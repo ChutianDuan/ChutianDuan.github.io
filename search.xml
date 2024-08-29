@@ -28,4 +28,18 @@
         <tag>生活</tag>
       </tags>
   </entry>
+  <entry>
+    <title>pytorch 软件环境搭建</title>
+    <url>/2024/08/29/pytorch-%E8%BD%AF%E4%BB%B6%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/</url>
+    <content><![CDATA[<h1 id="Pytorch-环境搭建"><a href="#Pytorch-环境搭建" class="headerlink" title="Pytorch 环境搭建"></a>Pytorch 环境搭建</h1><h2 id="conda安装"><a href="#conda安装" class="headerlink" title="conda安装"></a>conda安装</h2><p>conda是一个开源的包、环境管理器，可以用于在同一个机器上安装不同版本的软件包及其依赖，并能够在不同的环境之间切换。我强烈推荐你使用他，他的作用类似于java中的maven和我们平时使用的虚拟机，他能够保证的项目之间互相是隔离的。举个简单的例子，如果你同时有两个项目，你一个使用的是pytorch1.8，一个用的是pytorch1.10，这样一个环境肯定就不够了，这个时候anaconda就派上大用场了，他可以创建两个环境，各用各的，互不影响，而且同过不同项目加载不同环境，也可以使项目加载更快更轻便。 </p>
+<p>Anaconda有完整版和min版，完整版过于臃肿，因此推荐min版。下载地址推荐<a href="https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/">北京外国语大学开源镜像网站</a>,如果不想自己挑选版本也可以点击这个链接下载楼主的版本<a href="https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/Miniconda3-py39_4.9.2-Windows-x86_64.exe">Miniconda3</a><br>不管下载那个版本的，请注意不要安装到C盘，这是因为conda的使用过程会占据大量内存，下载C盘会使得C盘内存紧张。<br>安装的时候，需要添加到系统路径这个选项也请务必选上，后面使用起来会带来很多便捷，并且这里的安装位置请你一定要记得，后面我们在Pycharm中将会使用到。</p>
+<p>！<a href="/pic/conda%E5%AE%89%E8%A3%85%E9%80%89%E6%8B%A9.png">conda安装选择</a>  </p>
+<h2 id="coda-虚拟环境创建"><a href="#coda-虚拟环境创建" class="headerlink" title="coda 虚拟环境创建"></a>coda 虚拟环境创建</h2><h2 id="Pytorch-安装"><a href="#Pytorch-安装" class="headerlink" title="Pytorch 安装"></a>Pytorch 安装</h2><h3 id="Pytorch-CPU版本安装"><a href="#Pytorch-CPU版本安装" class="headerlink" title="Pytorch CPU版本安装"></a>Pytorch CPU版本安装</h3><h3 id="Pytroch-GPU版本安装"><a href="#Pytroch-GPU版本安装" class="headerlink" title="Pytroch GPU版本安装"></a>Pytroch GPU版本安装</h3><h2 id="Pycharm-IED-安装"><a href="#Pycharm-IED-安装" class="headerlink" title="Pycharm IED 安装"></a>Pycharm IED 安装</h2><h3 id="coda-环境映入"><a href="#coda-环境映入" class="headerlink" title="coda 环境映入"></a>coda 环境映入</h3><h2 id="完结撒花"><a href="#完结撒花" class="headerlink" title="完结撒花"></a>完结撒花</h2>]]></content>
+      <categories>
+        <category>软件</category>
+      </categories>
+      <tags>
+        <tag>Pytorch</tag>
+      </tags>
+  </entry>
 </search>
