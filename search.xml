@@ -24,8 +24,11 @@
     <content><![CDATA[<h1 id="博客的创建"><a href="#博客的创建" class="headerlink" title="博客的创建"></a>博客的创建</h1><p>当我写下这篇博客的时候，我很高兴我完成了我的第一篇博客的创作，虽然博客网站的运行等注意事项还没彻底掌握，但我很高兴至少自己完成了博客的初步制作。<br>以前在网络查询资料解决各种各式的问题，尝尝觉得这些大佬们技术叹为观止。不免在我脑海中产生一个问题，我能够成为像他们一样的人吗？  </p>
 <h1 id="展望"><a href="#展望" class="headerlink" title="展望"></a>展望</h1><p>个人博客的创建是为了记录我即将踏上的三年研究生生涯的点点滴滴，希望我能以梦为马，不负韶华。<br>先定下个小目标实现个人博客的月更和不断探索博客个性化希望等三年后的某一天回首这段时间，我能不留遗憾</p>
 ]]></content>
+      <categories>
+        <category>生活</category>
+      </categories>
       <tags>
-        <tag>生活</tag>
+        <tag>随想</tag>
       </tags>
   </entry>
   <entry>
@@ -43,12 +46,28 @@
 <p>正常出现这个输出着证明cuda驱动没问题，我们还需要记住 CUDA version 版本。上面的截图的版本是12.6.<br>后面pytorch安装需要更具你的cuda版本进行安装，cuda版本可以向下兼容，向上着会出现安装报错。<br>安装有两个选择，一个是去<a href="https://pytorch.org/get-started/locally/">官网</a>根据版本环境需求下载，但是由于服务器的原因下载并不稳定。本文后续介绍其它方法。</p>
 <h3 id="Pytorch-CPU版本安装"><a href="#Pytorch-CPU版本安装" class="headerlink" title="Pytorch CPU版本安装"></a>Pytorch CPU版本安装</h3><p><code>conda install pytorch torchvision torchaudio cpuonly -c pytorch</code></p>
 <h3 id="Pytroch-GPU版本安装"><a href="#Pytroch-GPU版本安装" class="headerlink" title="Pytroch GPU版本安装"></a>Pytroch GPU版本安装</h3><p><code>conda install pytorch==1.12.0 torchvision==0.13.0 torchaudio==0.12.0 cudatoolkit=11.3 -c https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch/win-64/</code></p>
-<h3 id="安装验证"><a href="#安装验证" class="headerlink" title="安装验证"></a>安装验证</h3><h2 id="Pycharm-IED-安装"><a href="#Pycharm-IED-安装" class="headerlink" title="Pycharm IED 安装"></a>Pycharm IED 安装</h2><h3 id="coda-环境引入"><a href="#coda-环境引入" class="headerlink" title="coda 环境引入"></a>coda 环境引入</h3><h2 id="完结撒花"><a href="#完结撒花" class="headerlink" title="完结撒花"></a>完结撒花</h2>]]></content>
+<h2 id="Pycharm-IED-安装"><a href="#Pycharm-IED-安装" class="headerlink" title="Pycharm IED 安装"></a>Pycharm IED 安装</h2><p>Pycharm IED是python集成编辑器，目前<a href="https://www.jetbrains.com/pycharm/">Pycharm官网</a>有两个版本社区版和专业版。通常来说初学者使用<a href="https://download-cdn.jetbrains.com.cn/python/pycharm-community-2024.2.1.exe">Pycharm社区版</a>完全够用。另外如想使用专业版，由于专业版有使用期限，但学生可以利用学生邮箱（edu后缀）去省钱使用，可以免费白嫖！！！<br>安装Pycharm过程十分简单这里就过多赘述，仅建议安装过程在选择Pycharm需求时全选。</p>
+<h3 id="conda-环境引入"><a href="#conda-环境引入" class="headerlink" title="conda 环境引入"></a>conda 环境引入</h3><p><img src="/pic/pytorchstep1.png" alt="step1"><br><img src="/pic/pytorchstep2.png" alt="step2">  </p>
+<h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><p>验证在Pycharm中新建一个项目，新建项目安装前一掌将conda引入。<br>新建一个py文件并输入下面代码<br><code>import torch</code><br><code>print(torch.__version__)</code><br><code>print(torch.version.cuda)</code><br><code>print(torch.cuda. is_available())</code>  </p>
+<p>进行运行，输出结果如下<br><img src="/pic/pytorch%E6%A3%80%E9%AA%8C.png" alt="检验结果"> </p>
+<h2 id="完结撒花"><a href="#完结撒花" class="headerlink" title="完结撒花"></a>完结撒花</h2><p>第一片技术类文章完结撒花，总耗时4小时</p>
+]]></content>
       <categories>
         <category>软件</category>
       </categories>
       <tags>
         <tag>Pytorch</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>研一第一月</title>
+    <url>/2024/09/01/%E7%A0%94%E4%B8%80%E7%AC%AC%E4%B8%80%E6%9C%88%EF%BC%88%E5%88%9D%EF%BC%89/</url>
+    <content><![CDATA[<h1 id="回顾"><a href="#回顾" class="headerlink" title="回顾"></a>回顾</h1><h2 id="学习"><a href="#学习" class="headerlink" title="学习"></a>学习</h2><h2 id="生活"><a href="#生活" class="headerlink" title="生活"></a>生活</h2><h1 id="展望"><a href="#展望" class="headerlink" title="展望"></a>展望</h1><h2 id="学习-1"><a href="#学习-1" class="headerlink" title="学习"></a>学习</h2><h2 id="生活-1"><a href="#生活-1" class="headerlink" title="生活"></a>生活</h2><h1 id="计划"><a href="#计划" class="headerlink" title="计划"></a>计划</h1>]]></content>
+      <categories>
+        <category>生活</category>
+      </categories>
+      <tags>
+        <tag>日记（月）</tag>
       </tags>
   </entry>
 </search>
