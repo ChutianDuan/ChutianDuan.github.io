@@ -60,14 +60,42 @@
       </tags>
   </entry>
   <entry>
+    <title>torchvision路径应用失败问题</title>
+    <url>/2024/09/05/torchvision%E8%B7%AF%E5%BE%84%E5%BA%94%E7%94%A8%E5%A4%B1%E8%B4%A5%E9%97%AE%E9%A2%98/</url>
+    <content><![CDATA[<h1 id="torchvision模块路径引用问题"><a href="#torchvision模块路径引用问题" class="headerlink" title="torchvision模块路径引用问题"></a>torchvision模块路径引用问题</h1><p>前言：安装pytorch后可能会出现torch模块引用成功，而torchvision模块引用失败，失败原因为torchvision模块路径丢失。可能是三个问题导致的： </p>
+<ol>
+<li>torch和torchvision版本不匹配</li>
+<li>pillow版本和torchvision版本不匹配</li>
+</ol>
+<h1 id="torch和torchvision版本不匹配"><a href="#torch和torchvision版本不匹配" class="headerlink" title="torch和torchvision版本不匹配"></a>torch和torchvision版本不匹配</h1><p>建议从pytorch官网重新下载新版pytorch，或者查询历史版本重新选择一个版本进行下载</p>
+<h1 id="pillow版本和torchvision版本不匹配"><a href="#pillow版本和torchvision版本不匹配" class="headerlink" title="pillow版本和torchvision版本不匹配"></a>pillow版本和torchvision版本不匹配</h1><p>删除pillow 在重新下载pillow最新版</p>
+]]></content>
+      <categories>
+        <category>软件</category>
+      </categories>
+      <tags>
+        <tag>Pytorch</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>研一第一月</title>
-    <url>/2024/09/01/%E7%A0%94%E4%B8%80%E7%AC%AC%E4%B8%80%E6%9C%88%EF%BC%88%E5%88%9D%EF%BC%89/</url>
-    <content><![CDATA[<h1 id="回顾"><a href="#回顾" class="headerlink" title="回顾"></a>回顾</h1><h2 id="学习"><a href="#学习" class="headerlink" title="学习"></a>学习</h2><h2 id="生活"><a href="#生活" class="headerlink" title="生活"></a>生活</h2><h1 id="展望"><a href="#展望" class="headerlink" title="展望"></a>展望</h1><h2 id="学习-1"><a href="#学习-1" class="headerlink" title="学习"></a>学习</h2><h2 id="生活-1"><a href="#生活-1" class="headerlink" title="生活"></a>生活</h2><h1 id="计划"><a href="#计划" class="headerlink" title="计划"></a>计划</h1>]]></content>
+    <url>/2024/09/01/%E7%A0%94%E4%B8%80%E7%AC%AC%E4%B8%80%E6%9C%88/</url>
+    <content><![CDATA[<h1 id="回顾"><a href="#回顾" class="headerlink" title="回顾"></a>回顾</h1><p>结束暑假，开始新学期</p>
+<h2 id="学习"><a href="#学习" class="headerlink" title="学习"></a>学习</h2><p>暑假期间初步入门了深度学习和python，完成了小土堆深度学习入门和python，后续需要进一步加强</p>
+<h2 id="生活"><a href="#生活" class="headerlink" title="生活"></a>生活</h2><h1 id="展望"><a href="#展望" class="headerlink" title="展望"></a>展望</h1><h2 id="学习-1"><a href="#学习-1" class="headerlink" title="学习"></a>学习</h2><p>继续学习深度学习和python，目前感觉深学习入门还是比较容易，希望学期结束能完成《动手深度学习》</p>
+<h2 id="生活-1"><a href="#生活-1" class="headerlink" title="生活"></a>生活</h2><p>准备广东博物馆、广东图书馆游玩</p>
+<h1 id="计划"><a href="#计划" class="headerlink" title="计划"></a>计划</h1><ol>
+<li>博客一个星期更新一次，一个月更新一次技术类型文章</li>
+<li>每月进行总结</li>
+<li>精读《动手深度学习》并将每章进行笔记记录，计划本周完成前三章的精读</li>
+<li>学习《流程使用python》</li>
+</ol>
+]]></content>
       <categories>
         <category>生活</category>
       </categories>
       <tags>
-        <tag>日记（月）</tag>
+        <tag>日记</tag>
       </tags>
   </entry>
 </search>
