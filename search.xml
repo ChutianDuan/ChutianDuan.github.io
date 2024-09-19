@@ -98,4 +98,47 @@
         <tag>日记</tag>
       </tags>
   </entry>
+  <entry>
+    <title>一、预备知识</title>
+    <url>/2024/09/05/%E4%B8%80%E3%80%81%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86/</url>
+    <content><![CDATA[<h1 id="预备知识"><a href="#预备知识" class="headerlink" title="预备知识"></a>预备知识</h1><h2 id="基础"><a href="#基础" class="headerlink" title="基础"></a>基础</h2><h2 id="重点"><a href="#重点" class="headerlink" title="重点"></a>重点</h2><h3 id="范数"><a href="#范数" class="headerlink" title="范数"></a>范数</h3><h3 id="矩阵求导"><a href="#矩阵求导" class="headerlink" title="矩阵求导"></a>矩阵求导</h3><h3 id="反向传播（sum函数）"><a href="#反向传播（sum函数）" class="headerlink" title="反向传播（sum函数）"></a>反向传播（sum函数）</h3><p>&#96;&#96;<a href="https://blog.csdn.net/qq_43722079/article/details/136583592">https://blog.csdn.net/qq_43722079/article/details/136583592</a></p>
+]]></content>
+      <categories>
+        <category>动手深度学习</category>
+      </categories>
+      <tags>
+        <tag>Pytorch</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>GAN生成式对抗网络</title>
+    <url>/2024/09/13/GAN%E7%BD%91%E7%BB%9C/</url>
+    <content><![CDATA[<h1 id="GAN生成式对抗网络"><a href="#GAN生成式对抗网络" class="headerlink" title="GAN生成式对抗网络"></a>GAN生成式对抗网络</h1><p>GAN生成式对抗网络，GAN网络由生成网络和判别网络两个网络组成，生成式网络通过学习图片后将噪声转换为图片，而判别式网络将区分数据集图片和生成图片进行判别。生成式与判别式网络类似与小偷与警察，通过不断的博弈互相升级，在这场游戏中我们更加希望小偷取得胜利。既是生成式网络生成的图片可以让判别器难以判断。</p>
+<h2 id="网络结构"><a href="#网络结构" class="headerlink" title="网络结构"></a>网络结构</h2><h3 id="网络模型"><a href="#网络模型" class="headerlink" title="网络模型"></a>网络模型</h3><h3 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h3><h3 id="评价指标"><a href="#评价指标" class="headerlink" title="评价指标"></a>评价指标</h3><h2 id="pytorch实现"><a href="#pytorch实现" class="headerlink" title="pytorch实现"></a>pytorch实现</h2><h2 id="GAN缺陷与改进"><a href="#GAN缺陷与改进" class="headerlink" title="GAN缺陷与改进"></a>GAN缺陷与改进</h2>]]></content>
+      <categories>
+        <category>深度学习</category>
+      </categories>
+      <tags>
+        <tag>pytorh</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>第二次组会</title>
+    <url>/2024/09/13/%E7%AC%AC%E4%BA%8C%E6%AC%A1%E7%BB%84%E4%BC%9A/</url>
+    <content><![CDATA[<h1 id="第二次组会"><a href="#第二次组会" class="headerlink" title="第二次组会"></a>第二次组会</h1><p>一共四个人汇报，其中在投文献一篇方向为拉曼，三篇论汇报拉曼两片，层析一篇</p>
+<h2 id="在投文献"><a href="#在投文献" class="headerlink" title="在投文献"></a>在投文献</h2><p>深度学习预测单细胞H2O2含量</p>
+<h3 id="数据集"><a href="#数据集" class="headerlink" title="数据集"></a>数据集</h3><p>细胞的数据集在预测问题上可以看作为时间序列，或者弱化其时间的数据看为序列。这种序列和文字序列有一定的相识性，在处理这方面数据可以更多的考虑循环神经网络和注意力机制进行处理</p>
+<h3 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h3><p>注意力机制</p>
+<h3 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h3><p>未知</p>
+<h3 id="评价指标"><a href="#评价指标" class="headerlink" title="评价指标"></a>评价指标</h3><p>R^2</p>
+<h2 id="论文问题"><a href="#论文问题" class="headerlink" title="论文问题"></a>论文问题</h2><p>网络结构不清晰，深度学习三要素 网络模型、损失函数和评价指标的选取有问题</p>
+<h2 id="论文汇报"><a href="#论文汇报" class="headerlink" title="论文汇报"></a>论文汇报</h2><h3 id="transformer-RNN-超高清重建图像"><a href="#transformer-RNN-超高清重建图像" class="headerlink" title="transformer+RNN 超高清重建图像"></a>transformer+RNN 超高清重建图像</h3><h4 id="网络-1"><a href="#网络-1" class="headerlink" title="网络"></a>网络</h4><p>RNN(head)</p>
+]]></content>
+      <categories>
+        <category>生活</category>
+      </categories>
+      <tags>
+        <tag>组会</tag>
+      </tags>
+  </entry>
 </search>
