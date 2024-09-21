@@ -141,4 +141,42 @@
         <tag>组会</tag>
       </tags>
   </entry>
+  <entry>
+    <title>第一次拉曼组会</title>
+    <url>/2024/09/21/%E7%AC%AC%E4%B8%80%E6%AC%A1%E6%8B%89%E6%9B%BC%E7%BB%84%E4%BC%9A/</url>
+    <content><![CDATA[<h1 id="第一次拉曼组会"><a href="#第一次拉曼组会" class="headerlink" title="第一次拉曼组会"></a>第一次拉曼组会</h1><h2 id="光谱的识别与3D成像方向"><a href="#光谱的识别与3D成像方向" class="headerlink" title="光谱的识别与3D成像方向"></a>光谱的识别与3D成像方向</h2><ol>
+<li>方法学：python、深度学习上的改进</li>
+<li>一维拉曼：讲故事，干什么？好处是？</li>
+<li>多模态转换（起步还需后续验证）：拉曼光谱与全息成像是否能够互相和转换</li>
+</ol>
+<h2 id="组会安排"><a href="#组会安排" class="headerlink" title="组会安排"></a>组会安排</h2><ol>
+<li>开会频率自由，不固定时间。但月最少两次</li>
+<li>组会内容，与正常组会有别，主要是讨论问题抛出问题，解决问题。不需要太过严谨</li>
+</ol>
+<h2 id="拉曼基础"><a href="#拉曼基础" class="headerlink" title="拉曼基础"></a>拉曼基础</h2><p>需要学习拉曼基础知识，补全数学基础，值得一提的的是需要特别学习一下主成分分析法</p>
+<h2 id="组会内容"><a href="#组会内容" class="headerlink" title="组会内容"></a>组会内容</h2><h3 id="基于深度可分离三维成像去噪方法的细胞拉曼成像-朱伟乐、小论文"><a href="#基于深度可分离三维成像去噪方法的细胞拉曼成像-朱伟乐、小论文" class="headerlink" title="基于深度可分离三维成像去噪方法的细胞拉曼成像 朱伟乐、小论文"></a>基于深度可分离三维成像去噪方法的细胞拉曼成像 朱伟乐、小论文</h3><h4 id="工作"><a href="#工作" class="headerlink" title="工作"></a>工作</h4><p>论文采用了神经网络对3D图像进行去噪处理，论文属于方法创新，创新了神经网络</p>
+<h4 id="数据集"><a href="#数据集" class="headerlink" title="数据集"></a>数据集</h4><p>公开数据集，加上自己小样本数据辅佐说明实验</p>
+<h4 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h4><p>改进的CNN网络，通过分离模块减少了网络训练产生，使得网络训练3D图像速度大大快  </p>
+<h4 id="loss"><a href="#loss" class="headerlink" title="loss"></a>loss</h4><p>目前：基础的损失函数，改进：加上约束项</p>
+<h4 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h4><p>选择作为真值的图像本身的噪声处理问题，图像优化过于平滑</p>
+<h3 id="万、小论文、一区"><a href="#万、小论文、一区" class="headerlink" title="万、小论文、一区"></a>万、小论文、一区</h3><h4 id="工作-1"><a href="#工作-1" class="headerlink" title="工作"></a>工作</h4><p>就使用了一个简单的CNN网络对干细胞进行功能性的预测</p>
+<h4 id="数据集-1"><a href="#数据集-1" class="headerlink" title="数据集"></a>数据集</h4><p>干细胞不同时间阶段中多功能性荧光图像</p>
+<h4 id="网络-1"><a href="#网络-1" class="headerlink" title="网络"></a>网络</h4><p>CNN</p>
+<h4 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h4><p>首先通过CNN网络学习到干细胞功能性预测，然后通过学习后的CNN网络发现在CNN对干细胞功能性能力判别时所关注的拉曼峰发现主要通过‘xx’峰进行判别，在反过来提出该‘xx’峰所对应的物质对干细胞功能性能力的影响。<br>该论文不是简短的应用创新，同学也研究创新发现了莫种物质对细胞能力的影响。同循循渐进的创新提升的论文的质量，值得学习</p>
+<h3 id="论文写作"><a href="#论文写作" class="headerlink" title="论文写作"></a>论文写作</h3><p>研究背景，研究内容，技术路径，技术流程</p>
+<h2 id="任务"><a href="#任务" class="headerlink" title="任务"></a>任务</h2><p>多模转换项目初体验</p>
+<h3 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h3><p>找到一个网络并试着完成拉曼光谱与全息图之间的相互转换，网络不限。可以无监督，有监督学习。先完成网络的预想和构建，在提供数据集（数据集需要张老师找两个不同的师兄要）共同完成</p>
+<h3 id="数据集-2"><a href="#数据集-2" class="headerlink" title="数据集"></a>数据集</h3><p>小数据集样本</p>
+<h3 id="困难"><a href="#困难" class="headerlink" title="困难"></a>困难</h3><ol>
+<li>缺乏具体的理论支持</li>
+<li>数据集少</li>
+</ol>
+]]></content>
+      <categories>
+        <category>组会</category>
+      </categories>
+      <tags>
+        <tag>拉曼</tag>
+      </tags>
+  </entry>
 </search>
