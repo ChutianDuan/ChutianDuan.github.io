@@ -207,4 +207,27 @@
         <tag>pytorch</tag>
       </tags>
   </entry>
+  <entry>
+    <title>自定义数据集</title>
+    <url>/2024/09/26/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%95%B0%E6%8D%AE%E9%9B%86/</url>
+    <content><![CDATA[<h1 id="自定义数据集"><a href="#自定义数据集" class="headerlink" title="自定义数据集"></a>自定义数据集</h1><p>在使用pytorch进行深度学习训练时，难以避免的使用自己的私有数据集。这时就需要进行手动封装，一个良好的数据集是深度学习完美的开始</p>
+<h1 id="定义数据集方法"><a href="#定义数据集方法" class="headerlink" title="定义数据集方法"></a>定义数据集方法</h1><p>自定义数据需要使用<code>torch.utils.data.Dataset</code>类，这是自定义数据集的基础<br>自定义数据无非就三要数，路径，标签处理及返回和数据大小返回  </p>
+<ol>
+<li><code>def __init__(self,root_dir,label_dir):</code> 通常进行初始换，图像路径调用  </li>
+<li><code>def __getitem__(self, item):</code> 按照自己的需要进行指定要，在下面的例子中，就自定义数据返回了图像本身和标签（标签是文件夹）  【这部分是自定义数据的关键】  </li>
+<li><code>def __len__(self):</code>定义len方法，一般不需要特殊定义<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">import torch</span><br><span class="line">import torchvision</span><br><span class="line">from torch.utils.data import Dataset</span><br><span class="line">import os</span><br><span class="line">from PIL import Image</span><br><span class="line">train_root = &#x27;data/train&#x27;</span><br><span class="line">train_ants_root = &#x27;ants&#x27;</span><br><span class="line">train_bess_root = &#x27;bees&#x27;</span><br><span class="line"></span><br><span class="line">class Mydata(Dataset):</span><br><span class="line">    def __init__(self,root_dir,label_dir):</span><br><span class="line">        #在这里进行初始化，一般是初始化文件路径或文件列表</span><br><span class="line">        super().__init__()</span><br><span class="line">        self.root_dir = root_dir</span><br><span class="line">        self.label_dir = label_dir</span><br><span class="line">        self.path = os.path.join(self.root_dir,self.label_dir)</span><br><span class="line">        self.img_path = os.listdir(self.path)</span><br><span class="line">    def __getitem__(self, item):</span><br><span class="line">        # 1. 按照index，读取文件中对应的数据  （读取一个数据！！！！我们常读取的数据是图片，一般我们送入模型的数据成批的，但在这里只是读取一张图片，成批后面会说到）</span><br><span class="line">        # 2. 对读取到的数据进行数据增强 (数据增强是深度学习中经常用到的，可以提高模型的泛化能力)(torchvision.transforms.Compose)</span><br><span class="line">        # 3. 返回数据对 （一般我们要返回 图片，对应的标签）</span><br><span class="line">        self.img = os.path.join(self.root_dir,self.root_dir,self.img_path[item])</span><br><span class="line">        img = Image.open(self.img)</span><br><span class="line">        img = torchvision.transforms.Compose([</span><br><span class="line">            torchvision.transforms.ToTensor()</span><br><span class="line">        ])</span><br><span class="line">        if self.label_dir == &#x27;ants&#x27;:</span><br><span class="line">            label = torch.tensor(1.0)</span><br><span class="line">        else:</span><br><span class="line">            label = torch.tensor(0)</span><br><span class="line">        return img, label</span><br><span class="line">    def __len__(self):</span><br><span class="line">        return len(self.img_path)</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h1 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h1><p>在许多书中和教程中很少提到自定义数据集这件事，导致产生了自定义数据这件事情比较难的刻板印象。但是实际系统的看了发现这点并非很难，定义复杂的数据集只要动手也不是问题。只要多看代码多动手一切困难都会解决的。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
+<li><a href="https://blog.csdn.net/qq_40788447/article/details/114937779">pytorch技巧 五： 自定义数据集 torch.utils.data.DataLoader 及Dataset的使用</a>  </li>
+<li><a href="https://www.bilibili.com/video/BV1G94y1z7vf/?spm_id_from=333.999.0.0&vd_source=c7b501bd0aabc326342cea733e0bfc62">基于Pytorch的自制蚂蚁蜜蜂数据集的训练与识别</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>深度学习</category>
+      </categories>
+      <tags>
+        <tag>pytorch</tag>
+      </tags>
+  </entry>
 </search>
