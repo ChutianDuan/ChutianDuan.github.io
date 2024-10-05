@@ -230,4 +230,28 @@
         <tag>pytorch</tag>
       </tags>
   </entry>
+  <entry>
+    <title>可视化</title>
+    <url>/2024/10/05/%E5%8F%AF%E8%A7%86%E5%8C%96/</url>
+    <content><![CDATA[<h1 id="神经网络训练可视化"><a href="#神经网络训练可视化" class="headerlink" title="神经网络训练可视化"></a>神经网络训练可视化</h1><h2 id="TensorBoard"><a href="#TensorBoard" class="headerlink" title="TensorBoard"></a>TensorBoard</h2><p>TensorBoard是一款强大的深度学习可视化工具，可以配合pytorch将模型细节进行可视化，本文将介绍三种初步用法。进阶查看网络卷积层等后续使用在进行介绍，单详细通过学习初步的用法后后续根据其它网络教程也很容易实现</p>
+<h3 id="应用安装"><a href="#应用安装" class="headerlink" title="应用安装"></a>应用安装</h3><p>安装TensorBoard （按住默认最新版，老版本在可视化梯度中存在问题）<br><code>pip install TensorBoard</code><br>引用</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">from torch.utils.tensorboard import SummaryWriter</span><br><span class="line"># 创建SummaryWriter类</span><br><span class="line">writer=SummaryWriter()</span><br></pre></td></tr></table></figure>
+<h3 id="可视化"><a href="#可视化" class="headerlink" title="可视化"></a>可视化</h3><h4 id="图像可视化"><a href="#图像可视化" class="headerlink" title="图像可视化"></a>图像可视化</h4><p>imgs 是图像DataLoader类，可视化能够实现将一组batch图像进行可视化。<br>在进行图像可视化的时候，如果tensor数据是0到1则会自动扩大244倍，数据超过1则默认数据范围为0到244。如果图像在可视化之前还进行了额外的操作，需要进行相反的操作才能正常可视化</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># images：可视化画布名称，imgsDataLoader类，steps每次训练的数据</span><br><span class="line">writer.add_images(&#x27;images&#x27;,imgs,steps)</span><br></pre></td></tr></table></figure>
+<h4 id="折线图可视化"><a href="#折线图可视化" class="headerlink" title="折线图可视化"></a>折线图可视化</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">writer.add_scalar(&#x27;loss&#x27;,loss, step)</span><br></pre></td></tr></table></figure>
+<h4 id="模型可视化"><a href="#模型可视化" class="headerlink" title="模型可视化"></a>模型可视化</h4><p>模型可视化稍微不同上面两种需要在训练循环中引入</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 创建假的图像需要和原始图像形状相同，还需要同模型在一个device上。</span><br><span class="line">img_false = torch.randn(1,3,32,32).to(device)</span><br><span class="line">writer.add_graph(chutian,img_false)</span><br></pre></td></tr></table></figure>
+<h3 id="查看"><a href="#查看" class="headerlink" title="查看"></a>查看</h3><p>在终端中输入<code>tensotboard --logdir=./</code>返回端口号后用浏览器打开就能查看训练过程的可视化情况了</p>
+<h3 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h3><p>tensorboard可视化还能用于可视化模型的卷积层的参数情况，通过查看参数的可视化的情况，就能轻易的发现梯度消失和梯度爆炸的问题。可视化的同时也为模型的训练过程调参提供了便利。</p>
+<h2 id="CAM"><a href="#CAM" class="headerlink" title="CAM"></a>CAM</h2><p>CAM多用于在分类问题中使用，类激活图可以显示模型在训练过程中，权重或重心在何处、如何转移，分类模型是根据哪一部分的特征进行判别的。简而言之，就是模仿人类识别物体的过程，随着模型的迭代，找到相关任务的关键部位。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://blog.csdn.net/qq_44722174/article/details/117000910">类激活图（CAM）代码+原理详解</a><br><a href="https://blog.csdn.net/qq_41656402/article/details/131123121">TensorBoard最全使用教程：看这篇就够了</a></p>
+]]></content>
+      <categories>
+        <category>深度学习</category>
+      </categories>
+      <tags>
+        <tag>tensorboard</tag>
+        <tag>可视化</tag>
+      </tags>
+  </entry>
 </search>
