@@ -253,4 +253,15 @@
         <tag>tensorboard</tag>
       </tags>
   </entry>
+  <entry>
+    <title>pytorch 中维度修改那些事</title>
+    <url>/2024/10/15/pytorch-%E4%B8%AD%E7%BB%B4%E5%BA%A6%E4%BF%AE%E6%94%B9%E9%82%A3%E4%BA%9B%E4%BA%8B/</url>
+    <content><![CDATA[<h1 id="pytorch-维度操作那些事"><a href="#pytorch-维度操作那些事" class="headerlink" title="pytorch 维度操作那些事"></a>pytorch 维度操作那些事</h1><h2 id="维度转置函数-transpose-和-permute"><a href="#维度转置函数-transpose-和-permute" class="headerlink" title="维度转置函数 transpose() 和 permute()"></a>维度转置函数 transpose() 和 permute()</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">x = torch.randn([2,3])</span><br><span class="line">y = torch.randn([2,3,4])</span><br><span class="line">print(f&#x27;x.shape:&#123;x.shape&#125;,y.shape&#123;y.shape&#125;&#x27;)</span><br><span class="line"># transpose() torch.transpose(x)合法， x.transpose()合法。</span><br><span class="line">## torch.transpose(input, dim0, dim1, out=None)</span><br><span class="line">print(f&#x27;&#123;x.transpose(0,1).shape,torch.transpose(x,0,1).shape&#125;&#x27;)</span><br><span class="line"># transpose 一次性只能对两个维度进行操作。因此在进行维度变化的时候多采用permute()</span><br><span class="line">print(f&#x27;&#123;y.transpose(0,2).shape&#125;&#x27;)</span><br><span class="line">x = torch.randn([2,3])</span><br><span class="line">y = torch.randn([2,3,4])</span><br><span class="line">print(f&#x27;x.shape:&#123;x.shape&#125;,y.shape&#123;y.shape&#125;&#x27;)</span><br><span class="line"># permute() torch.permute(x)不合法，x.permute()合法。</span><br><span class="line">print(f&#x27;&#123;x.permute(0,1).shape&#125;&#x27;)</span><br><span class="line">print(f&#x27;&#123;y.permute(0,2,1).shape&#125;&#x27;)</span><br><span class="line"># transpose() 和 permute() 两者大致相同，但是在内存处理方面具有差异</span><br></pre></td></tr></table></figure>
+<h2 id="维度修改函数-squeeze-和-unsqueeze"><a href="#维度修改函数-squeeze-和-unsqueeze" class="headerlink" title="维度修改函数 squeeze()和 unsqueeze()"></a>维度修改函数 squeeze()和 unsqueeze()</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># squeeze()</span><br><span class="line">## 低维记为0 高维记为1</span><br><span class="line">## 如果小括号里不是1怎么办？这个括号里的1是什么意思？</span><br><span class="line">## 具体而言，如果一个张量有四个维度的，squeeze(index)会将张量中第index维度，</span><br><span class="line">## 且大小为1的维度进行去除，从而减少张量的维度。如果index是负整数，那就是倒数第index个维度</span><br><span class="line">print(f&#x27;&#123;x.squeeze(-1).shape&#125;&#x27;)</span><br><span class="line"># unsqueeze()</span><br><span class="line">## 从左到右，高维记为0，最低维最大</span><br><span class="line">print(f&#x27;&#123;y.unsqueeze(0).shape&#125;&#x27;)</span><br></pre></td></tr></table></figure>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><p><a href="https://blog.csdn.net/xinjieyuan/article/details/105232802">https://blog.csdn.net/xinjieyuan/article/details/105232802</a><br><a href="https://blog.csdn.net/guihaiyuan123/article/details/113455775">https://blog.csdn.net/guihaiyuan123/article/details/113455775</a></p>
+]]></content>
+      <tags>
+        <tag>pytorch</tag>
+      </tags>
+  </entry>
 </search>
