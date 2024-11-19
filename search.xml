@@ -265,17 +265,17 @@
       </tags>
   </entry>
   <entry>
-    <title>�Զ������ݼ�</title>
+    <title>自定义数据集</title>
     <url>/2024/11/16/%E5%88%9D%E5%A7%8B%E5%8C%96/</url>
-    <content><![CDATA[<h1 id="�������ʼ��"><a href="#�������ʼ��" class="headerlink" title="�������ʼ��"></a>�������ʼ��</h1><p>������ĳ�ʼ��������ģ�͵�ѵ����������Ҫ�����ã�һ�������ĳ�ʼ���ܹ���ģ�͸������ϣ����������ʵĳ�ʼ��������ģ���������Ե�Ӱ�졣<br>ͨ�����Լ�����ģ�͵�ʱ��<code>pytorch</code>���Զ���ģ���е�Ȩ�ؽ�����̫�ֲ���ʼ����������ĪЩģ������̫�ֲ��ֲ�����Ч�������������������������Ҫ�����������ȡ����ʱ��Ҫ���õ��Զ����ʼ����<code>Weight Initialization</code></p>
-<h2 id="ѡ��������Ϊ����"><a href="#ѡ��������Ϊ����" class="headerlink" title="ѡ��������Ϊ����"></a>ѡ��������Ϊ����</h2><p>ͨ��������Ҫ�Զ����Ȩ�صĲ�Ϊ�����㣬��Ϊ�е�����ľ������ܹ���ȡ��ͬ����������Ϊ�����ģ��ѵ����������ɸѡ����ȡ<br><code>getattr</code>����<br>����<code>getattr</code>�����ܹ����ָ����ĵĻ�ȡ<code>conv_weight = getattr(model, conv)</code>�����ͽ�model����Ϊconv��ľ������Ȩ��������conv_weight�����С�<br>��conv_weight�������и�ֵ�ı��ʱ�򣬶�Ӧ��conv���еĲ���ͬ�������ı䡣</p>
-<h2 id="���в�����ʼ��"><a href="#���в�����ʼ��" class="headerlink" title="���в�����ʼ��"></a>���в�����ʼ��</h2><h3 id="������ʼ��"><a href="#������ʼ��" class="headerlink" title="������ʼ��"></a>������ʼ��</h3><h2 id="�ο�����"><a href="#�ο�����" class="headerlink" title="�ο�����"></a>�ο�����</h2><ol>
-<li><a href="https://zhuanlan.zhihu.com/p/610248161">��ͬ��Ӧ�ò�ͬ��ʼ����ʽ</a></li>
-<li><a href="https://blog.csdn.net/ys1305/article/details/94332007">pytorch�еĲ�����ʼ�������ܽ�</a></li>
+    <content><![CDATA[<h1 id="神经网络初始化"><a href="#神经网络初始化" class="headerlink" title="神经网络初始化"></a>神经网络初始化</h1><p>神经网络的初始化对整个模型的训练起到至关重要的作用，一个合理的初始化能够让模型更快的拟合，反正不合适的初始化对整个模型是灾难性的影响。<br>通常在自己构建模型的时候，<code>pytorch</code>会自动对模型中的权重进行正太分布初始化，当让在莫些模型中正太分布分布表现效果并不优良，亦或者是有特殊要求进行特征提取。这时就要利用到自定义初始化了<code>Weight Initialization</code></p>
+<h2 id="选定卷积层为对象"><a href="#选定卷积层为对象" class="headerlink" title="选定卷积层为对象"></a>选定卷积层为对象</h2><p>通常我们需要自定义的权重的层为卷积层，因为有的特殊的卷积核能够提取不同数据特征。为后面的模型训练提特征的筛选与提取<br><code>getattr</code>函数<br>利用<code>getattr</code>函数能够完成指定层的的获取<code>conv_weight = getattr(model, conv)</code>这样就将model中名为conv层的卷积层的权重链接至conv_weight变量中。<br>当conv_weight变量进行赋值改变的时候，对应的conv层中的参数同样发生改变。</p>
+<h2 id="进行参数初始化"><a href="#进行参数初始化" class="headerlink" title="进行参数初始化"></a>进行参数初始化</h2><h3 id="凯明初始化"><a href="#凯明初始化" class="headerlink" title="凯明初始化"></a>凯明初始化</h3><h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ol>
+<li><a href="https://zhuanlan.zhihu.com/p/610248161">不同层应用不同初始化方式</a></li>
+<li><a href="https://blog.csdn.net/ys1305/article/details/94332007">pytorch中的参数初始化方法总结</a></li>
 </ol>
 ]]></content>
       <categories>
-        <category>���ѧϰ</category>
+        <category>深度学习</category>
       </categories>
       <tags>
         <tag>pytorch</tag>
