@@ -282,30 +282,30 @@
       </tags>
   </entry>
   <entry>
-    <title>UNet-RCAN ����</title>
+    <title>UNet-RCAN 复现</title>
     <url>/2024/11/29/UNet_RCAN/</url>
-    <content><![CDATA[<h1 id="UNet-RCAN"><a href="#UNet-RCAN" class="headerlink" title="UNet-RCAN"></a>UNet-RCAN</h1><h2 id="��L��Ϣ"><a href="#��L��Ϣ" class="headerlink" title="��Ŀ��Ϣ"></a>��Ŀ��Ϣ</h2><p>���������һ��UNet���RCAN������ṹ��UNet����ģ����Ҫ�����������ͼ��ָ�����������䣬RCANͨ��ע����ģ�鸺����н�UNet���������ݽ����������޸�αӰ</p>
+    <content><![CDATA[<h1 id="UNet-RCAN"><a href="#UNet-RCAN" class="headerlink" title="UNet-RCAN"></a>UNet-RCAN</h1><h2 id="项目信息"><a href="#项目信息" class="headerlink" title="项目信息"></a>项目信息</h2><p>本文提出了一种UNet结合RCAN的网络结构，UNet网络模型主要负责进行弱光图像恢复进行数据填充，RCAN通道注意力模块负责进行将UNet的填充的数据进行清晰和修复伪影</p>
 <ol>
-<li>������Ŀ��Denoising fast super-resolution STED microscopy with UNet_RCAN</li>
-<li>�����ַ��<a href="https://github.com/vebrahimi1990/UNet_RCAN_Denoising">https://github.com/vebrahimi1990/UNet_RCAN_Denoising</a></li>
+<li>论文题目：Denoising fast super-resolution STED microscopy with UNet_RCAN</li>
+<li>代码地址：<a href="https://github.com/vebrahimi1990/UNet_RCAN_Denoising">https://github.com/vebrahimi1990/UNet_RCAN_Denoising</a></li>
 </ol>
-<h2 id="������"><a href="#������" class="headerlink" title="������"></a>������</h2><p>UNet-RCANģ���н��в����Ӹ�������CABģ��������ӣ�CAB��һ��ͨ��ע�������ƣ��ܹ���ȡͼƬ����Ҫ����Ϣ�����Ȿģ�ͻ�ӵ���������output-1��UNet����output-2(RCAN)ͨ��������ͬ����ʧ���Ż�����ģ�͵�����ģ����и���<br><img src="https://www.helloimg.com/i/2024/11/29/67495e45c2ddb.png" alt="Architecture.png"></p>
-<h3 id="��ʧ����"><a href="#��ʧ����" class="headerlink" title="��ʧ����"></a>��ʧ����</h3><p>ģ�Ͳ����˷�����ʧ����loss-1��loss-2��loss-1�����ͼ�������м���<strong>loss-2</strong>���þ����˼���ͼ��֮���ƽ����<strong>��ֹ��ƽ��</strong></p>
+<h2 id="网络框架"><a href="#网络框架" class="headerlink" title="网络框架"></a>网络框架</h2><p>UNet-RCAN模型中将残差链接更换成了CAB模块进行链接，CAB是一种通道注意力机制，能够提取图片中重要的信息，此外本模型还拥有两个输出output-1（UNet）和output-2(RCAN)通过设置相同的损失和优化器将模型的两个模块进行跟新<br><img src="https://www.helloimg.com/i/2024/11/29/67495e45c2ddb.png" alt="Architecture.png"></p>
+<h3 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h3><p>模型采用了符合损失函数loss-1和loss-2，loss-1负责对图像误差进行计算<strong>loss-2</strong>利用卷积核计算图像之间的平缓，<strong>防止过平滑</strong></p>
 <ol>
 <li><p>loss-1</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">def ch_loss_2D(pred, gt):</span><br><span class="line">    norm = tf.norm(pred - gt, axis=(1, 2))</span><br><span class="line">    norm = tf.squeeze(norm)</span><br><span class="line">    norm = tf.pow(norm, 2)</span><br><span class="line">    norm = norm / (256 * 256) + 1e-6</span><br><span class="line">    norm = tf.pow(norm, 0.5)</span><br><span class="line">    c_loss = tf.math.reduce_mean(norm)</span><br><span class="line">    return c_loss</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>loss-2</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">def edge_loss_2D(pred, gt):</span><br><span class="line">    kernel = np.array([[0, 1, 0], [1, -4, 1], [0, 1, 0]])</span><br><span class="line">    kernel = kernel.reshape((3, 3, 1, 1))</span><br><span class="line">    pred = tf.nn.conv2d(pred, kernel, strides=[1, 1, 1, 1], padding=&#x27;VALID&#x27;)</span><br><span class="line">    gt = tf.nn.conv2d(gt, kernel, strides=[1, 1, 1, 1], padding=&#x27;VALID&#x27;)</span><br><span class="line">    e_loss = ch_loss_2D(pred, gt)</span><br><span class="line">    return e_loss</span><br></pre></td></tr></table></figure>
-<p>���յ���ʧ����Ϊ<code>loss = c_loss + 0.05 * e_loss</code>����0.05�Ǿ��麯��</p>
+<p>最终的损失函数为<code>loss = c_loss + 0.05 * e_loss</code>其中0.05是经验函数</p>
 </li>
 </ol>
-<h3 id="�Z���"><a href="#�Z���" class="headerlink" title="�Ż���"></a>�Ż���</h3><p>�Ż���������Ĭ��Adam�Ż�</p>
-<h2 id="����"><a href="#����" class="headerlink" title="����"></a>����</h2><p>������tensorflow����¸����Ѷȼ��󣬽�����ģ�ͽ����ع���pytorch����½���ѵ��</p>
-<h3 id="�Z�������"><a href="#�Z�������" class="headerlink" title="�Ż�������"></a>�Ż�������</h3><p>Ϊ��ʵ������ģ�鵥������</p>
+<h3 id="优化器"><a href="#优化器" class="headerlink" title="优化器"></a>优化器</h3><p>优化器采用了默认Adam优化</p>
+<h2 id="复现"><a href="#复现" class="headerlink" title="复现"></a>复现</h2><p>由于在tensorflow框架下复现难度极大，将整个模型进行重构到pytorch框架下进行训练</p>
+<h3 id="优化器设置"><a href="#优化器设置" class="headerlink" title="优化器设置"></a>优化器设置</h3><p>为了实现两个模块单独跟新</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
       <categories>
-        <category>����</category>
+        <category>复现</category>
       </categories>
       <tags>
         <tag>pytorch</tag>
