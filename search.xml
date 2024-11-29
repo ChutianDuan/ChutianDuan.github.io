@@ -265,7 +265,7 @@
       </tags>
   </entry>
   <entry>
-    <title>自定义数据集</title>
+    <title>初始化</title>
     <url>/2024/11/16/%E5%88%9D%E5%A7%8B%E5%8C%96/</url>
     <content><![CDATA[<h1 id="神经网络初始化"><a href="#神经网络初始化" class="headerlink" title="神经网络初始化"></a>神经网络初始化</h1><p>神经网络的初始化对整个模型的训练起到至关重要的作用，一个合理的初始化能够让模型更快的拟合，反正不合适的初始化对整个模型是灾难性的影响。<br>通常在自己构建模型的时候，<code>pytorch</code>会自动对模型中的权重进行正太分布初始化，当让在莫些模型中正太分布分布表现效果并不优良，亦或者是有特殊要求进行特征提取。这时就要利用到自定义初始化了<code>Weight Initialization</code></p>
 <h2 id="选定卷积层为对象"><a href="#选定卷积层为对象" class="headerlink" title="选定卷积层为对象"></a>选定卷积层为对象</h2><p>通常我们需要自定义的权重的层为卷积层，因为有的特殊的卷积核能够提取不同数据特征。为后面的模型训练提特征的筛选与提取<br><code>getattr</code>函数<br>利用<code>getattr</code>函数能够完成指定层的的获取<code>conv_weight = getattr(model, conv)</code>这样就将model中名为conv层的卷积层的权重链接至conv_weight变量中。<br>当conv_weight变量进行赋值改变的时候，对应的conv层中的参数同样发生改变。</p>
@@ -276,6 +276,36 @@
 ]]></content>
       <categories>
         <category>深度学习</category>
+      </categories>
+      <tags>
+        <tag>pytorch</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>UNet-RCAN ����</title>
+    <url>/2024/11/29/UNet_RCAN/</url>
+    <content><![CDATA[<h1 id="UNet-RCAN"><a href="#UNet-RCAN" class="headerlink" title="UNet-RCAN"></a>UNet-RCAN</h1><h2 id="��L��Ϣ"><a href="#��L��Ϣ" class="headerlink" title="��Ŀ��Ϣ"></a>��Ŀ��Ϣ</h2><p>���������һ��UNet���RCAN������ṹ��UNet����ģ����Ҫ�����������ͼ��ָ�����������䣬RCANͨ��ע����ģ�鸺����н�UNet���������ݽ����������޸�αӰ</p>
+<ol>
+<li>������Ŀ��Denoising fast super-resolution STED microscopy with UNet_RCAN</li>
+<li>�����ַ��<a href="https://github.com/vebrahimi1990/UNet_RCAN_Denoising">https://github.com/vebrahimi1990/UNet_RCAN_Denoising</a></li>
+</ol>
+<h2 id="������"><a href="#������" class="headerlink" title="������"></a>������</h2><p>UNet-RCANģ���н��в����Ӹ�������CABģ��������ӣ�CAB��һ��ͨ��ע�������ƣ��ܹ���ȡͼƬ����Ҫ����Ϣ�����Ȿģ�ͻ�ӵ���������output-1��UNet����output-2(RCAN)ͨ��������ͬ����ʧ���Ż�����ģ�͵�����ģ����и���<br><img src="https://www.helloimg.com/i/2024/11/29/67495e45c2ddb.png" alt="Architecture.png"></p>
+<h3 id="��ʧ����"><a href="#��ʧ����" class="headerlink" title="��ʧ����"></a>��ʧ����</h3><p>ģ�Ͳ����˷�����ʧ����loss-1��loss-2��loss-1�����ͼ�������м���<strong>loss-2</strong>���þ����˼���ͼ��֮���ƽ����<strong>��ֹ��ƽ��</strong></p>
+<ol>
+<li><p>loss-1</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">def ch_loss_2D(pred, gt):</span><br><span class="line">    norm = tf.norm(pred - gt, axis=(1, 2))</span><br><span class="line">    norm = tf.squeeze(norm)</span><br><span class="line">    norm = tf.pow(norm, 2)</span><br><span class="line">    norm = norm / (256 * 256) + 1e-6</span><br><span class="line">    norm = tf.pow(norm, 0.5)</span><br><span class="line">    c_loss = tf.math.reduce_mean(norm)</span><br><span class="line">    return c_loss</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>loss-2</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">def edge_loss_2D(pred, gt):</span><br><span class="line">    kernel = np.array([[0, 1, 0], [1, -4, 1], [0, 1, 0]])</span><br><span class="line">    kernel = kernel.reshape((3, 3, 1, 1))</span><br><span class="line">    pred = tf.nn.conv2d(pred, kernel, strides=[1, 1, 1, 1], padding=&#x27;VALID&#x27;)</span><br><span class="line">    gt = tf.nn.conv2d(gt, kernel, strides=[1, 1, 1, 1], padding=&#x27;VALID&#x27;)</span><br><span class="line">    e_loss = ch_loss_2D(pred, gt)</span><br><span class="line">    return e_loss</span><br></pre></td></tr></table></figure>
+<p>���յ���ʧ����Ϊ<code>loss = c_loss + 0.05 * e_loss</code>����0.05�Ǿ��麯��</p>
+</li>
+</ol>
+<h3 id="�Z���"><a href="#�Z���" class="headerlink" title="�Ż���"></a>�Ż���</h3><p>�Ż���������Ĭ��Adam�Ż�</p>
+<h2 id="����"><a href="#����" class="headerlink" title="����"></a>����</h2><p>������tensorflow����¸����Ѷȼ��󣬽�����ģ�ͽ����ع���pytorch����½���ѵ��</p>
+<h3 id="�Z�������"><a href="#�Z�������" class="headerlink" title="�Ż�������"></a>�Ż�������</h3><p>Ϊ��ʵ������ģ�鵥������</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>����</category>
       </categories>
       <tags>
         <tag>pytorch</tag>
