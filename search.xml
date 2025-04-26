@@ -1,6 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>GAN生成式对抗网络</title>
+    <url>/2024/09/13/GAN%E7%BD%91%E7%BB%9C/</url>
+    <content><![CDATA[<h1 id="GAN生成式对抗网络"><a href="#GAN生成式对抗网络" class="headerlink" title="GAN生成式对抗网络"></a>GAN生成式对抗网络</h1><p>GAN生成式对抗网络，GAN网络由生成网络和判别网络两个网络组成，生成式网络通过学习图片后将噪声转换为图片，而判别式网络将区分数据集图片和生成图片进行判别。生成式与判别式网络类似与小偷与警察，通过不断的博弈互相升级，在这场游戏中我们更加希望小偷取得胜利。既是生成式网络生成的图片可以让判别器难以判断。</p>
+<h2 id="网络结构"><a href="#网络结构" class="headerlink" title="网络结构"></a>网络结构</h2><p>GAN网络由两部分网络过程：生成式网络和判别式网络构成<br><img src="https://www.helloimg.com/i/2024/09/22/66efb47a62926.jpg" alt="GANs.jpg"></p>
+<h2 id="GAN中鉴别器的目标"><a href="#GAN中鉴别器的目标" class="headerlink" title="GAN中鉴别器的目标"></a>GAN中鉴别器的目标</h2><p>引入了JS散度的概念来计算，事实上也可以看成是交叉熵乘一个负号，如图所示：<br><img src="https://www.helloimg.com/i/2024/09/22/66efb6e123cca.png" alt="jS.png"></p>
+<h2 id="pytorch实现"><a href="#pytorch实现" class="headerlink" title="pytorch实现"></a>pytorch实现</h2><h3 id="生成式网络"><a href="#生成式网络" class="headerlink" title="生成式网络"></a>生成式网络</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">class Generator(nn.Module):</span><br><span class="line">    def __init__(self):</span><br><span class="line">        super(Generator,self).__init__()</span><br><span class="line">        self.main=nn.Sequential(</span><br><span class="line">        nn.Linear(100,256),</span><br><span class="line">        nn.ReLU(),</span><br><span class="line">        nn.Linear(256,512),</span><br><span class="line">        nn.ReLU(),</span><br><span class="line">        nn.Linear(512,784),</span><br><span class="line">        nn.Tanh()#对于生成器，最后一个激活函数是tanh,值域：-1到1</span><br><span class="line">        )</span><br><span class="line">    #定义前向传播 </span><br><span class="line">    def forward(self,x):  #x表示长度为100的noise输入</span><br><span class="line">        img = self.main(x)</span><br><span class="line">        img=img.view(-1,28,28)#转换成图片的形式</span><br><span class="line">        return img</span><br></pre></td></tr></table></figure>
+<p>通常生成图片采用长度为100的一维随机噪声用于生成图像，当然也能自定义  </p>
+<h3 id="判别式网络"><a href="#判别式网络" class="headerlink" title="判别式网络"></a>判别式网络</h3><pre><code>class Discriminator(nn.Module):
+    def __init__(self):
+        super(Discriminator,self).__init__()
+        self.main = nn.Sequential(
+        nn.Linear(784,512),
+        nn.LeakyReLU(),
+        nn.Linear(512,256),
+        nn.LeakyReLU(),
+        nn.Linear(256,1),
+        nn.Sigmoid()
+        )
+    def forward(self,x):
+        x =x.view(-1,784) #展平
+        x =self.main(x)
+        return x
+</code></pre>
+<p>使用sigmoid激活函数是因为能够将判决概率固定到【0，1】，而我们本身是知晓程序所产生的图片的真假。</p>
+<h3 id="训练过程"><a href="#训练过程" class="headerlink" title="训练过程"></a>训练过程</h3><p>Step 1：初始化生成器和判别器的参数<br>Step 2：固定住生成器更新判别器，判别器给生成器的生成图像打低分给真实标签图像打高分<br>Step 3：固定住判别器更新生成器，生成器通过输入的随机采样的vector生成图像尝试骗过判别器使其让它打高分。<br>通过交替训练两个模型使其不断完善</p>
+<h2 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h2><p>原始GAN网络存在训练收敛问题，容易早停，这是训练过程中需要生成的内容过于复杂，而判别网络训练过快导致生成网络得不到训练，进而早停。</p>
+<h3 id="WGAN网络"><a href="#WGAN网络" class="headerlink" title="WGAN网络"></a>WGAN网络</h3><h3 id="cycle-GAN网络"><a href="#cycle-GAN网络" class="headerlink" title="cycle GAN网络"></a>cycle GAN网络</h3><p>风格转换网络，能够将输入图像转化风格，例如真人图像转换为二次元图像。<br>改模型一共需要训练四个网络<br><img src="https://www.helloimg.com/i/2024/09/22/66efb9ff16abb.png" alt="cycle GAN.png">  </p>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ol>
+<li><a href="https://openatomworkshop.csdn.net/664eed3db12a9d168eb725f4.html?dp_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6NTc5ODYwMywiZXhwIjoxNzI2ODE0NzE3LCJpYXQiOjE3MjYyMDk5MTcsInVzZXJuYW1lIjoiYXBwbGVfNjg0MDQ1NTkifQ.GePWcNoUb6VhMXd6SQFfUEJf-ELE8pmzPiKz4d-2vSk&spm=1001.2101.3001.6650.8&utm_medium=distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~activity-8-125825727-blog-125389000.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~activity-8-125825727-blog-125389000.235%5Ev43%5Epc_blog_bottom_relevance_base2">https://openatomworkshop.csdn.net/664eed3db12a9d168eb725f4.html?dp_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6NTc5ODYwMywiZXhwIjoxNzI2ODE0NzE3LCJpYXQiOjE3MjYyMDk5MTcsInVzZXJuYW1lIjoiYXBwbGVfNjg0MDQ1NTkifQ.GePWcNoUb6VhMXd6SQFfUEJf-ELE8pmzPiKz4d-2vSk&amp;spm=1001.2101.3001.6650.8&amp;utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7Eactivity-8-125825727-blog-125389000.235%5Ev43%5Epc_blog_bottom_relevance_base2&amp;depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7Eactivity-8-125825727-blog-125389000.235%5Ev43%5Epc_blog_bottom_relevance_base2</a></li>
+<li><a href="https://devpress.csdn.net/awstech/64ddd6faff5c3157f8babb8b.html?dp_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6NTc5ODYwMywiZXhwIjoxNzI3MzQzMjczLCJpYXQiOjE3MjY3Mzg0NzMsInVzZXJuYW1lIjoiYXBwbGVfNjg0MDQ1NTkifQ.6IhDSqK8AehCrMBCyq9OUyhorbX0k-f2Pd469jexnjU&spm=1001.2101.3001.6650.2&utm_medium=distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~activity-2-120001421-blog-125323622.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~activity-2-120001421-blog-125323622.235%5Ev43%5Epc_blog_bottom_relevance_base2&utm_relevant_index=5">https://devpress.csdn.net/awstech/64ddd6faff5c3157f8babb8b.html?dp_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6NTc5ODYwMywiZXhwIjoxNzI3MzQzMjczLCJpYXQiOjE3MjY3Mzg0NzMsInVzZXJuYW1lIjoiYXBwbGVfNjg0MDQ1NTkifQ.6IhDSqK8AehCrMBCyq9OUyhorbX0k-f2Pd469jexnjU&amp;spm=1001.2101.3001.6650.2&amp;utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7Eactivity-2-120001421-blog-125323622.235%5Ev43%5Epc_blog_bottom_relevance_base2&amp;depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7Eactivity-2-120001421-blog-125323622.235%5Ev43%5Epc_blog_bottom_relevance_base2&amp;utm_relevant_index=5</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>深度学习</category>
+      </categories>
+      <tags>
+        <tag>pytorch</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>UNet-RCAN 复现</title>
     <url>/2024/11/29/UNet_RCAN/</url>
     <content><![CDATA[<h1 id="UNet-RCAN"><a href="#UNet-RCAN" class="headerlink" title="UNet-RCAN"></a>UNet-RCAN</h1><h2 id="项目信息"><a href="#项目信息" class="headerlink" title="项目信息"></a>项目信息</h2><p>本文提出了一种UNet结合RCAN的网络结构，UNet网络模型主要负责进行弱光图像恢复进行数据填充，RCAN通道注意力模块负责进行将UNet的填充的数据进行清晰和修复伪影</p>
@@ -49,64 +89,6 @@
 ]]></content>
   </entry>
   <entry>
-    <title>GAN生成式对抗网络</title>
-    <url>/2024/09/13/GAN%E7%BD%91%E7%BB%9C/</url>
-    <content><![CDATA[<h1 id="GAN生成式对抗网络"><a href="#GAN生成式对抗网络" class="headerlink" title="GAN生成式对抗网络"></a>GAN生成式对抗网络</h1><p>GAN生成式对抗网络，GAN网络由生成网络和判别网络两个网络组成，生成式网络通过学习图片后将噪声转换为图片，而判别式网络将区分数据集图片和生成图片进行判别。生成式与判别式网络类似与小偷与警察，通过不断的博弈互相升级，在这场游戏中我们更加希望小偷取得胜利。既是生成式网络生成的图片可以让判别器难以判断。</p>
-<h2 id="网络结构"><a href="#网络结构" class="headerlink" title="网络结构"></a>网络结构</h2><p>GAN网络由两部分网络过程：生成式网络和判别式网络构成<br><img src="https://www.helloimg.com/i/2024/09/22/66efb47a62926.jpg" alt="GANs.jpg"></p>
-<h2 id="GAN中鉴别器的目标"><a href="#GAN中鉴别器的目标" class="headerlink" title="GAN中鉴别器的目标"></a>GAN中鉴别器的目标</h2><p>引入了JS散度的概念来计算，事实上也可以看成是交叉熵乘一个负号，如图所示：<br><img src="https://www.helloimg.com/i/2024/09/22/66efb6e123cca.png" alt="jS.png"></p>
-<h2 id="pytorch实现"><a href="#pytorch实现" class="headerlink" title="pytorch实现"></a>pytorch实现</h2><h3 id="生成式网络"><a href="#生成式网络" class="headerlink" title="生成式网络"></a>生成式网络</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">class Generator(nn.Module):</span><br><span class="line">    def __init__(self):</span><br><span class="line">        super(Generator,self).__init__()</span><br><span class="line">        self.main=nn.Sequential(</span><br><span class="line">        nn.Linear(100,256),</span><br><span class="line">        nn.ReLU(),</span><br><span class="line">        nn.Linear(256,512),</span><br><span class="line">        nn.ReLU(),</span><br><span class="line">        nn.Linear(512,784),</span><br><span class="line">        nn.Tanh()#对于生成器，最后一个激活函数是tanh,值域：-1到1</span><br><span class="line">        )</span><br><span class="line">    #定义前向传播 </span><br><span class="line">    def forward(self,x):  #x表示长度为100的noise输入</span><br><span class="line">        img = self.main(x)</span><br><span class="line">        img=img.view(-1,28,28)#转换成图片的形式</span><br><span class="line">        return img</span><br></pre></td></tr></table></figure>
-<p>通常生成图片采用长度为100的一维随机噪声用于生成图像，当然也能自定义  </p>
-<h3 id="判别式网络"><a href="#判别式网络" class="headerlink" title="判别式网络"></a>判别式网络</h3><pre><code>class Discriminator(nn.Module):
-    def __init__(self):
-        super(Discriminator,self).__init__()
-        self.main = nn.Sequential(
-        nn.Linear(784,512),
-        nn.LeakyReLU(),
-        nn.Linear(512,256),
-        nn.LeakyReLU(),
-        nn.Linear(256,1),
-        nn.Sigmoid()
-        )
-    def forward(self,x):
-        x =x.view(-1,784) #展平
-        x =self.main(x)
-        return x
-</code></pre>
-<p>使用sigmoid激活函数是因为能够将判决概率固定到【0，1】，而我们本身是知晓程序所产生的图片的真假。</p>
-<h3 id="训练过程"><a href="#训练过程" class="headerlink" title="训练过程"></a>训练过程</h3><p>Step 1：初始化生成器和判别器的参数<br>Step 2：固定住生成器更新判别器，判别器给生成器的生成图像打低分给真实标签图像打高分<br>Step 3：固定住判别器更新生成器，生成器通过输入的随机采样的vector生成图像尝试骗过判别器使其让它打高分。<br>通过交替训练两个模型使其不断完善</p>
-<h2 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h2><p>原始GAN网络存在训练收敛问题，容易早停，这是训练过程中需要生成的内容过于复杂，而判别网络训练过快导致生成网络得不到训练，进而早停。</p>
-<h3 id="WGAN网络"><a href="#WGAN网络" class="headerlink" title="WGAN网络"></a>WGAN网络</h3><h3 id="cycle-GAN网络"><a href="#cycle-GAN网络" class="headerlink" title="cycle GAN网络"></a>cycle GAN网络</h3><p>风格转换网络，能够将输入图像转化风格，例如真人图像转换为二次元图像。<br>改模型一共需要训练四个网络<br><img src="https://www.helloimg.com/i/2024/09/22/66efb9ff16abb.png" alt="cycle GAN.png">  </p>
-<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ol>
-<li><a href="https://openatomworkshop.csdn.net/664eed3db12a9d168eb725f4.html?dp_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6NTc5ODYwMywiZXhwIjoxNzI2ODE0NzE3LCJpYXQiOjE3MjYyMDk5MTcsInVzZXJuYW1lIjoiYXBwbGVfNjg0MDQ1NTkifQ.GePWcNoUb6VhMXd6SQFfUEJf-ELE8pmzPiKz4d-2vSk&spm=1001.2101.3001.6650.8&utm_medium=distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~activity-8-125825727-blog-125389000.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~activity-8-125825727-blog-125389000.235%5Ev43%5Epc_blog_bottom_relevance_base2">https://openatomworkshop.csdn.net/664eed3db12a9d168eb725f4.html?dp_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6NTc5ODYwMywiZXhwIjoxNzI2ODE0NzE3LCJpYXQiOjE3MjYyMDk5MTcsInVzZXJuYW1lIjoiYXBwbGVfNjg0MDQ1NTkifQ.GePWcNoUb6VhMXd6SQFfUEJf-ELE8pmzPiKz4d-2vSk&amp;spm=1001.2101.3001.6650.8&amp;utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7Eactivity-8-125825727-blog-125389000.235%5Ev43%5Epc_blog_bottom_relevance_base2&amp;depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7Eactivity-8-125825727-blog-125389000.235%5Ev43%5Epc_blog_bottom_relevance_base2</a></li>
-<li><a href="https://devpress.csdn.net/awstech/64ddd6faff5c3157f8babb8b.html?dp_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6NTc5ODYwMywiZXhwIjoxNzI3MzQzMjczLCJpYXQiOjE3MjY3Mzg0NzMsInVzZXJuYW1lIjoiYXBwbGVfNjg0MDQ1NTkifQ.6IhDSqK8AehCrMBCyq9OUyhorbX0k-f2Pd469jexnjU&spm=1001.2101.3001.6650.2&utm_medium=distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~activity-2-120001421-blog-125323622.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~activity-2-120001421-blog-125323622.235%5Ev43%5Epc_blog_bottom_relevance_base2&utm_relevant_index=5">https://devpress.csdn.net/awstech/64ddd6faff5c3157f8babb8b.html?dp_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6NTc5ODYwMywiZXhwIjoxNzI3MzQzMjczLCJpYXQiOjE3MjY3Mzg0NzMsInVzZXJuYW1lIjoiYXBwbGVfNjg0MDQ1NTkifQ.6IhDSqK8AehCrMBCyq9OUyhorbX0k-f2Pd469jexnjU&amp;spm=1001.2101.3001.6650.2&amp;utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7Eactivity-2-120001421-blog-125323622.235%5Ev43%5Epc_blog_bottom_relevance_base2&amp;depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7Eactivity-2-120001421-blog-125323622.235%5Ev43%5Epc_blog_bottom_relevance_base2&amp;utm_relevant_index=5</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>深度学习</category>
-      </categories>
-      <tags>
-        <tag>pytorch</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>torchvision路径应用失败问题</title>
-    <url>/2024/09/05/torchvision%E8%B7%AF%E5%BE%84%E5%BA%94%E7%94%A8%E5%A4%B1%E8%B4%A5%E9%97%AE%E9%A2%98/</url>
-    <content><![CDATA[<h1 id="torchvision模块路径引用问题"><a href="#torchvision模块路径引用问题" class="headerlink" title="torchvision模块路径引用问题"></a>torchvision模块路径引用问题</h1><p>前言：安装pytorch后可能会出现torch模块引用成功，而torchvision模块引用失败，失败原因为torchvision模块路径丢失。可能是三个问题导致的： </p>
-<ol>
-<li>torch和torchvision版本不匹配</li>
-<li>pillow版本和torchvision版本不匹配</li>
-</ol>
-<h1 id="torch和torchvision版本不匹配"><a href="#torch和torchvision版本不匹配" class="headerlink" title="torch和torchvision版本不匹配"></a>torch和torchvision版本不匹配</h1><p>建议从pytorch官网重新下载新版pytorch，或者查询历史版本重新选择一个版本进行下载</p>
-<h1 id="pillow版本和torchvision版本不匹配"><a href="#pillow版本和torchvision版本不匹配" class="headerlink" title="pillow版本和torchvision版本不匹配"></a>pillow版本和torchvision版本不匹配</h1><p>删除pillow 在重新下载pillow最新版</p>
-]]></content>
-      <categories>
-        <category>软件</category>
-      </categories>
-      <tags>
-        <tag>Pytorch</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>pytorch 中维度修改那些事</title>
     <url>/2024/10/15/pytorch-%E4%B8%AD%E7%BB%B4%E5%BA%A6%E4%BF%AE%E6%94%B9%E9%82%A3%E4%BA%9B%E4%BA%8B/</url>
     <content><![CDATA[<h1 id="pytorch-维度操作那些事"><a href="#pytorch-维度操作那些事" class="headerlink" title="pytorch 维度操作那些事"></a>pytorch 维度操作那些事</h1><h2 id="维度转置函数-transpose-和-permute"><a href="#维度转置函数-transpose-和-permute" class="headerlink" title="维度转置函数 transpose() 和 permute()"></a>维度转置函数 transpose() 和 permute()</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">x = torch.randn([2,3])</span><br><span class="line">y = torch.randn([2,3,4])</span><br><span class="line">print(f&#x27;x.shape:&#123;x.shape&#125;,y.shape&#123;y.shape&#125;&#x27;)</span><br><span class="line"># transpose() torch.transpose(x)合法， x.transpose()合法。</span><br><span class="line">## torch.transpose(input, dim0, dim1, out=None)</span><br><span class="line">print(f&#x27;&#123;x.transpose(0,1).shape,torch.transpose(x,0,1).shape&#125;&#x27;)</span><br><span class="line"># transpose 一次性只能对两个维度进行操作。因此在进行维度变化的时候多采用permute()</span><br><span class="line">print(f&#x27;&#123;y.transpose(0,2).shape&#125;&#x27;)</span><br><span class="line">x = torch.randn([2,3])</span><br><span class="line">y = torch.randn([2,3,4])</span><br><span class="line">print(f&#x27;x.shape:&#123;x.shape&#125;,y.shape&#123;y.shape&#125;&#x27;)</span><br><span class="line"># permute() torch.permute(x)不合法，x.permute()合法。</span><br><span class="line">print(f&#x27;&#123;x.permute(0,1).shape&#125;&#x27;)</span><br><span class="line">print(f&#x27;&#123;y.permute(0,2,1).shape&#125;&#x27;)</span><br><span class="line"># transpose() 和 permute() 两者大致相同，但是在内存处理方面具有差异</span><br></pre></td></tr></table></figure>
@@ -115,46 +97,6 @@
 ]]></content>
       <tags>
         <tag>pytorch</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>初始化</title>
-    <url>/2024/11/16/%E5%88%9D%E5%A7%8B%E5%8C%96/</url>
-    <content><![CDATA[<h1 id="神经网络初始化"><a href="#神经网络初始化" class="headerlink" title="神经网络初始化"></a>神经网络初始化</h1><p>神经网络的初始化对整个模型的训练起到至关重要的作用，一个合理的初始化能够让模型更快的拟合，反正不合适的初始化对整个模型是灾难性的影响。<br>通常在自己构建模型的时候，<code>pytorch</code>会自动对模型中的权重进行正太分布初始化，当让在莫些模型中正太分布分布表现效果并不优良，亦或者是有特殊要求进行特征提取。这时就要利用到自定义初始化了<code>Weight Initialization</code></p>
-<h2 id="选定卷积层为对象"><a href="#选定卷积层为对象" class="headerlink" title="选定卷积层为对象"></a>选定卷积层为对象</h2><p>通常我们需要自定义的权重的层为卷积层，因为有的特殊的卷积核能够提取不同数据特征。为后面的模型训练提特征的筛选与提取<br><code>getattr</code>函数<br>利用<code>getattr</code>函数能够完成指定层的的获取<code>conv_weight = getattr(model, conv)</code>这样就将model中名为conv层的卷积层的权重链接至conv_weight变量中。<br>当conv_weight变量进行赋值改变的时候，对应的conv层中的参数同样发生改变。</p>
-<h2 id="进行参数初始化"><a href="#进行参数初始化" class="headerlink" title="进行参数初始化"></a>进行参数初始化</h2><h3 id="凯明初始化"><a href="#凯明初始化" class="headerlink" title="凯明初始化"></a>凯明初始化</h3><h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ol>
-<li><a href="https://zhuanlan.zhihu.com/p/610248161">不同层应用不同初始化方式</a></li>
-<li><a href="https://blog.csdn.net/ys1305/article/details/94332007">pytorch中的参数初始化方法总结</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>深度学习</category>
-      </categories>
-      <tags>
-        <tag>pytorch</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>可视化</title>
-    <url>/2024/10/05/%E5%8F%AF%E8%A7%86%E5%8C%96/</url>
-    <content><![CDATA[<h1 id="神经网络训练可视化"><a href="#神经网络训练可视化" class="headerlink" title="神经网络训练可视化"></a>神经网络训练可视化</h1><h2 id="TensorBoard"><a href="#TensorBoard" class="headerlink" title="TensorBoard"></a>TensorBoard</h2><p>TensorBoard是一款强大的深度学习可视化工具，可以配合pytorch将模型细节进行可视化，本文将介绍三种初步用法。进阶查看网络卷积层等后续使用在进行介绍，单详细通过学习初步的用法后后续根据其它网络教程也很容易实现</p>
-<h3 id="应用安装"><a href="#应用安装" class="headerlink" title="应用安装"></a>应用安装</h3><p>安装TensorBoard （按住默认最新版，老版本在可视化梯度中存在问题）<br><code>pip install TensorBoard</code><br>引用</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">from torch.utils.tensorboard import SummaryWriter</span><br><span class="line"># 创建SummaryWriter类</span><br><span class="line">writer=SummaryWriter()</span><br></pre></td></tr></table></figure>
-<h3 id="可视化"><a href="#可视化" class="headerlink" title="可视化"></a>可视化</h3><h4 id="图像可视化"><a href="#图像可视化" class="headerlink" title="图像可视化"></a>图像可视化</h4><p>imgs 是图像DataLoader类，可视化能够实现将一组batch图像进行可视化。<br>在进行图像可视化的时候，如果tensor数据是0到1则会自动扩大244倍，数据超过1则默认数据范围为0到244。如果图像在可视化之前还进行了额外的操作，需要进行相反的操作才能正常可视化</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># images：可视化画布名称，imgsDataLoader类，steps每次训练的数据</span><br><span class="line">writer.add_images(&#x27;images&#x27;,imgs,steps)</span><br></pre></td></tr></table></figure>
-<h4 id="折线图可视化"><a href="#折线图可视化" class="headerlink" title="折线图可视化"></a>折线图可视化</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">writer.add_scalar(&#x27;loss&#x27;,loss, step)</span><br></pre></td></tr></table></figure>
-<h4 id="模型可视化"><a href="#模型可视化" class="headerlink" title="模型可视化"></a>模型可视化</h4><p>模型可视化稍微不同上面两种需要在训练循环中引入</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 创建假的图像需要和原始图像形状相同，还需要同模型在一个device上。</span><br><span class="line">img_false = torch.randn(1,3,32,32).to(device)</span><br><span class="line">writer.add_graph(chutian,img_false)</span><br></pre></td></tr></table></figure>
-<h3 id="查看"><a href="#查看" class="headerlink" title="查看"></a>查看</h3><p>在终端中输入<code>tensotboard --logdir=./</code>返回端口号后用浏览器打开就能查看训练过程的可视化情况了</p>
-<h3 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h3><p>tensorboard可视化还能用于可视化模型的卷积层的参数情况，通过查看参数的可视化的情况，就能轻易的发现梯度消失和梯度爆炸的问题。可视化的同时也为模型的训练过程调参提供了便利。</p>
-<h2 id="CAM"><a href="#CAM" class="headerlink" title="CAM"></a>CAM</h2><p>CAM多用于在分类问题中使用，类激活图可以显示模型在训练过程中，权重或重心在何处、如何转移，分类模型是根据哪一部分的特征进行判别的。简而言之，就是模仿人类识别物体的过程，随着模型的迭代，找到相关任务的关键部位。</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://blog.csdn.net/qq_44722174/article/details/117000910">类激活图（CAM）代码+原理详解</a><br><a href="https://blog.csdn.net/qq_41656402/article/details/131123121">TensorBoard最全使用教程：看这篇就够了</a></p>
-]]></content>
-      <categories>
-        <category>深度学习</category>
-      </categories>
-      <tags>
-        <tag>tensorboard</tag>
       </tags>
   </entry>
   <entry>
@@ -183,6 +125,64 @@
       </categories>
       <tags>
         <tag>Pytorch</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>torchvision路径应用失败问题</title>
+    <url>/2024/09/05/torchvision%E8%B7%AF%E5%BE%84%E5%BA%94%E7%94%A8%E5%A4%B1%E8%B4%A5%E9%97%AE%E9%A2%98/</url>
+    <content><![CDATA[<h1 id="torchvision模块路径引用问题"><a href="#torchvision模块路径引用问题" class="headerlink" title="torchvision模块路径引用问题"></a>torchvision模块路径引用问题</h1><p>前言：安装pytorch后可能会出现torch模块引用成功，而torchvision模块引用失败，失败原因为torchvision模块路径丢失。可能是三个问题导致的： </p>
+<ol>
+<li>torch和torchvision版本不匹配</li>
+<li>pillow版本和torchvision版本不匹配</li>
+</ol>
+<h1 id="torch和torchvision版本不匹配"><a href="#torch和torchvision版本不匹配" class="headerlink" title="torch和torchvision版本不匹配"></a>torch和torchvision版本不匹配</h1><p>建议从pytorch官网重新下载新版pytorch，或者查询历史版本重新选择一个版本进行下载</p>
+<h1 id="pillow版本和torchvision版本不匹配"><a href="#pillow版本和torchvision版本不匹配" class="headerlink" title="pillow版本和torchvision版本不匹配"></a>pillow版本和torchvision版本不匹配</h1><p>删除pillow 在重新下载pillow最新版</p>
+]]></content>
+      <categories>
+        <category>软件</category>
+      </categories>
+      <tags>
+        <tag>Pytorch</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>可视化</title>
+    <url>/2024/10/05/%E5%8F%AF%E8%A7%86%E5%8C%96/</url>
+    <content><![CDATA[<h1 id="神经网络训练可视化"><a href="#神经网络训练可视化" class="headerlink" title="神经网络训练可视化"></a>神经网络训练可视化</h1><h2 id="TensorBoard"><a href="#TensorBoard" class="headerlink" title="TensorBoard"></a>TensorBoard</h2><p>TensorBoard是一款强大的深度学习可视化工具，可以配合pytorch将模型细节进行可视化，本文将介绍三种初步用法。进阶查看网络卷积层等后续使用在进行介绍，单详细通过学习初步的用法后后续根据其它网络教程也很容易实现</p>
+<h3 id="应用安装"><a href="#应用安装" class="headerlink" title="应用安装"></a>应用安装</h3><p>安装TensorBoard （按住默认最新版，老版本在可视化梯度中存在问题）<br><code>pip install TensorBoard</code><br>引用</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">from torch.utils.tensorboard import SummaryWriter</span><br><span class="line"># 创建SummaryWriter类</span><br><span class="line">writer=SummaryWriter()</span><br></pre></td></tr></table></figure>
+<h3 id="可视化"><a href="#可视化" class="headerlink" title="可视化"></a>可视化</h3><h4 id="图像可视化"><a href="#图像可视化" class="headerlink" title="图像可视化"></a>图像可视化</h4><p>imgs 是图像DataLoader类，可视化能够实现将一组batch图像进行可视化。<br>在进行图像可视化的时候，如果tensor数据是0到1则会自动扩大244倍，数据超过1则默认数据范围为0到244。如果图像在可视化之前还进行了额外的操作，需要进行相反的操作才能正常可视化</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># images：可视化画布名称，imgsDataLoader类，steps每次训练的数据</span><br><span class="line">writer.add_images(&#x27;images&#x27;,imgs,steps)</span><br></pre></td></tr></table></figure>
+<h4 id="折线图可视化"><a href="#折线图可视化" class="headerlink" title="折线图可视化"></a>折线图可视化</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">writer.add_scalar(&#x27;loss&#x27;,loss, step)</span><br></pre></td></tr></table></figure>
+<h4 id="模型可视化"><a href="#模型可视化" class="headerlink" title="模型可视化"></a>模型可视化</h4><p>模型可视化稍微不同上面两种需要在训练循环中引入</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 创建假的图像需要和原始图像形状相同，还需要同模型在一个device上。</span><br><span class="line">img_false = torch.randn(1,3,32,32).to(device)</span><br><span class="line">writer.add_graph(chutian,img_false)</span><br></pre></td></tr></table></figure>
+<h3 id="查看"><a href="#查看" class="headerlink" title="查看"></a>查看</h3><p>在终端中输入<code>tensotboard --logdir=./</code>返回端口号后用浏览器打开就能查看训练过程的可视化情况了</p>
+<h3 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h3><p>tensorboard可视化还能用于可视化模型的卷积层的参数情况，通过查看参数的可视化的情况，就能轻易的发现梯度消失和梯度爆炸的问题。可视化的同时也为模型的训练过程调参提供了便利。</p>
+<h2 id="CAM"><a href="#CAM" class="headerlink" title="CAM"></a>CAM</h2><p>CAM多用于在分类问题中使用，类激活图可以显示模型在训练过程中，权重或重心在何处、如何转移，分类模型是根据哪一部分的特征进行判别的。简而言之，就是模仿人类识别物体的过程，随着模型的迭代，找到相关任务的关键部位。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://blog.csdn.net/qq_44722174/article/details/117000910">类激活图（CAM）代码+原理详解</a><br><a href="https://blog.csdn.net/qq_41656402/article/details/131123121">TensorBoard最全使用教程：看这篇就够了</a></p>
+]]></content>
+      <categories>
+        <category>深度学习</category>
+      </categories>
+      <tags>
+        <tag>tensorboard</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>初始化</title>
+    <url>/2024/11/16/%E5%88%9D%E5%A7%8B%E5%8C%96/</url>
+    <content><![CDATA[<h1 id="神经网络初始化"><a href="#神经网络初始化" class="headerlink" title="神经网络初始化"></a>神经网络初始化</h1><p>神经网络的初始化对整个模型的训练起到至关重要的作用，一个合理的初始化能够让模型更快的拟合，反正不合适的初始化对整个模型是灾难性的影响。<br>通常在自己构建模型的时候，<code>pytorch</code>会自动对模型中的权重进行正太分布初始化，当让在莫些模型中正太分布分布表现效果并不优良，亦或者是有特殊要求进行特征提取。这时就要利用到自定义初始化了<code>Weight Initialization</code></p>
+<h2 id="选定卷积层为对象"><a href="#选定卷积层为对象" class="headerlink" title="选定卷积层为对象"></a>选定卷积层为对象</h2><p>通常我们需要自定义的权重的层为卷积层，因为有的特殊的卷积核能够提取不同数据特征。为后面的模型训练提特征的筛选与提取<br><code>getattr</code>函数<br>利用<code>getattr</code>函数能够完成指定层的的获取<code>conv_weight = getattr(model, conv)</code>这样就将model中名为conv层的卷积层的权重链接至conv_weight变量中。<br>当conv_weight变量进行赋值改变的时候，对应的conv层中的参数同样发生改变。</p>
+<h2 id="进行参数初始化"><a href="#进行参数初始化" class="headerlink" title="进行参数初始化"></a>进行参数初始化</h2><h3 id="凯明初始化"><a href="#凯明初始化" class="headerlink" title="凯明初始化"></a>凯明初始化</h3><h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ol>
+<li><a href="https://zhuanlan.zhihu.com/p/610248161">不同层应用不同初始化方式</a></li>
+<li><a href="https://blog.csdn.net/ys1305/article/details/94332007">pytorch中的参数初始化方法总结</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>深度学习</category>
+      </categories>
+      <tags>
+        <tag>pytorch</tag>
       </tags>
   </entry>
   <entry>
@@ -278,6 +278,27 @@
       </tags>
   </entry>
   <entry>
+    <title>研一第一月</title>
+    <url>/2024/09/01/%E7%A0%94%E4%B8%80%E7%AC%AC%E4%B8%80%E6%9C%88/</url>
+    <content><![CDATA[<h1 id="回顾"><a href="#回顾" class="headerlink" title="回顾"></a>回顾</h1><p>结束暑假，开始新学期</p>
+<h2 id="学习"><a href="#学习" class="headerlink" title="学习"></a>学习</h2><p>暑假期间初步入门了深度学习和python，完成了小土堆深度学习入门和python，后续需要进一步加强</p>
+<h2 id="生活"><a href="#生活" class="headerlink" title="生活"></a>生活</h2><h1 id="展望"><a href="#展望" class="headerlink" title="展望"></a>展望</h1><h2 id="学习-1"><a href="#学习-1" class="headerlink" title="学习"></a>学习</h2><p>继续学习深度学习和python，目前感觉深学习入门还是比较容易，希望学期结束能完成《动手深度学习》</p>
+<h2 id="生活-1"><a href="#生活-1" class="headerlink" title="生活"></a>生活</h2><p>准备广东博物馆、广东图书馆游玩</p>
+<h1 id="计划"><a href="#计划" class="headerlink" title="计划"></a>计划</h1><ol>
+<li>博客一个星期更新一次，一个月更新一次技术类型文章</li>
+<li>每月进行总结</li>
+<li>精读《动手深度学习》并将每章进行笔记记录，计划本周完成前三章的精读</li>
+<li>学习《流程使用python》</li>
+</ol>
+]]></content>
+      <categories>
+        <category>生活</category>
+      </categories>
+      <tags>
+        <tag>日记</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>第一次拉曼组会</title>
     <url>/2024/09/21/%E7%AC%AC%E4%B8%80%E6%AC%A1%E6%8B%89%E6%9B%BC%E7%BB%84%E4%BC%9A/</url>
     <content><![CDATA[<h1 id="第一次拉曼组会"><a href="#第一次拉曼组会" class="headerlink" title="第一次拉曼组会"></a>第一次拉曼组会</h1><h2 id="光谱的识别与3D成像方向"><a href="#光谱的识别与3D成像方向" class="headerlink" title="光谱的识别与3D成像方向"></a>光谱的识别与3D成像方向</h2><ol>
@@ -313,27 +334,6 @@
       </categories>
       <tags>
         <tag>拉曼</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>研一第一月</title>
-    <url>/2024/09/01/%E7%A0%94%E4%B8%80%E7%AC%AC%E4%B8%80%E6%9C%88/</url>
-    <content><![CDATA[<h1 id="回顾"><a href="#回顾" class="headerlink" title="回顾"></a>回顾</h1><p>结束暑假，开始新学期</p>
-<h2 id="学习"><a href="#学习" class="headerlink" title="学习"></a>学习</h2><p>暑假期间初步入门了深度学习和python，完成了小土堆深度学习入门和python，后续需要进一步加强</p>
-<h2 id="生活"><a href="#生活" class="headerlink" title="生活"></a>生活</h2><h1 id="展望"><a href="#展望" class="headerlink" title="展望"></a>展望</h1><h2 id="学习-1"><a href="#学习-1" class="headerlink" title="学习"></a>学习</h2><p>继续学习深度学习和python，目前感觉深学习入门还是比较容易，希望学期结束能完成《动手深度学习》</p>
-<h2 id="生活-1"><a href="#生活-1" class="headerlink" title="生活"></a>生活</h2><p>准备广东博物馆、广东图书馆游玩</p>
-<h1 id="计划"><a href="#计划" class="headerlink" title="计划"></a>计划</h1><ol>
-<li>博客一个星期更新一次，一个月更新一次技术类型文章</li>
-<li>每月进行总结</li>
-<li>精读《动手深度学习》并将每章进行笔记记录，计划本周完成前三章的精读</li>
-<li>学习《流程使用python》</li>
-</ol>
-]]></content>
-      <categories>
-        <category>生活</category>
-      </categories>
-      <tags>
-        <tag>日记</tag>
       </tags>
   </entry>
   <entry>
