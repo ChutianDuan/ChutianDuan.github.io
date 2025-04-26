@@ -1,34 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Hello World</title>
-    <url>/2024/08/20/hello-world/</url>
-    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+    <title>pytorch 中维度修改那些事</title>
+    <url>/2024/10/15/pytorch-%E4%B8%AD%E7%BB%B4%E5%BA%A6%E4%BF%AE%E6%94%B9%E9%82%A3%E4%BA%9B%E4%BA%8B/</url>
+    <content><![CDATA[<h1 id="pytorch-维度操作那些事"><a href="#pytorch-维度操作那些事" class="headerlink" title="pytorch 维度操作那些事"></a>pytorch 维度操作那些事</h1><h2 id="维度转置函数-transpose-和-permute"><a href="#维度转置函数-transpose-和-permute" class="headerlink" title="维度转置函数 transpose() 和 permute()"></a>维度转置函数 transpose() 和 permute()</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">x = torch.randn([2,3])</span><br><span class="line">y = torch.randn([2,3,4])</span><br><span class="line">print(f&#x27;x.shape:&#123;x.shape&#125;,y.shape&#123;y.shape&#125;&#x27;)</span><br><span class="line"># transpose() torch.transpose(x)合法， x.transpose()合法。</span><br><span class="line">## torch.transpose(input, dim0, dim1, out=None)</span><br><span class="line">print(f&#x27;&#123;x.transpose(0,1).shape,torch.transpose(x,0,1).shape&#125;&#x27;)</span><br><span class="line"># transpose 一次性只能对两个维度进行操作。因此在进行维度变化的时候多采用permute()</span><br><span class="line">print(f&#x27;&#123;y.transpose(0,2).shape&#125;&#x27;)</span><br><span class="line">x = torch.randn([2,3])</span><br><span class="line">y = torch.randn([2,3,4])</span><br><span class="line">print(f&#x27;x.shape:&#123;x.shape&#125;,y.shape&#123;y.shape&#125;&#x27;)</span><br><span class="line"># permute() torch.permute(x)不合法，x.permute()合法。</span><br><span class="line">print(f&#x27;&#123;x.permute(0,1).shape&#125;&#x27;)</span><br><span class="line">print(f&#x27;&#123;y.permute(0,2,1).shape&#125;&#x27;)</span><br><span class="line"># transpose() 和 permute() 两者大致相同，但是在内存处理方面具有差异</span><br></pre></td></tr></table></figure>
+<h2 id="维度修改函数-squeeze-和-unsqueeze"><a href="#维度修改函数-squeeze-和-unsqueeze" class="headerlink" title="维度修改函数 squeeze()和 unsqueeze()"></a>维度修改函数 squeeze()和 unsqueeze()</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># squeeze()</span><br><span class="line">## 低维记为0 高维记为1</span><br><span class="line">## 如果小括号里不是1怎么办？这个括号里的1是什么意思？</span><br><span class="line">## 具体而言，如果一个张量有四个维度的，squeeze(index)会将张量中第index维度，</span><br><span class="line">## 且大小为1的维度进行去除，从而减少张量的维度。如果index是负整数，那就是倒数第index个维度</span><br><span class="line">print(f&#x27;&#123;x.squeeze(-1).shape&#125;&#x27;)</span><br><span class="line"># unsqueeze()</span><br><span class="line">## 从左到右，高维记为0，最低维最大</span><br><span class="line">print(f&#x27;&#123;y.unsqueeze(0).shape&#125;&#x27;)</span><br></pre></td></tr></table></figure>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><p><a href="https://blog.csdn.net/xinjieyuan/article/details/105232802">https://blog.csdn.net/xinjieyuan/article/details/105232802</a><br><a href="https://blog.csdn.net/guihaiyuan123/article/details/113455775">https://blog.csdn.net/guihaiyuan123/article/details/113455775</a></p>
 ]]></content>
-  </entry>
-  <entry>
-    <title>新的开始 第一篇博客</title>
-    <url>/2024/08/24/%E6%96%B0%E7%9A%84%E5%BC%80%E5%A7%8B-%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/</url>
-    <content><![CDATA[<h1 id="博客的创建"><a href="#博客的创建" class="headerlink" title="博客的创建"></a>博客的创建</h1><p>当我写下这篇博客的时候，我很高兴我完成了我的第一篇博客的创作，虽然博客网站的运行等注意事项还没彻底掌握，但我很高兴至少自己完成了博客的初步制作。<br>以前在网络查询资料解决各种各式的问题，尝尝觉得这些大佬们技术叹为观止。不免在我脑海中产生一个问题，我能够成为像他们一样的人吗？  </p>
-<h1 id="展望"><a href="#展望" class="headerlink" title="展望"></a>展望</h1><p>个人博客的创建是为了记录我即将踏上的三年研究生生涯的点点滴滴，希望我能以梦为马，不负韶华。<br>先定下个小目标实现个人博客的月更和不断探索博客个性化希望等三年后的某一天回首这段时间，我能不留遗憾</p>
-]]></content>
-      <categories>
-        <category>生活</category>
-      </categories>
       <tags>
-        <tag>随想</tag>
+        <tag>pytorch</tag>
       </tags>
   </entry>
   <entry>
@@ -60,111 +40,68 @@
       </tags>
   </entry>
   <entry>
-    <title>torchvision路径应用失败问题</title>
-    <url>/2024/09/05/torchvision%E8%B7%AF%E5%BE%84%E5%BA%94%E7%94%A8%E5%A4%B1%E8%B4%A5%E9%97%AE%E9%A2%98/</url>
-    <content><![CDATA[<h1 id="torchvision模块路径引用问题"><a href="#torchvision模块路径引用问题" class="headerlink" title="torchvision模块路径引用问题"></a>torchvision模块路径引用问题</h1><p>前言：安装pytorch后可能会出现torch模块引用成功，而torchvision模块引用失败，失败原因为torchvision模块路径丢失。可能是三个问题导致的： </p>
+    <title>Hello World</title>
+    <url>/2024/08/20/hello-world/</url>
+    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+]]></content>
+  </entry>
+  <entry>
+    <title>UNet-RCAN 复现</title>
+    <url>/2024/11/29/UNet_RCAN/</url>
+    <content><![CDATA[<h1 id="UNet-RCAN"><a href="#UNet-RCAN" class="headerlink" title="UNet-RCAN"></a>UNet-RCAN</h1><h2 id="项目信息"><a href="#项目信息" class="headerlink" title="项目信息"></a>项目信息</h2><p>本文提出了一种UNet结合RCAN的网络结构，UNet网络模型主要负责进行弱光图像恢复进行数据填充，RCAN通道注意力模块负责进行将UNet的填充的数据进行清晰和修复伪影</p>
 <ol>
-<li>torch和torchvision版本不匹配</li>
-<li>pillow版本和torchvision版本不匹配</li>
+<li>论文题目：Denoising fast super-resolution STED microscopy with UNet_RCAN</li>
+<li>代码地址：<a href="https://github.com/vebrahimi1990/UNet_RCAN_Denoising">https://github.com/vebrahimi1990/UNet_RCAN_Denoising</a></li>
 </ol>
-<h1 id="torch和torchvision版本不匹配"><a href="#torch和torchvision版本不匹配" class="headerlink" title="torch和torchvision版本不匹配"></a>torch和torchvision版本不匹配</h1><p>建议从pytorch官网重新下载新版pytorch，或者查询历史版本重新选择一个版本进行下载</p>
-<h1 id="pillow版本和torchvision版本不匹配"><a href="#pillow版本和torchvision版本不匹配" class="headerlink" title="pillow版本和torchvision版本不匹配"></a>pillow版本和torchvision版本不匹配</h1><p>删除pillow 在重新下载pillow最新版</p>
-]]></content>
+<h2 id="网络框架"><a href="#网络框架" class="headerlink" title="网络框架"></a>网络框架</h2><p>UNet-RCAN模型中将残差链接更换成了CAB模块进行链接，CAB是一种通道注意力机制，能够提取图片中重要的信息，此外本模型还拥有两个输出output-1（UNet）和output-2(RCAN)通过设置相同的损失和优化器将模型的两个模块进行跟新<br><img src="https://www.helloimg.com/i/2024/11/29/67495e45c2ddb.png" alt="Architecture.png"></p>
+<h3 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h3><p>模型采用了符合损失函数loss-1和loss-2，loss-1负责对图像误差进行计算<strong>loss-2</strong>利用卷积核计算图像之间的平缓，<strong>防止过平滑</strong></p>
+<ol>
+<li><p>loss-1</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">def ch_loss_2D(pred, gt):</span><br><span class="line">    norm = tf.norm(pred - gt, axis=(1, 2))</span><br><span class="line">    norm = tf.squeeze(norm)</span><br><span class="line">    norm = tf.pow(norm, 2)</span><br><span class="line">    norm = norm / (256 * 256) + 1e-6</span><br><span class="line">    norm = tf.pow(norm, 0.5)</span><br><span class="line">    c_loss = tf.math.reduce_mean(norm)</span><br><span class="line">    return c_loss</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>loss-2</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">def edge_loss_2D(pred, gt):</span><br><span class="line">    kernel = np.array([[0, 1, 0], [1, -4, 1], [0, 1, 0]])</span><br><span class="line">    kernel = kernel.reshape((3, 3, 1, 1))</span><br><span class="line">    pred = tf.nn.conv2d(pred, kernel, strides=[1, 1, 1, 1], padding=&#x27;VALID&#x27;)</span><br><span class="line">    gt = tf.nn.conv2d(gt, kernel, strides=[1, 1, 1, 1], padding=&#x27;VALID&#x27;)</span><br><span class="line">    e_loss = ch_loss_2D(pred, gt)</span><br><span class="line">    return e_loss</span><br></pre></td></tr></table></figure>
+<p>最终的损失函数为<code>loss = c_loss + 0.05 * e_loss</code>其中0.05是经验函数</p>
+</li>
+</ol>
+<h3 id="优化器"><a href="#优化器" class="headerlink" title="优化器"></a>优化器</h3><p>优化器采用了默认Adam优化</p>
+<h2 id="复现"><a href="#复现" class="headerlink" title="复现"></a>复现</h2><p>由于在tensorflow框架下复现难度极大，将整个模型进行重构到pytorch框架下进行训练</p>
+<h3 id="优化器设置"><a href="#优化器设置" class="headerlink" title="优化器设置"></a>优化器设置</h3><p>为了实现两个模块单独跟新</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
       <categories>
-        <category>软件</category>
+        <category>复现</category>
       </categories>
       <tags>
-        <tag>Pytorch</tag>
+        <tag>pytorch</tag>
       </tags>
   </entry>
   <entry>
-    <title>研一第一月</title>
-    <url>/2024/09/01/%E7%A0%94%E4%B8%80%E7%AC%AC%E4%B8%80%E6%9C%88/</url>
-    <content><![CDATA[<h1 id="回顾"><a href="#回顾" class="headerlink" title="回顾"></a>回顾</h1><p>结束暑假，开始新学期</p>
-<h2 id="学习"><a href="#学习" class="headerlink" title="学习"></a>学习</h2><p>暑假期间初步入门了深度学习和python，完成了小土堆深度学习入门和python，后续需要进一步加强</p>
-<h2 id="生活"><a href="#生活" class="headerlink" title="生活"></a>生活</h2><h1 id="展望"><a href="#展望" class="headerlink" title="展望"></a>展望</h1><h2 id="学习-1"><a href="#学习-1" class="headerlink" title="学习"></a>学习</h2><p>继续学习深度学习和python，目前感觉深学习入门还是比较容易，希望学期结束能完成《动手深度学习》</p>
-<h2 id="生活-1"><a href="#生活-1" class="headerlink" title="生活"></a>生活</h2><p>准备广东博物馆、广东图书馆游玩</p>
-<h1 id="计划"><a href="#计划" class="headerlink" title="计划"></a>计划</h1><ol>
-<li>博客一个星期更新一次，一个月更新一次技术类型文章</li>
-<li>每月进行总结</li>
-<li>精读《动手深度学习》并将每章进行笔记记录，计划本周完成前三章的精读</li>
-<li>学习《流程使用python》</li>
+    <title>初始化</title>
+    <url>/2024/11/16/%E5%88%9D%E5%A7%8B%E5%8C%96/</url>
+    <content><![CDATA[<h1 id="神经网络初始化"><a href="#神经网络初始化" class="headerlink" title="神经网络初始化"></a>神经网络初始化</h1><p>神经网络的初始化对整个模型的训练起到至关重要的作用，一个合理的初始化能够让模型更快的拟合，反正不合适的初始化对整个模型是灾难性的影响。<br>通常在自己构建模型的时候，<code>pytorch</code>会自动对模型中的权重进行正太分布初始化，当让在莫些模型中正太分布分布表现效果并不优良，亦或者是有特殊要求进行特征提取。这时就要利用到自定义初始化了<code>Weight Initialization</code></p>
+<h2 id="选定卷积层为对象"><a href="#选定卷积层为对象" class="headerlink" title="选定卷积层为对象"></a>选定卷积层为对象</h2><p>通常我们需要自定义的权重的层为卷积层，因为有的特殊的卷积核能够提取不同数据特征。为后面的模型训练提特征的筛选与提取<br><code>getattr</code>函数<br>利用<code>getattr</code>函数能够完成指定层的的获取<code>conv_weight = getattr(model, conv)</code>这样就将model中名为conv层的卷积层的权重链接至conv_weight变量中。<br>当conv_weight变量进行赋值改变的时候，对应的conv层中的参数同样发生改变。</p>
+<h2 id="进行参数初始化"><a href="#进行参数初始化" class="headerlink" title="进行参数初始化"></a>进行参数初始化</h2><h3 id="凯明初始化"><a href="#凯明初始化" class="headerlink" title="凯明初始化"></a>凯明初始化</h3><h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ol>
+<li><a href="https://zhuanlan.zhihu.com/p/610248161">不同层应用不同初始化方式</a></li>
+<li><a href="https://blog.csdn.net/ys1305/article/details/94332007">pytorch中的参数初始化方法总结</a></li>
 </ol>
 ]]></content>
       <categories>
-        <category>生活</category>
+        <category>深度学习</category>
       </categories>
       <tags>
-        <tag>日记</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>一、预备知识</title>
-    <url>/2024/09/05/%E4%B8%80%E3%80%81%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86/</url>
-    <content><![CDATA[<h1 id="预备知识"><a href="#预备知识" class="headerlink" title="预备知识"></a>预备知识</h1><h2 id="基础"><a href="#基础" class="headerlink" title="基础"></a>基础</h2><h2 id="重点"><a href="#重点" class="headerlink" title="重点"></a>重点</h2><h3 id="范数"><a href="#范数" class="headerlink" title="范数"></a>范数</h3><h3 id="矩阵求导"><a href="#矩阵求导" class="headerlink" title="矩阵求导"></a>矩阵求导</h3><h3 id="反向传播（sum函数）"><a href="#反向传播（sum函数）" class="headerlink" title="反向传播（sum函数）"></a>反向传播（sum函数）</h3><p>&#96;&#96;<a href="https://blog.csdn.net/qq_43722079/article/details/136583592">https://blog.csdn.net/qq_43722079/article/details/136583592</a></p>
-]]></content>
-      <categories>
-        <category>动手深度学习</category>
-      </categories>
-      <tags>
-        <tag>Pytorch</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>第二次组会</title>
-    <url>/2024/09/13/%E7%AC%AC%E4%BA%8C%E6%AC%A1%E7%BB%84%E4%BC%9A/</url>
-    <content><![CDATA[<h1 id="第二次组会"><a href="#第二次组会" class="headerlink" title="第二次组会"></a>第二次组会</h1><p>一共四个人汇报，其中在投文献一篇方向为拉曼，三篇论汇报拉曼两片，层析一篇</p>
-<h2 id="在投文献"><a href="#在投文献" class="headerlink" title="在投文献"></a>在投文献</h2><p>深度学习预测单细胞H2O2含量</p>
-<h3 id="数据集"><a href="#数据集" class="headerlink" title="数据集"></a>数据集</h3><p>细胞的数据集在预测问题上可以看作为时间序列，或者弱化其时间的数据看为序列。这种序列和文字序列有一定的相识性，在处理这方面数据可以更多的考虑循环神经网络和注意力机制进行处理</p>
-<h3 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h3><p>注意力机制</p>
-<h3 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h3><p>未知</p>
-<h3 id="评价指标"><a href="#评价指标" class="headerlink" title="评价指标"></a>评价指标</h3><p>R^2</p>
-<h2 id="论文问题"><a href="#论文问题" class="headerlink" title="论文问题"></a>论文问题</h2><p>网络结构不清晰，深度学习三要素 网络模型、损失函数和评价指标的选取有问题</p>
-<h2 id="论文汇报"><a href="#论文汇报" class="headerlink" title="论文汇报"></a>论文汇报</h2><h3 id="transformer-RNN-超高清重建图像"><a href="#transformer-RNN-超高清重建图像" class="headerlink" title="transformer+RNN 超高清重建图像"></a>transformer+RNN 超高清重建图像</h3><h4 id="网络-1"><a href="#网络-1" class="headerlink" title="网络"></a>网络</h4><p>RNN(head)</p>
-]]></content>
-      <categories>
-        <category>生活</category>
-      </categories>
-      <tags>
-        <tag>组会</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>第一次拉曼组会</title>
-    <url>/2024/09/21/%E7%AC%AC%E4%B8%80%E6%AC%A1%E6%8B%89%E6%9B%BC%E7%BB%84%E4%BC%9A/</url>
-    <content><![CDATA[<h1 id="第一次拉曼组会"><a href="#第一次拉曼组会" class="headerlink" title="第一次拉曼组会"></a>第一次拉曼组会</h1><h2 id="光谱的识别与3D成像方向"><a href="#光谱的识别与3D成像方向" class="headerlink" title="光谱的识别与3D成像方向"></a>光谱的识别与3D成像方向</h2><ol>
-<li>方法学：python、深度学习上的改进</li>
-<li>一维拉曼：讲故事，干什么？好处是？</li>
-<li>多模态转换（起步还需后续验证）：拉曼光谱与全息成像是否能够互相和转换</li>
-</ol>
-<h2 id="组会安排"><a href="#组会安排" class="headerlink" title="组会安排"></a>组会安排</h2><ol>
-<li>开会频率自由，不固定时间。但月最少两次</li>
-<li>组会内容，与正常组会有别，主要是讨论问题抛出问题，解决问题。不需要太过严谨</li>
-</ol>
-<h2 id="拉曼基础"><a href="#拉曼基础" class="headerlink" title="拉曼基础"></a>拉曼基础</h2><p>需要学习拉曼基础知识，补全数学基础，值得一提的的是需要特别学习一下主成分分析法</p>
-<h2 id="组会内容"><a href="#组会内容" class="headerlink" title="组会内容"></a>组会内容</h2><h3 id="基于深度可分离三维成像去噪方法的细胞拉曼成像-朱伟乐、小论文"><a href="#基于深度可分离三维成像去噪方法的细胞拉曼成像-朱伟乐、小论文" class="headerlink" title="基于深度可分离三维成像去噪方法的细胞拉曼成像 朱伟乐、小论文"></a>基于深度可分离三维成像去噪方法的细胞拉曼成像 朱伟乐、小论文</h3><h4 id="工作"><a href="#工作" class="headerlink" title="工作"></a>工作</h4><p>论文采用了神经网络对3D图像进行去噪处理，论文属于方法创新，创新了神经网络</p>
-<h4 id="数据集"><a href="#数据集" class="headerlink" title="数据集"></a>数据集</h4><p>公开数据集，加上自己小样本数据辅佐说明实验</p>
-<h4 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h4><p>改进的CNN网络，通过分离模块减少了网络训练产生，使得网络训练3D图像速度大大快  </p>
-<h4 id="loss"><a href="#loss" class="headerlink" title="loss"></a>loss</h4><p>目前：基础的损失函数，改进：加上约束项</p>
-<h4 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h4><p>选择作为真值的图像本身的噪声处理问题，图像优化过于平滑</p>
-<h3 id="万、小论文、一区"><a href="#万、小论文、一区" class="headerlink" title="万、小论文、一区"></a>万、小论文、一区</h3><h4 id="工作-1"><a href="#工作-1" class="headerlink" title="工作"></a>工作</h4><p>就使用了一个简单的CNN网络对干细胞进行功能性的预测</p>
-<h4 id="数据集-1"><a href="#数据集-1" class="headerlink" title="数据集"></a>数据集</h4><p>干细胞不同时间阶段中多功能性荧光图像</p>
-<h4 id="网络-1"><a href="#网络-1" class="headerlink" title="网络"></a>网络</h4><p>CNN</p>
-<h4 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h4><p>首先通过CNN网络学习到干细胞功能性预测，然后通过学习后的CNN网络发现在CNN对干细胞功能性能力判别时所关注的拉曼峰发现主要通过‘xx’峰进行判别，在反过来提出该‘xx’峰所对应的物质对干细胞功能性能力的影响。<br>该论文不是简短的应用创新，同学也研究创新发现了莫种物质对细胞能力的影响。同循循渐进的创新提升的论文的质量，值得学习</p>
-<h3 id="论文写作"><a href="#论文写作" class="headerlink" title="论文写作"></a>论文写作</h3><p>研究背景，研究内容，技术路径，技术流程</p>
-<h2 id="任务"><a href="#任务" class="headerlink" title="任务"></a>任务</h2><p>多模转换项目初体验</p>
-<h3 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h3><p>找到一个网络并试着完成拉曼光谱与全息图之间的相互转换，网络不限。可以无监督，有监督学习。先完成网络的预想和构建，在提供数据集（数据集需要张老师找两个不同的师兄要）共同完成</p>
-<h3 id="数据集-2"><a href="#数据集-2" class="headerlink" title="数据集"></a>数据集</h3><p>小数据集样本</p>
-<h3 id="困难"><a href="#困难" class="headerlink" title="困难"></a>困难</h3><ol>
-<li>缺乏具体的理论支持</li>
-<li>数据集少</li>
-</ol>
-]]></content>
-      <categories>
-        <category>组会</category>
-      </categories>
-      <tags>
-        <tag>拉曼</tag>
+        <tag>pytorch</tag>
       </tags>
   </entry>
   <entry>
@@ -208,26 +145,172 @@
       </tags>
   </entry>
   <entry>
-    <title>自定义数据集</title>
-    <url>/2024/09/26/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%95%B0%E6%8D%AE%E9%9B%86/</url>
-    <content><![CDATA[<h1 id="自定义数据集"><a href="#自定义数据集" class="headerlink" title="自定义数据集"></a>自定义数据集</h1><p>在使用pytorch进行深度学习训练时，难以避免的使用自己的私有数据集。这时就需要进行手动封装，一个良好的数据集是深度学习完美的开始</p>
-<h1 id="定义数据集方法"><a href="#定义数据集方法" class="headerlink" title="定义数据集方法"></a>定义数据集方法</h1><p>自定义数据需要使用<code>torch.utils.data.Dataset</code>类，这是自定义数据集的基础<br>自定义数据无非就三要数，路径，标签处理及返回和数据大小返回  </p>
-<ol>
-<li><code>def __init__(self,root_dir,label_dir):</code> 通常进行初始换，图像路径调用  </li>
-<li><code>def __getitem__(self, item):</code> 按照自己的需要进行指定要，在下面的例子中，就自定义数据返回了图像本身和标签（标签是文件夹）  【这部分是自定义数据的关键】  </li>
-<li><code>def __len__(self):</code>定义len方法，一般不需要特殊定义<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">import torch</span><br><span class="line">import torchvision</span><br><span class="line">from torch.utils.data import Dataset</span><br><span class="line">import os</span><br><span class="line">from PIL import Image</span><br><span class="line">train_root = &#x27;data/train&#x27;</span><br><span class="line">train_ants_root = &#x27;ants&#x27;</span><br><span class="line">train_bess_root = &#x27;bees&#x27;</span><br><span class="line"></span><br><span class="line">class Mydata(Dataset):</span><br><span class="line">    def __init__(self,root_dir,label_dir):</span><br><span class="line">        #在这里进行初始化，一般是初始化文件路径或文件列表</span><br><span class="line">        super().__init__()</span><br><span class="line">        self.root_dir = root_dir</span><br><span class="line">        self.label_dir = label_dir</span><br><span class="line">        self.path = os.path.join(self.root_dir,self.label_dir)</span><br><span class="line">        self.img_path = os.listdir(self.path)</span><br><span class="line">    def __getitem__(self, item):</span><br><span class="line">        # 1. 按照index，读取文件中对应的数据  （读取一个数据！！！！我们常读取的数据是图片，一般我们送入模型的数据成批的，但在这里只是读取一张图片，成批后面会说到）</span><br><span class="line">        # 2. 对读取到的数据进行数据增强 (数据增强是深度学习中经常用到的，可以提高模型的泛化能力)(torchvision.transforms.Compose)</span><br><span class="line">        # 3. 返回数据对 （一般我们要返回 图片，对应的标签）</span><br><span class="line">        self.img = os.path.join(self.root_dir,self.root_dir,self.img_path[item])</span><br><span class="line">        img = Image.open(self.img)</span><br><span class="line">        img = torchvision.transforms.Compose([</span><br><span class="line">            torchvision.transforms.ToTensor()</span><br><span class="line">        ])</span><br><span class="line">        if self.label_dir == &#x27;ants&#x27;:</span><br><span class="line">            label = torch.tensor(1.0)</span><br><span class="line">        else:</span><br><span class="line">            label = torch.tensor(0)</span><br><span class="line">        return img, label</span><br><span class="line">    def __len__(self):</span><br><span class="line">        return len(self.img_path)</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+    <title>新的开始 第一篇博客</title>
+    <url>/2024/04/26/%E5%AF%BB%E5%91%B3%E9%A1%BA%E5%BE%B7/</url>
+    <content><![CDATA[<h1 id="大学城-→-顺德（华盖路-→-清晖园）半日—夜玩乐路线"><a href="#大学城-→-顺德（华盖路-→-清晖园）半日—夜玩乐路线" class="headerlink" title="大学城 → 顺德（华盖路 → 清晖园）半日—夜玩乐路线"></a>大学城 → 顺德（华盖路 → 清晖园）半日—夜玩乐路线</h1><p><em>⏱ 建议 10 : 00 出发；如想更宽松，可把所有时段整体前移 1 h。</em>  </p>
+<table>
+<thead>
+<tr>
+<th>时间</th>
+<th>行程</th>
+<th>细节 &#x2F; Tips</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>10 : 00 – 11 : 50</strong></td>
+<td><strong>地铁：大学城南 → 北滘公园 (7 号线)</strong><br>→ 同站换乘 <strong>佛山 3 号线</strong> 顺德学院方向至 <strong>大良楼</strong></td>
+<td>7 号线大学城南⇢北滘公园全程≈49 min，6 : 00-23 : 00 运营  (<a href="https://news.sina.cn/gn/2022-04-30/detail-imcwiwst4937876.d.html?utm_source=chatgpt.com">定了！广州地铁七号线西延段将于5月1日14时正式开通 - 新浪新闻</a>)；北滘公园⇢大良楼约15 min，高峰车隔≈6 min  (<a href="https://m.fs.bendibao.com/traffic/120041.shtm?utm_source=chatgpt.com">佛山地铁3号线运营时间</a>)</td>
+</tr>
+<tr>
+<td><strong>11 : 50 – 13 : 30</strong></td>
+<td><strong>华盖路 &amp; 金榜上街午餐逛吃</strong>（大良楼 A 口出，步行 5-8 min）</td>
+<td>- <strong>民信老铺</strong> 双皮奶&#x2F;姜撞奶（08 : 00-23 : 30）  (<a href="https://m.map.360.cn/m/search/detail/pid%3D155c26d05a5ab161?utm_source=chatgpt.com">【民信老铺(双皮奶博物馆店)】地址,电话,路线,周边设施 - 360地图</a>) <br>- <strong>细妹五香牛杂、欢记水牛奶、姜撞奶档口</strong>……整条骑楼小吃街 1 km，边走边吃最省时  (<a href="https://hk.trip.com/moments/poi-pedestrian-street-of-huagai-road-95312/?utm_source=chatgpt.com">【2025佛山景點】大良華蓋路商業步行街旅遊攻略（於3月更新）</a>)</td>
+</tr>
+<tr>
+<td><strong>13 : 30 – 16 : 30</strong></td>
+<td><strong>清晖园</strong>（步行 10 min 或单车 5 min）</td>
+<td>门票 ¥15，09 : 00-17 : 30；16 : 30 停止入园  (<a href="https://hk.trip.com/guide/food/%E9%A0%86%E5%BE%B7%E7%BE%8E%E9%A3%9F.html?utm_source=chatgpt.com">2025 10 個不能錯過的順德美食，附交通方法、營業時間、招牌菜式</a>)。建议按“榕荫池 → 天镜台 → 竹风堂 → 环碧池”顺时针拍照，光线最佳</td>
+</tr>
+<tr>
+<td><strong>16 : 30 – 17 : 20</strong></td>
+<td>清晖园周边小歇</td>
+<td>对面 <strong>顺德博物馆</strong> &amp; <strong>文塔</strong> 免费 30-40 min；或华盖山栈道看城区全景</td>
+</tr>
+<tr>
+<td><strong>17 : 30 – 19 : 00</strong></td>
+<td><strong>顺德鱼生晚餐</strong>（步行 5-8 min）</td>
+<td><strong>野仙鱼生·顺德鱼生专家（清晖园店）</strong><br>地址：华盖里四巷 16 号；营业 11 : 00-14 : 00 &#x2F; 17 : 00-21 : 00；人均 ¥120，鲩鱼生＋鱼皮＋鱼骨三吃  (<a href="https://www.openrice.com.cn/zh-cn/foshan/r-%E9%87%8E%E4%BB%99%E9%B1%BC%E7%94%9F-%E9%A1%BA%E5%BE%B7%E9%B1%BC%E7%94%9F%E4%B8%93%E5%AE%B6-%E5%A4%A7%E8%89%AF-%E7%B2%A4%E8%8F%9C-%E5%B9%BF%E4%B8%9C-r8374535?utm_source=chatgpt.com">野仙鱼生•顺德鱼生专家(新世界清晖园店) – 佛山大良的粤菜(广东 …</a>) <br><em>备用</em>：<strong>捞德顺鱼生</strong>（华盖路 27 号）  (<a href="https://map.baidu.com/place/f3f3c50937b31c3007026f91?utm_source=chatgpt.com">捞德顺·顺德鱼生(清晖园店)</a>)</td>
+</tr>
+<tr>
+<td><strong>19 : 10 – 20 : 50</strong></td>
+<td>原路返程：大良楼 → 北滘公园 → 大学城南</td>
+<td>晚高峰 19 : 00 后人流回落；若已逛累，可在大良楼站 A 口直接滴滴至北滘公园（约 ¥18&#x2F;18 min），再上 7 号线</td>
+</tr>
+</tbody></table>
+<hr>
+<h4 id="费用预估"><a href="#费用预估" class="headerlink" title="费用预估"></a>费用预估</h4><ul>
+<li>地铁往返：¥18  </li>
+<li>清晖园门票：¥15  </li>
+<li>午餐小吃：¥40-60（按个人食量）  </li>
+<li>晚餐鱼生：¥110-150<br><strong>≈ ¥185-245&#x2F;人</strong></li>
+</ul>
+<h4 id="小贴士"><a href="#小贴士" class="headerlink" title="小贴士"></a>小贴士</h4><ol>
+<li><strong>电子支付</strong>：顺德多店支持微信&#x2F;支付宝；准备少量现金以防街头老摊。  </li>
+<li><strong>防晒补水</strong>：4-5 月体感 28-32 °C，园内多水景湿热，帽子 + 轻薄长袖最舒适。  </li>
+<li><strong>排队策略</strong>：华盖路热门甜品 12 点后开始排队，可先取号再逛周边手信铺。野仙鱼生晚市 18 点后排队明显，17 : 30 左右到店最稳。  </li>
+<li><strong>返程末班</strong>：7 号线大学城南方向末班≈23 : 00；3 号线顺德学院方向末班≈22 : 45  (<a href="https://news.qq.com/rain/a/20221225A01YS300?utm_source=chatgpt.com">超实用！佛山地铁3号线首通段最全公交接驳方案来了 - QQ News</a>)，安心玩到 20 点上车足够。</li>
 </ol>
-<h1 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h1><p>在许多书中和教程中很少提到自定义数据集这件事，导致产生了自定义数据这件事情比较难的刻板印象。但是实际系统的看了发现这点并非很难，定义复杂的数据集只要动手也不是问题。只要多看代码多动手一切困难都会解决的。</p>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
-<li><a href="https://blog.csdn.net/qq_40788447/article/details/114937779">pytorch技巧 五： 自定义数据集 torch.utils.data.DataLoader 及Dataset的使用</a>  </li>
-<li><a href="https://www.bilibili.com/video/BV1G94y1z7vf/?spm_id_from=333.999.0.0&vd_source=c7b501bd0aabc326342cea733e0bfc62">基于Pytorch的自制蚂蚁蜜蜂数据集的训练与识别</a></li>
+<blockquote>
+<p>从悠哉逛吃的老街，到岭南园林的午后光影，再以鲜到发甜的鲩鱼生收尾——顺德的 <strong>“烟火 + 雅致”</strong> 就在这 8 小时里一次打包。祝玩得尽兴，记得空着肚子去！</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>生活</category>
+      </categories>
+      <tags>
+        <tag>随想</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>torchvision路径应用失败问题</title>
+    <url>/2024/09/05/torchvision%E8%B7%AF%E5%BE%84%E5%BA%94%E7%94%A8%E5%A4%B1%E8%B4%A5%E9%97%AE%E9%A2%98/</url>
+    <content><![CDATA[<h1 id="torchvision模块路径引用问题"><a href="#torchvision模块路径引用问题" class="headerlink" title="torchvision模块路径引用问题"></a>torchvision模块路径引用问题</h1><p>前言：安装pytorch后可能会出现torch模块引用成功，而torchvision模块引用失败，失败原因为torchvision模块路径丢失。可能是三个问题导致的： </p>
+<ol>
+<li>torch和torchvision版本不匹配</li>
+<li>pillow版本和torchvision版本不匹配</li>
+</ol>
+<h1 id="torch和torchvision版本不匹配"><a href="#torch和torchvision版本不匹配" class="headerlink" title="torch和torchvision版本不匹配"></a>torch和torchvision版本不匹配</h1><p>建议从pytorch官网重新下载新版pytorch，或者查询历史版本重新选择一个版本进行下载</p>
+<h1 id="pillow版本和torchvision版本不匹配"><a href="#pillow版本和torchvision版本不匹配" class="headerlink" title="pillow版本和torchvision版本不匹配"></a>pillow版本和torchvision版本不匹配</h1><p>删除pillow 在重新下载pillow最新版</p>
+]]></content>
+      <categories>
+        <category>软件</category>
+      </categories>
+      <tags>
+        <tag>Pytorch</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>新的开始 第一篇博客</title>
+    <url>/2024/08/24/%E6%96%B0%E7%9A%84%E5%BC%80%E5%A7%8B-%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/</url>
+    <content><![CDATA[<h1 id="博客的创建"><a href="#博客的创建" class="headerlink" title="博客的创建"></a>博客的创建</h1><p>当我写下这篇博客的时候，我很高兴我完成了我的第一篇博客的创作，虽然博客网站的运行等注意事项还没彻底掌握，但我很高兴至少自己完成了博客的初步制作。<br>以前在网络查询资料解决各种各式的问题，尝尝觉得这些大佬们技术叹为观止。不免在我脑海中产生一个问题，我能够成为像他们一样的人吗？  </p>
+<h1 id="展望"><a href="#展望" class="headerlink" title="展望"></a>展望</h1><p>个人博客的创建是为了记录我即将踏上的三年研究生生涯的点点滴滴，希望我能以梦为马，不负韶华。<br>先定下个小目标实现个人博客的月更和不断探索博客个性化希望等三年后的某一天回首这段时间，我能不留遗憾</p>
+]]></content>
+      <categories>
+        <category>生活</category>
+      </categories>
+      <tags>
+        <tag>随想</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>一、预备知识</title>
+    <url>/2024/09/05/%E4%B8%80%E3%80%81%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86/</url>
+    <content><![CDATA[<h1 id="预备知识"><a href="#预备知识" class="headerlink" title="预备知识"></a>预备知识</h1><h2 id="基础"><a href="#基础" class="headerlink" title="基础"></a>基础</h2><h2 id="重点"><a href="#重点" class="headerlink" title="重点"></a>重点</h2><h3 id="范数"><a href="#范数" class="headerlink" title="范数"></a>范数</h3><h3 id="矩阵求导"><a href="#矩阵求导" class="headerlink" title="矩阵求导"></a>矩阵求导</h3><h3 id="反向传播（sum函数）"><a href="#反向传播（sum函数）" class="headerlink" title="反向传播（sum函数）"></a>反向传播（sum函数）</h3><p>&#96;&#96;<a href="https://blog.csdn.net/qq_43722079/article/details/136583592">https://blog.csdn.net/qq_43722079/article/details/136583592</a></p>
+]]></content>
+      <categories>
+        <category>动手深度学习</category>
+      </categories>
+      <tags>
+        <tag>Pytorch</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>第一次拉曼组会</title>
+    <url>/2024/09/21/%E7%AC%AC%E4%B8%80%E6%AC%A1%E6%8B%89%E6%9B%BC%E7%BB%84%E4%BC%9A/</url>
+    <content><![CDATA[<h1 id="第一次拉曼组会"><a href="#第一次拉曼组会" class="headerlink" title="第一次拉曼组会"></a>第一次拉曼组会</h1><h2 id="光谱的识别与3D成像方向"><a href="#光谱的识别与3D成像方向" class="headerlink" title="光谱的识别与3D成像方向"></a>光谱的识别与3D成像方向</h2><ol>
+<li>方法学：python、深度学习上的改进</li>
+<li>一维拉曼：讲故事，干什么？好处是？</li>
+<li>多模态转换（起步还需后续验证）：拉曼光谱与全息成像是否能够互相和转换</li>
+</ol>
+<h2 id="组会安排"><a href="#组会安排" class="headerlink" title="组会安排"></a>组会安排</h2><ol>
+<li>开会频率自由，不固定时间。但月最少两次</li>
+<li>组会内容，与正常组会有别，主要是讨论问题抛出问题，解决问题。不需要太过严谨</li>
+</ol>
+<h2 id="拉曼基础"><a href="#拉曼基础" class="headerlink" title="拉曼基础"></a>拉曼基础</h2><p>需要学习拉曼基础知识，补全数学基础，值得一提的的是需要特别学习一下主成分分析法</p>
+<h2 id="组会内容"><a href="#组会内容" class="headerlink" title="组会内容"></a>组会内容</h2><h3 id="基于深度可分离三维成像去噪方法的细胞拉曼成像-朱伟乐、小论文"><a href="#基于深度可分离三维成像去噪方法的细胞拉曼成像-朱伟乐、小论文" class="headerlink" title="基于深度可分离三维成像去噪方法的细胞拉曼成像 朱伟乐、小论文"></a>基于深度可分离三维成像去噪方法的细胞拉曼成像 朱伟乐、小论文</h3><h4 id="工作"><a href="#工作" class="headerlink" title="工作"></a>工作</h4><p>论文采用了神经网络对3D图像进行去噪处理，论文属于方法创新，创新了神经网络</p>
+<h4 id="数据集"><a href="#数据集" class="headerlink" title="数据集"></a>数据集</h4><p>公开数据集，加上自己小样本数据辅佐说明实验</p>
+<h4 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h4><p>改进的CNN网络，通过分离模块减少了网络训练产生，使得网络训练3D图像速度大大快  </p>
+<h4 id="loss"><a href="#loss" class="headerlink" title="loss"></a>loss</h4><p>目前：基础的损失函数，改进：加上约束项</p>
+<h4 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h4><p>选择作为真值的图像本身的噪声处理问题，图像优化过于平滑</p>
+<h3 id="万、小论文、一区"><a href="#万、小论文、一区" class="headerlink" title="万、小论文、一区"></a>万、小论文、一区</h3><h4 id="工作-1"><a href="#工作-1" class="headerlink" title="工作"></a>工作</h4><p>就使用了一个简单的CNN网络对干细胞进行功能性的预测</p>
+<h4 id="数据集-1"><a href="#数据集-1" class="headerlink" title="数据集"></a>数据集</h4><p>干细胞不同时间阶段中多功能性荧光图像</p>
+<h4 id="网络-1"><a href="#网络-1" class="headerlink" title="网络"></a>网络</h4><p>CNN</p>
+<h4 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h4><p>首先通过CNN网络学习到干细胞功能性预测，然后通过学习后的CNN网络发现在CNN对干细胞功能性能力判别时所关注的拉曼峰发现主要通过‘xx’峰进行判别，在反过来提出该‘xx’峰所对应的物质对干细胞功能性能力的影响。<br>该论文不是简短的应用创新，同学也研究创新发现了莫种物质对细胞能力的影响。同循循渐进的创新提升的论文的质量，值得学习</p>
+<h3 id="论文写作"><a href="#论文写作" class="headerlink" title="论文写作"></a>论文写作</h3><p>研究背景，研究内容，技术路径，技术流程</p>
+<h2 id="任务"><a href="#任务" class="headerlink" title="任务"></a>任务</h2><p>多模转换项目初体验</p>
+<h3 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h3><p>找到一个网络并试着完成拉曼光谱与全息图之间的相互转换，网络不限。可以无监督，有监督学习。先完成网络的预想和构建，在提供数据集（数据集需要张老师找两个不同的师兄要）共同完成</p>
+<h3 id="数据集-2"><a href="#数据集-2" class="headerlink" title="数据集"></a>数据集</h3><p>小数据集样本</p>
+<h3 id="困难"><a href="#困难" class="headerlink" title="困难"></a>困难</h3><ol>
+<li>缺乏具体的理论支持</li>
+<li>数据集少</li>
 </ol>
 ]]></content>
       <categories>
-        <category>深度学习</category>
+        <category>组会</category>
       </categories>
       <tags>
-        <tag>pytorch</tag>
+        <tag>拉曼</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>研一第一月</title>
+    <url>/2024/09/01/%E7%A0%94%E4%B8%80%E7%AC%AC%E4%B8%80%E6%9C%88/</url>
+    <content><![CDATA[<h1 id="回顾"><a href="#回顾" class="headerlink" title="回顾"></a>回顾</h1><p>结束暑假，开始新学期</p>
+<h2 id="学习"><a href="#学习" class="headerlink" title="学习"></a>学习</h2><p>暑假期间初步入门了深度学习和python，完成了小土堆深度学习入门和python，后续需要进一步加强</p>
+<h2 id="生活"><a href="#生活" class="headerlink" title="生活"></a>生活</h2><h1 id="展望"><a href="#展望" class="headerlink" title="展望"></a>展望</h1><h2 id="学习-1"><a href="#学习-1" class="headerlink" title="学习"></a>学习</h2><p>继续学习深度学习和python，目前感觉深学习入门还是比较容易，希望学期结束能完成《动手深度学习》</p>
+<h2 id="生活-1"><a href="#生活-1" class="headerlink" title="生活"></a>生活</h2><p>准备广东博物馆、广东图书馆游玩</p>
+<h1 id="计划"><a href="#计划" class="headerlink" title="计划"></a>计划</h1><ol>
+<li>博客一个星期更新一次，一个月更新一次技术类型文章</li>
+<li>每月进行总结</li>
+<li>精读《动手深度学习》并将每章进行笔记记录，计划本周完成前三章的精读</li>
+<li>学习《流程使用python》</li>
+</ol>
+]]></content>
+      <categories>
+        <category>生活</category>
+      </categories>
+      <tags>
+        <tag>日记</tag>
       </tags>
   </entry>
   <entry>
@@ -254,58 +337,42 @@
       </tags>
   </entry>
   <entry>
-    <title>pytorch 中维度修改那些事</title>
-    <url>/2024/10/15/pytorch-%E4%B8%AD%E7%BB%B4%E5%BA%A6%E4%BF%AE%E6%94%B9%E9%82%A3%E4%BA%9B%E4%BA%8B/</url>
-    <content><![CDATA[<h1 id="pytorch-维度操作那些事"><a href="#pytorch-维度操作那些事" class="headerlink" title="pytorch 维度操作那些事"></a>pytorch 维度操作那些事</h1><h2 id="维度转置函数-transpose-和-permute"><a href="#维度转置函数-transpose-和-permute" class="headerlink" title="维度转置函数 transpose() 和 permute()"></a>维度转置函数 transpose() 和 permute()</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">x = torch.randn([2,3])</span><br><span class="line">y = torch.randn([2,3,4])</span><br><span class="line">print(f&#x27;x.shape:&#123;x.shape&#125;,y.shape&#123;y.shape&#125;&#x27;)</span><br><span class="line"># transpose() torch.transpose(x)合法， x.transpose()合法。</span><br><span class="line">## torch.transpose(input, dim0, dim1, out=None)</span><br><span class="line">print(f&#x27;&#123;x.transpose(0,1).shape,torch.transpose(x,0,1).shape&#125;&#x27;)</span><br><span class="line"># transpose 一次性只能对两个维度进行操作。因此在进行维度变化的时候多采用permute()</span><br><span class="line">print(f&#x27;&#123;y.transpose(0,2).shape&#125;&#x27;)</span><br><span class="line">x = torch.randn([2,3])</span><br><span class="line">y = torch.randn([2,3,4])</span><br><span class="line">print(f&#x27;x.shape:&#123;x.shape&#125;,y.shape&#123;y.shape&#125;&#x27;)</span><br><span class="line"># permute() torch.permute(x)不合法，x.permute()合法。</span><br><span class="line">print(f&#x27;&#123;x.permute(0,1).shape&#125;&#x27;)</span><br><span class="line">print(f&#x27;&#123;y.permute(0,2,1).shape&#125;&#x27;)</span><br><span class="line"># transpose() 和 permute() 两者大致相同，但是在内存处理方面具有差异</span><br></pre></td></tr></table></figure>
-<h2 id="维度修改函数-squeeze-和-unsqueeze"><a href="#维度修改函数-squeeze-和-unsqueeze" class="headerlink" title="维度修改函数 squeeze()和 unsqueeze()"></a>维度修改函数 squeeze()和 unsqueeze()</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># squeeze()</span><br><span class="line">## 低维记为0 高维记为1</span><br><span class="line">## 如果小括号里不是1怎么办？这个括号里的1是什么意思？</span><br><span class="line">## 具体而言，如果一个张量有四个维度的，squeeze(index)会将张量中第index维度，</span><br><span class="line">## 且大小为1的维度进行去除，从而减少张量的维度。如果index是负整数，那就是倒数第index个维度</span><br><span class="line">print(f&#x27;&#123;x.squeeze(-1).shape&#125;&#x27;)</span><br><span class="line"># unsqueeze()</span><br><span class="line">## 从左到右，高维记为0，最低维最大</span><br><span class="line">print(f&#x27;&#123;y.unsqueeze(0).shape&#125;&#x27;)</span><br></pre></td></tr></table></figure>
-<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><p><a href="https://blog.csdn.net/xinjieyuan/article/details/105232802">https://blog.csdn.net/xinjieyuan/article/details/105232802</a><br><a href="https://blog.csdn.net/guihaiyuan123/article/details/113455775">https://blog.csdn.net/guihaiyuan123/article/details/113455775</a></p>
+    <title>第二次组会</title>
+    <url>/2024/09/13/%E7%AC%AC%E4%BA%8C%E6%AC%A1%E7%BB%84%E4%BC%9A/</url>
+    <content><![CDATA[<h1 id="第二次组会"><a href="#第二次组会" class="headerlink" title="第二次组会"></a>第二次组会</h1><p>一共四个人汇报，其中在投文献一篇方向为拉曼，三篇论汇报拉曼两片，层析一篇</p>
+<h2 id="在投文献"><a href="#在投文献" class="headerlink" title="在投文献"></a>在投文献</h2><p>深度学习预测单细胞H2O2含量</p>
+<h3 id="数据集"><a href="#数据集" class="headerlink" title="数据集"></a>数据集</h3><p>细胞的数据集在预测问题上可以看作为时间序列，或者弱化其时间的数据看为序列。这种序列和文字序列有一定的相识性，在处理这方面数据可以更多的考虑循环神经网络和注意力机制进行处理</p>
+<h3 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h3><p>注意力机制</p>
+<h3 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h3><p>未知</p>
+<h3 id="评价指标"><a href="#评价指标" class="headerlink" title="评价指标"></a>评价指标</h3><p>R^2</p>
+<h2 id="论文问题"><a href="#论文问题" class="headerlink" title="论文问题"></a>论文问题</h2><p>网络结构不清晰，深度学习三要素 网络模型、损失函数和评价指标的选取有问题</p>
+<h2 id="论文汇报"><a href="#论文汇报" class="headerlink" title="论文汇报"></a>论文汇报</h2><h3 id="transformer-RNN-超高清重建图像"><a href="#transformer-RNN-超高清重建图像" class="headerlink" title="transformer+RNN 超高清重建图像"></a>transformer+RNN 超高清重建图像</h3><h4 id="网络-1"><a href="#网络-1" class="headerlink" title="网络"></a>网络</h4><p>RNN(head)</p>
 ]]></content>
+      <categories>
+        <category>生活</category>
+      </categories>
       <tags>
-        <tag>pytorch</tag>
+        <tag>组会</tag>
       </tags>
   </entry>
   <entry>
-    <title>初始化</title>
-    <url>/2024/11/16/%E5%88%9D%E5%A7%8B%E5%8C%96/</url>
-    <content><![CDATA[<h1 id="神经网络初始化"><a href="#神经网络初始化" class="headerlink" title="神经网络初始化"></a>神经网络初始化</h1><p>神经网络的初始化对整个模型的训练起到至关重要的作用，一个合理的初始化能够让模型更快的拟合，反正不合适的初始化对整个模型是灾难性的影响。<br>通常在自己构建模型的时候，<code>pytorch</code>会自动对模型中的权重进行正太分布初始化，当让在莫些模型中正太分布分布表现效果并不优良，亦或者是有特殊要求进行特征提取。这时就要利用到自定义初始化了<code>Weight Initialization</code></p>
-<h2 id="选定卷积层为对象"><a href="#选定卷积层为对象" class="headerlink" title="选定卷积层为对象"></a>选定卷积层为对象</h2><p>通常我们需要自定义的权重的层为卷积层，因为有的特殊的卷积核能够提取不同数据特征。为后面的模型训练提特征的筛选与提取<br><code>getattr</code>函数<br>利用<code>getattr</code>函数能够完成指定层的的获取<code>conv_weight = getattr(model, conv)</code>这样就将model中名为conv层的卷积层的权重链接至conv_weight变量中。<br>当conv_weight变量进行赋值改变的时候，对应的conv层中的参数同样发生改变。</p>
-<h2 id="进行参数初始化"><a href="#进行参数初始化" class="headerlink" title="进行参数初始化"></a>进行参数初始化</h2><h3 id="凯明初始化"><a href="#凯明初始化" class="headerlink" title="凯明初始化"></a>凯明初始化</h3><h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ol>
-<li><a href="https://zhuanlan.zhihu.com/p/610248161">不同层应用不同初始化方式</a></li>
-<li><a href="https://blog.csdn.net/ys1305/article/details/94332007">pytorch中的参数初始化方法总结</a></li>
+    <title>自定义数据集</title>
+    <url>/2024/09/26/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%95%B0%E6%8D%AE%E9%9B%86/</url>
+    <content><![CDATA[<h1 id="自定义数据集"><a href="#自定义数据集" class="headerlink" title="自定义数据集"></a>自定义数据集</h1><p>在使用pytorch进行深度学习训练时，难以避免的使用自己的私有数据集。这时就需要进行手动封装，一个良好的数据集是深度学习完美的开始</p>
+<h1 id="定义数据集方法"><a href="#定义数据集方法" class="headerlink" title="定义数据集方法"></a>定义数据集方法</h1><p>自定义数据需要使用<code>torch.utils.data.Dataset</code>类，这是自定义数据集的基础<br>自定义数据无非就三要数，路径，标签处理及返回和数据大小返回  </p>
+<ol>
+<li><code>def __init__(self,root_dir,label_dir):</code> 通常进行初始换，图像路径调用  </li>
+<li><code>def __getitem__(self, item):</code> 按照自己的需要进行指定要，在下面的例子中，就自定义数据返回了图像本身和标签（标签是文件夹）  【这部分是自定义数据的关键】  </li>
+<li><code>def __len__(self):</code>定义len方法，一般不需要特殊定义<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">import torch</span><br><span class="line">import torchvision</span><br><span class="line">from torch.utils.data import Dataset</span><br><span class="line">import os</span><br><span class="line">from PIL import Image</span><br><span class="line">train_root = &#x27;data/train&#x27;</span><br><span class="line">train_ants_root = &#x27;ants&#x27;</span><br><span class="line">train_bess_root = &#x27;bees&#x27;</span><br><span class="line"></span><br><span class="line">class Mydata(Dataset):</span><br><span class="line">    def __init__(self,root_dir,label_dir):</span><br><span class="line">        #在这里进行初始化，一般是初始化文件路径或文件列表</span><br><span class="line">        super().__init__()</span><br><span class="line">        self.root_dir = root_dir</span><br><span class="line">        self.label_dir = label_dir</span><br><span class="line">        self.path = os.path.join(self.root_dir,self.label_dir)</span><br><span class="line">        self.img_path = os.listdir(self.path)</span><br><span class="line">    def __getitem__(self, item):</span><br><span class="line">        # 1. 按照index，读取文件中对应的数据  （读取一个数据！！！！我们常读取的数据是图片，一般我们送入模型的数据成批的，但在这里只是读取一张图片，成批后面会说到）</span><br><span class="line">        # 2. 对读取到的数据进行数据增强 (数据增强是深度学习中经常用到的，可以提高模型的泛化能力)(torchvision.transforms.Compose)</span><br><span class="line">        # 3. 返回数据对 （一般我们要返回 图片，对应的标签）</span><br><span class="line">        self.img = os.path.join(self.root_dir,self.root_dir,self.img_path[item])</span><br><span class="line">        img = Image.open(self.img)</span><br><span class="line">        img = torchvision.transforms.Compose([</span><br><span class="line">            torchvision.transforms.ToTensor()</span><br><span class="line">        ])</span><br><span class="line">        if self.label_dir == &#x27;ants&#x27;:</span><br><span class="line">            label = torch.tensor(1.0)</span><br><span class="line">        else:</span><br><span class="line">            label = torch.tensor(0)</span><br><span class="line">        return img, label</span><br><span class="line">    def __len__(self):</span><br><span class="line">        return len(self.img_path)</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h1 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h1><p>在许多书中和教程中很少提到自定义数据集这件事，导致产生了自定义数据这件事情比较难的刻板印象。但是实际系统的看了发现这点并非很难，定义复杂的数据集只要动手也不是问题。只要多看代码多动手一切困难都会解决的。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
+<li><a href="https://blog.csdn.net/qq_40788447/article/details/114937779">pytorch技巧 五： 自定义数据集 torch.utils.data.DataLoader 及Dataset的使用</a>  </li>
+<li><a href="https://www.bilibili.com/video/BV1G94y1z7vf/?spm_id_from=333.999.0.0&vd_source=c7b501bd0aabc326342cea733e0bfc62">基于Pytorch的自制蚂蚁蜜蜂数据集的训练与识别</a></li>
 </ol>
 ]]></content>
       <categories>
         <category>深度学习</category>
-      </categories>
-      <tags>
-        <tag>pytorch</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>UNet-RCAN 复现</title>
-    <url>/2024/11/29/UNet_RCAN/</url>
-    <content><![CDATA[<h1 id="UNet-RCAN"><a href="#UNet-RCAN" class="headerlink" title="UNet-RCAN"></a>UNet-RCAN</h1><h2 id="项目信息"><a href="#项目信息" class="headerlink" title="项目信息"></a>项目信息</h2><p>本文提出了一种UNet结合RCAN的网络结构，UNet网络模型主要负责进行弱光图像恢复进行数据填充，RCAN通道注意力模块负责进行将UNet的填充的数据进行清晰和修复伪影</p>
-<ol>
-<li>论文题目：Denoising fast super-resolution STED microscopy with UNet_RCAN</li>
-<li>代码地址：<a href="https://github.com/vebrahimi1990/UNet_RCAN_Denoising">https://github.com/vebrahimi1990/UNet_RCAN_Denoising</a></li>
-</ol>
-<h2 id="网络框架"><a href="#网络框架" class="headerlink" title="网络框架"></a>网络框架</h2><p>UNet-RCAN模型中将残差链接更换成了CAB模块进行链接，CAB是一种通道注意力机制，能够提取图片中重要的信息，此外本模型还拥有两个输出output-1（UNet）和output-2(RCAN)通过设置相同的损失和优化器将模型的两个模块进行跟新<br><img src="https://www.helloimg.com/i/2024/11/29/67495e45c2ddb.png" alt="Architecture.png"></p>
-<h3 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h3><p>模型采用了符合损失函数loss-1和loss-2，loss-1负责对图像误差进行计算<strong>loss-2</strong>利用卷积核计算图像之间的平缓，<strong>防止过平滑</strong></p>
-<ol>
-<li><p>loss-1</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">def ch_loss_2D(pred, gt):</span><br><span class="line">    norm = tf.norm(pred - gt, axis=(1, 2))</span><br><span class="line">    norm = tf.squeeze(norm)</span><br><span class="line">    norm = tf.pow(norm, 2)</span><br><span class="line">    norm = norm / (256 * 256) + 1e-6</span><br><span class="line">    norm = tf.pow(norm, 0.5)</span><br><span class="line">    c_loss = tf.math.reduce_mean(norm)</span><br><span class="line">    return c_loss</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>loss-2</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">def edge_loss_2D(pred, gt):</span><br><span class="line">    kernel = np.array([[0, 1, 0], [1, -4, 1], [0, 1, 0]])</span><br><span class="line">    kernel = kernel.reshape((3, 3, 1, 1))</span><br><span class="line">    pred = tf.nn.conv2d(pred, kernel, strides=[1, 1, 1, 1], padding=&#x27;VALID&#x27;)</span><br><span class="line">    gt = tf.nn.conv2d(gt, kernel, strides=[1, 1, 1, 1], padding=&#x27;VALID&#x27;)</span><br><span class="line">    e_loss = ch_loss_2D(pred, gt)</span><br><span class="line">    return e_loss</span><br></pre></td></tr></table></figure>
-<p>最终的损失函数为<code>loss = c_loss + 0.05 * e_loss</code>其中0.05是经验函数</p>
-</li>
-</ol>
-<h3 id="优化器"><a href="#优化器" class="headerlink" title="优化器"></a>优化器</h3><p>优化器采用了默认Adam优化</p>
-<h2 id="复现"><a href="#复现" class="headerlink" title="复现"></a>复现</h2><p>由于在tensorflow框架下复现难度极大，将整个模型进行重构到pytorch框架下进行训练</p>
-<h3 id="优化器设置"><a href="#优化器设置" class="headerlink" title="优化器设置"></a>优化器设置</h3><p>为了实现两个模块单独跟新</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>复现</category>
       </categories>
       <tags>
         <tag>pytorch</tag>
