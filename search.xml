@@ -1,36 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>UNet-RCAN 复现</title>
-    <url>/2024/11/29/UNet_RCAN/</url>
-    <content><![CDATA[<h1 id="UNet-RCAN"><a href="#UNet-RCAN" class="headerlink" title="UNet-RCAN"></a>UNet-RCAN</h1><h2 id="项目信息"><a href="#项目信息" class="headerlink" title="项目信息"></a>项目信息</h2><p>本文提出了一种UNet结合RCAN的网络结构，UNet网络模型主要负责进行弱光图像恢复进行数据填充，RCAN通道注意力模块负责进行将UNet的填充的数据进行清晰和修复伪影</p>
-<ol>
-<li>论文题目：Denoising fast super-resolution STED microscopy with UNet_RCAN</li>
-<li>代码地址：<a href="https://github.com/vebrahimi1990/UNet_RCAN_Denoising">https://github.com/vebrahimi1990/UNet_RCAN_Denoising</a></li>
-</ol>
-<h2 id="网络框架"><a href="#网络框架" class="headerlink" title="网络框架"></a>网络框架</h2><p>UNet-RCAN模型中将残差链接更换成了CAB模块进行链接，CAB是一种通道注意力机制，能够提取图片中重要的信息，此外本模型还拥有两个输出output-1（UNet）和output-2(RCAN)通过设置相同的损失和优化器将模型的两个模块进行跟新<br><img src="https://www.helloimg.com/i/2024/11/29/67495e45c2ddb.png" alt="Architecture.png"></p>
-<h3 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h3><p>模型采用了符合损失函数loss-1和loss-2，loss-1负责对图像误差进行计算<strong>loss-2</strong>利用卷积核计算图像之间的平缓，<strong>防止过平滑</strong></p>
-<ol>
-<li><p>loss-1</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">def ch_loss_2D(pred, gt):</span><br><span class="line">    norm = tf.norm(pred - gt, axis=(1, 2))</span><br><span class="line">    norm = tf.squeeze(norm)</span><br><span class="line">    norm = tf.pow(norm, 2)</span><br><span class="line">    norm = norm / (256 * 256) + 1e-6</span><br><span class="line">    norm = tf.pow(norm, 0.5)</span><br><span class="line">    c_loss = tf.math.reduce_mean(norm)</span><br><span class="line">    return c_loss</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>loss-2</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">def edge_loss_2D(pred, gt):</span><br><span class="line">    kernel = np.array([[0, 1, 0], [1, -4, 1], [0, 1, 0]])</span><br><span class="line">    kernel = kernel.reshape((3, 3, 1, 1))</span><br><span class="line">    pred = tf.nn.conv2d(pred, kernel, strides=[1, 1, 1, 1], padding=&#x27;VALID&#x27;)</span><br><span class="line">    gt = tf.nn.conv2d(gt, kernel, strides=[1, 1, 1, 1], padding=&#x27;VALID&#x27;)</span><br><span class="line">    e_loss = ch_loss_2D(pred, gt)</span><br><span class="line">    return e_loss</span><br></pre></td></tr></table></figure>
-<p>最终的损失函数为<code>loss = c_loss + 0.05 * e_loss</code>其中0.05是经验函数</p>
-</li>
-</ol>
-<h3 id="优化器"><a href="#优化器" class="headerlink" title="优化器"></a>优化器</h3><p>优化器采用了默认Adam优化</p>
-<h2 id="复现"><a href="#复现" class="headerlink" title="复现"></a>复现</h2><p>由于在tensorflow框架下复现难度极大，将整个模型进行重构到pytorch框架下进行训练</p>
-<h3 id="优化器设置"><a href="#优化器设置" class="headerlink" title="优化器设置"></a>优化器设置</h3><p>为了实现两个模块单独跟新</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>复现</category>
-      </categories>
-      <tags>
-        <tag>pytorch</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>GAN生成式对抗网络</title>
     <url>/2024/09/13/GAN%E7%BD%91%E7%BB%9C/</url>
     <content><![CDATA[<h1 id="GAN生成式对抗网络"><a href="#GAN生成式对抗网络" class="headerlink" title="GAN生成式对抗网络"></a>GAN生成式对抗网络</h1><p>GAN生成式对抗网络，GAN网络由生成网络和判别网络两个网络组成，生成式网络通过学习图片后将噪声转换为图片，而判别式网络将区分数据集图片和生成图片进行判别。生成式与判别式网络类似与小偷与警察，通过不断的博弈互相升级，在这场游戏中我们更加希望小偷取得胜利。既是生成式网络生成的图片可以让判别器难以判断。</p>
@@ -71,30 +41,42 @@
       </tags>
   </entry>
   <entry>
-    <title>torchvision路径应用失败问题</title>
-    <url>/2024/09/05/torchvision%E8%B7%AF%E5%BE%84%E5%BA%94%E7%94%A8%E5%A4%B1%E8%B4%A5%E9%97%AE%E9%A2%98/</url>
-    <content><![CDATA[<h1 id="torchvision模块路径引用问题"><a href="#torchvision模块路径引用问题" class="headerlink" title="torchvision模块路径引用问题"></a>torchvision模块路径引用问题</h1><p>前言：安装pytorch后可能会出现torch模块引用成功，而torchvision模块引用失败，失败原因为torchvision模块路径丢失。可能是三个问题导致的： </p>
-<ol>
-<li>torch和torchvision版本不匹配</li>
-<li>pillow版本和torchvision版本不匹配</li>
-</ol>
-<h1 id="torch和torchvision版本不匹配"><a href="#torch和torchvision版本不匹配" class="headerlink" title="torch和torchvision版本不匹配"></a>torch和torchvision版本不匹配</h1><p>建议从pytorch官网重新下载新版pytorch，或者查询历史版本重新选择一个版本进行下载</p>
-<h1 id="pillow版本和torchvision版本不匹配"><a href="#pillow版本和torchvision版本不匹配" class="headerlink" title="pillow版本和torchvision版本不匹配"></a>pillow版本和torchvision版本不匹配</h1><p>删除pillow 在重新下载pillow最新版</p>
-]]></content>
-      <categories>
-        <category>软件</category>
-      </categories>
-      <tags>
-        <tag>Pytorch</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>pytorch 中维度修改那些事</title>
     <url>/2024/10/15/pytorch-%E4%B8%AD%E7%BB%B4%E5%BA%A6%E4%BF%AE%E6%94%B9%E9%82%A3%E4%BA%9B%E4%BA%8B/</url>
     <content><![CDATA[<h1 id="pytorch-维度操作那些事"><a href="#pytorch-维度操作那些事" class="headerlink" title="pytorch 维度操作那些事"></a>pytorch 维度操作那些事</h1><h2 id="维度转置函数-transpose-和-permute"><a href="#维度转置函数-transpose-和-permute" class="headerlink" title="维度转置函数 transpose() 和 permute()"></a>维度转置函数 transpose() 和 permute()</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">x = torch.randn([2,3])</span><br><span class="line">y = torch.randn([2,3,4])</span><br><span class="line">print(f&#x27;x.shape:&#123;x.shape&#125;,y.shape&#123;y.shape&#125;&#x27;)</span><br><span class="line"># transpose() torch.transpose(x)合法， x.transpose()合法。</span><br><span class="line">## torch.transpose(input, dim0, dim1, out=None)</span><br><span class="line">print(f&#x27;&#123;x.transpose(0,1).shape,torch.transpose(x,0,1).shape&#125;&#x27;)</span><br><span class="line"># transpose 一次性只能对两个维度进行操作。因此在进行维度变化的时候多采用permute()</span><br><span class="line">print(f&#x27;&#123;y.transpose(0,2).shape&#125;&#x27;)</span><br><span class="line">x = torch.randn([2,3])</span><br><span class="line">y = torch.randn([2,3,4])</span><br><span class="line">print(f&#x27;x.shape:&#123;x.shape&#125;,y.shape&#123;y.shape&#125;&#x27;)</span><br><span class="line"># permute() torch.permute(x)不合法，x.permute()合法。</span><br><span class="line">print(f&#x27;&#123;x.permute(0,1).shape&#125;&#x27;)</span><br><span class="line">print(f&#x27;&#123;y.permute(0,2,1).shape&#125;&#x27;)</span><br><span class="line"># transpose() 和 permute() 两者大致相同，但是在内存处理方面具有差异</span><br></pre></td></tr></table></figure>
 <h2 id="维度修改函数-squeeze-和-unsqueeze"><a href="#维度修改函数-squeeze-和-unsqueeze" class="headerlink" title="维度修改函数 squeeze()和 unsqueeze()"></a>维度修改函数 squeeze()和 unsqueeze()</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># squeeze()</span><br><span class="line">## 低维记为0 高维记为1</span><br><span class="line">## 如果小括号里不是1怎么办？这个括号里的1是什么意思？</span><br><span class="line">## 具体而言，如果一个张量有四个维度的，squeeze(index)会将张量中第index维度，</span><br><span class="line">## 且大小为1的维度进行去除，从而减少张量的维度。如果index是负整数，那就是倒数第index个维度</span><br><span class="line">print(f&#x27;&#123;x.squeeze(-1).shape&#125;&#x27;)</span><br><span class="line"># unsqueeze()</span><br><span class="line">## 从左到右，高维记为0，最低维最大</span><br><span class="line">print(f&#x27;&#123;y.unsqueeze(0).shape&#125;&#x27;)</span><br></pre></td></tr></table></figure>
 <h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><p><a href="https://blog.csdn.net/xinjieyuan/article/details/105232802">https://blog.csdn.net/xinjieyuan/article/details/105232802</a><br><a href="https://blog.csdn.net/guihaiyuan123/article/details/113455775">https://blog.csdn.net/guihaiyuan123/article/details/113455775</a></p>
 ]]></content>
+      <tags>
+        <tag>pytorch</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>UNet-RCAN 复现</title>
+    <url>/2024/11/29/UNet_RCAN/</url>
+    <content><![CDATA[<h1 id="UNet-RCAN"><a href="#UNet-RCAN" class="headerlink" title="UNet-RCAN"></a>UNet-RCAN</h1><h2 id="项目信息"><a href="#项目信息" class="headerlink" title="项目信息"></a>项目信息</h2><p>本文提出了一种UNet结合RCAN的网络结构，UNet网络模型主要负责进行弱光图像恢复进行数据填充，RCAN通道注意力模块负责进行将UNet的填充的数据进行清晰和修复伪影</p>
+<ol>
+<li>论文题目：Denoising fast super-resolution STED microscopy with UNet_RCAN</li>
+<li>代码地址：<a href="https://github.com/vebrahimi1990/UNet_RCAN_Denoising">https://github.com/vebrahimi1990/UNet_RCAN_Denoising</a></li>
+</ol>
+<h2 id="网络框架"><a href="#网络框架" class="headerlink" title="网络框架"></a>网络框架</h2><p>UNet-RCAN模型中将残差链接更换成了CAB模块进行链接，CAB是一种通道注意力机制，能够提取图片中重要的信息，此外本模型还拥有两个输出output-1（UNet）和output-2(RCAN)通过设置相同的损失和优化器将模型的两个模块进行跟新<br><img src="https://www.helloimg.com/i/2024/11/29/67495e45c2ddb.png" alt="Architecture.png"></p>
+<h3 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h3><p>模型采用了符合损失函数loss-1和loss-2，loss-1负责对图像误差进行计算<strong>loss-2</strong>利用卷积核计算图像之间的平缓，<strong>防止过平滑</strong></p>
+<ol>
+<li><p>loss-1</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">def ch_loss_2D(pred, gt):</span><br><span class="line">    norm = tf.norm(pred - gt, axis=(1, 2))</span><br><span class="line">    norm = tf.squeeze(norm)</span><br><span class="line">    norm = tf.pow(norm, 2)</span><br><span class="line">    norm = norm / (256 * 256) + 1e-6</span><br><span class="line">    norm = tf.pow(norm, 0.5)</span><br><span class="line">    c_loss = tf.math.reduce_mean(norm)</span><br><span class="line">    return c_loss</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>loss-2</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">def edge_loss_2D(pred, gt):</span><br><span class="line">    kernel = np.array([[0, 1, 0], [1, -4, 1], [0, 1, 0]])</span><br><span class="line">    kernel = kernel.reshape((3, 3, 1, 1))</span><br><span class="line">    pred = tf.nn.conv2d(pred, kernel, strides=[1, 1, 1, 1], padding=&#x27;VALID&#x27;)</span><br><span class="line">    gt = tf.nn.conv2d(gt, kernel, strides=[1, 1, 1, 1], padding=&#x27;VALID&#x27;)</span><br><span class="line">    e_loss = ch_loss_2D(pred, gt)</span><br><span class="line">    return e_loss</span><br></pre></td></tr></table></figure>
+<p>最终的损失函数为<code>loss = c_loss + 0.05 * e_loss</code>其中0.05是经验函数</p>
+</li>
+</ol>
+<h3 id="优化器"><a href="#优化器" class="headerlink" title="优化器"></a>优化器</h3><p>优化器采用了默认Adam优化</p>
+<h2 id="复现"><a href="#复现" class="headerlink" title="复现"></a>复现</h2><p>由于在tensorflow框架下复现难度极大，将整个模型进行重构到pytorch框架下进行训练</p>
+<h3 id="优化器设置"><a href="#优化器设置" class="headerlink" title="优化器设置"></a>优化器设置</h3><p>为了实现两个模块单独跟新</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>复现</category>
+      </categories>
       <tags>
         <tag>pytorch</tag>
       </tags>
@@ -116,6 +98,76 @@
 
 <p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
 ]]></content>
+  </entry>
+  <entry>
+    <title>一、预备知识</title>
+    <url>/2024/09/05/%E4%B8%80%E3%80%81%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86/</url>
+    <content><![CDATA[<h1 id="预备知识"><a href="#预备知识" class="headerlink" title="预备知识"></a>预备知识</h1><h2 id="基础"><a href="#基础" class="headerlink" title="基础"></a>基础</h2><h2 id="重点"><a href="#重点" class="headerlink" title="重点"></a>重点</h2><h3 id="范数"><a href="#范数" class="headerlink" title="范数"></a>范数</h3><h3 id="矩阵求导"><a href="#矩阵求导" class="headerlink" title="矩阵求导"></a>矩阵求导</h3><h3 id="反向传播（sum函数）"><a href="#反向传播（sum函数）" class="headerlink" title="反向传播（sum函数）"></a>反向传播（sum函数）</h3><p>&#96;&#96;<a href="https://blog.csdn.net/qq_43722079/article/details/136583592">https://blog.csdn.net/qq_43722079/article/details/136583592</a></p>
+]]></content>
+      <categories>
+        <category>动手深度学习</category>
+      </categories>
+      <tags>
+        <tag>Pytorch</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>torchvision路径应用失败问题</title>
+    <url>/2024/09/05/torchvision%E8%B7%AF%E5%BE%84%E5%BA%94%E7%94%A8%E5%A4%B1%E8%B4%A5%E9%97%AE%E9%A2%98/</url>
+    <content><![CDATA[<h1 id="torchvision模块路径引用问题"><a href="#torchvision模块路径引用问题" class="headerlink" title="torchvision模块路径引用问题"></a>torchvision模块路径引用问题</h1><p>前言：安装pytorch后可能会出现torch模块引用成功，而torchvision模块引用失败，失败原因为torchvision模块路径丢失。可能是三个问题导致的： </p>
+<ol>
+<li>torch和torchvision版本不匹配</li>
+<li>pillow版本和torchvision版本不匹配</li>
+</ol>
+<h1 id="torch和torchvision版本不匹配"><a href="#torch和torchvision版本不匹配" class="headerlink" title="torch和torchvision版本不匹配"></a>torch和torchvision版本不匹配</h1><p>建议从pytorch官网重新下载新版pytorch，或者查询历史版本重新选择一个版本进行下载</p>
+<h1 id="pillow版本和torchvision版本不匹配"><a href="#pillow版本和torchvision版本不匹配" class="headerlink" title="pillow版本和torchvision版本不匹配"></a>pillow版本和torchvision版本不匹配</h1><p>删除pillow 在重新下载pillow最新版</p>
+]]></content>
+      <categories>
+        <category>软件</category>
+      </categories>
+      <tags>
+        <tag>Pytorch</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>初始化</title>
+    <url>/2024/11/16/%E5%88%9D%E5%A7%8B%E5%8C%96/</url>
+    <content><![CDATA[<h1 id="神经网络初始化"><a href="#神经网络初始化" class="headerlink" title="神经网络初始化"></a>神经网络初始化</h1><p>神经网络的初始化对整个模型的训练起到至关重要的作用，一个合理的初始化能够让模型更快的拟合，反正不合适的初始化对整个模型是灾难性的影响。<br>通常在自己构建模型的时候，<code>pytorch</code>会自动对模型中的权重进行正太分布初始化，当让在莫些模型中正太分布分布表现效果并不优良，亦或者是有特殊要求进行特征提取。这时就要利用到自定义初始化了<code>Weight Initialization</code></p>
+<h2 id="选定卷积层为对象"><a href="#选定卷积层为对象" class="headerlink" title="选定卷积层为对象"></a>选定卷积层为对象</h2><p>通常我们需要自定义的权重的层为卷积层，因为有的特殊的卷积核能够提取不同数据特征。为后面的模型训练提特征的筛选与提取<br><code>getattr</code>函数<br>利用<code>getattr</code>函数能够完成指定层的的获取<code>conv_weight = getattr(model, conv)</code>这样就将model中名为conv层的卷积层的权重链接至conv_weight变量中。<br>当conv_weight变量进行赋值改变的时候，对应的conv层中的参数同样发生改变。</p>
+<h2 id="进行参数初始化"><a href="#进行参数初始化" class="headerlink" title="进行参数初始化"></a>进行参数初始化</h2><h3 id="凯明初始化"><a href="#凯明初始化" class="headerlink" title="凯明初始化"></a>凯明初始化</h3><h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ol>
+<li><a href="https://zhuanlan.zhihu.com/p/610248161">不同层应用不同初始化方式</a></li>
+<li><a href="https://blog.csdn.net/ys1305/article/details/94332007">pytorch中的参数初始化方法总结</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>深度学习</category>
+      </categories>
+      <tags>
+        <tag>pytorch</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>可视化</title>
+    <url>/2024/10/05/%E5%8F%AF%E8%A7%86%E5%8C%96/</url>
+    <content><![CDATA[<h1 id="神经网络训练可视化"><a href="#神经网络训练可视化" class="headerlink" title="神经网络训练可视化"></a>神经网络训练可视化</h1><h2 id="TensorBoard"><a href="#TensorBoard" class="headerlink" title="TensorBoard"></a>TensorBoard</h2><p>TensorBoard是一款强大的深度学习可视化工具，可以配合pytorch将模型细节进行可视化，本文将介绍三种初步用法。进阶查看网络卷积层等后续使用在进行介绍，单详细通过学习初步的用法后后续根据其它网络教程也很容易实现</p>
+<h3 id="应用安装"><a href="#应用安装" class="headerlink" title="应用安装"></a>应用安装</h3><p>安装TensorBoard （按住默认最新版，老版本在可视化梯度中存在问题）<br><code>pip install TensorBoard</code><br>引用</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">from torch.utils.tensorboard import SummaryWriter</span><br><span class="line"># 创建SummaryWriter类</span><br><span class="line">writer=SummaryWriter()</span><br></pre></td></tr></table></figure>
+<h3 id="可视化"><a href="#可视化" class="headerlink" title="可视化"></a>可视化</h3><h4 id="图像可视化"><a href="#图像可视化" class="headerlink" title="图像可视化"></a>图像可视化</h4><p>imgs 是图像DataLoader类，可视化能够实现将一组batch图像进行可视化。<br>在进行图像可视化的时候，如果tensor数据是0到1则会自动扩大244倍，数据超过1则默认数据范围为0到244。如果图像在可视化之前还进行了额外的操作，需要进行相反的操作才能正常可视化</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># images：可视化画布名称，imgsDataLoader类，steps每次训练的数据</span><br><span class="line">writer.add_images(&#x27;images&#x27;,imgs,steps)</span><br></pre></td></tr></table></figure>
+<h4 id="折线图可视化"><a href="#折线图可视化" class="headerlink" title="折线图可视化"></a>折线图可视化</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">writer.add_scalar(&#x27;loss&#x27;,loss, step)</span><br></pre></td></tr></table></figure>
+<h4 id="模型可视化"><a href="#模型可视化" class="headerlink" title="模型可视化"></a>模型可视化</h4><p>模型可视化稍微不同上面两种需要在训练循环中引入</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 创建假的图像需要和原始图像形状相同，还需要同模型在一个device上。</span><br><span class="line">img_false = torch.randn(1,3,32,32).to(device)</span><br><span class="line">writer.add_graph(chutian,img_false)</span><br></pre></td></tr></table></figure>
+<h3 id="查看"><a href="#查看" class="headerlink" title="查看"></a>查看</h3><p>在终端中输入<code>tensotboard --logdir=./</code>返回端口号后用浏览器打开就能查看训练过程的可视化情况了</p>
+<h3 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h3><p>tensorboard可视化还能用于可视化模型的卷积层的参数情况，通过查看参数的可视化的情况，就能轻易的发现梯度消失和梯度爆炸的问题。可视化的同时也为模型的训练过程调参提供了便利。</p>
+<h2 id="CAM"><a href="#CAM" class="headerlink" title="CAM"></a>CAM</h2><p>CAM多用于在分类问题中使用，类激活图可以显示模型在训练过程中，权重或重心在何处、如何转移，分类模型是根据哪一部分的特征进行判别的。简而言之，就是模仿人类识别物体的过程，随着模型的迭代，找到相关任务的关键部位。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://blog.csdn.net/qq_44722174/article/details/117000910">类激活图（CAM）代码+原理详解</a><br><a href="https://blog.csdn.net/qq_41656402/article/details/131123121">TensorBoard最全使用教程：看这篇就够了</a></p>
+]]></content>
+      <categories>
+        <category>深度学习</category>
+      </categories>
+      <tags>
+        <tag>tensorboard</tag>
+      </tags>
   </entry>
   <entry>
     <title>pytorch 软件环境搭建</title>
@@ -143,48 +195,6 @@
       </categories>
       <tags>
         <tag>Pytorch</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>初始化</title>
-    <url>/2024/11/16/%E5%88%9D%E5%A7%8B%E5%8C%96/</url>
-    <content><![CDATA[<h1 id="神经网络初始化"><a href="#神经网络初始化" class="headerlink" title="神经网络初始化"></a>神经网络初始化</h1><p>神经网络的初始化对整个模型的训练起到至关重要的作用，一个合理的初始化能够让模型更快的拟合，反正不合适的初始化对整个模型是灾难性的影响。<br>通常在自己构建模型的时候，<code>pytorch</code>会自动对模型中的权重进行正太分布初始化，当让在莫些模型中正太分布分布表现效果并不优良，亦或者是有特殊要求进行特征提取。这时就要利用到自定义初始化了<code>Weight Initialization</code></p>
-<h2 id="选定卷积层为对象"><a href="#选定卷积层为对象" class="headerlink" title="选定卷积层为对象"></a>选定卷积层为对象</h2><p>通常我们需要自定义的权重的层为卷积层，因为有的特殊的卷积核能够提取不同数据特征。为后面的模型训练提特征的筛选与提取<br><code>getattr</code>函数<br>利用<code>getattr</code>函数能够完成指定层的的获取<code>conv_weight = getattr(model, conv)</code>这样就将model中名为conv层的卷积层的权重链接至conv_weight变量中。<br>当conv_weight变量进行赋值改变的时候，对应的conv层中的参数同样发生改变。</p>
-<h2 id="进行参数初始化"><a href="#进行参数初始化" class="headerlink" title="进行参数初始化"></a>进行参数初始化</h2><h3 id="凯明初始化"><a href="#凯明初始化" class="headerlink" title="凯明初始化"></a>凯明初始化</h3><h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ol>
-<li><a href="https://zhuanlan.zhihu.com/p/610248161">不同层应用不同初始化方式</a></li>
-<li><a href="https://blog.csdn.net/ys1305/article/details/94332007">pytorch中的参数初始化方法总结</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>深度学习</category>
-      </categories>
-      <tags>
-        <tag>pytorch</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>一、预备知识</title>
-    <url>/2024/09/05/%E4%B8%80%E3%80%81%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86/</url>
-    <content><![CDATA[<h1 id="预备知识"><a href="#预备知识" class="headerlink" title="预备知识"></a>预备知识</h1><h2 id="基础"><a href="#基础" class="headerlink" title="基础"></a>基础</h2><h2 id="重点"><a href="#重点" class="headerlink" title="重点"></a>重点</h2><h3 id="范数"><a href="#范数" class="headerlink" title="范数"></a>范数</h3><h3 id="矩阵求导"><a href="#矩阵求导" class="headerlink" title="矩阵求导"></a>矩阵求导</h3><h3 id="反向传播（sum函数）"><a href="#反向传播（sum函数）" class="headerlink" title="反向传播（sum函数）"></a>反向传播（sum函数）</h3><p>&#96;&#96;<a href="https://blog.csdn.net/qq_43722079/article/details/136583592">https://blog.csdn.net/qq_43722079/article/details/136583592</a></p>
-]]></content>
-      <categories>
-        <category>动手深度学习</category>
-      </categories>
-      <tags>
-        <tag>Pytorch</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>新的开始 第一篇博客</title>
-    <url>/2024/08/24/%E6%96%B0%E7%9A%84%E5%BC%80%E5%A7%8B-%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/</url>
-    <content><![CDATA[<h1 id="博客的创建"><a href="#博客的创建" class="headerlink" title="博客的创建"></a>博客的创建</h1><p>当我写下这篇博客的时候，我很高兴我完成了我的第一篇博客的创作，虽然博客网站的运行等注意事项还没彻底掌握，但我很高兴至少自己完成了博客的初步制作。<br>以前在网络查询资料解决各种各式的问题，尝尝觉得这些大佬们技术叹为观止。不免在我脑海中产生一个问题，我能够成为像他们一样的人吗？  </p>
-<h1 id="展望"><a href="#展望" class="headerlink" title="展望"></a>展望</h1><p>个人博客的创建是为了记录我即将踏上的三年研究生生涯的点点滴滴，希望我能以梦为马，不负韶华。<br>先定下个小目标实现个人博客的月更和不断探索博客个性化希望等三年后的某一天回首这段时间，我能不留遗憾</p>
-]]></content>
-      <categories>
-        <category>生活</category>
-      </categories>
-      <tags>
-        <tag>随想</tag>
       </tags>
   </entry>
   <entry>
@@ -255,29 +265,6 @@
       </tags>
   </entry>
   <entry>
-    <title>可视化</title>
-    <url>/2024/10/05/%E5%8F%AF%E8%A7%86%E5%8C%96/</url>
-    <content><![CDATA[<h1 id="神经网络训练可视化"><a href="#神经网络训练可视化" class="headerlink" title="神经网络训练可视化"></a>神经网络训练可视化</h1><h2 id="TensorBoard"><a href="#TensorBoard" class="headerlink" title="TensorBoard"></a>TensorBoard</h2><p>TensorBoard是一款强大的深度学习可视化工具，可以配合pytorch将模型细节进行可视化，本文将介绍三种初步用法。进阶查看网络卷积层等后续使用在进行介绍，单详细通过学习初步的用法后后续根据其它网络教程也很容易实现</p>
-<h3 id="应用安装"><a href="#应用安装" class="headerlink" title="应用安装"></a>应用安装</h3><p>安装TensorBoard （按住默认最新版，老版本在可视化梯度中存在问题）<br><code>pip install TensorBoard</code><br>引用</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">from torch.utils.tensorboard import SummaryWriter</span><br><span class="line"># 创建SummaryWriter类</span><br><span class="line">writer=SummaryWriter()</span><br></pre></td></tr></table></figure>
-<h3 id="可视化"><a href="#可视化" class="headerlink" title="可视化"></a>可视化</h3><h4 id="图像可视化"><a href="#图像可视化" class="headerlink" title="图像可视化"></a>图像可视化</h4><p>imgs 是图像DataLoader类，可视化能够实现将一组batch图像进行可视化。<br>在进行图像可视化的时候，如果tensor数据是0到1则会自动扩大244倍，数据超过1则默认数据范围为0到244。如果图像在可视化之前还进行了额外的操作，需要进行相反的操作才能正常可视化</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># images：可视化画布名称，imgsDataLoader类，steps每次训练的数据</span><br><span class="line">writer.add_images(&#x27;images&#x27;,imgs,steps)</span><br></pre></td></tr></table></figure>
-<h4 id="折线图可视化"><a href="#折线图可视化" class="headerlink" title="折线图可视化"></a>折线图可视化</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">writer.add_scalar(&#x27;loss&#x27;,loss, step)</span><br></pre></td></tr></table></figure>
-<h4 id="模型可视化"><a href="#模型可视化" class="headerlink" title="模型可视化"></a>模型可视化</h4><p>模型可视化稍微不同上面两种需要在训练循环中引入</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 创建假的图像需要和原始图像形状相同，还需要同模型在一个device上。</span><br><span class="line">img_false = torch.randn(1,3,32,32).to(device)</span><br><span class="line">writer.add_graph(chutian,img_false)</span><br></pre></td></tr></table></figure>
-<h3 id="查看"><a href="#查看" class="headerlink" title="查看"></a>查看</h3><p>在终端中输入<code>tensotboard --logdir=./</code>返回端口号后用浏览器打开就能查看训练过程的可视化情况了</p>
-<h3 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h3><p>tensorboard可视化还能用于可视化模型的卷积层的参数情况，通过查看参数的可视化的情况，就能轻易的发现梯度消失和梯度爆炸的问题。可视化的同时也为模型的训练过程调参提供了便利。</p>
-<h2 id="CAM"><a href="#CAM" class="headerlink" title="CAM"></a>CAM</h2><p>CAM多用于在分类问题中使用，类激活图可以显示模型在训练过程中，权重或重心在何处、如何转移，分类模型是根据哪一部分的特征进行判别的。简而言之，就是模仿人类识别物体的过程，随着模型的迭代，找到相关任务的关键部位。</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://blog.csdn.net/qq_44722174/article/details/117000910">类激活图（CAM）代码+原理详解</a><br><a href="https://blog.csdn.net/qq_41656402/article/details/131123121">TensorBoard最全使用教程：看这篇就够了</a></p>
-]]></content>
-      <categories>
-        <category>深度学习</category>
-      </categories>
-      <tags>
-        <tag>tensorboard</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>研一第一月</title>
     <url>/2024/09/01/%E7%A0%94%E4%B8%80%E7%AC%AC%E4%B8%80%E6%9C%88/</url>
     <content><![CDATA[<h1 id="回顾"><a href="#回顾" class="headerlink" title="回顾"></a>回顾</h1><p>结束暑假，开始新学期</p>
@@ -296,6 +283,38 @@
       </categories>
       <tags>
         <tag>日记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>第二次组会</title>
+    <url>/2024/09/13/%E7%AC%AC%E4%BA%8C%E6%AC%A1%E7%BB%84%E4%BC%9A/</url>
+    <content><![CDATA[<h1 id="第二次组会"><a href="#第二次组会" class="headerlink" title="第二次组会"></a>第二次组会</h1><p>一共四个人汇报，其中在投文献一篇方向为拉曼，三篇论汇报拉曼两片，层析一篇</p>
+<h2 id="在投文献"><a href="#在投文献" class="headerlink" title="在投文献"></a>在投文献</h2><p>深度学习预测单细胞H2O2含量</p>
+<h3 id="数据集"><a href="#数据集" class="headerlink" title="数据集"></a>数据集</h3><p>细胞的数据集在预测问题上可以看作为时间序列，或者弱化其时间的数据看为序列。这种序列和文字序列有一定的相识性，在处理这方面数据可以更多的考虑循环神经网络和注意力机制进行处理</p>
+<h3 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h3><p>注意力机制</p>
+<h3 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h3><p>未知</p>
+<h3 id="评价指标"><a href="#评价指标" class="headerlink" title="评价指标"></a>评价指标</h3><p>R^2</p>
+<h2 id="论文问题"><a href="#论文问题" class="headerlink" title="论文问题"></a>论文问题</h2><p>网络结构不清晰，深度学习三要素 网络模型、损失函数和评价指标的选取有问题</p>
+<h2 id="论文汇报"><a href="#论文汇报" class="headerlink" title="论文汇报"></a>论文汇报</h2><h3 id="transformer-RNN-超高清重建图像"><a href="#transformer-RNN-超高清重建图像" class="headerlink" title="transformer+RNN 超高清重建图像"></a>transformer+RNN 超高清重建图像</h3><h4 id="网络-1"><a href="#网络-1" class="headerlink" title="网络"></a>网络</h4><p>RNN(head)</p>
+]]></content>
+      <categories>
+        <category>生活</category>
+      </categories>
+      <tags>
+        <tag>组会</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>新的开始 第一篇博客</title>
+    <url>/2024/08/24/%E6%96%B0%E7%9A%84%E5%BC%80%E5%A7%8B-%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/</url>
+    <content><![CDATA[<h1 id="博客的创建"><a href="#博客的创建" class="headerlink" title="博客的创建"></a>博客的创建</h1><p>当我写下这篇博客的时候，我很高兴我完成了我的第一篇博客的创作，虽然博客网站的运行等注意事项还没彻底掌握，但我很高兴至少自己完成了博客的初步制作。<br>以前在网络查询资料解决各种各式的问题，尝尝觉得这些大佬们技术叹为观止。不免在我脑海中产生一个问题，我能够成为像他们一样的人吗？  </p>
+<h1 id="展望"><a href="#展望" class="headerlink" title="展望"></a>展望</h1><p>个人博客的创建是为了记录我即将踏上的三年研究生生涯的点点滴滴，希望我能以梦为马，不负韶华。<br>先定下个小目标实现个人博客的月更和不断探索博客个性化希望等三年后的某一天回首这段时间，我能不留遗憾</p>
+]]></content>
+      <categories>
+        <category>生活</category>
+      </categories>
+      <tags>
+        <tag>随想</tag>
       </tags>
   </entry>
   <entry>
@@ -357,25 +376,6 @@
       </categories>
       <tags>
         <tag>pytorch</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>第二次组会</title>
-    <url>/2024/09/13/%E7%AC%AC%E4%BA%8C%E6%AC%A1%E7%BB%84%E4%BC%9A/</url>
-    <content><![CDATA[<h1 id="第二次组会"><a href="#第二次组会" class="headerlink" title="第二次组会"></a>第二次组会</h1><p>一共四个人汇报，其中在投文献一篇方向为拉曼，三篇论汇报拉曼两片，层析一篇</p>
-<h2 id="在投文献"><a href="#在投文献" class="headerlink" title="在投文献"></a>在投文献</h2><p>深度学习预测单细胞H2O2含量</p>
-<h3 id="数据集"><a href="#数据集" class="headerlink" title="数据集"></a>数据集</h3><p>细胞的数据集在预测问题上可以看作为时间序列，或者弱化其时间的数据看为序列。这种序列和文字序列有一定的相识性，在处理这方面数据可以更多的考虑循环神经网络和注意力机制进行处理</p>
-<h3 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h3><p>注意力机制</p>
-<h3 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h3><p>未知</p>
-<h3 id="评价指标"><a href="#评价指标" class="headerlink" title="评价指标"></a>评价指标</h3><p>R^2</p>
-<h2 id="论文问题"><a href="#论文问题" class="headerlink" title="论文问题"></a>论文问题</h2><p>网络结构不清晰，深度学习三要素 网络模型、损失函数和评价指标的选取有问题</p>
-<h2 id="论文汇报"><a href="#论文汇报" class="headerlink" title="论文汇报"></a>论文汇报</h2><h3 id="transformer-RNN-超高清重建图像"><a href="#transformer-RNN-超高清重建图像" class="headerlink" title="transformer+RNN 超高清重建图像"></a>transformer+RNN 超高清重建图像</h3><h4 id="网络-1"><a href="#网络-1" class="headerlink" title="网络"></a>网络</h4><p>RNN(head)</p>
-]]></content>
-      <categories>
-        <category>生活</category>
-      </categories>
-      <tags>
-        <tag>组会</tag>
       </tags>
   </entry>
 </search>
