@@ -8,6 +8,7 @@ tags:
 categories:
   - "学习"
   - "Linux高性能服务器编程"
+thumbnail: /img/covers/cover4.jpg
 ---
 # bufferevent
 

@@ -8,6 +8,7 @@ tags:
 categories:
   - "学习"
   - "Linux高性能服务器编程"
+thumbnail: /img/covers/cover3.jpg
 ---
 # UDP 通信
 time:2025_1_8

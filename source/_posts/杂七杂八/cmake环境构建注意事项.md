@@ -7,6 +7,7 @@ tags:
   - "环境配置"
 categories:
   - "杂七杂八"
+thumbnail: /img/covers/cover10.jpg
 ---
 # cmake环境构建注意事项
 

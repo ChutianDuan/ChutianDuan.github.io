@@ -8,6 +8,7 @@ tags:
 categories:
   - "学习"
   - "高性能C++并行编程"
+thumbnail: /img/covers/cover2.jpg
 ---
 # CUDA 开启的 GPU 编程
 

@@ -5,6 +5,7 @@ tags:
 - Pytorch
 categories: 
 - 软件
+thumbnail: /img/covers/cover7.jpg
 ---
 # Pytorch 环境搭建
 ## conda安装

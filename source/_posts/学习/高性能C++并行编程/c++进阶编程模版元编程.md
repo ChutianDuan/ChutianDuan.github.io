@@ -7,6 +7,7 @@ tags:
 categories:
   - "学习"
   - "高性能C++并行编程"
+thumbnail: /img/covers/cover5.jpg
 ---
 # C++进阶编程模版元编程
 time：2025_12_16

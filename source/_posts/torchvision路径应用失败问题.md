@@ -5,6 +5,7 @@ tags:
 - Pytorch
 categories: 
 - 软件
+thumbnail: /img/covers/cover5.jpg
 ---
 # torchvision模块路径引用问题
 前言：安装pytorch后可能会出现torch模块引用成功，而torchvision模块引用失败，失败原因为torchvision模块路径丢失。可能是三个问题导致的： 

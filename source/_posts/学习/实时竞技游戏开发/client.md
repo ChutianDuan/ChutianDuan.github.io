@@ -8,6 +8,7 @@ tags:
 categories:
   - "学习"
   - "实时竞技游戏开发"
+thumbnail: /img/covers/cover1.jpg
 ---
 # Client 实现分析
 time：2026_1_21

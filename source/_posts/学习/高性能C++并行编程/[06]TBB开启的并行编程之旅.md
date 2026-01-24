@@ -8,6 +8,7 @@ tags:
 categories:
   - "学习"
   - "高性能C++并行编程"
+thumbnail: /img/covers/cover10.jpg
 ---
 # TBB 开启的并行编程之旅
 time: 2025-12-23

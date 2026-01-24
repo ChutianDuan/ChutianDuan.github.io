@@ -8,6 +8,7 @@ tags:
 categories:
   - "学习"
   - "现代C++实践"
+thumbnail: /img/covers/cover9.jpg
 ---
 # allocator 自定义动态分配
 time:2026_1_9

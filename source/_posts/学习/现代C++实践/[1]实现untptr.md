@@ -9,6 +9,7 @@ tags:
 categories:
   - "学习"
   - "现代C++实践"
+thumbnail: /img/covers/cover1.jpg
 ---
 # 实现untptr
 

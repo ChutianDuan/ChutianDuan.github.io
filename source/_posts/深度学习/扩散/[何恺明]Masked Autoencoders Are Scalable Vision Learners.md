@@ -8,6 +8,7 @@ tags:
 categories:
   - "深度学习"
   - "扩散"
+thumbnail: /img/covers/cover3.jpg
 ---
 # Masked Autoencoders Are Scalable Vision Learners
 论文地址：https://arxiv.org/pdf/2111.06377。  
