@@ -1,465 +1,1456 @@
-<!DOCTYPE HTML>
-<html>
-
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
-	<link rel="bookmark"  type="image/x-icon"  href="/img/favicon.png"/>
-	<link rel="shortcut icon" href="/img/favicon.png">
-	
-			    <title>
-    楚天
-    </title>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-    <link rel="stylesheet" href="/css/mic_main.css" />
-    <link rel="stylesheet" href="/css/dropdownMenu.css" />
-    <meta name="keywords" content="Chutian Duan blog 深度学习 C++" />
-    
-    	<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-	 
-    <noscript>
-        <link rel="stylesheet" href="/css/noscript.css" />
-    </noscript>
-    <style type="text/css">
-        body:before {
-          content: ' ';
-          position: fixed;
-          top: 0;
-          background: url('/img/bg.jpg') center 0 no-repeat;
-          right: 0;
-          bottom: 0;
-          left: 0;
-          background-size: cover; 
-        }
-    </style>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
 
-			    
-  
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        tex2jax: {
-          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
-          processEscapes: true,
-          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-        }
-      });
-    </script>
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax(), i;
-        for (i=0; i < all.length; i += 1) {
-          all[i].SourceElement().parentNode.className += ' has-jax';
-        }
-      });
-    </script>
-    <script async type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chutianduan.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":2,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="楚天">
+<meta property="og:url" content="https://chutianduan.github.io/page/4/index.html">
+<meta property="og:site_name" content="楚天">
+<meta property="og:description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="楚天">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="游戏网络">
+<meta property="article:tag" content="技术博客">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://chutianduan.github.io/page/4/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":true,"isPost":false,"lang":"zh-CN","comments":"","permalink":"","path":"page/4/index.html","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>楚天</title>
   
 
 
-    <script src="/js/jquery.min.js"></script>
-    <script src="/js/jquery.scrollex.min.js"></script>
-    <script src="/js/jquery.scrolly.min.js"></script>
-    <script src="/js/skel.min.js"></script>
-    <script src="/js/util.js"></script>
-    <script src="/js/main.js"></script>
-	
-<meta name="generator" content="Hexo 7.3.0"></head>
-    
-		<body class="is-loading">
-    <!-- Wrapper 外包 s-->
-    <div id="wrapper" class="fade-in overlay">
-        <!-- Intro 头部显示 s -->
-                <div id="intro">
-            <h1>This is<br />
-                        Chutian Duan </h1>
-            <p> Keep learning, keep building.
-            </p>
-            <ul class="actions">
-                <li><a href="#header" class="button icon solo fa-arrow-down scrolly">Continue</a></li>
-            </ul>
-        </div>
-        <!-- Intro 头部显示 e -->
-        <!-- Header 头部logo start -->
-        <header id="header">
-    <a href="/" class="logo">Enter Blog</a>
-</header>
-        <!-- Header 头部logo end -->
-        <!-- Nav 导航条 start -->
-        <nav id="nav" class="special" >
-            <ul class="menu links" >
-			<!-- Homepage  主页  --> 
-			<li >
-	            <a href="/" rel="nofollow">主页</a>
-	        </li>
-			<!-- categories_name  分类   --> 
-	        
-	        <li class="active">
-	            <a href="#s1">分类</a>
-	                    <ul class="submenu">
-	                        <li>
-	                        <a class="category-link" href="/categories/%E5%8A%A8%E6%89%8B%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">动手深度学习</a></li><li><a class="category-link" href="/categories/%E5%AD%A6%E4%B9%A0/">学习</a></li><li><a class="category-link" href="/categories/%E5%AD%A6%E4%B9%A0/Linux%E9%AB%98%E6%80%A7%E8%83%BD%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BC%96%E7%A8%8B/">Linux高性能服务器编程</a></li><li><a class="category-link" href="/categories/%E5%AD%A6%E4%B9%A0/%E4%BB%A3%E7%A0%81%E7%BB%83%E4%B9%A0/">代码练习</a></li><li><a class="category-link" href="/categories/%E5%AD%A6%E4%B9%A0/%E5%AE%9E%E6%97%B6%E7%AB%9E%E6%8A%80%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/">实时竞技游戏开发</a></li><li><a class="category-link" href="/categories/%E5%AD%A6%E4%B9%A0/%E7%8E%B0%E4%BB%A3C-%E5%AE%9E%E8%B7%B5/">现代C++实践</a></li><li><a class="category-link" href="/categories/%E5%AD%A6%E4%B9%A0/%E9%AB%98%E6%80%A7%E8%83%BDC-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/">高性能C++并行编程</a></li><li><a class="category-link" href="/categories/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/">杂七杂八</a></li><li><a class="category-link" href="/categories/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/%E8%AF%BB%E4%B9%A6%E6%9C%89%E6%84%9F/">读书有感</a></li><li><a class="category-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a></li><li><a class="category-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E6%89%A9%E6%95%A3/">扩散</a></li><li><a class="category-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E8%B6%85%E5%88%86/">超分</a></li><li><a class="category-link" href="/categories/%E7%94%9F%E6%B4%BB/">生活</a></li><li><a class="category-link" href="/categories/%E7%94%9F%E6%B4%BB/%E6%97%85%E6%B8%B8%E6%94%BB%E7%95%A5/">旅游攻略</a></li><li><a class="category-link" href="/categories/%E8%BD%AF%E4%BB%B6/">软件</a>
-	                    </ul>
-	        </li>
-	        
-	        <!-- archives  归档   --> 
-	        
-	        <li class="active">
-	            <a href="#s1">归档</a>
-	                    <ul class="submenu">
-	                        <li>
-	                        <a class="archive-link" href="/archives/2026/02/">二月 2026</a></li><li><a class="archive-link" href="/archives/2026/01/">一月 2026</a></li><li><a class="archive-link" href="/archives/2025/12/">十二月 2025</a></li><li><a class="archive-link" href="/archives/2025/11/">十一月 2025</a></li><li><a class="archive-link" href="/archives/2024/09/">九月 2024</a></li><li><a class="archive-link" href="/archives/2024/08/">八月 2024</a>
-	                    </ul>
-	        </li>
-	        
-	        
-		        <!-- Pages 自定义   -->
-		        
-		        <li>
-		            <a href="/about/" title="关于">
-		                关于
-		            </a>
-		        </li>
-		        
-		        <li>
-		            <a href="/tags/" title="标签">
-		                标签
-		            </a>
-		        </li>
-		        
 
 
-            </ul>
-            <!-- icons 图标   -->
-			<ul class="icons">
-                    
-                    <li>
-                        <a title="github" href="https://github.com/ChutianDuan" target="_blank" rel="noopener">
-                            <i class="icon fa fa-github"></i>
-                        </a>
-                    </li>
-                    
-			</ul>
-</nav>
-        <!-- Nav 导航条 end -->
-        <!-- Main 主要部分 start -->
-        
-        <!-- 文章列表   s -->
-        <div id="main" style="background-color: transparent; padding:0;">
-        <section class="link_container" style="margin-top: 0; background-color: transparent; ">
-            <div class="link_row">
-                <!-- 文章sample  s-->
 
-                
-                <div class="6u 12u(narrower)">
-                    <section class="link_box special">
-                       <a href="/2025/12/09/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/%E8%AF%BB%E4%B9%A6%E6%9C%89%E6%84%9F/%E7%A6%85%E4%B8%8E%E6%91%A9%E6%89%98%E8%BD%A6%E7%BB%B4%E4%BF%AE%E8%89%BA%E6%9C%AF/">
-                        <div class="page_title" style="background-image: url(/img/covers/cover1.jpg);background-position: center; background-repeat:no-repeat; background-size:cover;-moz-background-size:cover;">
-                            <!--标题-->
-                            <h2 class="page_title_text"> 禅与摩托车维修艺术 </h2>
-                            <!--段落-->
-                        </div>
-                        </a>
-                        <div class="home-post-info">
-                            <!-- Author Avatar -->
-                            <div class="home-post-info-author-avatar">
-                                <h6><span class="home-post-info-data">2025-12-09</span></h6>
-                                <div class="home-post-info-Category">
-                                    <!-- Category -->
-                                    <span>
-                            <h6>
-                            <a class="post_category-link" target="_blank" rel="noopener" href="http://localhost:4000/categories/Algorithm/">
-                                <a class="post_category-link" href="/categories/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/">杂七杂八</a>, <a class="post_category-link" href="/categories/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/%E8%AF%BB%E4%B9%A6%E6%9C%89%E6%84%9F/">读书有感</a></a>
-                            </h6>
-                        </span>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                </div>
-                <!-- 文章sample  e-->
-            
-                <div class="6u 12u(narrower)">
-                    <section class="link_box special">
-                       <a href="/2025/11/28/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E8%B6%85%E5%88%86/%E7%9B%B2%E8%B6%85%E5%88%86/">
-                        <div class="page_title" style="background-image: url(/img/covers/cover5.jpg);background-position: center; background-repeat:no-repeat; background-size:cover;-moz-background-size:cover;">
-                            <!--标题-->
-                            <h2 class="page_title_text"> 盲超分 </h2>
-                            <!--段落-->
-                        </div>
-                        </a>
-                        <div class="home-post-info">
-                            <!-- Author Avatar -->
-                            <div class="home-post-info-author-avatar">
-                                <h6><span class="home-post-info-data">2025-11-28</span></h6>
-                                <div class="home-post-info-Category">
-                                    <!-- Category -->
-                                    <span>
-                            <h6>
-                            <a class="post_category-link" target="_blank" rel="noopener" href="http://localhost:4000/categories/Algorithm/">
-                                <a class="post_category-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a>, <a class="post_category-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E8%B6%85%E5%88%86/">超分</a></a>
-                            </h6>
-                        </span>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                </div>
-                <!-- 文章sample  e-->
-            
-                <div class="6u 12u(narrower)">
-                    <section class="link_box special">
-                       <a href="/2025/11/22/%E5%AD%A6%E4%B9%A0/%E9%AB%98%E6%80%A7%E8%83%BDC++%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/vector%E5%AE%B9%E5%99%A8%E4%BC%98%E5%8C%96%E7%BC%96%E7%A8%8B/">
-                        <div class="page_title" style="background-image: url(/img/covers/cover9.jpg);background-position: center; background-repeat:no-repeat; background-size:cover;-moz-background-size:cover;">
-                            <!--标题-->
-                            <h2 class="page_title_text"> vector容器优化编程 </h2>
-                            <!--段落-->
-                        </div>
-                        </a>
-                        <div class="home-post-info">
-                            <!-- Author Avatar -->
-                            <div class="home-post-info-author-avatar">
-                                <h6><span class="home-post-info-data">2025-11-22</span></h6>
-                                <div class="home-post-info-Category">
-                                    <!-- Category -->
-                                    <span>
-                            <h6>
-                            <a class="post_category-link" target="_blank" rel="noopener" href="http://localhost:4000/categories/Algorithm/">
-                                <a class="post_category-link" href="/categories/%E5%AD%A6%E4%B9%A0/">学习</a>, <a class="post_category-link" href="/categories/%E5%AD%A6%E4%B9%A0/%E9%AB%98%E6%80%A7%E8%83%BDC-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/">高性能C++并行编程</a></a>
-                            </h6>
-                        </span>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                </div>
-                <!-- 文章sample  e-->
-            
-                <div class="6u 12u(narrower)">
-                    <section class="link_box special">
-                       <a href="/2025/11/21/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E6%89%A9%E6%95%A3/%E4%BD%95%E5%87%AF%E6%98%8E%E8%AE%A9%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E5%9B%9E%E5%BD%92%E2%80%9C%E5%8E%BB%E5%99%AA%E2%80%9D%E6%9C%AC%E8%B4%A8/">
-                        <div class="page_title" style="background-image: url(/img/covers/cover4.jpg);background-position: center; background-repeat:no-repeat; background-size:cover;-moz-background-size:cover;">
-                            <!--标题-->
-                            <h2 class="page_title_text"> 让扩散模型回归“去噪”本质 </h2>
-                            <!--段落-->
-                        </div>
-                        </a>
-                        <div class="home-post-info">
-                            <!-- Author Avatar -->
-                            <div class="home-post-info-author-avatar">
-                                <h6><span class="home-post-info-data">2025-11-21</span></h6>
-                                <div class="home-post-info-Category">
-                                    <!-- Category -->
-                                    <span>
-                            <h6>
-                            <a class="post_category-link" target="_blank" rel="noopener" href="http://localhost:4000/categories/Algorithm/">
-                                <a class="post_category-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a>, <a class="post_category-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E6%89%A9%E6%95%A3/">扩散</a></a>
-                            </h6>
-                        </span>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                </div>
-                <!-- 文章sample  e-->
-            
-                <div class="6u 12u(narrower)">
-                    <section class="link_box special">
-                       <a href="/2025/11/16/%E7%94%9F%E6%B4%BB/%E6%97%85%E6%B8%B8%E6%94%BB%E7%95%A5/%E9%BB%84%E5%B1%B1/">
-                        <div class="page_title" style="background-image: url(/img/covers/cover2.jpg);background-position: center; background-repeat:no-repeat; background-size:cover;-moz-background-size:cover;">
-                            <!--标题-->
-                            <h2 class="page_title_text"> 黄山 </h2>
-                            <!--段落-->
-                        </div>
-                        </a>
-                        <div class="home-post-info">
-                            <!-- Author Avatar -->
-                            <div class="home-post-info-author-avatar">
-                                <h6><span class="home-post-info-data">2025-11-16</span></h6>
-                                <div class="home-post-info-Category">
-                                    <!-- Category -->
-                                    <span>
-                            <h6>
-                            <a class="post_category-link" target="_blank" rel="noopener" href="http://localhost:4000/categories/Algorithm/">
-                                <a class="post_category-link" href="/categories/%E7%94%9F%E6%B4%BB/">生活</a>, <a class="post_category-link" href="/categories/%E7%94%9F%E6%B4%BB/%E6%97%85%E6%B8%B8%E6%94%BB%E7%95%A5/">旅游攻略</a></a>
-                            </h6>
-                        </span>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                </div>
-                <!-- 文章sample  e-->
-            
-                <div class="6u 12u(narrower)">
-                    <section class="link_box special">
-                       <a href="/2024/09/13/%E7%AC%AC%E4%BA%8C%E6%AC%A1%E7%BB%84%E4%BC%9A/">
-                        <div class="page_title" style="background-image: url(/img/covers/cover6.jpg);background-position: center; background-repeat:no-repeat; background-size:cover;-moz-background-size:cover;">
-                            <!--标题-->
-                            <h2 class="page_title_text"> 第二次组会 </h2>
-                            <!--段落-->
-                        </div>
-                        </a>
-                        <div class="home-post-info">
-                            <!-- Author Avatar -->
-                            <div class="home-post-info-author-avatar">
-                                <h6><span class="home-post-info-data">2024-09-13</span></h6>
-                                <div class="home-post-info-Category">
-                                    <!-- Category -->
-                                    <span>
-                            <h6>
-                            <a class="post_category-link" target="_blank" rel="noopener" href="http://localhost:4000/categories/Algorithm/">
-                                <a class="post_category-link" href="/categories/%E7%94%9F%E6%B4%BB/">生活</a></a>
-                            </h6>
-                        </span>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                </div>
-                <!-- 文章sample  e-->
-            
-                <div class="6u 12u(narrower)">
-                    <section class="link_box special">
-                       <a href="/2024/09/13/GAN%E7%BD%91%E7%BB%9C/">
-                        <div class="page_title" style="background-image: url(/img/covers/cover1.jpg);background-position: center; background-repeat:no-repeat; background-size:cover;-moz-background-size:cover;">
-                            <!--标题-->
-                            <h2 class="page_title_text"> GAN生成式对抗网络 </h2>
-                            <!--段落-->
-                        </div>
-                        </a>
-                        <div class="home-post-info">
-                            <!-- Author Avatar -->
-                            <div class="home-post-info-author-avatar">
-                                <h6><span class="home-post-info-data">2024-09-13</span></h6>
-                                <div class="home-post-info-Category">
-                                    <!-- Category -->
-                                    <span>
-                            <h6>
-                            <a class="post_category-link" target="_blank" rel="noopener" href="http://localhost:4000/categories/Algorithm/">
-                                <a class="post_category-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a></a>
-                            </h6>
-                        </span>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                </div>
-                <!-- 文章sample  e-->
-            
-                <div class="6u 12u(narrower)">
-                    <section class="link_box special">
-                       <a href="/2024/09/05/%E4%B8%80%E3%80%81%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86/">
-                        <div class="page_title" style="background-image: url(/img/covers/cover9.jpg);background-position: center; background-repeat:no-repeat; background-size:cover;-moz-background-size:cover;">
-                            <!--标题-->
-                            <h2 class="page_title_text"> 一、预备知识 </h2>
-                            <!--段落-->
-                        </div>
-                        </a>
-                        <div class="home-post-info">
-                            <!-- Author Avatar -->
-                            <div class="home-post-info-author-avatar">
-                                <h6><span class="home-post-info-data">2024-09-05</span></h6>
-                                <div class="home-post-info-Category">
-                                    <!-- Category -->
-                                    <span>
-                            <h6>
-                            <a class="post_category-link" target="_blank" rel="noopener" href="http://localhost:4000/categories/Algorithm/">
-                                <a class="post_category-link" href="/categories/%E5%8A%A8%E6%89%8B%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">动手深度学习</a></a>
-                            </h6>
-                        </span>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                </div>
-                <!-- 文章sample  e-->
-            
-                <div class="6u 12u(narrower)">
-                    <section class="link_box special">
-                       <a href="/2024/09/05/torchvision%E8%B7%AF%E5%BE%84%E5%BA%94%E7%94%A8%E5%A4%B1%E8%B4%A5%E9%97%AE%E9%A2%98/">
-                        <div class="page_title" style="background-image: url(/img/covers/cover5.jpg);background-position: center; background-repeat:no-repeat; background-size:cover;-moz-background-size:cover;">
-                            <!--标题-->
-                            <h2 class="page_title_text"> torchvision路径应用失败问题 </h2>
-                            <!--段落-->
-                        </div>
-                        </a>
-                        <div class="home-post-info">
-                            <!-- Author Avatar -->
-                            <div class="home-post-info-author-avatar">
-                                <h6><span class="home-post-info-data">2024-09-05</span></h6>
-                                <div class="home-post-info-Category">
-                                    <!-- Category -->
-                                    <span>
-                            <h6>
-                            <a class="post_category-link" target="_blank" rel="noopener" href="http://localhost:4000/categories/Algorithm/">
-                                <a class="post_category-link" href="/categories/%E8%BD%AF%E4%BB%B6/">软件</a></a>
-                            </h6>
-                        </span>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                </div>
-                <!-- 文章sample  e-->
-            
-                <div class="6u 12u(narrower)">
-                    <section class="link_box special">
-                       <a href="/2024/09/01/%E7%A0%94%E4%B8%80%E7%AC%AC%E4%B8%80%E6%9C%88/">
-                        <div class="page_title" style="background-image: url(/img/covers/cover3.jpg);background-position: center; background-repeat:no-repeat; background-size:cover;-moz-background-size:cover;">
-                            <!--标题-->
-                            <h2 class="page_title_text"> 研一第一月 </h2>
-                            <!--段落-->
-                        </div>
-                        </a>
-                        <div class="home-post-info">
-                            <!-- Author Avatar -->
-                            <div class="home-post-info-author-avatar">
-                                <h6><span class="home-post-info-data">2024-09-01</span></h6>
-                                <div class="home-post-info-Category">
-                                    <!-- Category -->
-                                    <span>
-                            <h6>
-                            <a class="post_category-link" target="_blank" rel="noopener" href="http://localhost:4000/categories/Algorithm/">
-                                <a class="post_category-link" href="/categories/%E7%94%9F%E6%B4%BB/">生活</a></a>
-                            </h6>
-                        </span>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                </div>
-                <!-- 文章sample  e-->
-            
-            </div>
-        </section>
-        </div>
-        <!-- 文章列表   end -->
-        <!-- Main 主要部分 end -->
-        <!-- footer  页码 start-->
-        <footer style="text-align: center; padding-top: 2em;">
+
+
+
   
-    <div class="pagination" >
-        <a class="extend prev" rel="prev" href="/page/3/">pre</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/5/">nex</a>
-    </div>  
-    
-</footer>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
 
-        <!-- footer  页码 end-->
-        <!-- Copyright 版权 start -->
-                <div id="copyright">
-            <ul>
-                <li>&copy;Powered By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/" style="border-bottom: none;">hexo</a></li>
-                <li>Design: <a target="_blank" rel="noopener" href="http://miccall.tech " style="border-bottom: none;">miccall</a></li>
-            </ul>
-            
-                <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
-			
-        </div>
-        <!-- Copyright 版权 end -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
     </div>
-    <!-- Wrapper 外包 e-->
-    <!-- Scripts -->
-</body>
+  </div>
 
- 	
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">楚天</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">惟楚有材，于斯为盛</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-友情链接"><a href="/link/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-overview-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="楚天"
+      src="/img/me.jpg">
+  <p class="site-author-name" itemprop="name">楚天</p>
+  <div class="site-description" itemprop="description">记录深度学习、C++、游戏网络与生活旅行的学习笔记。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">70</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ChutianDuan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ChutianDuan" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:3383006954@qq.com" title="E-Mail → mailto:3383006954@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/2025/12/09/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/%E8%AF%BB%E4%B9%A6%E6%9C%89%E6%84%9F/%E7%A6%85%E4%B8%8E%E6%91%A9%E6%89%98%E8%BD%A6%E7%BB%B4%E4%BF%AE%E8%89%BA%E6%9C%AF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/12/09/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/%E8%AF%BB%E4%B9%A6%E6%9C%89%E6%84%9F/%E7%A6%85%E4%B8%8E%E6%91%A9%E6%89%98%E8%BD%A6%E7%BB%B4%E4%BF%AE%E8%89%BA%E6%9C%AF/" class="post-title-link" itemprop="url">禅与摩托车维修艺术</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-12-09 07:29:44" itemprop="dateCreated datePublished" datetime="2025-12-09T07:29:44+08:00">2025-12-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-01-24 10:43:15" itemprop="dateModified" datetime="2026-01-24T10:43:15+08:00">2026-01-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/" itemprop="url" rel="index"><span itemprop="name">杂七杂八</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/%E8%AF%BB%E4%B9%A6%E6%9C%89%E6%84%9F/" itemprop="url" rel="index"><span itemprop="name">读书有感</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="良质"><a href="#良质" class="headerlink" title="良质"></a>良质</h1>
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/2025/11/28/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E8%B6%85%E5%88%86/%E7%9B%B2%E8%B6%85%E5%88%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/11/28/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E8%B6%85%E5%88%86/%E7%9B%B2%E8%B6%85%E5%88%86/" class="post-title-link" itemprop="url">盲超分</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-11-28 10:45:46" itemprop="dateCreated datePublished" datetime="2025-11-28T10:45:46+08:00">2025-11-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-01-24 10:43:15" itemprop="dateModified" datetime="2026-01-24T10:43:15+08:00">2026-01-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E8%B6%85%E5%88%86/" itemprop="url" rel="index"><span itemprop="name">超分</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="盲超分"><a href="#盲超分" class="headerlink" title="盲超分"></a>盲超分</h1><p>退化核？<br>综述：“看清”世界——从盲超分到真实超分 <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/657729852">https://zhuanlan.zhihu.com/p/657729852</a></p>
+<p>自监督：<a target="_blank" rel="noopener" href="https://ieeexplore.ieee.org/document/10868396">https://ieeexplore.ieee.org/document/10868396</a><br>自监督：单一遥感高光谱图像的盲超分辨率<a target="_blank" rel="noopener" href="https://github.com/zhiyuan0112/TSBSR">https://github.com/zhiyuan0112/TSBSR</a></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/2025/11/22/%E5%AD%A6%E4%B9%A0/%E9%AB%98%E6%80%A7%E8%83%BDC++%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/vector%E5%AE%B9%E5%99%A8%E4%BC%98%E5%8C%96%E7%BC%96%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/11/22/%E5%AD%A6%E4%B9%A0/%E9%AB%98%E6%80%A7%E8%83%BDC++%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/vector%E5%AE%B9%E5%99%A8%E4%BC%98%E5%8C%96%E7%BC%96%E7%A8%8B/" class="post-title-link" itemprop="url">vector容器优化编程</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-11-22 15:30:58" itemprop="dateCreated datePublished" datetime="2025-11-22T15:30:58+08:00">2025-11-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-01-24 10:43:15" itemprop="dateModified" datetime="2026-01-24T10:43:15+08:00">2026-01-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/%E9%AB%98%E6%80%A7%E8%83%BDC-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">高性能C++并行编程</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="vector-容器优化编程笔记"><a href="#vector-容器优化编程笔记" class="headerlink" title="vector 容器优化编程笔记"></a>vector 容器优化编程笔记</h1><p>时间：2025&#x2F;11&#x2F;22<br>课程地址：Bilibili – BV1qF411T7sd<br>课件仓库：parallel101&#x2F;course（GitHub）</p>
+<hr>
+<h2 id="一、基础知识"><a href="#一、基础知识" class="headerlink" title="一、基础知识"></a>一、基础知识</h2><h3 id="1-分配器（Allocator）"><a href="#1-分配器（Allocator）" class="headerlink" title="1. 分配器（Allocator）"></a>1. 分配器（Allocator）</h3><table>
+<thead>
+<tr>
+<th>方法</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>allocate(n)</code></td>
+<td>分配 n 个 T 的原始内存（未构造对象）</td>
+</tr>
+<tr>
+<td><code>deallocate(p, n)</code></td>
+<td>释放之前分配的内存</td>
+</tr>
+<tr>
+<td><code>construct(p, args...)</code></td>
+<td>在 p 指向的位置调用 T 的构造函数</td>
+</tr>
+<tr>
+<td><code>destroy(p)</code></td>
+<td>调用 p 指向对象的析构函数</td>
+</tr>
+</tbody></table>
+<p>vector 在扩容时会：</p>
+<p>allocator.allocate() 申请更大内存</p>
+<p>allocator.construct() 搬移原有元素</p>
+<p>allocator.destroy() 销毁旧元素</p>
+<p>allocator.deallocate() 释放旧内存</p>
+<h3 id="2-迭代器（Iterator）"><a href="#2-迭代器（Iterator）" class="headerlink" title="2. 迭代器（Iterator）"></a>2. 迭代器（Iterator）</h3><p>提供一个统一的、类似指针的访问接口</p>
+<p>迭代器 ≈ 指针的一般化版本</p>
+<p>vector 的迭代器本质就是指针（随机访问）</p>
+<p>list 的迭代器是包装了节点的对象（链式结构）</p>
+<p>map&#x2F;set 的迭代器包装了树节点（红黑树结构）</p>
+<p>所有迭代器都必须重载以下操作符：</p>
+<p>*it 返回元素</p>
+<p>it-&gt;member 访问结构体字段</p>
+<p>++it &#x2F; –it 移动位置</p>
+<p>it &#x3D;&#x3D; other 判断是否到达末尾</p>
+<table>
+<thead>
+<tr>
+<th>容器</th>
+<th>迭代器类型</th>
+<th>是否连续内存</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>vector</td>
+<td>随机访问（指针）</td>
+<td>是</td>
+</tr>
+<tr>
+<td>array</td>
+<td>随机访问（指针）</td>
+<td>是</td>
+</tr>
+<tr>
+<td>deque</td>
+<td>随机访问（复杂对象）</td>
+<td>否</td>
+</tr>
+<tr>
+<td>list</td>
+<td>双向迭代器</td>
+<td>否</td>
+</tr>
+<tr>
+<td>set&#x2F;map</td>
+<td>双向迭代器（红黑树）</td>
+<td>否</td>
+</tr>
+</tbody></table>
+<h3 id="3-仿函数（Functor）"><a href="#3-仿函数（Functor）" class="headerlink" title="3. 仿函数（Functor）"></a>3. 仿函数（Functor）</h3><p>仿函数也称“函数对象”（Function Object），本质是一个重载了 <code>operator()</code> 的类实例。<br>它既能像函数一样被调用，也能作为对象携带状态，因此常用于需要将“可调用对象”作为参数传入的场景中。</p>
+<p>编写仿函数的基本方式：<br>创建一个类 → 实现内部逻辑 → 重载 <code>operator()</code>。<br>这样可以避免大量使用全局变量，同时便于逻辑复用，使代码更易维护和管理。</p>
+<hr>
+<h2 id="二、vector-容器"><a href="#二、vector-容器" class="headerlink" title="二、vector 容器"></a>二、vector 容器</h2><p><code>std::vector</code> 是一种动态数组，其元素存储在堆上，支持自动扩容。</p>
+<p>常用操作说明：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">a</span><span class="params">(<span class="number">4</span>)</span></span></span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><p><strong>size()</strong><br><code>a.size()</code> 返回当前长度（元素个数）。</p>
+</li>
+<li><p><strong>operator[]</strong><br><code>a[x]</code> 等价于 <code>*(a.begin() + x)</code>。<br>需要注意：为了性能 <strong>不会做越界检查</strong>，越界可能导致未定义行为（包括程序崩溃）。</p>
+</li>
+<li><p><strong>at()</strong><br><code>a.at(x)</code> 与 <code>a[x]</code> 功能一致，但会进行边界检查（异常处理），可靠性更高但性能略低。</p>
+</li>
+<li><p><strong>resize(n)</strong><br>修改 vector 的逻辑长度为 n：</p>
+<ul>
+<li>n 变大：扩容位置填充默认值（int 为 0）</li>
+<li>n 变小：截断，但多余空间不会立即释放，仅修改 size，不改 capacity</li>
+</ul>
+</li>
+<li><p><strong>resize(n, val)</strong><br>扩容部分使用 <code>val</code> 填充。</p>
+</li>
+<li><p><strong>clear()</strong><br><code>a.clear()</code> 等价于 <code>a.resize(0)</code>；清空元素但不释放已分配内存。</p>
+</li>
+<li><p><strong>push_back(x)</strong><br>在末尾添加一个元素。<br>等价于：<code>a.resize(a.size()+1, x)</code>。</p>
+</li>
+<li><p><strong>pop_back()</strong><br>删除末尾元素（不返回值）。<br>等价于：<code>a.resize(a.size()-1)</code>。</p>
+</li>
+<li><p><strong>back()</strong><br>返回最后一个元素 <code>a[a.size()-1]</code>。</p>
+</li>
+<li><p><strong>front()</strong><br>等价于 <code>a[0]</code>。</p>
+</li>
+<li><p><strong>data()</strong><br>返回底层数组的首地址，即 <code>&amp;a[0]</code>。<br>通常需搭配 <code>size()</code> 使用，方便与 C 风格接口交互。<br><strong>注意：扩容后 data() 可能失效，因为底层地址可能改变。</strong></p>
+</li>
+<li><p><strong>capacity()</strong><br>返回当前实际分配的容量（不等于 size）。</p>
+</li>
+<li><p><strong>shrink_to_fit()</strong><br>请求释放多余内存，使 capacity 接近 size（但不保证一定有效）。</p>
+</li>
+</ol>
+<hr>
+<h2 id="三、迭代器"><a href="#三、迭代器" class="headerlink" title="三、迭代器"></a>三、迭代器</h2><p>迭代器本质上类似指针，但通过重载运算符实现对不同容器的统一访问方式。<br>可以理解为：<strong>“为容器设计的通用指针行为适配层”</strong>，从而兼容 C 语言的指针风格遍历。</p>
+<hr>
+<h2 id="四、补充知识"><a href="#四、补充知识" class="headerlink" title="四、补充知识"></a>四、补充知识</h2><h3 id="1-栈与堆"><a href="#1-栈与堆" class="headerlink" title="1. 栈与堆"></a>1. 栈与堆</h3><h4 id="Vector-对象本身的存储位置"><a href="#Vector-对象本身的存储位置" class="headerlink" title="Vector 对象本身的存储位置"></a>Vector <strong>对象本身</strong>的存储位置</h4><p>若直接作为局部变量声明：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">std::vector&lt;<span class="type">int</span>&gt; vec;</span><br></pre></td></tr></table></figure>
+
+<p><code>vec</code> 变量本身存储在 <strong>栈</strong> 上，包括：</p>
+<ul>
+<li>size</li>
+<li>capacity</li>
+<li>data 指针</li>
+</ul>
+<h4 id="Vector-元素的存储位置"><a href="#Vector-元素的存储位置" class="headerlink" title="Vector 元素的存储位置"></a>Vector <strong>元素</strong>的存储位置</h4><p>元素总是在 <strong>堆</strong> 上，因为 vector 需要支持动态扩容。</p>
+<p>示意结构：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">栈内存</span><br><span class="line">    vector 对象本体</span><br><span class="line">    ├── size</span><br><span class="line">    ├── capacity</span><br><span class="line">    └── data 指针（指向堆）</span><br><span class="line"></span><br><span class="line">堆内存</span><br><span class="line">    元素1</span><br><span class="line">    元素2</span><br><span class="line">    ……</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="五、参考资料"><a href="#五、参考资料" class="headerlink" title="五、参考资料"></a>五、参考资料</h2><ol>
+<li><p><em>仿函数详解</em><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/helloylh/p/17209709.html">https://www.cnblogs.com/helloylh/p/17209709.html</a></p>
+</li>
+<li><p><em>Vector 对象到底在堆上还是栈上？</em><br><a target="_blank" rel="noopener" href="https://www.51cto.com/article/814126.html">https://www.51cto.com/article/814126.html</a></p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/2025/11/21/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E6%89%A9%E6%95%A3/%E4%BD%95%E5%87%AF%E6%98%8E%E8%AE%A9%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E5%9B%9E%E5%BD%92%E2%80%9C%E5%8E%BB%E5%99%AA%E2%80%9D%E6%9C%AC%E8%B4%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/11/21/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E6%89%A9%E6%95%A3/%E4%BD%95%E5%87%AF%E6%98%8E%E8%AE%A9%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E5%9B%9E%E5%BD%92%E2%80%9C%E5%8E%BB%E5%99%AA%E2%80%9D%E6%9C%AC%E8%B4%A8/" class="post-title-link" itemprop="url">让扩散模型回归“去噪”本质</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-11-21 16:03:30" itemprop="dateCreated datePublished" datetime="2025-11-21T16:03:30+08:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-01-24 10:43:15" itemprop="dateModified" datetime="2026-01-24T10:43:15+08:00">2026-01-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E6%89%A9%E6%95%A3/" itemprop="url" rel="index"><span itemprop="name">扩散</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="让扩散模型回归“去噪”本质"><a href="#让扩散模型回归“去噪”本质" class="headerlink" title="让扩散模型回归“去噪”本质"></a>让扩散模型回归“去噪”本质</h1><p>论文标题: Back to Basics: Let Denoising Generative Models Denoise<br>作者: Tianhong Li(黎天鸿), Kaiming He(何恺明)<br>机构: 麻省理工学院 (MIT)<br>论文地址: <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2511.13720">https://arxiv.org/abs/2511.13720</a><br>代码仓库: <a target="_blank" rel="noopener" href="https://github.com/LTH14/JiT">https://github.com/LTH14/JiT</a><br>总结：本文指出了一个反常识问题，就是传统的去噪模型每步预测的唯噪声，而噪声在高维度中的分布是很难观察的，但是如果将预测噪声改为预测真实纯洁的图像就能改变这一问题。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/2025/11/16/%E7%94%9F%E6%B4%BB/%E6%97%85%E6%B8%B8%E6%94%BB%E7%95%A5/%E9%BB%84%E5%B1%B1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/11/16/%E7%94%9F%E6%B4%BB/%E6%97%85%E6%B8%B8%E6%94%BB%E7%95%A5/%E9%BB%84%E5%B1%B1/" class="post-title-link" itemprop="url">黄山</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-11-16 11:05:41" itemprop="dateCreated datePublished" datetime="2025-11-16T11:05:41+08:00">2025-11-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-01-24 10:43:15" itemprop="dateModified" datetime="2026-01-24T10:43:15+08:00">2026-01-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%94%9F%E6%B4%BB/" itemprop="url" rel="index"><span itemprop="name">生活</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%94%9F%E6%B4%BB/%E6%97%85%E6%B8%B8%E6%94%BB%E7%95%A5/" itemprop="url" rel="index"><span itemprop="name">旅游攻略</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="黄山"><a href="#黄山" class="headerlink" title="黄山"></a>黄山</h1><p><a target="_blank" rel="noopener" href="https://www.nipic.com/show/50091343.html?utm_source=chatgpt.com"><img src="https://tse4.mm.bing.net/th/id/OIP.a92obHwocDrNicbuQrWrswHaJ1?cb=ucfimg2&pid=Api&ucfimg=1" alt="AI创作图黄山 奇松 山谷 云海 松树 绿色 自然 风景 旅行 摄影 中国 安徽省 地理 生态 宁静 壮丽nipic.com-昵图网"></a></p>
+<h2 id="一、整体思路（预算版）"><a href="#一、整体思路（预算版）" class="headerlink" title="一、整体思路（预算版）"></a>一、整体思路（预算版）</h2><ul>
+<li><p><strong>出行方式</strong>：广州 → 黄山北 高铁往返，二等座一般单程 520–600 元左右，往返约 1100–1200 元。(<a target="_blank" rel="noopener" href="https://trains.ctrip.com/TrainBooking/guangzhounan-huangshan/gaotie/?utm_source=chatgpt.com" title="广州南到黄山高铁查询">携程火车票</a>)</p>
+</li>
+<li><p><strong>住宿策略</strong>：</p>
+<ul>
+<li>不住山上，<strong>两晚都住山下（汤口或者屯溪）</strong>，选 100–150&#x2F;晚的经济型酒店&#x2F;客栈。</li>
+</ul>
+</li>
+<li><p><strong>景点选择</strong>：</p>
+<ul>
+<li>D1–D2：黄山一日半：走索道+步行的轻量版线路</li>
+<li>D3：宏村半日 + 黄山市区随便逛，视预算可选</li>
+</ul>
+</li>
+<li><p><strong>控制花费的小技巧</strong>：</p>
+<ul>
+<li>索道只坐一段（上山坐，视体力下山走部分路）。</li>
+<li>山上的水&#x2F;零食尽量自带一些。</li>
+<li>宏村可以跟当地一日游&#x2F;拼车，省心也省一点车费。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="二、详细行程规划"><a href="#二、详细行程规划" class="headerlink" title="二、详细行程规划"></a>二、详细行程规划</h2><h3 id="▶-D1：广州-→-黄山北-→-汤口-屯溪（轻松抵达日）"><a href="#▶-D1：广州-→-黄山北-→-汤口-屯溪（轻松抵达日）" class="headerlink" title="▶ D1：广州 → 黄山北 → 汤口&#x2F;屯溪（轻松抵达日）"></a>▶ D1：广州 → 黄山北 → 汤口&#x2F;屯溪（轻松抵达日）</h3><p><strong>上午 &#x2F; 中午</strong></p>
+<ul>
+<li><p>从 <strong>广州南&#x2F;广州东&#x2F;广州新塘 → 黄山北</strong> 坐高铁，尽量选中午前出发、下午两三点到黄山北的车次（车程约 5 小时）。(<a target="_blank" rel="noopener" href="https://tw.trip.com/trains/china/route/guangzhou-to-huangshan/?utm_source=chatgpt.com" title="從廣州到黃山的高鐵預訂、票價及時刻表">Trip.com</a>)</p>
+</li>
+<li><p>黄山北出站后：</p>
+<ul>
+<li>若第二天一早上黄山：建议直接去 <strong>汤口镇（黄山南大门）</strong>，大巴或拼车约 1–1.5 小时。</li>
+<li>若想市区逛一逛：可以先住 <strong>屯溪老街附近</strong>，晚上吃吃逛逛。</li>
+</ul>
+</li>
+</ul>
+<p><strong>下午 &#x2F; 晚上</strong></p>
+<ul>
+<li>办理入住（控制在 <strong>100–150 元&#x2F;晚</strong> 的快捷酒店&#x2F;客栈）。</li>
+<li>在屯溪的话：逛 <strong>屯溪老街</strong>，吃一顿徽菜（毛豆腐、臭鳜鱼、刀板香等）。</li>
+<li>在汤口的话：熟悉第二天上山的大巴、售票处位置，早点休息。</li>
+</ul>
+<blockquote>
+<p>建议：预算紧 &amp; 主要目标是黄山 → <strong>D1 晚上住汤口</strong> 会更高效，第二天可以早早上山。</p>
+</blockquote>
+<hr>
+<h3 id="▶-D2：黄山一日游（索道-精华步行，不住山上）"><a href="#▶-D2：黄山一日游（索道-精华步行，不住山上）" class="headerlink" title="▶ D2：黄山一日游（索道 + 精华步行，不住山上）"></a>▶ D2：黄山一日游（索道 + 精华步行，不住山上）</h3><blockquote>
+<p>预算版选择：<strong>黄山一日“精华速刷版”</strong>，不上主峰也能感受到黄山特色。</p>
+</blockquote>
+<p><strong>早上</strong></p>
+<ol>
+<li><p>早起从酒店 → 汤口新国线换乘中心</p>
+</li>
+<li><p>买票：</p>
+<ul>
+<li>景区门票：平旺季 <strong>190 元&#x2F;人</strong>(<a target="_blank" rel="noopener" href="https://hf.bendibao.com/tour/2023331/91141.shtm?utm_source=chatgpt.com" title="黄山门票多少钱2025？附索道价格">hf.bendibao.com</a>)</li>
+<li>景区大巴：单程 19 元，上下山合计约 38 元。(<a target="_blank" rel="noopener" href="https://wap.huangshan.com.cn/hsdetail/ticket/park2017122114525726?addressLabel=04&utm_source=chatgpt.com" title="黄山风景区-门票索道详情">wap.huangshan.com.cn</a>)</li>
+</ul>
+</li>
+<li><p>坐大巴到 <strong>云谷寺（后山口）</strong> → 再坐 <strong>云谷索道上山</strong>，单程 80 元左右（平旺季）。(<a target="_blank" rel="noopener" href="https://hf.bendibao.com/tour/2023331/91141.shtm?utm_source=chatgpt.com" title="黄山门票多少钱2025？附索道价格">hf.bendibao.com</a>)</p>
+</li>
+</ol>
+<p><strong>上山后推荐线路（强度中等）：</strong></p>
+<ul>
+<li>索道上站（白鹅岭） → 始信峰（看奇松、怪石）</li>
+<li>北海景区：清凉台、猴子观海 等观景点</li>
+<li>喜欢走一点路的：可以往 西海入口 方向走一段，再折返，不进大峡谷深处（省体力）。</li>
+<li>中午在北海&#x2F;光明顶附近简单吃点自带干粮或景区快餐。</li>
+</ul>
+<p><strong>下午下山</strong></p>
+<ul>
+<li><p>体力不错：</p>
+<ul>
+<li>从北海 → 白鹅岭 → 步行下到 <strong>云谷寺</strong>（路程较长但一路风景不错）。</li>
+</ul>
+</li>
+<li><p>体力一般：</p>
+<ul>
+<li>返回云谷索道上站 → 再坐索道下山（再花 1×80 元）。</li>
+</ul>
+</li>
+</ul>
+<p>然后：云谷寺 → 大巴 → 汤口 → 回酒店休息。</p>
+<blockquote>
+<p>不上天都峰&#x2F;莲花峰，可以大幅度降低体力和时间消耗，一天玩得比较从容。</p>
+</blockquote>
+<hr>
+<h3 id="▶-D3：宏村半日游-回广州"><a href="#▶-D3：宏村半日游-回广州" class="headerlink" title="▶ D3：宏村半日游 + 回广州"></a>▶ D3：宏村半日游 + 回广州</h3><p><strong>早上：汤口&#x2F;屯溪 → 宏村</strong></p>
+<ul>
+<li>从汤口&#x2F;黄山市区报一个去 <strong>宏村的拼车&#x2F;一日游</strong>，或者去汽车站坐车，车程约 1–1.5 小时。</li>
+<li>宏村门票：成人约 <strong>90–100 元左右</strong>。(<a target="_blank" rel="noopener" href="https://touch.piao.qunar.com/touch/detail.htm?cat=from_area=ts_sku&from_index=4&from_value=%25E5%2590%2588%25E8%2582%25A5%25E5%25BF%2585%25E6%25B8%25B8&dist_city=%25E6%25B7%25AE%25E5%258C%2597&id=11072&utm_source=chatgpt.com" title="宏村景区门票 - 景点门票预订- 去哪儿网">去哪儿网</a>)</li>
+</ul>
+<p><strong>宏村游玩重点：</strong></p>
+<ul>
+<li>南湖、月沼：徽派建筑 + 水面倒影，拍照很好看。</li>
+<li>巷子里慢慢走走，找几家咖啡&#x2F;小吃店坐坐，体验古村氛围。</li>
+</ul>
+<p><strong>下午</strong></p>
+<ul>
+<li>午后从宏村 → 返回黄山北 &#x2F; 屯溪。</li>
+<li>预留足够时间，傍晚或晚上坐高铁 <strong>黄山北 → 广州</strong>。</li>
+</ul>
+<hr>
+<h2 id="三、人均费用粗算（按“2000-左右”来配）"><a href="#三、人均费用粗算（按“2000-左右”来配）" class="headerlink" title="三、人均费用粗算（按“2000 左右”来配）"></a>三、人均费用粗算（按“2000 左右”来配）</h2><blockquote>
+<p>下表是<strong>大致估算</strong>，实际以你订到的车票&#x2F;酒店为准。</p>
+</blockquote>
+<h3 id="1-大头：往返高铁"><a href="#1-大头：往返高铁" class="headerlink" title="1. 大头：往返高铁"></a>1. 大头：往返高铁</h3><ul>
+<li>广州 → 黄山北 二等座：约 520–600 元</li>
+<li>黄山北 → 广州 二等座：约 520–600 元<br>👉 合计按 <strong>1100–1200 元</strong> 预估。(<a target="_blank" rel="noopener" href="https://trains.ctrip.com/TrainBooking/guangzhounan-huangshan/gaotie/?utm_source=chatgpt.com" title="广州南到黄山高铁查询">携程火车票</a>)</li>
+</ul>
+<h3 id="2-景区门票-索道-大巴"><a href="#2-景区门票-索道-大巴" class="headerlink" title="2. 景区门票 + 索道 + 大巴"></a>2. 景区门票 + 索道 + 大巴</h3><ul>
+<li><p>黄山门票：190</p>
+</li>
+<li><p>黄山景区大巴：38（往返）</p>
+</li>
+<li><p>索道：</p>
+<ul>
+<li>只坐上行一次：80</li>
+<li>若上下都坐：160</li>
+</ul>
+</li>
+<li><p>宏村门票：约 94（按网上成人价估算）(<a target="_blank" rel="noopener" href="https://touch.piao.qunar.com/touch/detail.htm?cat=from_area=ts_sku&from_index=4&from_value=%25E5%2590%2588%25E8%2582%25A5%25E5%25BF%2585%25E6%25B8%25B8&dist_city=%25E6%25B7%25AE%25E5%258C%2597&id=11072&utm_source=chatgpt.com" title="宏村景区门票 - 景点门票预订- 去哪儿网">去哪儿网</a>)</p>
+</li>
+</ul>
+<p><strong>控制版（只坐单程索道）合计：</strong><br><code>190 + 38 + 80 + 94 ≈ 402 元</code></p>
+<p>如果你觉得体力一般，上下都坐索道：<br><code>190 + 38 + 160 + 94 ≈ 482 元</code></p>
+<h3 id="3-住宿"><a href="#3-住宿" class="headerlink" title="3. 住宿"></a>3. 住宿</h3><ul>
+<li>D1：汤口&#x2F;屯溪经济型酒店 100–150</li>
+<li>D2：同上，再 100–150<br>👉 住宿预估：<strong>200–300 元</strong></li>
+</ul>
+<h3 id="4-吃饭-当地交通"><a href="#4-吃饭-当地交通" class="headerlink" title="4. 吃饭 + 当地交通"></a>4. 吃饭 + 当地交通</h3><ul>
+<li>吃饭按 <strong>80–100 元&#x2F;天</strong> 算，3 天 ≈ 240–300 元</li>
+<li>市内&#x2F;镇内小交通、拼车到宏村等：预留 <strong>100–150 元</strong>。</li>
+</ul>
+<hr>
+<h3 id="5-总体汇总（偏省钱方案）"><a href="#5-总体汇总（偏省钱方案）" class="headerlink" title="5. 总体汇总（偏省钱方案）"></a>5. 总体汇总（偏省钱方案）</h3><p>按较省的方式估算（高铁 1100、索道只坐一次、酒店便宜点）：</p>
+<ul>
+<li>高铁：1100</li>
+<li>黄山 + 宏村门票&#x2F;车&#x2F;索道：约 400</li>
+<li>住宿：约 250</li>
+<li>吃饭 + 小交通：约 350</li>
+</ul>
+<p><strong>合计 ≈ 2100 元左右</strong></p>
+<blockquote>
+<p>也就是说：<strong>“两千左右”是可以做到的，但会略微紧张</strong>，主要看你高铁能不能抢到稍便宜的车次、酒店选多便宜的、索道坐几次。<br>如果你想更轻松一点（多坐索道、吃好一点），建议心里预留到 <strong>2200–2300</strong> 更舒服。</p>
+</blockquote>
+<hr>
+<h2 id="四、给你一个能直接照抄的简短行程版"><a href="#四、给你一个能直接照抄的简短行程版" class="headerlink" title="四、给你一个能直接照抄的简短行程版"></a>四、给你一个能直接照抄的简短行程版</h2><ul>
+<li><strong>D1</strong>：广州 → 黄山北（高铁）→ 汤口，入住；晚上简单逛逛、准备上山物资。</li>
+<li><strong>D2</strong>：汤口 → 黄山（云谷索道上 → 北海 → 始信峰 → 光明顶附近 → 视体力部分步行下山&#x2F;坐索道下），晚上回汤口 &#x2F; 屯溪休息。</li>
+<li><strong>D3</strong>：早上去宏村（南湖、月沼拍照闲逛），下午返回黄山北，傍晚&#x2F;晚上高铁回广州。</li>
+</ul>
+<p>如果你愿意告诉我<strong>大概出行月份 + 更偏“省钱”还是“轻松”</strong>，我可以帮你把上面每一天细到：大概几点出门、建议坐的车次时段、黄山具体走哪条步行路线，给你一个“可直接发给同伴&#x2F;直接订票用”的终版行程单。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/2024/09/13/%E7%AC%AC%E4%BA%8C%E6%AC%A1%E7%BB%84%E4%BC%9A/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/09/13/%E7%AC%AC%E4%BA%8C%E6%AC%A1%E7%BB%84%E4%BC%9A/" class="post-title-link" itemprop="url">第二次组会</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-09-13 22:33:37" itemprop="dateCreated datePublished" datetime="2024-09-13T22:33:37+08:00">2024-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-01-24 10:43:15" itemprop="dateModified" datetime="2026-01-24T10:43:15+08:00">2026-01-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%94%9F%E6%B4%BB/" itemprop="url" rel="index"><span itemprop="name">生活</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="第二次组会"><a href="#第二次组会" class="headerlink" title="第二次组会"></a>第二次组会</h1><p>一共四个人汇报，其中在投文献一篇方向为拉曼，三篇论汇报拉曼两片，层析一篇</p>
+<h2 id="在投文献"><a href="#在投文献" class="headerlink" title="在投文献"></a>在投文献</h2><p>深度学习预测单细胞H2O2含量</p>
+<h3 id="数据集"><a href="#数据集" class="headerlink" title="数据集"></a>数据集</h3><p>细胞的数据集在预测问题上可以看作为时间序列，或者弱化其时间的数据看为序列。这种序列和文字序列有一定的相识性，在处理这方面数据可以更多的考虑循环神经网络和注意力机制进行处理</p>
+<h3 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h3><p>注意力机制</p>
+<h3 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h3><p>未知</p>
+<h3 id="评价指标"><a href="#评价指标" class="headerlink" title="评价指标"></a>评价指标</h3><p>R^2</p>
+<h2 id="论文问题"><a href="#论文问题" class="headerlink" title="论文问题"></a>论文问题</h2><p>网络结构不清晰，深度学习三要素 网络模型、损失函数和评价指标的选取有问题</p>
+<h2 id="论文汇报"><a href="#论文汇报" class="headerlink" title="论文汇报"></a>论文汇报</h2><h3 id="transformer-RNN-超高清重建图像"><a href="#transformer-RNN-超高清重建图像" class="headerlink" title="transformer+RNN 超高清重建图像"></a>transformer+RNN 超高清重建图像</h3><h4 id="网络-1"><a href="#网络-1" class="headerlink" title="网络"></a>网络</h4><p>RNN(head)</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/2024/09/13/GAN%E7%BD%91%E7%BB%9C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/09/13/GAN%E7%BD%91%E7%BB%9C/" class="post-title-link" itemprop="url">GAN生成式对抗网络</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-09-13 00:00:00" itemprop="dateCreated datePublished" datetime="2024-09-13T00:00:00+08:00">2024-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-01-24 10:43:15" itemprop="dateModified" datetime="2026-01-24T10:43:15+08:00">2026-01-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="GAN生成式对抗网络"><a href="#GAN生成式对抗网络" class="headerlink" title="GAN生成式对抗网络"></a>GAN生成式对抗网络</h1><p>GAN生成式对抗网络，GAN网络由生成网络和判别网络两个网络组成，生成式网络通过学习图片后将噪声转换为图片，而判别式网络将区分数据集图片和生成图片进行判别。生成式与判别式网络类似与小偷与警察，通过不断的博弈互相升级，在这场游戏中我们更加希望小偷取得胜利。既是生成式网络生成的图片可以让判别器难以判断。</p>
+<h2 id="网络结构"><a href="#网络结构" class="headerlink" title="网络结构"></a>网络结构</h2><h3 id="网络模型"><a href="#网络模型" class="headerlink" title="网络模型"></a>网络模型</h3><h3 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h3><h3 id="评价指标"><a href="#评价指标" class="headerlink" title="评价指标"></a>评价指标</h3><h2 id="pytorch实现"><a href="#pytorch实现" class="headerlink" title="pytorch实现"></a>pytorch实现</h2><h2 id="GAN缺陷与改进"><a href="#GAN缺陷与改进" class="headerlink" title="GAN缺陷与改进"></a>GAN缺陷与改进</h2>
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/2024/09/05/%E4%B8%80%E3%80%81%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/09/05/%E4%B8%80%E3%80%81%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86/" class="post-title-link" itemprop="url">一、预备知识</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-09-05 18:43:48" itemprop="dateCreated datePublished" datetime="2024-09-05T18:43:48+08:00">2024-09-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-01-24 10:43:15" itemprop="dateModified" datetime="2026-01-24T10:43:15+08:00">2026-01-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%8A%A8%E6%89%8B%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">动手深度学习</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="预备知识"><a href="#预备知识" class="headerlink" title="预备知识"></a>预备知识</h1><h2 id="基础"><a href="#基础" class="headerlink" title="基础"></a>基础</h2><h2 id="重点"><a href="#重点" class="headerlink" title="重点"></a>重点</h2><h3 id="范数"><a href="#范数" class="headerlink" title="范数"></a>范数</h3><h3 id="矩阵求导"><a href="#矩阵求导" class="headerlink" title="矩阵求导"></a>矩阵求导</h3><h3 id="反向传播（sum函数）"><a href="#反向传播（sum函数）" class="headerlink" title="反向传播（sum函数）"></a>反向传播（sum函数）</h3><p>&#96;&#96;<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_43722079/article/details/136583592">https://blog.csdn.net/qq_43722079/article/details/136583592</a></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/2024/09/05/torchvision%E8%B7%AF%E5%BE%84%E5%BA%94%E7%94%A8%E5%A4%B1%E8%B4%A5%E9%97%AE%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/09/05/torchvision%E8%B7%AF%E5%BE%84%E5%BA%94%E7%94%A8%E5%A4%B1%E8%B4%A5%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">torchvision路径应用失败问题</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-09-05 09:17:06" itemprop="dateCreated datePublished" datetime="2024-09-05T09:17:06+08:00">2024-09-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-01-24 10:43:15" itemprop="dateModified" datetime="2026-01-24T10:43:15+08:00">2026-01-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%BD%AF%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">软件</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="torchvision模块路径引用问题"><a href="#torchvision模块路径引用问题" class="headerlink" title="torchvision模块路径引用问题"></a>torchvision模块路径引用问题</h1><p>前言：安装pytorch后可能会出现torch模块引用成功，而torchvision模块引用失败，失败原因为torchvision模块路径丢失。可能是三个问题导致的： </p>
+<ol>
+<li>torch和torchvision版本不匹配</li>
+<li>pillow版本和torchvision版本不匹配</li>
+</ol>
+<h1 id="torch和torchvision版本不匹配"><a href="#torch和torchvision版本不匹配" class="headerlink" title="torch和torchvision版本不匹配"></a>torch和torchvision版本不匹配</h1><p>建议从pytorch官网重新下载新版pytorch，或者查询历史版本重新选择一个版本进行下载</p>
+<h1 id="pillow版本和torchvision版本不匹配"><a href="#pillow版本和torchvision版本不匹配" class="headerlink" title="pillow版本和torchvision版本不匹配"></a>pillow版本和torchvision版本不匹配</h1><p>删除pillow 在重新下载pillow最新版</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/2024/09/01/%E7%A0%94%E4%B8%80%E7%AC%AC%E4%B8%80%E6%9C%88/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/09/01/%E7%A0%94%E4%B8%80%E7%AC%AC%E4%B8%80%E6%9C%88/" class="post-title-link" itemprop="url">研一第一月</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-09-01 20:11:37" itemprop="dateCreated datePublished" datetime="2024-09-01T20:11:37+08:00">2024-09-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-01-24 10:43:15" itemprop="dateModified" datetime="2026-01-24T10:43:15+08:00">2026-01-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%94%9F%E6%B4%BB/" itemprop="url" rel="index"><span itemprop="name">生活</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="回顾"><a href="#回顾" class="headerlink" title="回顾"></a>回顾</h1><p>结束暑假，开始新学期</p>
+<h2 id="学习"><a href="#学习" class="headerlink" title="学习"></a>学习</h2><p>暑假期间初步入门了深度学习和python，完成了小土堆深度学习入门和python，后续需要进一步加强</p>
+<h2 id="生活"><a href="#生活" class="headerlink" title="生活"></a>生活</h2><h1 id="展望"><a href="#展望" class="headerlink" title="展望"></a>展望</h1><h2 id="学习-1"><a href="#学习-1" class="headerlink" title="学习"></a>学习</h2><p>继续学习深度学习和python，目前感觉深学习入门还是比较容易，希望学期结束能完成《动手深度学习》</p>
+<h2 id="生活-1"><a href="#生活-1" class="headerlink" title="生活"></a>生活</h2><p>准备广东博物馆、广东图书馆游玩</p>
+<h1 id="计划"><a href="#计划" class="headerlink" title="计划"></a>计划</h1><ol>
+<li>博客一个星期更新一次，一个月更新一次技术类型文章</li>
+<li>每月进行总结</li>
+<li>精读《动手深度学习》并将每章进行笔记记录，计划本周完成前三章的精读</li>
+<li>学习《流程使用python》</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/3/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/5/"><i class="fa fa-angle-right"></i></a>
+  </nav>
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-code"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">楚天</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
 </html>
