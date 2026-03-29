@@ -5,15 +5,15 @@
 # Site
 title: 楚天
 subtitle: '惟楚有材，于斯为盛'
-description: ''
+description: '记录深度学习、C++、游戏网络与生活旅行的学习笔记。'
 keywords:
+  - 深度学习
+  - C++
+  - 游戏网络
+  - 技术博客
 author: 楚天
-language: 
-  - zh-CN
-  - en
-  - zh-HK
-  - zh-TW
-timezone: ''
+language: zh-CN
+timezone: Asia/Shanghai
 
 # URL
 ## Set your site url here. For example, if you use GitHub Page, set url as 'https://username.github.io/project'
@@ -100,7 +100,13 @@ ignore:
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: Mic_Theme
+theme: next
+
+search:
+  path: search.xml
+  field: post
+  content: true
+  format: html
 
 # Deployment
 ## Docs: https://hexo.io/docs/one-command-deployment

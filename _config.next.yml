@@ -1,0 +1,129 @@
+# NexT alternate theme config
+# Docs: https://theme-next.js.org/docs/getting-started/configuration.html
+
+scheme: Pisces
+darkmode: true
+
+menu:
+  home: / || fa fa-home
+  archives: /archives/ || fa fa-archive
+  categories: /categories/ || fa fa-th
+  tags: /tags/ || fa fa-tags
+  about: /about/ || fa fa-user
+  友情链接: /link/ || fa fa-link
+
+menu_settings:
+  icons: true
+  badges: false
+
+sidebar:
+  position: left
+  display: always
+  padding: 18
+  offset: 12
+
+avatar:
+  url: /img/me.jpg
+  rounded: true
+  rotated: false
+
+site_state: true
+
+social:
+  GitHub: https://github.com/ChutianDuan || fab fa-github
+  E-Mail: mailto:3383006954@qq.com || fa fa-envelope
+
+social_icons:
+  enable: true
+  icons_only: false
+  transition: true
+
+toc:
+  enable: true
+  number: true
+  wrap: true
+  expand_all: false
+  max_depth: 4
+
+creative_commons:
+  license: by-nc-sa
+  size: small
+  post: true
+  language: deed.zh
+
+footer:
+  since: 2024
+  icon:
+    name: fa fa-code
+    animated: false
+    color: "#222"
+  powered: true
+
+post_meta:
+  item_text: true
+  created_at: true
+  updated_at:
+    enable: true
+    another_day: true
+  categories: true
+
+read_more_btn: true
+
+symbols_count_time:
+  separated_meta: true
+  item_text_total: false
+
+post_navigation: left
+
+text_align:
+  desktop: start
+  mobile: start
+
+codeblock:
+  copy_button:
+    enable: true
+    style: flat
+  fold:
+    enable: false
+    height: 500
+  language: true
+
+back2top:
+  enable: true
+  sidebar: true
+  scrollpercent: true
+
+reading_progress:
+  enable: true
+  start_at: left
+  position: top
+  reversed: false
+  color: "#222"
+  height: 3px
+
+bookmark:
+  enable: true
+  color: "#222"
+  save: auto
+
+mediumzoom: true
+
+motion:
+  enable: true
+  async: false
+  duration: 200
+
+busuanzi_count:
+  enable: true
+  total_visitors: true
+  total_visitors_icon: fa fa-user
+  total_views: true
+  total_views_icon: fa fa-eye
+  post_views: true
+  post_views_icon: far fa-eye
+
+local_search:
+  enable: true
+  top_n_per_article: 2
+  unescape: false
+  preload: false
