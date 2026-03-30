@@ -176,7 +176,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-count">43</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -187,7 +187,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">70</span>
+        <span class="site-state-item-count">72</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -216,6 +216,97 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/2025/12/09/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E6%89%A9%E6%95%A3/[%E4%BD%95%E6%81%BA%E6%98%8E]Masked%20Autoencoders%20Are%20Scalable%20Vision%20Learners/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/12/09/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E6%89%A9%E6%95%A3/%5B%E4%BD%95%E6%81%BA%E6%98%8E%5DMasked%20Autoencoders%20Are%20Scalable%20Vision%20Learners/" class="post-title-link" itemprop="url">Masked Autoencoders Are Scalable Vision Learners</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-12-09 13:58:26" itemprop="dateCreated datePublished" datetime="2025-12-09T13:58:26+08:00">2025-12-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-01-24 10:43:15" itemprop="dateModified" datetime="2026-01-24T10:43:15+08:00">2026-01-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E6%89%A9%E6%95%A3/" itemprop="url" rel="index"><span itemprop="name">扩散</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="Masked-Autoencoders-Are-Scalable-Vision-Learners"><a href="#Masked-Autoencoders-Are-Scalable-Vision-Learners" class="headerlink" title="Masked Autoencoders Are Scalable Vision Learners"></a>Masked Autoencoders Are Scalable Vision Learners</h1><p>论文地址：<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2111.06377%E3%80%82">https://arxiv.org/pdf/2111.06377。</a><br>作者：何凯明<br>机构: Facebook</p>
+<h2 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h2><p>带掩码的自编码器是一个可拓展的视觉学习器<br>MAE基于两个核心设计，可以高效的训练大模型：<br>1、非对称的encoder-decoder架构编码器只作用在可见的patch中，对于丢掉的patch，编码器不会对它进行编码，这样能够节省一定的计算时间。解码器是一个比较轻量的解码器，拿到编码器的输出之后，重构被遮挡住的块。<br>2、使用较高的mask比例将mask比例设置为75%，迫使模型得到一个较好的自监督训练效果。如果只是遮住几块的话，只需要进行插值就可以出来了，模型可能学不到特别的东西。编码器只编码1&#x2F;4大小的图片，可以降低计算量，训练加速3倍或者以上模型结构。最终作者只使用一个最简单的ViT-Huge模型（模型结构来自ViT这篇文章），在ImageNet-1K（100万张图片）上预训练，准确率能达到87.8%；这个模型主要是用来做迁移学习，它证明了在迁移学习的其他任务上表现也非常好注：在ViT这篇文章的最后一段有提到过怎样做自监督学习，作者说效果并不是很好，结论是：用有标号的模型和大的训练集可以得到很好的效果。本文亮点是，只使用小的数据集（ImageNet-1k，100万张图片），而且是通过自监督，就能够做到跟之前可能效果一样好的模型了。</p>
+<h2 id="网络结构"><a href="#网络结构" class="headerlink" title="网络结构"></a>网络结构</h2><p><img src="/img/notes/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E6%89%A9%E6%95%A3/%E5%9B%BE%E5%BA%93/MAE/%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84.png" alt="网络图"></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1284,100 +1375,6 @@
 </ol>
 <h1 id="torch和torchvision版本不匹配"><a href="#torch和torchvision版本不匹配" class="headerlink" title="torch和torchvision版本不匹配"></a>torch和torchvision版本不匹配</h1><p>建议从pytorch官网重新下载新版pytorch，或者查询历史版本重新选择一个版本进行下载</p>
 <h1 id="pillow版本和torchvision版本不匹配"><a href="#pillow版本和torchvision版本不匹配" class="headerlink" title="pillow版本和torchvision版本不匹配"></a>pillow版本和torchvision版本不匹配</h1><p>删除pillow 在重新下载pillow最新版</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/2024/09/01/%E7%A0%94%E4%B8%80%E7%AC%AC%E4%B8%80%E6%9C%88/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/img/me.jpg">
-      <meta itemprop="name" content="楚天">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="楚天">
-      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | 楚天">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/09/01/%E7%A0%94%E4%B8%80%E7%AC%AC%E4%B8%80%E6%9C%88/" class="post-title-link" itemprop="url">研一第一月</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-09-01 20:11:37" itemprop="dateCreated datePublished" datetime="2024-09-01T20:11:37+08:00">2024-09-01</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-01-24 10:43:15" itemprop="dateModified" datetime="2026-01-24T10:43:15+08:00">2026-01-24</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%94%9F%E6%B4%BB/" itemprop="url" rel="index"><span itemprop="name">生活</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="回顾"><a href="#回顾" class="headerlink" title="回顾"></a>回顾</h1><p>结束暑假，开始新学期</p>
-<h2 id="学习"><a href="#学习" class="headerlink" title="学习"></a>学习</h2><p>暑假期间初步入门了深度学习和python，完成了小土堆深度学习入门和python，后续需要进一步加强</p>
-<h2 id="生活"><a href="#生活" class="headerlink" title="生活"></a>生活</h2><h1 id="展望"><a href="#展望" class="headerlink" title="展望"></a>展望</h1><h2 id="学习-1"><a href="#学习-1" class="headerlink" title="学习"></a>学习</h2><p>继续学习深度学习和python，目前感觉深学习入门还是比较容易，希望学期结束能完成《动手深度学习》</p>
-<h2 id="生活-1"><a href="#生活-1" class="headerlink" title="生活"></a>生活</h2><p>准备广东博物馆、广东图书馆游玩</p>
-<h1 id="计划"><a href="#计划" class="headerlink" title="计划"></a>计划</h1><ol>
-<li>博客一个星期更新一次，一个月更新一次技术类型文章</li>
-<li>每月进行总结</li>
-<li>精读《动手深度学习》并将每章进行笔记记录，计划本周完成前三章的精读</li>
-<li>学习《流程使用python》</li>
-</ol>
 
       
     </div>
