@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chutianduan.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":2,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="MySQL 学习笔记1. MySQL 是什么MySQL 是一个关系型数据库，用来存储：  用户信息 订单数据 文档元数据 任务记录 聊天记录 各种需要长期保存的结构化数据  先抓住它和 Redis 的分工差异：  MySQL 更适合存“长期、结构化、可查询的数据”，Redis 更适合存“高频、临时、快速访问的数据”。  2. 为什么项目里经常会有 MySQL因为很多业务数据都需要：  长期保存 有">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL 学习笔记">
+<meta property="og:url" content="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/mysql/index.html">
+<meta property="og:site_name" content="楚天">
+<meta property="og:description" content="MySQL 学习笔记1. MySQL 是什么MySQL 是一个关系型数据库，用来存储：  用户信息 订单数据 文档元数据 任务记录 聊天记录 各种需要长期保存的结构化数据  先抓住它和 Redis 的分工差异：  MySQL 更适合存“长期、结构化、可查询的数据”，Redis 更适合存“高频、临时、快速访问的数据”。  2. 为什么项目里经常会有 MySQL因为很多业务数据都需要：  长期保存 有">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-04-20T01:03:11.000Z">
+<meta property="article:modified_time" content="2026-04-20T01:03:11.000Z">
+<meta property="article:author" content="楚天">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="游戏网络">
+<meta property="article:tag" content="技术博客">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/mysql/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/mysql/","path":"/notes/ai模型开发/知识点学习/框架/mysql/","title":"MySQL 学习笔记"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>MySQL 学习笔记 | 楚天</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">楚天</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">惟楚有材，于斯为盛</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-友情链接"><a href="/link/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MySQL-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0"><span class="nav-number">1.</span> <span class="nav-text">MySQL 学习笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-MySQL-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.1.</span> <span class="nav-text">1. MySQL 是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%A1%B9%E7%9B%AE%E9%87%8C%E7%BB%8F%E5%B8%B8%E4%BC%9A%E6%9C%89-MySQL"><span class="nav-number">1.2.</span> <span class="nav-text">2. 为什么项目里经常会有 MySQL</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%9C%A8-AI-%E9%A1%B9%E7%9B%AE%E9%87%8C-MySQL-%E5%B8%B8%E8%A7%81%E7%94%A8%E6%B3%95"><span class="nav-number">1.3.</span> <span class="nav-text">3. 在 AI 项目里 MySQL 常见用法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-MySQL-%E5%92%8C-Redis-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">1.4.</span> <span class="nav-text">4. MySQL 和 Redis 的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E5%AE%89%E8%A3%85%E5%92%8C%E5%90%AF%E5%8A%A8"><span class="nav-number">1.5.</span> <span class="nav-text">5. 安装和启动</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-Python-%E8%BF%9E%E6%8E%A5-MySQL"><span class="nav-number">1.6.</span> <span class="nav-text">6. Python 连接 MySQL</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-%E8%BF%9E%E6%8E%A5%E5%92%8C%E6%B8%B8%E6%A0%87-cursor"><span class="nav-number">1.7.</span> <span class="nav-text">7. 连接和游标 cursor</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-%E5%BB%BA%E8%A1%A8%E5%92%8C%E5%B8%B8%E8%A7%81%E5%AD%97%E6%AE%B5%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.8.</span> <span class="nav-text">8. 建表和常见字段类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-%E8%A1%A8%E7%BB%93%E6%9E%84%E7%9B%B8%E5%85%B3-SQL"><span class="nav-number">1.9.</span> <span class="nav-text">9. 表结构相关 SQL</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#9-1-%E5%88%9B%E5%BB%BA%E8%A1%A8"><span class="nav-number">1.9.1.</span> <span class="nav-text">9.1 创建表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-2-%E5%A6%82%E6%9E%9C%E8%A1%A8%E5%B7%B2%E5%AD%98%E5%9C%A8%E5%B0%B1%E8%B7%B3%E8%BF%87"><span class="nav-number">1.9.2.</span> <span class="nav-text">9.2 如果表已存在就跳过</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-3-%E4%BF%AE%E6%94%B9%E8%A1%A8"><span class="nav-number">1.9.3.</span> <span class="nav-text">9.3 修改表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-4-%E5%88%A0%E9%99%A4%E8%A1%A8"><span class="nav-number">1.9.4.</span> <span class="nav-text">9.4 删除表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-5-%E6%9F%A5%E7%9C%8B%E5%BB%BA%E8%A1%A8%E8%AF%AD%E5%8F%A5"><span class="nav-number">1.9.5.</span> <span class="nav-text">9.5 查看建表语句</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-%E6%8F%92%E5%85%A5%E6%95%B0%E6%8D%AE-INSERT"><span class="nav-number">1.10.</span> <span class="nav-text">10. 插入数据 INSERT</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-%E6%9F%A5%E8%AF%A2%E6%95%B0%E6%8D%AE-SELECT"><span class="nav-number">1.11.</span> <span class="nav-text">11. 查询数据 SELECT</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#11-1-%E6%9F%A5%E5%85%A8%E9%83%A8%E5%AD%97%E6%AE%B5"><span class="nav-number">1.11.1.</span> <span class="nav-text">11.1 查全部字段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-2-%E5%8F%AA%E6%9F%A5%E9%83%A8%E5%88%86%E5%AD%97%E6%AE%B5"><span class="nav-number">1.11.2.</span> <span class="nav-text">11.2 只查部分字段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-3-%E5%B8%A6%E6%9D%A1%E4%BB%B6%E6%9F%A5%E8%AF%A2"><span class="nav-number">1.11.3.</span> <span class="nav-text">11.3 带条件查询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-4-%E6%8E%92%E5%BA%8F"><span class="nav-number">1.11.4.</span> <span class="nav-text">11.4 排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-5-%E5%88%86%E9%A1%B5"><span class="nav-number">1.11.5.</span> <span class="nav-text">11.5 分页</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-%E6%9B%B4%E6%96%B0%E6%95%B0%E6%8D%AE-UPDATE"><span class="nav-number">1.12.</span> <span class="nav-text">12. 更新数据 UPDATE</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-%E5%88%A0%E9%99%A4%E6%95%B0%E6%8D%AE-DELETE"><span class="nav-number">1.13.</span> <span class="nav-text">13. 删除数据 DELETE</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-%E6%9D%A1%E4%BB%B6%E6%9F%A5%E8%AF%A2%E3%80%81%E6%8E%92%E5%BA%8F%E3%80%81%E5%88%86%E7%BB%84"><span class="nav-number">1.14.</span> <span class="nav-text">14. 条件查询、排序、分组</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#14-1-WHERE"><span class="nav-number">1.14.1.</span> <span class="nav-text">14.1 WHERE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14-2-ORDER-BY"><span class="nav-number">1.14.2.</span> <span class="nav-text">14.2 ORDER BY</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14-3-LIMIT"><span class="nav-number">1.14.3.</span> <span class="nav-text">14.3 LIMIT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14-4-GROUP-BY"><span class="nav-number">1.14.4.</span> <span class="nav-text">14.4 GROUP BY</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14-5-HAVING"><span class="nav-number">1.14.5.</span> <span class="nav-text">14.5 HAVING</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#15-JOIN-%E5%85%B3%E8%81%94%E6%9F%A5%E8%AF%A2"><span class="nav-number">1.15.</span> <span class="nav-text">15. JOIN 关联查询</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#16-%E7%B4%A2%E5%BC%95-INDEX"><span class="nav-number">1.16.</span> <span class="nav-text">16. 索引 INDEX</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#17-%E5%A4%96%E9%94%AE-FOREIGN-KEY"><span class="nav-number">1.17.</span> <span class="nav-text">17. 外键 FOREIGN KEY</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#18-%E4%BA%8B%E5%8A%A1-commit-%E5%92%8C-rollback"><span class="nav-number">1.18.</span> <span class="nav-text">18. 事务 commit 和 rollback</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#19-%E6%9F%A5%E8%AF%A2%E7%BB%93%E6%9E%9C%E8%8E%B7%E5%8F%96"><span class="nav-number">1.19.</span> <span class="nav-text">19. 查询结果获取</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#19-1-fetchone"><span class="nav-number">1.19.1.</span> <span class="nav-text">19.1 fetchone()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#19-2-fetchmany-n"><span class="nav-number">1.19.2.</span> <span class="nav-text">19.2 fetchmany(n)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#19-3-fetchall"><span class="nav-number">1.19.3.</span> <span class="nav-text">19.3 fetchall()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#19-4-lastrowid"><span class="nav-number">1.19.4.</span> <span class="nav-text">19.4 lastrowid</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#19-5-rowcount"><span class="nav-number">1.19.5.</span> <span class="nav-text">19.5 rowcount</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#20-execute-%E5%92%8C-executemany"><span class="nav-number">1.20.</span> <span class="nav-text">20. execute() 和 executemany()</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#20-1-execute"><span class="nav-number">1.20.1.</span> <span class="nav-text">20.1 execute()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#20-2-executemany"><span class="nav-number">1.20.2.</span> <span class="nav-text">20.2 executemany()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#21-%E4%B8%80%E6%AE%B5%E6%AF%94%E8%BE%83%E5%AE%8C%E6%95%B4%E7%9A%84-PyMySQL-%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.21.</span> <span class="nav-text">21. 一段比较完整的 PyMySQL 示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#22-FastAPI-%E9%87%8C%E6%80%8E%E4%B9%88%E7%94%A8-MySQL"><span class="nav-number">1.22.</span> <span class="nav-text">22. FastAPI 里怎么用 MySQL</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#23-AI-%E9%A1%B9%E7%9B%AE%E9%87%8C%E6%AF%94%E8%BE%83%E5%B8%B8%E8%A7%81%E7%9A%84%E8%A1%A8%E8%AE%BE%E8%AE%A1"><span class="nav-number">1.23.</span> <span class="nav-text">23. AI 项目里比较常见的表设计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#24-%E5%B8%B8%E8%A7%81%E5%9D%91"><span class="nav-number">1.24.</span> <span class="nav-text">24. 常见坑</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#24-1-%E7%94%A8%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%8B%BC-SQL"><span class="nav-number">1.24.1.</span> <span class="nav-text">24.1 用字符串拼 SQL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#24-2-%E5%BF%98%E8%AE%B0%E6%8F%90%E4%BA%A4%E4%BA%8B%E5%8A%A1"><span class="nav-number">1.24.2.</span> <span class="nav-text">24.2 忘记提交事务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#24-3-UPDATE-DELETE-%E4%B8%8D%E5%B8%A6-WHERE"><span class="nav-number">1.24.3.</span> <span class="nav-text">24.3 UPDATE &#x2F; DELETE 不带 WHERE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#24-4-%E6%BB%A5%E7%94%A8-SELECT"><span class="nav-number">1.24.4.</span> <span class="nav-text">24.4 滥用 SELECT *</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#24-5-%E4%B8%8D%E5%BB%BA%E7%B4%A2%E5%BC%95%E6%88%96%E4%B9%B1%E5%BB%BA%E7%B4%A2%E5%BC%95"><span class="nav-number">1.24.5.</span> <span class="nav-text">24.5 不建索引或乱建索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#24-6-%E5%AD%97%E7%AC%A6%E9%9B%86%E6%B2%A1%E7%BB%9F%E4%B8%80"><span class="nav-number">1.24.6.</span> <span class="nav-text">24.6 字符集没统一</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#24-7-%E6%8A%8A-MySQL-%E5%BD%93%E7%BC%93%E5%AD%98%E7%94%A8"><span class="nav-number">1.24.7.</span> <span class="nav-text">24.7 把 MySQL 当缓存用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#25-%E4%B8%80%E5%A5%97%E6%AF%94%E8%BE%83%E5%AE%9E%E7%94%A8%E7%9A%84%E5%AD%A6%E4%B9%A0%E9%A1%BA%E5%BA%8F"><span class="nav-number">1.25.</span> <span class="nav-text">25. 一套比较实用的学习顺序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#26-%E6%80%BB%E7%BB%93"><span class="nav-number">1.26.</span> <span class="nav-text">26. 总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#27-%E5%8F%82%E8%80%83"><span class="nav-number">1.27.</span> <span class="nav-text">27. 参考</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="楚天"
+      src="/img/me.jpg">
+  <p class="site-author-name" itemprop="name">楚天</p>
+  <div class="site-description" itemprop="description">记录深度学习、C++、游戏网络与生活旅行的学习笔记。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ChutianDuan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ChutianDuan" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:3383006954@qq.com" title="E-Mail → mailto:3383006954@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/mysql/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="MySQL 学习笔记 | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MySQL 学习笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-04-20 09:03:11" itemprop="dateCreated datePublished" datetime="2026-04-20T09:03:11+08:00">2026-04-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/AI%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">AI模型开发</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/AI%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">知识点学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/AI%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/" itemprop="url" rel="index"><span itemprop="name">框架</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="MySQL-学习笔记"><a href="#MySQL-学习笔记" class="headerlink" title="MySQL 学习笔记"></a>MySQL 学习笔记</h1><h2 id="1-MySQL-是什么"><a href="#1-MySQL-是什么" class="headerlink" title="1. MySQL 是什么"></a>1. MySQL 是什么</h2><p>MySQL 是一个关系型数据库，用来存储：</p>
+<ul>
+<li>用户信息</li>
+<li>订单数据</li>
+<li>文档元数据</li>
+<li>任务记录</li>
+<li>聊天记录</li>
+<li>各种需要长期保存的结构化数据</li>
+</ul>
+<p>先抓住它和 Redis 的分工差异：</p>
+<blockquote>
+<p>MySQL 更适合存“长期、结构化、可查询的数据”，Redis 更适合存“高频、临时、快速访问的数据”。</p>
+</blockquote>
+<h2 id="2-为什么项目里经常会有-MySQL"><a href="#2-为什么项目里经常会有-MySQL" class="headerlink" title="2. 为什么项目里经常会有 MySQL"></a>2. 为什么项目里经常会有 MySQL</h2><p>因为很多业务数据都需要：</p>
+<ul>
+<li>长期保存</li>
+<li>有明确字段结构</li>
+<li>支持条件查询</li>
+<li>支持关联查询</li>
+<li>保证数据一致性</li>
+</ul>
+<p>例如：</p>
+<ul>
+<li>一个用户有哪些会话</li>
+<li>一个文档属于哪个用户</li>
+<li>一条任务记录当前是什么状态</li>
+<li>某段时间创建了多少条消息</li>
+</ul>
+<p>这些都很适合用 MySQL 来存。</p>
+<h2 id="3-在-AI-项目里-MySQL-常见用法"><a href="#3-在-AI-项目里-MySQL-常见用法" class="headerlink" title="3. 在 AI 项目里 MySQL 常见用法"></a>3. 在 AI 项目里 MySQL 常见用法</h2><p>在 AI 模型开发场景里，MySQL 常见用途有：</p>
+<ul>
+<li>存用户表</li>
+<li>存会话表</li>
+<li>存消息表</li>
+<li>存文档表</li>
+<li>存任务记录表</li>
+<li>存模型调用日志</li>
+<li>存权限和配置</li>
+</ul>
+<p>放回整套系统里看，各组件的分工大致是：</p>
+<ul>
+<li>FastAPI &#x2F; Drogon：接请求</li>
+<li>Redis：做缓存、状态层、中间层</li>
+<li>Celery：处理后台任务</li>
+<li>MySQL：存长期结构化数据</li>
+</ul>
+<h2 id="4-MySQL-和-Redis-的区别"><a href="#4-MySQL-和-Redis-的区别" class="headerlink" title="4. MySQL 和 Redis 的区别"></a>4. MySQL 和 Redis 的区别</h2><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>MySQL</th>
+<th>Redis</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>数据模型</td>
+<td>关系型表结构</td>
+<td>键值型</td>
+</tr>
+<tr>
+<td>持久化</td>
+<td>强，适合长期存储</td>
+<td>可持久化，但常用于短期数据</td>
+</tr>
+<tr>
+<td>查询能力</td>
+<td>强，支持 SQL</td>
+<td>主要按 key 操作</td>
+</tr>
+<tr>
+<td>适合场景</td>
+<td>用户、订单、文档、消息</td>
+<td>缓存、计数器、会话、队列</td>
+</tr>
+<tr>
+<td>事务</td>
+<td>支持</td>
+<td>支持有限的原子操作，不是传统关系事务</td>
+</tr>
+</tbody></table>
+<p>简单理解：</p>
+<ul>
+<li>用户资料、文档记录、消息历史更适合 MySQL</li>
+<li>缓存结果、限流计数、短期任务状态更适合 Redis</li>
+</ul>
+<h2 id="5-安装和启动"><a href="#5-安装和启动" class="headerlink" title="5. 安装和启动"></a>5. 安装和启动</h2><p>如果本地已经装好了 MySQL，可以直接启动服务。</p>
+<p>如果只是临时学习，Docker 会更省事：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">docker run -d \</span><br><span class="line">  --name mysql8 \</span><br><span class="line">  -p 3306:3306 \</span><br><span class="line">  -e MYSQL_ROOT_PASSWORD=123456 \</span><br><span class="line">  -e MYSQL_DATABASE=demo \</span><br><span class="line">  mysql:8</span><br></pre></td></tr></table></figure>
+
+<p>进入 MySQL：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -h 127.0.0.1 -P 3306 -u root -p</span><br></pre></td></tr></table></figure>
+
+<p>查看数据库：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SHOW</span> DATABASES;</span><br></pre></td></tr></table></figure>
+
+<p>选择数据库：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">USE demo;</span><br></pre></td></tr></table></figure>
+
+<h2 id="6-Python-连接-MySQL"><a href="#6-Python-连接-MySQL" class="headerlink" title="6. Python 连接 MySQL"></a>6. Python 连接 MySQL</h2><p>Python 项目里很常见的是 <code>pymysql</code>。</p>
+<p>安装：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install pymysql</span><br></pre></td></tr></table></figure>
+
+<p>最基础的连接方式：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pymysql</span><br><span class="line"></span><br><span class="line">conn = pymysql.connect(</span><br><span class="line">    host=<span class="string">&quot;127.0.0.1&quot;</span>,</span><br><span class="line">    port=<span class="number">3306</span>,</span><br><span class="line">    user=<span class="string">&quot;root&quot;</span>,</span><br><span class="line">    password=<span class="string">&quot;123456&quot;</span>,</span><br><span class="line">    database=<span class="string">&quot;demo&quot;</span>,</span><br><span class="line">    charset=<span class="string">&quot;utf8mb4&quot;</span>,</span><br><span class="line">    autocommit=<span class="literal">False</span>,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>几个常见参数：</p>
+<ul>
+<li><code>host</code>：数据库地址</li>
+<li><code>port</code>：端口，MySQL 默认通常是 <code>3306</code></li>
+<li><code>user</code> &#x2F; <code>password</code>：用户名密码</li>
+<li><code>database</code>：要连接的库</li>
+<li><code>charset=&quot;utf8mb4&quot;</code>：推荐写上，避免中文和 emoji 编码问题</li>
+<li><code>autocommit=False</code>：默认手动提交事务</li>
+</ul>
+<h2 id="7-连接和游标-cursor"><a href="#7-连接和游标-cursor" class="headerlink" title="7. 连接和游标 cursor"></a>7. 连接和游标 <code>cursor</code></h2><p>你原来笔记里提到“游标对象的具体作用是什么”，可以这样理解：</p>
+<blockquote>
+<p>连接 <code>conn</code> 负责连数据库，游标 <code>cursor</code> 负责执行 SQL 和取结果。</p>
+</blockquote>
+<p>最常见写法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cursor = conn.cursor()</span><br></pre></td></tr></table></figure>
+
+<p>更推荐：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> conn.cursor() <span class="keyword">as</span> cursor:</span><br><span class="line">    cursor.execute(<span class="string">&quot;SELECT 1&quot;</span>)</span><br><span class="line">    result = cursor.fetchone()</span><br></pre></td></tr></table></figure>
+
+<p><code>cursor</code> 主要负责：</p>
+<ul>
+<li>执行 SQL</li>
+<li>传递参数</li>
+<li>获取查询结果</li>
+<li>提供 <code>lastrowid</code>、<code>rowcount</code> 等信息</li>
+</ul>
+<p>常见方法：</p>
+<ul>
+<li><code>cursor.execute()</code>：执行一条 SQL</li>
+<li><code>cursor.executemany()</code>：批量执行</li>
+<li><code>cursor.fetchone()</code>：取一条</li>
+<li><code>cursor.fetchmany(n)</code>：取前 <code>n</code> 条</li>
+<li><code>cursor.fetchall()</code>：取全部</li>
+</ul>
+<p>如果你希望查询结果按字典返回，而不是元组，可以这样写：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pymysql.cursors</span><br><span class="line"></span><br><span class="line">conn = pymysql.connect(</span><br><span class="line">    host=<span class="string">&quot;127.0.0.1&quot;</span>,</span><br><span class="line">    user=<span class="string">&quot;root&quot;</span>,</span><br><span class="line">    password=<span class="string">&quot;123456&quot;</span>,</span><br><span class="line">    database=<span class="string">&quot;demo&quot;</span>,</span><br><span class="line">    charset=<span class="string">&quot;utf8mb4&quot;</span>,</span><br><span class="line">    cursorclass=pymysql.cursors.DictCursor,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>这样查出来的数据会更接近：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="string">&quot;id&quot;</span>: <span class="number">1</span>, <span class="string">&quot;name&quot;</span>: <span class="string">&quot;tom&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="8-建表和常见字段类型"><a href="#8-建表和常见字段类型" class="headerlink" title="8. 建表和常见字段类型"></a>8. 建表和常见字段类型</h2><p>MySQL 最基础的 SQL 之一就是建表。</p>
+<p>示例：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> users (</span><br><span class="line">    id <span class="type">BIGINT</span> <span class="keyword">PRIMARY</span> KEY AUTO_INCREMENT,</span><br><span class="line">    username <span class="type">VARCHAR</span>(<span class="number">100</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> <span class="keyword">UNIQUE</span>,</span><br><span class="line">    email <span class="type">VARCHAR</span>(<span class="number">200</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">    age <span class="type">INT</span> <span class="keyword">DEFAULT</span> <span class="number">0</span>,</span><br><span class="line">    created_at DATETIME <span class="keyword">NOT</span> <span class="keyword">NULL</span> <span class="keyword">DEFAULT</span> <span class="built_in">CURRENT_TIMESTAMP</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>常见字段类型：</p>
+<ul>
+<li><code>INT</code>：整数</li>
+<li><code>BIGINT</code>：更大的整数</li>
+<li><code>VARCHAR(n)</code>：变长字符串</li>
+<li><code>TEXT</code>：长文本</li>
+<li><code>DATETIME</code>：日期时间</li>
+<li><code>DATE</code>：日期</li>
+<li><code>DECIMAL(10,2)</code>：精确小数</li>
+<li><code>BOOLEAN</code>：布尔，底层通常可看成 <code>TINYINT</code></li>
+</ul>
+<p>常见约束：</p>
+<ul>
+<li><code>PRIMARY KEY</code>：主键</li>
+<li><code>AUTO_INCREMENT</code>：自增</li>
+<li><code>NOT NULL</code>：不能为空</li>
+<li><code>UNIQUE</code>：唯一</li>
+<li><code>DEFAULT</code>：默认值</li>
+<li><code>FOREIGN KEY</code>：外键</li>
+</ul>
+<h2 id="9-表结构相关-SQL"><a href="#9-表结构相关-SQL" class="headerlink" title="9. 表结构相关 SQL"></a>9. 表结构相关 SQL</h2><p>这部分在实际开发里很常用。</p>
+<h3 id="9-1-创建表"><a href="#9-1-创建表" class="headerlink" title="9.1 创建表"></a>9.1 创建表</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> users (</span><br><span class="line">    id <span class="type">BIGINT</span> <span class="keyword">PRIMARY</span> KEY AUTO_INCREMENT,</span><br><span class="line">    name <span class="type">VARCHAR</span>(<span class="number">100</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h3 id="9-2-如果表已存在就跳过"><a href="#9-2-如果表已存在就跳过" class="headerlink" title="9.2 如果表已存在就跳过"></a>9.2 如果表已存在就跳过</h3><p>你前面提到的“表已存在怎么办”，对应的就是这个场景。</p>
+<p>如果担心“已经有同名表，再创建会报错”，可以写：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> IF <span class="keyword">NOT</span> <span class="keyword">EXISTS</span> users (</span><br><span class="line">    id <span class="type">BIGINT</span> <span class="keyword">PRIMARY</span> KEY AUTO_INCREMENT,</span><br><span class="line">    name <span class="type">VARCHAR</span>(<span class="number">100</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>这样当表已存在时，会直接跳过，不会因为同名表报错。</p>
+<h3 id="9-3-修改表"><a href="#9-3-修改表" class="headerlink" title="9.3 修改表"></a>9.3 修改表</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> users <span class="keyword">ADD</span> <span class="keyword">COLUMN</span> email <span class="type">VARCHAR</span>(<span class="number">200</span>);</span><br></pre></td></tr></table></figure>
+
+<h3 id="9-4-删除表"><a href="#9-4-删除表" class="headerlink" title="9.4 删除表"></a>9.4 删除表</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">TABLE</span> users;</span><br></pre></td></tr></table></figure>
+
+<p>如果担心表不存在报错：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">TABLE</span> IF <span class="keyword">EXISTS</span> users;</span><br></pre></td></tr></table></figure>
+
+<h3 id="9-5-查看建表语句"><a href="#9-5-查看建表语句" class="headerlink" title="9.5 查看建表语句"></a>9.5 查看建表语句</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SHOW</span> <span class="keyword">CREATE</span> <span class="keyword">TABLE</span> users;</span><br></pre></td></tr></table></figure>
+
+<p>这个命令非常实用，因为它能直接看到当前表的真实结构、索引、字符集等信息。</p>
+<h2 id="10-插入数据-INSERT"><a href="#10-插入数据-INSERT" class="headerlink" title="10. 插入数据 INSERT"></a>10. 插入数据 <code>INSERT</code></h2><p>最基础的插入写法：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> users (username, email, age)</span><br><span class="line"><span class="keyword">VALUES</span> (<span class="string">&#x27;tom&#x27;</span>, <span class="string">&#x27;tom@example.com&#x27;</span>, <span class="number">18</span>);</span><br></pre></td></tr></table></figure>
+
+<p>在 Python 里更推荐参数化写法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> conn.cursor() <span class="keyword">as</span> cursor:</span><br><span class="line">    sql = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    INSERT INTO users (username, email, age)</span></span><br><span class="line"><span class="string">    VALUES (%s, %s, %s)</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    cursor.execute(sql, (<span class="string">&quot;tom&quot;</span>, <span class="string">&quot;tom@example.com&quot;</span>, <span class="number">18</span>))</span><br><span class="line">    conn.commit()</span><br></pre></td></tr></table></figure>
+
+<p>插入后拿自增主键：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">user_id = cursor.lastrowid</span><br></pre></td></tr></table></figure>
+
+<h2 id="11-查询数据-SELECT"><a href="#11-查询数据-SELECT" class="headerlink" title="11. 查询数据 SELECT"></a>11. 查询数据 <code>SELECT</code></h2><h3 id="11-1-查全部字段"><a href="#11-1-查全部字段" class="headerlink" title="11.1 查全部字段"></a>11.1 查全部字段</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> users;</span><br></pre></td></tr></table></figure>
+
+<h3 id="11-2-只查部分字段"><a href="#11-2-只查部分字段" class="headerlink" title="11.2 只查部分字段"></a>11.2 只查部分字段</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> id, username <span class="keyword">FROM</span> users;</span><br></pre></td></tr></table></figure>
+
+<h3 id="11-3-带条件查询"><a href="#11-3-带条件查询" class="headerlink" title="11.3 带条件查询"></a>11.3 带条件查询</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> id, username</span><br><span class="line"><span class="keyword">FROM</span> users</span><br><span class="line"><span class="keyword">WHERE</span> age <span class="operator">&gt;=</span> <span class="number">18</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="11-4-排序"><a href="#11-4-排序" class="headerlink" title="11.4 排序"></a>11.4 排序</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> id, username</span><br><span class="line"><span class="keyword">FROM</span> users</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> created_at <span class="keyword">DESC</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="11-5-分页"><a href="#11-5-分页" class="headerlink" title="11.5 分页"></a>11.5 分页</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> id, username</span><br><span class="line"><span class="keyword">FROM</span> users</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> id <span class="keyword">DESC</span></span><br><span class="line">LIMIT <span class="number">10</span> <span class="keyword">OFFSET</span> <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+
+<p>也常写成：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LIMIT <span class="number">0</span>, <span class="number">10</span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="12-更新数据-UPDATE"><a href="#12-更新数据-UPDATE" class="headerlink" title="12. 更新数据 UPDATE"></a>12. 更新数据 <code>UPDATE</code></h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">UPDATE</span> users</span><br><span class="line"><span class="keyword">SET</span> email <span class="operator">=</span> <span class="string">&#x27;new@example.com&#x27;</span></span><br><span class="line"><span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+<p>一定要注意：</p>
+<blockquote>
+<p><code>UPDATE</code> 不写 <code>WHERE</code>，会更新整张表。</p>
+</blockquote>
+<p>Python 示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> conn.cursor() <span class="keyword">as</span> cursor:</span><br><span class="line">    sql = <span class="string">&quot;UPDATE users SET email = %s WHERE id = %s&quot;</span></span><br><span class="line">    affected_rows = cursor.execute(sql, (<span class="string">&quot;new@example.com&quot;</span>, <span class="number">1</span>))</span><br><span class="line">    conn.commit()</span><br><span class="line">    <span class="built_in">print</span>(affected_rows)</span><br></pre></td></tr></table></figure>
+
+<h2 id="13-删除数据-DELETE"><a href="#13-删除数据-DELETE" class="headerlink" title="13. 删除数据 DELETE"></a>13. 删除数据 <code>DELETE</code></h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DELETE</span> <span class="keyword">FROM</span> users</span><br><span class="line"><span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+<p>同样要注意：</p>
+<blockquote>
+<p><code>DELETE</code> 不写 <code>WHERE</code>，会删整张表的数据。</p>
+</blockquote>
+<p>如果你是想删整张表但保留结构，也可以：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">TRUNCATE</span> <span class="keyword">TABLE</span> users;</span><br></pre></td></tr></table></figure>
+
+<h2 id="14-条件查询、排序、分组"><a href="#14-条件查询、排序、分组" class="headerlink" title="14. 条件查询、排序、分组"></a>14. 条件查询、排序、分组</h2><p>这些是 SQL 里非常高频的能力。</p>
+<h3 id="14-1-WHERE"><a href="#14-1-WHERE" class="headerlink" title="14.1 WHERE"></a>14.1 <code>WHERE</code></h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> users <span class="keyword">WHERE</span> age <span class="operator">&gt;=</span> <span class="number">18</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="14-2-ORDER-BY"><a href="#14-2-ORDER-BY" class="headerlink" title="14.2 ORDER BY"></a>14.2 <code>ORDER BY</code></h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> users <span class="keyword">ORDER</span> <span class="keyword">BY</span> id <span class="keyword">DESC</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="14-3-LIMIT"><a href="#14-3-LIMIT" class="headerlink" title="14.3 LIMIT"></a>14.3 <code>LIMIT</code></h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> users LIMIT <span class="number">20</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="14-4-GROUP-BY"><a href="#14-4-GROUP-BY" class="headerlink" title="14.4 GROUP BY"></a>14.4 <code>GROUP BY</code></h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> status, <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="keyword">AS</span> total</span><br><span class="line"><span class="keyword">FROM</span> tasks</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> status;</span><br></pre></td></tr></table></figure>
+
+<h3 id="14-5-HAVING"><a href="#14-5-HAVING" class="headerlink" title="14.5 HAVING"></a>14.5 <code>HAVING</code></h3><p><code>HAVING</code> 通常配合分组结果使用：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> status, <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="keyword">AS</span> total</span><br><span class="line"><span class="keyword">FROM</span> tasks</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> status</span><br><span class="line"><span class="keyword">HAVING</span> total <span class="operator">&gt;</span> <span class="number">10</span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="15-JOIN-关联查询"><a href="#15-JOIN-关联查询" class="headerlink" title="15. JOIN 关联查询"></a>15. JOIN 关联查询</h2><p>这是关系型数据库最重要的优势之一。</p>
+<p>假设：</p>
+<ul>
+<li><code>users</code> 表存用户</li>
+<li><code>documents</code> 表存文档</li>
+</ul>
+<p>查询“每篇文档属于哪个用户”：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> d.id, d.title, u.username</span><br><span class="line"><span class="keyword">FROM</span> documents d</span><br><span class="line"><span class="keyword">JOIN</span> users u <span class="keyword">ON</span> d.user_id <span class="operator">=</span> u.id;</span><br></pre></td></tr></table></figure>
+
+<p>常见 JOIN：</p>
+<ul>
+<li><code>JOIN</code> &#x2F; <code>INNER JOIN</code>：两边都能匹配到才返回</li>
+<li><code>LEFT JOIN</code>：左表全部保留，右表匹配不到则为 <code>NULL</code></li>
+</ul>
+<p>例如：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> u.id, u.username, d.title</span><br><span class="line"><span class="keyword">FROM</span> users u</span><br><span class="line"><span class="keyword">LEFT</span> <span class="keyword">JOIN</span> documents d <span class="keyword">ON</span> u.id <span class="operator">=</span> d.user_id;</span><br></pre></td></tr></table></figure>
+
+<h2 id="16-索引-INDEX"><a href="#16-索引-INDEX" class="headerlink" title="16. 索引 INDEX"></a>16. 索引 <code>INDEX</code></h2><p>索引的作用可以粗暴理解成：</p>
+<blockquote>
+<p>让查询更快，但会增加写入成本和占用空间。</p>
+</blockquote>
+<p>例如给用户名加索引：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> INDEX idx_users_username <span class="keyword">ON</span> users(username);</span><br></pre></td></tr></table></figure>
+
+<p>适合加索引的字段通常有：</p>
+<ul>
+<li>经常出现在 <code>WHERE</code> 里的字段</li>
+<li>经常用于排序的字段</li>
+<li>经常用于 JOIN 的字段</li>
+<li>唯一约束字段</li>
+</ul>
+<p>常见误区：</p>
+<ul>
+<li>不是索引越多越好</li>
+<li>很小的表不一定需要索引</li>
+<li>更新频繁的字段加太多索引会拖慢写入</li>
+</ul>
+<h2 id="17-外键-FOREIGN-KEY"><a href="#17-外键-FOREIGN-KEY" class="headerlink" title="17. 外键 FOREIGN KEY"></a>17. 外键 <code>FOREIGN KEY</code></h2><p>外键用于表达表和表之间的引用关系。</p>
+<p>例如：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> documents (</span><br><span class="line">    id <span class="type">BIGINT</span> <span class="keyword">PRIMARY</span> KEY AUTO_INCREMENT,</span><br><span class="line">    user_id <span class="type">BIGINT</span> <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">    title <span class="type">VARCHAR</span>(<span class="number">200</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">    <span class="keyword">CONSTRAINT</span> fk_documents_user</span><br><span class="line">        <span class="keyword">FOREIGN</span> KEY (user_id) <span class="keyword">REFERENCES</span> users(id)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>它的作用是：</p>
+<ul>
+<li>保证引用关系合法</li>
+<li>避免出现“文档指向一个不存在用户”的情况</li>
+</ul>
+<p>但很多实际项目里，也会选择在业务层保证关系，而不是强依赖数据库外键。</p>
+<h2 id="18-事务-commit-和-rollback"><a href="#18-事务-commit-和-rollback" class="headerlink" title="18. 事务 commit 和 rollback"></a>18. 事务 <code>commit</code> 和 <code>rollback</code></h2><p>你原来的笔记里提到“事务提交”，这部分非常重要。</p>
+<p>事务适合用于：</p>
+<ul>
+<li>多条 SQL 必须一起成功</li>
+<li>中间某一步失败时要整体撤回</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="keyword">with</span> conn.cursor() <span class="keyword">as</span> cursor:</span><br><span class="line">        cursor.execute(</span><br><span class="line">            <span class="string">&quot;INSERT INTO accounts (name, balance) VALUES (%s, %s)&quot;</span>,</span><br><span class="line">            (<span class="string">&quot;alice&quot;</span>, <span class="number">1000</span>),</span><br><span class="line">        )</span><br><span class="line">        cursor.execute(</span><br><span class="line">            <span class="string">&quot;INSERT INTO accounts (name, balance) VALUES (%s, %s)&quot;</span>,</span><br><span class="line">            (<span class="string">&quot;bob&quot;</span>, <span class="number">500</span>),</span><br><span class="line">        )</span><br><span class="line">    conn.commit()</span><br><span class="line"><span class="keyword">except</span> Exception:</span><br><span class="line">    conn.rollback()</span><br><span class="line">    <span class="keyword">raise</span></span><br></pre></td></tr></table></figure>
+
+<p>常见规则：</p>
+<ul>
+<li>成功后 <code>conn.commit()</code></li>
+<li>失败时 <code>conn.rollback()</code></li>
+</ul>
+<p>如果连接时配置：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">autocommit=<span class="literal">True</span></span><br></pre></td></tr></table></figure>
+
+<p>就表示每条 SQL 默认自动提交。</p>
+<p>学习阶段可以用，但项目里要清楚：</p>
+<blockquote>
+<p>一旦涉及多步写操作，通常还是要认真控制事务边界。</p>
+</blockquote>
+<h2 id="19-查询结果获取"><a href="#19-查询结果获取" class="headerlink" title="19. 查询结果获取"></a>19. 查询结果获取</h2><p>这是你原来笔记里已经提到的内容，这里整理成更清晰的版本。</p>
+<h3 id="19-1-fetchone"><a href="#19-1-fetchone" class="headerlink" title="19.1 fetchone()"></a>19.1 <code>fetchone()</code></h3><p>只取一条：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">row = cursor.fetchone()</span><br></pre></td></tr></table></figure>
+
+<h3 id="19-2-fetchmany-n"><a href="#19-2-fetchmany-n" class="headerlink" title="19.2 fetchmany(n)"></a>19.2 <code>fetchmany(n)</code></h3><p>取前 <code>n</code> 条：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rows = cursor.fetchmany(<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="19-3-fetchall"><a href="#19-3-fetchall" class="headerlink" title="19.3 fetchall()"></a>19.3 <code>fetchall()</code></h3><p>取全部：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rows = cursor.fetchall()</span><br></pre></td></tr></table></figure>
+
+<h3 id="19-4-lastrowid"><a href="#19-4-lastrowid" class="headerlink" title="19.4 lastrowid"></a>19.4 <code>lastrowid</code></h3><p>拿最后插入的自增 ID：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">new_id = cursor.lastrowid</span><br></pre></td></tr></table></figure>
+
+<h3 id="19-5-rowcount"><a href="#19-5-rowcount" class="headerlink" title="19.5 rowcount"></a>19.5 <code>rowcount</code></h3><p>看本次 SQL 影响了多少行：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">count = cursor.rowcount</span><br></pre></td></tr></table></figure>
+
+<h2 id="20-execute-和-executemany"><a href="#20-execute-和-executemany" class="headerlink" title="20. execute() 和 executemany()"></a>20. <code>execute()</code> 和 <code>executemany()</code></h2><h3 id="20-1-execute"><a href="#20-1-execute" class="headerlink" title="20.1 execute()"></a>20.1 <code>execute()</code></h3><p>执行一条 SQL：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cursor.execute(</span><br><span class="line">    <span class="string">&quot;INSERT INTO users (username, age) VALUES (%s, %s)&quot;</span>,</span><br><span class="line">    (<span class="string">&quot;tom&quot;</span>, <span class="number">18</span>),</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="20-2-executemany"><a href="#20-2-executemany" class="headerlink" title="20.2 executemany()"></a>20.2 <code>executemany()</code></h3><p>批量执行：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">data = [</span><br><span class="line">    (<span class="string">&quot;tom&quot;</span>, <span class="number">18</span>),</span><br><span class="line">    (<span class="string">&quot;alice&quot;</span>, <span class="number">20</span>),</span><br><span class="line">    (<span class="string">&quot;bob&quot;</span>, <span class="number">22</span>),</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">cursor.executemany(</span><br><span class="line">    <span class="string">&quot;INSERT INTO users (username, age) VALUES (%s, %s)&quot;</span>,</span><br><span class="line">    data,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>适合：</p>
+<ul>
+<li>批量插入</li>
+<li>批量更新同类数据</li>
+</ul>
+<h2 id="21-一段比较完整的-PyMySQL-示例"><a href="#21-一段比较完整的-PyMySQL-示例" class="headerlink" title="21. 一段比较完整的 PyMySQL 示例"></a>21. 一段比较完整的 PyMySQL 示例</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pymysql</span><br><span class="line"><span class="keyword">import</span> pymysql.cursors</span><br><span class="line"></span><br><span class="line">conn = pymysql.connect(</span><br><span class="line">    host=<span class="string">&quot;127.0.0.1&quot;</span>,</span><br><span class="line">    port=<span class="number">3306</span>,</span><br><span class="line">    user=<span class="string">&quot;root&quot;</span>,</span><br><span class="line">    password=<span class="string">&quot;123456&quot;</span>,</span><br><span class="line">    database=<span class="string">&quot;demo&quot;</span>,</span><br><span class="line">    charset=<span class="string">&quot;utf8mb4&quot;</span>,</span><br><span class="line">    cursorclass=pymysql.cursors.DictCursor,</span><br><span class="line">    autocommit=<span class="literal">False</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="keyword">with</span> conn.cursor() <span class="keyword">as</span> cursor:</span><br><span class="line">        cursor.execute(</span><br><span class="line">            <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">            CREATE TABLE IF NOT EXISTS users (</span></span><br><span class="line"><span class="string">                id BIGINT PRIMARY KEY AUTO_INCREMENT,</span></span><br><span class="line"><span class="string">                username VARCHAR(100) NOT NULL UNIQUE,</span></span><br><span class="line"><span class="string">                age INT NOT NULL DEFAULT 0,</span></span><br><span class="line"><span class="string">                created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP</span></span><br><span class="line"><span class="string">            )</span></span><br><span class="line"><span class="string">            &quot;&quot;&quot;</span></span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">        cursor.execute(</span><br><span class="line">            <span class="string">&quot;INSERT INTO users (username, age) VALUES (%s, %s)&quot;</span>,</span><br><span class="line">            (<span class="string">&quot;tom&quot;</span>, <span class="number">18</span>),</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">        new_id = cursor.lastrowid</span><br><span class="line"></span><br><span class="line">        cursor.execute(</span><br><span class="line">            <span class="string">&quot;SELECT id, username, age FROM users WHERE id = %s&quot;</span>,</span><br><span class="line">            (new_id,),</span><br><span class="line">        )</span><br><span class="line">        row = cursor.fetchone()</span><br><span class="line">        <span class="built_in">print</span>(row)</span><br><span class="line"></span><br><span class="line">    conn.commit()</span><br><span class="line"><span class="keyword">except</span> Exception:</span><br><span class="line">    conn.rollback()</span><br><span class="line">    <span class="keyword">raise</span></span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">    conn.close()</span><br></pre></td></tr></table></figure>
+
+<h2 id="22-FastAPI-里怎么用-MySQL"><a href="#22-FastAPI-里怎么用-MySQL" class="headerlink" title="22. FastAPI 里怎么用 MySQL"></a>22. FastAPI 里怎么用 MySQL</h2><p>在 FastAPI 项目里，MySQL 常见用途有：</p>
+<ul>
+<li>存用户</li>
+<li>存任务记录</li>
+<li>存会话和消息</li>
+<li>存文档元数据</li>
+</ul>
+<p>最简单的同步示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pymysql</span><br><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI</span><br><span class="line"></span><br><span class="line">app = FastAPI()</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_conn</span>():</span><br><span class="line">    <span class="keyword">return</span> pymysql.connect(</span><br><span class="line">        host=<span class="string">&quot;127.0.0.1&quot;</span>,</span><br><span class="line">        user=<span class="string">&quot;root&quot;</span>,</span><br><span class="line">        password=<span class="string">&quot;123456&quot;</span>,</span><br><span class="line">        database=<span class="string">&quot;demo&quot;</span>,</span><br><span class="line">        charset=<span class="string">&quot;utf8mb4&quot;</span>,</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.get(<span class="params"><span class="string">&quot;/users/&#123;user_id&#125;&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_user</span>(<span class="params">user_id: <span class="built_in">int</span></span>):</span><br><span class="line">    conn = get_conn()</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">with</span> conn.cursor() <span class="keyword">as</span> cursor:</span><br><span class="line">            cursor.execute(</span><br><span class="line">                <span class="string">&quot;SELECT id, username FROM users WHERE id = %s&quot;</span>,</span><br><span class="line">                (user_id,),</span><br><span class="line">            )</span><br><span class="line">            row = cursor.fetchone()</span><br><span class="line">        <span class="keyword">return</span> &#123;<span class="string">&quot;data&quot;</span>: row&#125;</span><br><span class="line">    <span class="keyword">finally</span>:</span><br><span class="line">        conn.close()</span><br></pre></td></tr></table></figure>
+
+<p>不过实际项目里通常会再往前走一步：</p>
+<ul>
+<li>使用连接池</li>
+<li>抽 Repository &#x2F; Service 层</li>
+<li>使用 SQLAlchemy 等更完整的数据库层</li>
+</ul>
+<h2 id="23-AI-项目里比较常见的表设计"><a href="#23-AI-项目里比较常见的表设计" class="headerlink" title="23. AI 项目里比较常见的表设计"></a>23. AI 项目里比较常见的表设计</h2><p>如果你在做文档问答、RAG、聊天系统，常见会有这些表：</p>
+<ul>
+<li><code>users</code></li>
+<li><code>sessions</code></li>
+<li><code>messages</code></li>
+<li><code>documents</code></li>
+<li><code>document_chunks</code></li>
+<li><code>tasks</code></li>
+</ul>
+<p>例如：</p>
+<ul>
+<li><code>documents</code>：存文档标题、路径、状态、所属用户</li>
+<li><code>tasks</code>：存异步任务 ID、状态、错误信息</li>
+<li><code>messages</code>：存对话消息和角色</li>
+</ul>
+<p>也就是说：</p>
+<blockquote>
+<p>MySQL 更适合存“事实记录”和“长期业务数据”，不适合拿来做高频缓存层。</p>
+</blockquote>
+<h2 id="24-常见坑"><a href="#24-常见坑" class="headerlink" title="24. 常见坑"></a>24. 常见坑</h2><h3 id="24-1-用字符串拼-SQL"><a href="#24-1-用字符串拼-SQL" class="headerlink" title="24.1 用字符串拼 SQL"></a>24.1 用字符串拼 SQL</h3><p>错误示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sql = <span class="string">f&quot;SELECT * FROM users WHERE username = &#x27;<span class="subst">&#123;username&#125;</span>&#x27;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>这会有 SQL 注入风险。</p>
+<p>正确做法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cursor.execute(</span><br><span class="line">    <span class="string">&quot;SELECT * FROM users WHERE username = %s&quot;</span>,</span><br><span class="line">    (username,),</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="24-2-忘记提交事务"><a href="#24-2-忘记提交事务" class="headerlink" title="24.2 忘记提交事务"></a>24.2 忘记提交事务</h3><p>执行了 <code>INSERT</code> &#x2F; <code>UPDATE</code> &#x2F; <code>DELETE</code> 之后，如果没有 <code>commit()</code>，数据可能不会真正写入。</p>
+<h3 id="24-3-UPDATE-DELETE-不带-WHERE"><a href="#24-3-UPDATE-DELETE-不带-WHERE" class="headerlink" title="24.3 UPDATE &#x2F; DELETE 不带 WHERE"></a>24.3 <code>UPDATE</code> &#x2F; <code>DELETE</code> 不带 <code>WHERE</code></h3><p>这会影响整张表。</p>
+<h3 id="24-4-滥用-SELECT"><a href="#24-4-滥用-SELECT" class="headerlink" title="24.4 滥用 SELECT *"></a>24.4 滥用 <code>SELECT *</code></h3><p>开发初期问题不大，但项目里更推荐明确字段，避免：</p>
+<ul>
+<li>取了不需要的数据</li>
+<li>表结构变动后影响接口</li>
+<li>传输和解析成本增加</li>
+</ul>
+<h3 id="24-5-不建索引或乱建索引"><a href="#24-5-不建索引或乱建索引" class="headerlink" title="24.5 不建索引或乱建索引"></a>24.5 不建索引或乱建索引</h3><p>都不对。</p>
+<p>应该根据查询模式来设计索引。</p>
+<h3 id="24-6-字符集没统一"><a href="#24-6-字符集没统一" class="headerlink" title="24.6 字符集没统一"></a>24.6 字符集没统一</h3><p>推荐统一使用：</p>
+<ul>
+<li>数据库字符集：<code>utf8mb4</code></li>
+<li>Python 连接：<code>charset=&quot;utf8mb4&quot;</code></li>
+</ul>
+<h3 id="24-7-把-MySQL-当缓存用"><a href="#24-7-把-MySQL-当缓存用" class="headerlink" title="24.7 把 MySQL 当缓存用"></a>24.7 把 MySQL 当缓存用</h3><p>这会让数据库承担不适合它的高频压力。</p>
+<h2 id="25-一套比较实用的学习顺序"><a href="#25-一套比较实用的学习顺序" class="headerlink" title="25. 一套比较实用的学习顺序"></a>25. 一套比较实用的学习顺序</h2><p>建议这样学：</p>
+<ol>
+<li>先学会创建库、建表、插入、查询、更新、删除</li>
+<li>学会 <code>WHERE</code>、<code>ORDER BY</code>、<code>LIMIT</code></li>
+<li>学会 <code>GROUP BY</code> 和 <code>JOIN</code></li>
+<li>学会索引和事务</li>
+<li>学会用 PyMySQL 连接和执行参数化 SQL</li>
+<li>最后再接入 FastAPI、Celery、Redis</li>
+</ol>
+<h2 id="26-总结"><a href="#26-总结" class="headerlink" title="26. 总结"></a>26. 总结</h2><p>MySQL 的核心价值在于：</p>
+<ul>
+<li>存长期结构化数据</li>
+<li>支持 SQL 查询</li>
+<li>支持关联查询</li>
+<li>支持事务</li>
+<li>适合承载业务主数据</li>
+</ul>
+<p>对于 AI 项目，可以把它理解成：</p>
+<ul>
+<li>用户数据存储层</li>
+<li>会话和消息持久化层</li>
+<li>文档元数据层</li>
+<li>任务记录层</li>
+</ul>
+<p>如果把你前面几份笔记连起来看，可以把它们理解成一条链：</p>
+<ul>
+<li>FastAPI &#x2F; Drogon：接请求</li>
+<li>Redis：缓存 &#x2F; 状态 &#x2F; 中间层</li>
+<li>Celery：后台异步任务</li>
+<li>MySQL：长期持久化数据</li>
+</ul>
+<h2 id="27-参考"><a href="#27-参考" class="headerlink" title="27. 参考"></a>27. 参考</h2><ul>
+<li>MySQL Official Docs: <a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/">https://dev.mysql.com/doc/</a></li>
+<li>PyMySQL Docs: <a target="_blank" rel="noopener" href="https://pymysql.readthedocs.io/">https://pymysql.readthedocs.io/</a></li>
+<li>SQL Syntax Reference: <a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/sql-statements.html">https://dev.mysql.com/doc/refman/8.0/en/sql-statements.html</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>楚天
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/mysql/" title="MySQL 学习笔记">https://chutianduan.github.io/notes/ai模型开发/知识点学习/框架/mysql/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/redis/" rel="prev" title="Redis 学习笔记">
+                  <i class="fa fa-angle-left"></i> Redis 学习笔记
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/embedding/" rel="next" title="Embedding 入门笔记">
+                  Embedding 入门笔记 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-code"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">楚天</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chutianduan.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":2,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="高性能 C++ 并行编程导读时间：2026&#x2F;04&#x2F;09 这组笔记现在按“从语言与内存基础，到 CPU 并行，再到 GPU 与实战”的顺序整理。阅读时不建议完全按时间写作顺序看，而建议按下面这条主线走。  1. 推荐学习顺序 C 指针与内存模型 RAII 与智能指针 左右值、完美转发与引用折叠 模板与元编程 vector 容器优化 编译器优化与汇编视角 访存优化 C++11 多线">
+<meta property="og:type" content="article">
+<meta property="og:title" content="高性能 C++ 并行编程导读">
+<meta property="og:url" content="https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/00-%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B%E5%AF%BC%E8%AF%BB/index.html">
+<meta property="og:site_name" content="楚天">
+<meta property="og:description" content="高性能 C++ 并行编程导读时间：2026&#x2F;04&#x2F;09 这组笔记现在按“从语言与内存基础，到 CPU 并行，再到 GPU 与实战”的顺序整理。阅读时不建议完全按时间写作顺序看，而建议按下面这条主线走。  1. 推荐学习顺序 C 指针与内存模型 RAII 与智能指针 左右值、完美转发与引用折叠 模板与元编程 vector 容器优化 编译器优化与汇编视角 访存优化 C++11 多线">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-04-09T02:29:27.000Z">
+<meta property="article:modified_time" content="2026-04-09T02:29:27.000Z">
+<meta property="article:author" content="楚天">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="游戏网络">
+<meta property="article:tag" content="技术博客">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/00-%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B%E5%AF%BC%E8%AF%BB/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/00-%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B%E5%AF%BC%E8%AF%BB/","path":"/notes/高性能c-并行编程/00-高性能c-并行编程导读/","title":"高性能 C++ 并行编程导读"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>高性能 C++ 并行编程导读 | 楚天</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">楚天</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">惟楚有材，于斯为盛</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-友情链接"><a href="/link/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%AB%98%E6%80%A7%E8%83%BD-C-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B%E5%AF%BC%E8%AF%BB"><span class="nav-number">1.</span> <span class="nav-text">高性能 C++ 并行编程导读</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%8E%A8%E8%8D%90%E5%AD%A6%E4%B9%A0%E9%A1%BA%E5%BA%8F"><span class="nav-number">1.1.</span> <span class="nav-text">1. 推荐学习顺序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%AF%8F%E7%AF%87%E7%AC%94%E8%AE%B0%E8%A7%A3%E5%86%B3%E4%BB%80%E4%B9%88%E9%97%AE%E9%A2%98"><span class="nav-number">1.2.</span> <span class="nav-text">2. 每篇笔记解决什么问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E8%BF%99%E6%AC%A1%E6%95%B4%E7%90%86%E5%81%9A%E4%BA%86%E4%BB%80%E4%B9%88"><span class="nav-number">1.3.</span> <span class="nav-text">3. 这次整理做了什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%A6%82%E6%9E%9C%E5%8F%AA%E6%83%B3%E6%8A%93%E4%B8%BB%E5%B9%B2"><span class="nav-number">1.4.</span> <span class="nav-text">4. 如果只想抓主干</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E6%8E%A5%E4%B8%8B%E6%9D%A5%E7%9A%84%E8%87%AA%E7%84%B6%E6%89%A9%E5%B1%95"><span class="nav-number">1.5.</span> <span class="nav-text">5. 接下来的自然扩展</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="楚天"
+      src="/img/me.jpg">
+  <p class="site-author-name" itemprop="name">楚天</p>
+  <div class="site-description" itemprop="description">记录深度学习、C++、游戏网络与生活旅行的学习笔记。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ChutianDuan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ChutianDuan" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:3383006954@qq.com" title="E-Mail → mailto:3383006954@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/00-%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B%E5%AF%BC%E8%AF%BB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="高性能 C++ 并行编程导读 | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          高性能 C++ 并行编程导读
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-04-09 10:29:27" itemprop="dateCreated datePublished" datetime="2026-04-09T10:29:27+08:00">2026-04-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/%E9%AB%98%E6%80%A7%E8%83%BDC-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">高性能C++并行编程</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="高性能-C-并行编程导读"><a href="#高性能-C-并行编程导读" class="headerlink" title="高性能 C++ 并行编程导读"></a>高性能 C++ 并行编程导读</h1><p>时间：2026&#x2F;04&#x2F;09</p>
+<p>这组笔记现在按“从语言与内存基础，到 CPU 并行，再到 GPU 与实战”的顺序整理。<br>阅读时不建议完全按时间写作顺序看，而建议按下面这条主线走。</p>
+<hr>
+<h2 id="1-推荐学习顺序"><a href="#1-推荐学习顺序" class="headerlink" title="1. 推荐学习顺序"></a>1. 推荐学习顺序</h2><ol>
+<li><code>C 指针与内存模型</code></li>
+<li><code>RAII 与智能指针</code></li>
+<li><code>左右值、完美转发与引用折叠</code></li>
+<li><code>模板与元编程</code></li>
+<li><code>vector 容器优化</code></li>
+<li><code>编译器优化与汇编视角</code></li>
+<li><code>访存优化</code></li>
+<li><code>C++11 多线程编程</code></li>
+<li><code>原子操作、内存序与无锁基础</code></li>
+<li><code>TBB 并行编程</code></li>
+<li><code>CUDA 开启的 GPU 编程</code></li>
+<li><code>流体仿真实战</code></li>
+</ol>
+<hr>
+<h2 id="2-每篇笔记解决什么问题"><a href="#2-每篇笔记解决什么问题" class="headerlink" title="2. 每篇笔记解决什么问题"></a>2. 每篇笔记解决什么问题</h2><table>
+<thead>
+<tr>
+<th>编号</th>
+<th>主题</th>
+<th>核心问题</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>[01]</code></td>
+<td>C 指针与内存模型</td>
+<td>地址、生命周期、数组退化、别名与缓存直觉</td>
+</tr>
+<tr>
+<td><code>[02]</code></td>
+<td>RAII 与智能指针</td>
+<td>资源如何自动释放，所有权如何表达</td>
+</tr>
+<tr>
+<td><code>[03]</code></td>
+<td>左右值、完美转发与引用折叠</td>
+<td><code>std::move</code> &#x2F; <code>std::forward</code> 到底在做什么</td>
+</tr>
+<tr>
+<td><code>[04]</code></td>
+<td>模板与元编程</td>
+<td>泛型、类型推导、<code>if constexpr</code>、traits、concepts</td>
+</tr>
+<tr>
+<td><code>[05]</code></td>
+<td>vector 容器优化</td>
+<td>连续内存、扩容、失效规则、并发写入模式</td>
+</tr>
+<tr>
+<td><code>[06]</code></td>
+<td>编译器优化与汇编视角</td>
+<td>编译器如何重写 C++，哪些写法更利于优化</td>
+</tr>
+<tr>
+<td><code>[07]</code></td>
+<td>访存优化</td>
+<td>cache、AoS&#x2F;SoA、stride、blocking、false sharing</td>
+</tr>
+<tr>
+<td><code>[08]</code></td>
+<td>C++11 多线程编程</td>
+<td><code>thread/mutex/condition_variable/future/thread pool</code></td>
+</tr>
+<tr>
+<td><code>[09]</code></td>
+<td>原子操作、内存序与无锁基础</td>
+<td><code>atomic</code>、CAS、acquire&#x2F;release、<code>seq_cst</code></td>
+</tr>
+<tr>
+<td><code>[10]</code></td>
+<td>TBB 并行编程之旅</td>
+<td>task、并行循环、归约、scan、arena、pipeline</td>
+</tr>
+<tr>
+<td><code>[11]</code></td>
+<td>CUDA 开启的 GPU 编程</td>
+<td>kernel、内存、shared memory、stream、Thrust</td>
+</tr>
+<tr>
+<td><code>[12]</code></td>
+<td>流体仿真实战</td>
+<td>把 CUDA、访存、数值迭代放到一个完整案例里</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="3-这次整理做了什么"><a href="#3-这次整理做了什么" class="headerlink" title="3. 这次整理做了什么"></a>3. 这次整理做了什么</h2><p>这次不是只改文件名，而是做了三类整理：</p>
+<ol>
+<li>把空白或草稿笔记补成正式版：<br><code>C 指针</code>、<code>RAII</code>、<code>编译器优化</code>、<code>访存优化</code>、<code>流体仿真</code></li>
+<li>新增了一篇缺失但关键的笔记：<br><code>原子操作、内存序与无锁基础</code></li>
+<li>统一为按内容排序的 <code>[NN]xxx.md</code> 命名</li>
+</ol>
+<hr>
+<h2 id="4-如果只想抓主干"><a href="#4-如果只想抓主干" class="headerlink" title="4. 如果只想抓主干"></a>4. 如果只想抓主干</h2><p>时间有限时，可以先看这 6 篇：</p>
+<ol>
+<li><code>C 指针与内存模型</code></li>
+<li><code>RAII 与智能指针</code></li>
+<li><code>左右值、完美转发与引用折叠</code></li>
+<li><code>vector 容器优化</code></li>
+<li><code>访存优化</code></li>
+<li><code>C++11 多线程编程</code></li>
+</ol>
+<p>这几篇能先把 C++ 高性能和并行里最常见的基础坑位补齐。</p>
+<hr>
+<h2 id="5-接下来的自然扩展"><a href="#5-接下来的自然扩展" class="headerlink" title="5. 接下来的自然扩展"></a>5. 接下来的自然扩展</h2><p>如果后面继续补这套笔记，最值得优先新增的主题是：</p>
+<ol>
+<li>SIMD 与自动向量化</li>
+<li>Benchmark 与性能分析方法</li>
+<li>NUMA 与多路 CPU 内存访问</li>
+<li><code>std::pmr</code> 与内存池</li>
+<li>C++20&#x2F;23 并发工具：<code>jthread / latch / barrier / semaphore</code></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>楚天
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/00-%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B%E5%AF%BC%E8%AF%BB/" title="高性能 C++ 并行编程导读">https://chutianduan.github.io/notes/高性能c-并行编程/00-高性能c-并行编程导读/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/09-%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C-%E5%86%85%E5%AD%98%E5%BA%8F%E4%B8%8E%E6%97%A0%E9%94%81%E5%9F%BA%E7%A1%80/" rel="prev" title="原子操作、内存序与无锁基础">
+                  <i class="fa fa-angle-left"></i> 原子操作、内存序与无锁基础
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/02-%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E4%B8%8E%E6%89%80%E6%9C%89%E6%9D%83/" rel="next" title="智能指针与所有权">
+                  智能指针与所有权 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-code"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">楚天</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

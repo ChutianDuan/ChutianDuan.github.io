@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chutianduan.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":2,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="深入浅出访存优化时间：2026&#x2F;04&#x2F;09  关键词：缓存、cache line、局部性、AoS&#x2F;SoA、stride、blocking、false sharing、带宽、延迟核心目标：理解“为什么同样是 O(n)，不同内存访问方式会有非常大的性能差异”。   1. 为什么访存优化这么重要很多程序并不是算得慢，而是等内存等得慢。 现代 CPU 的特点是：  算术单元非">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入浅出访存优化">
+<meta property="og:url" content="https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/07-%E8%AE%BF%E5%AD%98%E4%BC%98%E5%8C%96/index.html">
+<meta property="og:site_name" content="楚天">
+<meta property="og:description" content="深入浅出访存优化时间：2026&#x2F;04&#x2F;09  关键词：缓存、cache line、局部性、AoS&#x2F;SoA、stride、blocking、false sharing、带宽、延迟核心目标：理解“为什么同样是 O(n)，不同内存访问方式会有非常大的性能差异”。   1. 为什么访存优化这么重要很多程序并不是算得慢，而是等内存等得慢。 现代 CPU 的特点是：  算术单元非">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-04-09T02:26:36.000Z">
+<meta property="article:modified_time" content="2026-04-09T02:26:36.000Z">
+<meta property="article:author" content="楚天">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="游戏网络">
+<meta property="article:tag" content="技术博客">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/07-%E8%AE%BF%E5%AD%98%E4%BC%98%E5%8C%96/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/07-%E8%AE%BF%E5%AD%98%E4%BC%98%E5%8C%96/","path":"/notes/高性能c-并行编程/07-访存优化/","title":"深入浅出访存优化"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>深入浅出访存优化 | 楚天</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">楚天</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">惟楚有材，于斯为盛</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-友情链接"><a href="/link/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E8%AE%BF%E5%AD%98%E4%BC%98%E5%8C%96"><span class="nav-number">1.</span> <span class="nav-text">深入浅出访存优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%AE%BF%E5%AD%98%E4%BC%98%E5%8C%96%E8%BF%99%E4%B9%88%E9%87%8D%E8%A6%81"><span class="nav-number">1.1.</span> <span class="nav-text">1. 为什么访存优化这么重要</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-CPU-%E4%B8%8D%E6%98%AF%E7%9B%B4%E6%8E%A5%E4%BB%8E%E5%86%85%E5%AD%98%E4%B8%80%E6%A0%BC%E4%B8%80%E6%A0%BC%E5%8F%96%E6%95%B0%E6%8D%AE"><span class="nav-number">1.2.</span> <span class="nav-text">2. CPU 不是直接从内存一格一格取数据</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E7%BC%93%E5%AD%98%E5%B1%82%E7%BA%A7"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 缓存层级</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-cache-line"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 cache line</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E4%B8%A4%E7%A7%8D%E6%9C%80%E9%87%8D%E8%A6%81%E7%9A%84%E5%B1%80%E9%83%A8%E6%80%A7"><span class="nav-number">1.3.</span> <span class="nav-text">3. 两种最重要的局部性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E7%A9%BA%E9%97%B4%E5%B1%80%E9%83%A8%E6%80%A7"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 空间局部性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E6%97%B6%E9%97%B4%E5%B1%80%E9%83%A8%E6%80%A7"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 时间局部性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%A1%BA%E5%BA%8F%E8%AE%BF%E9%97%AE%E9%80%9A%E5%B8%B8%E6%AF%94%E9%9A%8F%E6%9C%BA%E8%AE%BF%E9%97%AE%E5%BF%AB"><span class="nav-number">1.4.</span> <span class="nav-text">4. 为什么顺序访问通常比随机访问快</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-AoS-%E4%B8%8E-SoA"><span class="nav-number">1.5.</span> <span class="nav-text">5. AoS 与 SoA</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-AoS%EF%BC%9AArray-of-Struct"><span class="nav-number">1.5.1.</span> <span class="nav-text">5.1 AoS：Array of Struct</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-SoA%EF%BC%9AStruct-of-Arrays"><span class="nav-number">1.5.2.</span> <span class="nav-text">5.2 SoA：Struct of Arrays</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99-SoA-%E6%9B%B4%E6%9C%89%E4%BC%98%E5%8A%BF"><span class="nav-number">1.5.3.</span> <span class="nav-text">5.3 什么时候 SoA 更有优势</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99-AoS-%E6%9B%B4%E8%87%AA%E7%84%B6"><span class="nav-number">1.5.4.</span> <span class="nav-text">5.4 什么时候 AoS 更自然</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-stride%EF%BC%88%E6%AD%A5%E9%95%BF%EF%BC%89%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E7%9B%B4%E6%8E%A5%E5%BD%B1%E5%93%8D%E6%80%A7%E8%83%BD"><span class="nav-number">1.6.</span> <span class="nav-text">6. stride（步长）为什么会直接影响性能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-%E8%BF%9E%E7%BB%AD%E6%AD%A5%E9%95%BF%E8%AE%BF%E9%97%AE"><span class="nav-number">1.6.1.</span> <span class="nav-text">6.1 连续步长访问</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-%E5%A4%A7%E6%AD%A5%E9%95%BF%E8%AE%BF%E9%97%AE"><span class="nav-number">1.6.2.</span> <span class="nav-text">6.2 大步长访问</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-%E4%BA%8C%E7%BB%B4%E6%95%B0%E7%BB%84%E9%87%8C%E7%9A%84%E5%88%97%E8%AE%BF%E9%97%AE"><span class="nav-number">1.6.3.</span> <span class="nav-text">6.3 二维数组里的列访问</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-blocking-tiling%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E5%88%86%E5%9D%97%E5%B8%B8%E5%B8%B8%E6%9B%B4%E5%BF%AB"><span class="nav-number">1.7.</span> <span class="nav-text">7. blocking &#x2F; tiling：为什么分块常常更快</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-%E7%9B%B4%E8%A7%89"><span class="nav-number">1.7.1.</span> <span class="nav-text">7.1 直觉</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-%E7%9F%A9%E9%98%B5%E4%B9%98%E6%B3%95%E6%98%AF%E6%9C%80%E5%85%B8%E5%9E%8B%E5%9C%BA%E6%99%AF"><span class="nav-number">1.7.2.</span> <span class="nav-text">7.2 矩阵乘法是最典型场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-3-%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E4%B9%9F%E4%B8%80%E6%A0%B7"><span class="nav-number">1.7.3.</span> <span class="nav-text">7.3 图像处理也一样</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-%E9%A2%84%E5%8F%96%E4%B8%8E%E7%A1%AC%E4%BB%B6%E9%A2%84%E5%8F%96%E5%99%A8"><span class="nav-number">1.8.</span> <span class="nav-text">8. 预取与硬件预取器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-false-sharing%EF%BC%9A%E5%B9%B6%E5%8F%91%E9%87%8C%E6%9C%80%E9%9A%90%E8%94%BD%E7%9A%84%E8%AE%BF%E5%AD%98%E6%9D%80%E6%89%8B%E4%B9%8B%E4%B8%80"><span class="nav-number">1.9.</span> <span class="nav-text">9. false sharing：并发里最隐蔽的访存杀手之一</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#9-1-%E5%AE%83%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.9.1.</span> <span class="nav-text">9.1 它是什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-2-%E4%BE%8B%E5%AD%90"><span class="nav-number">1.9.2.</span> <span class="nav-text">9.2 例子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-3-%E5%85%B8%E5%9E%8B%E7%BC%93%E8%A7%A3%E6%96%B9%E5%BC%8F"><span class="nav-number">1.9.3.</span> <span class="nav-text">9.3 典型缓解方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-%E5%AF%B9%E9%BD%90%E3%80%81padding-%E4%B8%8E%E7%BC%93%E5%AD%98%E5%B8%83%E5%B1%80"><span class="nav-number">1.10.</span> <span class="nav-text">10. 对齐、padding 与缓存布局</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#10-1-%E5%AF%B9%E9%BD%90%E5%BD%B1%E5%93%8D%E5%8A%A0%E8%BD%BD%E6%95%88%E7%8E%87"><span class="nav-number">1.10.1.</span> <span class="nav-text">10.1 对齐影响加载效率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-2-%E7%BB%93%E6%9E%84%E4%BD%93%E5%B8%83%E5%B1%80%E4%BC%9A%E5%BD%B1%E5%93%8D%E7%BC%93%E5%AD%98%E5%88%A9%E7%94%A8%E7%8E%87"><span class="nav-number">1.10.2.</span> <span class="nav-text">10.2 结构体布局会影响缓存利用率</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-%E5%88%86%E6%94%AF%E4%B8%8E%E8%AE%BF%E5%AD%98%E4%B9%9F%E5%B8%B8%E5%B8%B8%E7%BB%91%E5%AE%9A%E5%9C%A8%E4%B8%80%E8%B5%B7"><span class="nav-number">1.11.</span> <span class="nav-text">11. 分支与访存也常常绑定在一起</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-%E4%B8%BA%E4%BB%80%E4%B9%88-vector-%E9%80%9A%E5%B8%B8%E6%AF%94-list-%E6%9B%B4%E5%BF%AB"><span class="nav-number">1.12.</span> <span class="nav-text">12. 为什么 vector 通常比 list 更快</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%86%99%E5%85%A5%E6%97%B6%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%88%86%E5%8C%BA"><span class="nav-number">1.13.</span> <span class="nav-text">13. 多线程写入时为什么要分区</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-GPU-%E8%A7%86%E8%A7%92%E4%B8%8B%E4%B8%BA%E4%BB%80%E4%B9%88%E6%9B%B4%E9%87%8D%E8%A7%86-SoA"><span class="nav-number">1.14.</span> <span class="nav-text">14. GPU 视角下为什么更重视 SoA</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#15-%E8%AE%BF%E5%AD%98%E4%BC%98%E5%8C%96%E7%9A%84%E5%AE%9E%E6%88%98%E5%8E%9F%E5%88%99"><span class="nav-number">1.15.</span> <span class="nav-text">15. 访存优化的实战原则</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#15-1-%E5%B0%BD%E9%87%8F%E8%BF%9E%E7%BB%AD%E8%AE%BF%E9%97%AE"><span class="nav-number">1.15.1.</span> <span class="nav-text">15.1 尽量连续访问</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-2-%E5%B0%BD%E9%87%8F%E7%BC%A9%E5%B0%8F%E7%83%AD%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="nav-number">1.15.2.</span> <span class="nav-text">15.2 尽量缩小热数据集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-3-%E5%B0%BD%E9%87%8F%E5%A2%9E%E5%8A%A0%E5%A4%8D%E7%94%A8"><span class="nav-number">1.15.3.</span> <span class="nav-text">15.3 尽量增加复用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-4-%E5%B0%BD%E9%87%8F%E9%81%BF%E5%85%8D%E6%97%A0%E6%84%8F%E4%B9%89%E5%85%B1%E4%BA%AB"><span class="nav-number">1.15.4.</span> <span class="nav-text">15.4 尽量避免无意义共享</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-5-%E7%94%A8%E6%95%B0%E6%8D%AE%E5%B8%83%E5%B1%80%E6%9C%8D%E5%8A%A1%E7%AE%97%E6%B3%95"><span class="nav-number">1.15.5.</span> <span class="nav-text">15.5 用数据布局服务算法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#16-%E5%B8%B8%E8%A7%81%E8%AF%AF%E5%8C%BA"><span class="nav-number">1.16.</span> <span class="nav-text">16. 常见误区</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#16-1-%E5%8F%AA%E7%9B%AF%E7%AE%97%E6%B3%95%E5%A4%8D%E6%9D%82%E5%BA%A6%EF%BC%8C%E4%B8%8D%E7%9C%8B%E8%AE%BF%E5%AD%98"><span class="nav-number">1.16.1.</span> <span class="nav-text">16.1 只盯算法复杂度，不看访存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16-2-%E8%AF%AF%E4%BB%A5%E4%B8%BA-cache-%E6%98%AF%E2%80%9C%E7%BC%96%E8%AF%91%E5%99%A8%E9%97%AE%E9%A2%98%E2%80%9D"><span class="nav-number">1.16.2.</span> <span class="nav-text">16.2 误以为 cache 是“编译器问题”</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16-3-%E6%8A%8A%E6%89%80%E6%9C%89%E5%AF%B9%E8%B1%A1%E9%83%BD%E5%81%9A%E6%88%90%E2%80%9C%E5%A4%A7%E8%80%8C%E5%85%A8%E2%80%9D"><span class="nav-number">1.16.3.</span> <span class="nav-text">16.3 把所有对象都做成“大而全”</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16-4-%E5%B9%B6%E5%8F%91%E5%9C%BA%E6%99%AF%E5%8F%AA%E5%85%B3%E6%B3%A8%E9%94%81%EF%BC%8C%E4%B8%8D%E5%85%B3%E6%B3%A8-cache-line"><span class="nav-number">1.16.4.</span> <span class="nav-text">16.4 并发场景只关注锁，不关注 cache line</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#17-%E4%B8%80%E9%A1%B5%E6%80%BB%E7%BB%93"><span class="nav-number">1.17.</span> <span class="nav-text">17. 一页总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#18-%E5%BB%BA%E8%AE%AE%E7%BB%A7%E7%BB%AD%E8%A1%A5%E5%85%85%E7%9A%84%E7%9B%B8%E5%85%B3%E4%B8%BB%E9%A2%98"><span class="nav-number">1.18.</span> <span class="nav-text">18. 建议继续补充的相关主题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#19-%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.19.</span> <span class="nav-text">19. 参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="楚天"
+      src="/img/me.jpg">
+  <p class="site-author-name" itemprop="name">楚天</p>
+  <div class="site-description" itemprop="description">记录深度学习、C++、游戏网络与生活旅行的学习笔记。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ChutianDuan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ChutianDuan" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:3383006954@qq.com" title="E-Mail → mailto:3383006954@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/07-%E8%AE%BF%E5%AD%98%E4%BC%98%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="深入浅出访存优化 | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          深入浅出访存优化
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-04-09 10:26:36" itemprop="dateCreated datePublished" datetime="2026-04-09T10:26:36+08:00">2026-04-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/%E9%AB%98%E6%80%A7%E8%83%BDC-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">高性能C++并行编程</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="深入浅出访存优化"><a href="#深入浅出访存优化" class="headerlink" title="深入浅出访存优化"></a>深入浅出访存优化</h1><p>时间：2026&#x2F;04&#x2F;09</p>
+<blockquote>
+<p>关键词：缓存、cache line、局部性、AoS&#x2F;SoA、stride、blocking、false sharing、带宽、延迟<br>核心目标：理解“为什么同样是 <code>O(n)</code>，不同内存访问方式会有非常大的性能差异”。</p>
+</blockquote>
+<hr>
+<h2 id="1-为什么访存优化这么重要"><a href="#1-为什么访存优化这么重要" class="headerlink" title="1. 为什么访存优化这么重要"></a>1. 为什么访存优化这么重要</h2><p>很多程序并不是算得慢，而是<strong>等内存等得慢</strong>。</p>
+<p>现代 CPU 的特点是：</p>
+<ul>
+<li>算术单元非常快</li>
+<li>主存访问相对很慢</li>
+<li>一旦 cache miss，CPU 可能要空等很多周期</li>
+</ul>
+<p>所以高性能编程里经常会出现这种现象：</p>
+<ul>
+<li>算法复杂度没变</li>
+<li>指令数也没怎么变</li>
+<li>只是换了数据布局和访问顺序</li>
+<li>性能却提升一大截</li>
+</ul>
+<p>这背后的核心就是访存模式。</p>
+<hr>
+<h2 id="2-CPU-不是直接从内存一格一格取数据"><a href="#2-CPU-不是直接从内存一格一格取数据" class="headerlink" title="2. CPU 不是直接从内存一格一格取数据"></a>2. CPU 不是直接从内存一格一格取数据</h2><h3 id="2-1-缓存层级"><a href="#2-1-缓存层级" class="headerlink" title="2.1 缓存层级"></a>2.1 缓存层级</h3><p>可以先粗略理解成：</p>
+<ul>
+<li><code>L1</code>：最小、最快</li>
+<li><code>L2</code>：更大、稍慢</li>
+<li><code>L3</code>：更大、共享、再慢一些</li>
+<li><code>DRAM</code>：远慢于缓存</li>
+</ul>
+<p>因此访问一个数据时：</p>
+<ul>
+<li>如果在缓存里，代价较低</li>
+<li>如果不在，就会发生 cache miss，从更慢层级取</li>
+</ul>
+<h3 id="2-2-cache-line"><a href="#2-2-cache-line" class="headerlink" title="2.2 cache line"></a>2.2 cache line</h3><p>CPU 取数据通常不是只取一个字节或一个 <code>int</code>，而是按<strong>缓存行</strong>成块搬运。</p>
+<p>常见 cache line 大小是：</p>
+<ul>
+<li>64 字节</li>
+</ul>
+<p>这意味着：</p>
+<ul>
+<li>如果你访问了 <code>a[i]</code></li>
+<li>那么 <code>a[i]</code> 周围的一片数据往往也会一起进缓存</li>
+</ul>
+<p>所以连续访问会特别受益。</p>
+<hr>
+<h2 id="3-两种最重要的局部性"><a href="#3-两种最重要的局部性" class="headerlink" title="3. 两种最重要的局部性"></a>3. 两种最重要的局部性</h2><h3 id="3-1-空间局部性"><a href="#3-1-空间局部性" class="headerlink" title="3.1 空间局部性"></a>3.1 空间局部性</h3><p>如果你访问了某个地址，附近地址也很可能马上会被访问。<br>连续数组遍历就是最典型例子。</p>
+<h3 id="3-2-时间局部性"><a href="#3-2-时间局部性" class="headerlink" title="3.2 时间局部性"></a>3.2 时间局部性</h3><p>如果你刚访问过某个数据，很可能短时间内还会再访问它。</p>
+<p>例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; n; ++i) &#123;</span><br><span class="line">    sum += a[i];</span><br><span class="line">    sum += a[i];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>第二次访问 <code>a[i]</code> 很可能仍在缓存里。</p>
+<hr>
+<h2 id="4-为什么顺序访问通常比随机访问快"><a href="#4-为什么顺序访问通常比随机访问快" class="headerlink" title="4. 为什么顺序访问通常比随机访问快"></a>4. 为什么顺序访问通常比随机访问快</h2><p>看两个模式：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; n; ++i) &#123;</span><br><span class="line">    sum += a[i];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>和：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; n; ++i) &#123;</span><br><span class="line">    sum += a[idx[i]];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>第二种如果 <code>idx</code> 很随机，就容易出现：</p>
+<ul>
+<li>cache line 利用率低</li>
+<li>硬件预取器很难提前猜中</li>
+<li>CPU 长时间等待内存</li>
+</ul>
+<p>这就是为什么：</p>
+<ul>
+<li>链表遍历</li>
+<li>稀疏随机访问</li>
+<li>指针追逐</li>
+</ul>
+<p>常常会显著慢于顺序数组遍历。</p>
+<hr>
+<h2 id="5-AoS-与-SoA"><a href="#5-AoS-与-SoA" class="headerlink" title="5. AoS 与 SoA"></a>5. AoS 与 SoA</h2><p>这是访存优化里最经典的话题之一。</p>
+<h3 id="5-1-AoS：Array-of-Struct"><a href="#5-1-AoS：Array-of-Struct" class="headerlink" title="5.1 AoS：Array of Struct"></a>5.1 AoS：Array of Struct</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Particle</span> &#123;</span><br><span class="line">    <span class="type">float</span> x, y, z;</span><br><span class="line">    <span class="type">float</span> vx, vy, vz;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">std::vector&lt;Particle&gt; a;</span><br></pre></td></tr></table></figure>
+
+<p>特点：</p>
+<ul>
+<li>单个对象的属性紧挨着存</li>
+<li>适合“经常整对象一起处理”的场景</li>
+</ul>
+<h3 id="5-2-SoA：Struct-of-Arrays"><a href="#5-2-SoA：Struct-of-Arrays" class="headerlink" title="5.2 SoA：Struct of Arrays"></a>5.2 SoA：Struct of Arrays</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Particles</span> &#123;</span><br><span class="line">    std::vector&lt;<span class="type">float</span>&gt; x, y, z;</span><br><span class="line">    std::vector&lt;<span class="type">float</span>&gt; vx, vy, vz;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>特点：</p>
+<ul>
+<li>同一属性的数据连续存储</li>
+<li>更适合批量处理同一字段</li>
+<li>常更利于 SIMD &#x2F; GPU &#x2F; cache</li>
+</ul>
+<h3 id="5-3-什么时候-SoA-更有优势"><a href="#5-3-什么时候-SoA-更有优势" class="headerlink" title="5.3 什么时候 SoA 更有优势"></a>5.3 什么时候 SoA 更有优势</h3><p>如果你的计算主要是：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (...) &#123;</span><br><span class="line">    x[i] += vx[i] * dt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>那么 SoA 往往更好，因为：</p>
+<ul>
+<li>访问字段连续</li>
+<li>每个 cache line 里装的都是“当前真正要用的数据”</li>
+</ul>
+<h3 id="5-4-什么时候-AoS-更自然"><a href="#5-4-什么时候-AoS-更自然" class="headerlink" title="5.4 什么时候 AoS 更自然"></a>5.4 什么时候 AoS 更自然</h3><p>如果逻辑经常要完整处理单个对象，例如：</p>
+<ul>
+<li>读一个粒子的全部属性</li>
+<li>面向对象接口较多</li>
+</ul>
+<p>AoS 可能更直观。</p>
+<p>经验上：</p>
+<ul>
+<li>计算密集且按字段批量处理时，优先考虑 SoA</li>
+<li>业务逻辑围绕单对象时，AoS 更自然</li>
+</ul>
+<hr>
+<h2 id="6-stride（步长）为什么会直接影响性能"><a href="#6-stride（步长）为什么会直接影响性能" class="headerlink" title="6. stride（步长）为什么会直接影响性能"></a>6. stride（步长）为什么会直接影响性能</h2><h3 id="6-1-连续步长访问"><a href="#6-1-连续步长访问" class="headerlink" title="6.1 连续步长访问"></a>6.1 连续步长访问</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; n; ++i) &#123;</span><br><span class="line">    sum += a[i];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这通常最好。</p>
+<h3 id="6-2-大步长访问"><a href="#6-2-大步长访问" class="headerlink" title="6.2 大步长访问"></a>6.2 大步长访问</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; n; i += <span class="number">16</span>) &#123;</span><br><span class="line">    sum += a[i];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>问题在于：</p>
+<ul>
+<li>每次只用到一个 cache line 里的很少一部分</li>
+<li>带宽利用率低</li>
+</ul>
+<h3 id="6-3-二维数组里的列访问"><a href="#6-3-二维数组里的列访问" class="headerlink" title="6.3 二维数组里的列访问"></a>6.3 二维数组里的列访问</h3><p>假设按行连续存储：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">size_t</span> j = <span class="number">0</span>; j &lt; m; ++j) &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; n; ++i) &#123;</span><br><span class="line">        sum += a[i][j];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果内层循环跨行跳，会比按行访问差很多。</p>
+<p>因此多维数据常见经验是：</p>
+<ul>
+<li><strong>内层循环尽量走连续维</strong></li>
+</ul>
+<hr>
+<h2 id="7-blocking-tiling：为什么分块常常更快"><a href="#7-blocking-tiling：为什么分块常常更快" class="headerlink" title="7. blocking &#x2F; tiling：为什么分块常常更快"></a>7. blocking &#x2F; tiling：为什么分块常常更快</h2><p>当工作集太大，无法完全放进缓存时，可以按块处理。</p>
+<h3 id="7-1-直觉"><a href="#7-1-直觉" class="headerlink" title="7.1 直觉"></a>7.1 直觉</h3><p>不要一次把全量数据扫完再回来重扫，而是：</p>
+<ul>
+<li>先拿一小块</li>
+<li>在这小块上做尽量多的计算</li>
+<li>让这小块在缓存中被充分复用</li>
+</ul>
+<h3 id="7-2-矩阵乘法是最典型场景"><a href="#7-2-矩阵乘法是最典型场景" class="headerlink" title="7.2 矩阵乘法是最典型场景"></a>7.2 矩阵乘法是最典型场景</h3><p>朴素矩阵乘法经常很慢，不是乘法本身慢，而是访存复用差。<br>分块后的核心收益是：</p>
+<ul>
+<li>提高缓存命中</li>
+<li>减少大跨度反复读</li>
+</ul>
+<h3 id="7-3-图像处理也一样"><a href="#7-3-图像处理也一样" class="headerlink" title="7.3 图像处理也一样"></a>7.3 图像处理也一样</h3><p>例如卷积、滤波、stencil 计算，都常通过 tile&#x2F;block 改善访存。</p>
+<hr>
+<h2 id="8-预取与硬件预取器"><a href="#8-预取与硬件预取器" class="headerlink" title="8. 预取与硬件预取器"></a>8. 预取与硬件预取器</h2><p>现代 CPU 会尝试根据访问规律提前把数据搬进缓存，这就是硬件预取。</p>
+<p>它更擅长：</p>
+<ul>
+<li>连续访问</li>
+<li>稳定步长访问</li>
+</ul>
+<p>它不擅长：</p>
+<ul>
+<li>随机访问</li>
+<li>指针跳转</li>
+<li>强数据依赖链</li>
+</ul>
+<p>所以很多“看起来只是更整齐的循环”之所以更快，本质上是在帮硬件预取器工作。</p>
+<hr>
+<h2 id="9-false-sharing：并发里最隐蔽的访存杀手之一"><a href="#9-false-sharing：并发里最隐蔽的访存杀手之一" class="headerlink" title="9. false sharing：并发里最隐蔽的访存杀手之一"></a>9. false sharing：并发里最隐蔽的访存杀手之一</h2><h3 id="9-1-它是什么"><a href="#9-1-它是什么" class="headerlink" title="9.1 它是什么"></a>9.1 它是什么</h3><p>两个线程虽然更新的是<strong>不同变量</strong>，但这两个变量落在同一个 cache line 里。<br>结果两个核心会频繁抢这个 cache line 的所有权，导致性能急剧下降。</p>
+<h3 id="9-2-例子"><a href="#9-2-例子" class="headerlink" title="9.2 例子"></a>9.2 例子</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">CounterPair</span> &#123;</span><br><span class="line">    std::atomic&lt;<span class="type">int</span>&gt; a;</span><br><span class="line">    std::atomic&lt;<span class="type">int</span>&gt; b;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>如果线程 1 只写 <code>a</code>，线程 2 只写 <code>b</code>，理论上彼此独立；<br>但如果 <code>a</code> 和 <code>b</code> 在同一 cache line，就可能 false sharing。</p>
+<h3 id="9-3-典型缓解方式"><a href="#9-3-典型缓解方式" class="headerlink" title="9.3 典型缓解方式"></a>9.3 典型缓解方式</h3><ul>
+<li>padding</li>
+<li><code>alignas(64)</code></li>
+<li>每线程局部累加，最后汇总</li>
+</ul>
+<p>这在并行归约、线程本地统计里特别常见。</p>
+<hr>
+<h2 id="10-对齐、padding-与缓存布局"><a href="#10-对齐、padding-与缓存布局" class="headerlink" title="10. 对齐、padding 与缓存布局"></a>10. 对齐、padding 与缓存布局</h2><h3 id="10-1-对齐影响加载效率"><a href="#10-1-对齐影响加载效率" class="headerlink" title="10.1 对齐影响加载效率"></a>10.1 对齐影响加载效率</h3><p>对齐良好的数据更利于：</p>
+<ul>
+<li>高效加载</li>
+<li>SIMD 指令</li>
+<li>cache line 对齐访问</li>
+</ul>
+<h3 id="10-2-结构体布局会影响缓存利用率"><a href="#10-2-结构体布局会影响缓存利用率" class="headerlink" title="10.2 结构体布局会影响缓存利用率"></a>10.2 结构体布局会影响缓存利用率</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">A</span> &#123;</span><br><span class="line">    <span class="type">char</span> flag;</span><br><span class="line">    <span class="type">double</span> value;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>编译器可能为了对齐插入 padding。<br>如果一个结构体很大，而你每次只用其中一两个字段，就会带来缓存浪费。</p>
+<p>这也是为什么“对象设计”会直接变成“性能设计”。</p>
+<hr>
+<h2 id="11-分支与访存也常常绑定在一起"><a href="#11-分支与访存也常常绑定在一起" class="headerlink" title="11. 分支与访存也常常绑定在一起"></a>11. 分支与访存也常常绑定在一起</h2><p>下面这类代码既影响分支预测，也影响访存效率：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (a[i] &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    sum += heavy_table[a[i]];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果：</p>
+<ul>
+<li><code>a[i] &gt; 0</code> 高度不可预测</li>
+<li><code>heavy_table</code> 访问又很随机</li>
+</ul>
+<p>性能通常会明显变差。</p>
+<p>所以优化时别把“计算”和“访存”割裂看，它们常是一起出问题的。</p>
+<hr>
+<h2 id="12-为什么-vector-通常比-list-更快"><a href="#12-为什么-vector-通常比-list-更快" class="headerlink" title="12. 为什么 vector 通常比 list 更快"></a>12. 为什么 <code>vector</code> 通常比 <code>list</code> 更快</h2><p>很多人第一次接触会觉得：</p>
+<ul>
+<li><code>list</code> 插入删除是 <code>O(1)</code></li>
+<li><code>vector</code> 中间插删是 <code>O(n)</code></li>
+</ul>
+<p>于是误以为 <code>list</code> 应该经常更快。<br>但现实里，很多遍历型或批量处理场景中，<code>vector</code> 常常更快，原因就在于：</p>
+<ul>
+<li>连续内存</li>
+<li>cache 友好</li>
+<li>更利于预取与向量化</li>
+</ul>
+<p>所以算法复杂度只是第一层，访存模式是第二层。</p>
+<hr>
+<h2 id="13-多线程写入时为什么要分区"><a href="#13-多线程写入时为什么要分区" class="headerlink" title="13. 多线程写入时为什么要分区"></a>13. 多线程写入时为什么要分区</h2><p>如果多个线程写同一个大数组，比较好的模式通常是：</p>
+<ul>
+<li>每个线程负责一个连续区间</li>
+<li>尽量避免多个线程反复改同一个 cache line</li>
+</ul>
+<p>不好的模式则常见于：</p>
+<ul>
+<li>交错写入</li>
+<li>所有线程抢同一个计数器</li>
+<li>共享小对象频繁原子更新</li>
+</ul>
+<p>这会带来：</p>
+<ul>
+<li>cache line 争用</li>
+<li>false sharing</li>
+<li>带宽浪费</li>
+</ul>
+<hr>
+<h2 id="14-GPU-视角下为什么更重视-SoA"><a href="#14-GPU-视角下为什么更重视-SoA" class="headerlink" title="14. GPU 视角下为什么更重视 SoA"></a>14. GPU 视角下为什么更重视 SoA</h2><p>GPU 更强调大规模并行和合并访问（coalescing）。<br>因此当一批线程访问同一字段的连续元素时，SoA 往往比 AoS 更有优势。</p>
+<p>所以很多 CPU&#x2F;GPU 共享的高性能数据结构设计原则其实是相通的：</p>
+<ul>
+<li>扁平化</li>
+<li>连续化</li>
+<li>尽量批处理同类字段</li>
+</ul>
+<hr>
+<h2 id="15-访存优化的实战原则"><a href="#15-访存优化的实战原则" class="headerlink" title="15. 访存优化的实战原则"></a>15. 访存优化的实战原则</h2><p>可以直接记这几条：</p>
+<h3 id="15-1-尽量连续访问"><a href="#15-1-尽量连续访问" class="headerlink" title="15.1 尽量连续访问"></a>15.1 尽量连续访问</h3><p>先改访问顺序，再谈别的。</p>
+<h3 id="15-2-尽量缩小热数据集"><a href="#15-2-尽量缩小热数据集" class="headerlink" title="15.2 尽量缩小热数据集"></a>15.2 尽量缩小热数据集</h3><p>把频繁访问的数据做得更紧凑。</p>
+<h3 id="15-3-尽量增加复用"><a href="#15-3-尽量增加复用" class="headerlink" title="15.3 尽量增加复用"></a>15.3 尽量增加复用</h3><p>让已经进缓存的数据多用几次。</p>
+<h3 id="15-4-尽量避免无意义共享"><a href="#15-4-尽量避免无意义共享" class="headerlink" title="15.4 尽量避免无意义共享"></a>15.4 尽量避免无意义共享</h3><p>特别是在并行代码里。</p>
+<h3 id="15-5-用数据布局服务算法"><a href="#15-5-用数据布局服务算法" class="headerlink" title="15.5 用数据布局服务算法"></a>15.5 用数据布局服务算法</h3><p>不是“先写一个漂亮对象模型，再看性能”，而是：</p>
+<ul>
+<li>哪种布局更适合核心计算，就优先哪种</li>
+</ul>
+<hr>
+<h2 id="16-常见误区"><a href="#16-常见误区" class="headerlink" title="16. 常见误区"></a>16. 常见误区</h2><h3 id="16-1-只盯算法复杂度，不看访存"><a href="#16-1-只盯算法复杂度，不看访存" class="headerlink" title="16.1 只盯算法复杂度，不看访存"></a>16.1 只盯算法复杂度，不看访存</h3><p>两个同为 <code>O(n)</code> 的实现，真实速度可能差很多倍。</p>
+<h3 id="16-2-误以为-cache-是“编译器问题”"><a href="#16-2-误以为-cache-是“编译器问题”" class="headerlink" title="16.2 误以为 cache 是“编译器问题”"></a>16.2 误以为 cache 是“编译器问题”</h3><p>缓存问题本质上是：</p>
+<ul>
+<li>数据布局问题</li>
+<li>访问顺序问题</li>
+<li>并发共享问题</li>
+</ul>
+<h3 id="16-3-把所有对象都做成“大而全”"><a href="#16-3-把所有对象都做成“大而全”" class="headerlink" title="16.3 把所有对象都做成“大而全”"></a>16.3 把所有对象都做成“大而全”</h3><p>热路径只用两个字段时，大结构体会造成大量无效搬运。</p>
+<h3 id="16-4-并发场景只关注锁，不关注-cache-line"><a href="#16-4-并发场景只关注锁，不关注-cache-line" class="headerlink" title="16.4 并发场景只关注锁，不关注 cache line"></a>16.4 并发场景只关注锁，不关注 cache line</h3><p>很多“看起来没锁争用”的程序，其实卡在 false sharing。</p>
+<hr>
+<h2 id="17-一页总结"><a href="#17-一页总结" class="headerlink" title="17. 一页总结"></a>17. 一页总结</h2><p>访存优化可以压缩成一句话：</p>
+<blockquote>
+<p>让 CPU&#x2F;GPU 更容易在更少次、更连续、更可预测的内存访问中拿到真正需要的数据。</p>
+</blockquote>
+<p>最关键的实践点有：</p>
+<ol>
+<li>顺序访问优于随机访问</li>
+<li>连续布局优于分散指针结构</li>
+<li>SoA 在按字段批量处理时常优于 AoS</li>
+<li>分块能提升缓存复用</li>
+<li>并发时要警惕 false sharing</li>
+</ol>
+<hr>
+<h2 id="18-建议继续补充的相关主题"><a href="#18-建议继续补充的相关主题" class="headerlink" title="18. 建议继续补充的相关主题"></a>18. 建议继续补充的相关主题</h2><p>和本篇衔接最紧密的内容：</p>
+<ol>
+<li><code>vector</code> 容器优化</li>
+<li>自动向量化与 SIMD</li>
+<li>NUMA 与多路 CPU 访存</li>
+<li>GPU 合并访存与 shared memory</li>
+<li>矩阵分块与 stencil 优化</li>
+</ol>
+<hr>
+<h2 id="19-参考资料"><a href="#19-参考资料" class="headerlink" title="19. 参考资料"></a>19. 参考资料</h2><ol>
+<li><p>Intel Optimization Manual<br><a target="_blank" rel="noopener" href="https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html">https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html</a></p>
+</li>
+<li><p>cppreference: <code>alignas</code><br><a target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/language/alignas">https://en.cppreference.com/w/cpp/language/alignas</a></p>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>楚天
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/07-%E8%AE%BF%E5%AD%98%E4%BC%98%E5%8C%96/" title="深入浅出访存优化">https://chutianduan.github.io/notes/高性能c-并行编程/07-访存优化/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/06-%E7%BC%96%E8%AF%91%E5%99%A8%E4%BC%98%E5%8C%96%E4%B8%8E%E6%B1%87%E7%BC%96%E8%A7%86%E8%A7%92/" rel="prev" title="从汇编角度看编译器优化">
+                  <i class="fa fa-angle-left"></i> 从汇编角度看编译器优化
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/12-%E6%B5%81%E4%BD%93%E4%BB%BF%E7%9C%9F%E5%AE%9E%E6%88%98/" rel="next" title="流体仿真实战">
+                  流体仿真实战 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-code"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">楚天</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

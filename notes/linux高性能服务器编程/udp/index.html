@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chutianduan.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":2,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="UDP 通信时间：2026&#x2F;04&#x2F;09  关键词：报文、无连接、不可靠传输、sendto&#x2F;recvfrom、MTU、丢包重传、滑动窗口核心目标：先把 UDP 的“简单”理解透，再搞清楚为什么很多实时协议愿意在 UDP 之上自己补可靠性。   1. UDP 是什么UDP（User Datagram Protocol）是面向报文的传输层协议。 它的特点很直接：  无连接：通信前不需">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UDP 通信">
+<meta property="og:url" content="https://chutianduan.github.io/notes/linux%E9%AB%98%E6%80%A7%E8%83%BD%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BC%96%E7%A8%8B/udp/index.html">
+<meta property="og:site_name" content="楚天">
+<meta property="og:description" content="UDP 通信时间：2026&#x2F;04&#x2F;09  关键词：报文、无连接、不可靠传输、sendto&#x2F;recvfrom、MTU、丢包重传、滑动窗口核心目标：先把 UDP 的“简单”理解透，再搞清楚为什么很多实时协议愿意在 UDP 之上自己补可靠性。   1. UDP 是什么UDP（User Datagram Protocol）是面向报文的传输层协议。 它的特点很直接：  无连接：通信前不需">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-04-09T09:50:24.000Z">
+<meta property="article:modified_time" content="2026-04-09T09:50:24.000Z">
+<meta property="article:author" content="楚天">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="游戏网络">
+<meta property="article:tag" content="技术博客">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://chutianduan.github.io/notes/linux%E9%AB%98%E6%80%A7%E8%83%BD%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BC%96%E7%A8%8B/udp/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://chutianduan.github.io/notes/linux%E9%AB%98%E6%80%A7%E8%83%BD%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BC%96%E7%A8%8B/udp/","path":"/notes/linux高性能服务器编程/udp/","title":"UDP 通信"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>UDP 通信 | 楚天</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">楚天</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">惟楚有材，于斯为盛</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-友情链接"><a href="/link/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#UDP-%E9%80%9A%E4%BF%A1"><span class="nav-number">1.</span> <span class="nav-text">UDP 通信</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-UDP-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.1.</span> <span class="nav-text">1. UDP 是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-UDP-%E5%92%8C-TCP-%E7%9A%84%E6%A0%B8%E5%BF%83%E5%B7%AE%E5%BC%82"><span class="nav-number">1.2.</span> <span class="nav-text">2. UDP 和 TCP 的核心差异</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Linux-%E4%B8%8B-UDP-%E7%9A%84%E5%B8%B8%E7%94%A8%E6%8E%A5%E5%8F%A3"><span class="nav-number">1.3.</span> <span class="nav-text">3. Linux 下 UDP 的常用接口</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E5%88%9B%E5%BB%BA-socket"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 创建 socket</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E7%BB%91%E5%AE%9A%E5%9C%B0%E5%9D%80"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 服务端绑定地址</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E6%8E%A5%E6%94%B6%E4%B8%8E%E5%8F%91%E9%80%81"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 接收与发送</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-connect-%E5%AF%B9-UDP-%E4%B9%9F%E6%9C%89%E7%94%A8"><span class="nav-number">1.3.4.</span> <span class="nav-text">3.4 connect() 对 UDP 也有用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-UDP-%E9%80%9A%E4%BF%A1%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%B5%81%E7%A8%8B"><span class="nav-number">1.4.</span> <span class="nav-text">4. UDP 通信的基本流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E6%9C%8D%E5%8A%A1%E7%AB%AF"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 服务端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 客户端</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-UDP-%E7%9A%84%E5%B7%A5%E7%A8%8B%E6%B3%A8%E6%84%8F%E7%82%B9"><span class="nav-number">1.5.</span> <span class="nav-text">5. UDP 的工程注意点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-%E6%B2%A1%E6%9C%89%E7%B2%98%E5%8C%85%EF%BC%8C%E4%B8%8D%E7%AD%89%E4%BA%8E%E6%B2%A1%E6%9C%89%E5%8D%8F%E8%AE%AE%E8%AE%BE%E8%AE%A1"><span class="nav-number">1.5.1.</span> <span class="nav-text">5.1 没有粘包，不等于没有协议设计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-%E4%B8%A2%E5%8C%85%E3%80%81%E4%B9%B1%E5%BA%8F%E3%80%81%E9%87%8D%E5%A4%8D%E9%83%BD%E6%98%AF%E6%AD%A3%E5%B8%B8%E7%8E%B0%E8%B1%A1"><span class="nav-number">1.5.2.</span> <span class="nav-text">5.2 丢包、乱序、重复都是正常现象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-%E5%B0%BD%E9%87%8F%E9%81%BF%E5%85%8D-IP-%E5%88%86%E7%89%87"><span class="nav-number">1.5.3.</span> <span class="nav-text">5.3 尽量避免 IP 分片</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-%E9%AB%98%E6%80%A7%E8%83%BD%E5%9C%BA%E6%99%AF%E9%80%9A%E5%B8%B8%E8%A6%81%E9%85%8D%E5%90%88%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF"><span class="nav-number">1.5.4.</span> <span class="nav-text">5.4 高性能场景通常要配合事件循环</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E4%B8%80%E4%B8%AA%E6%9C%80%E5%B0%8F-UDP-%E5%9B%9E%E6%98%BE%E6%9C%8D%E5%8A%A1%E7%AB%AF"><span class="nav-number">1.6.</span> <span class="nav-text">6. 一个最小 UDP 回显服务端</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-%E7%94%A8-UDP-%E5%AE%9E%E7%8E%B0-TCP%EF%BC%8C%E5%BA%94%E8%AF%A5%E6%80%8E%E4%B9%88%E6%83%B3"><span class="nav-number">1.7.</span> <span class="nav-text">7. 用 UDP 实现 TCP，应该怎么想</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-%E5%85%88%E5%88%86%E6%B8%85%E7%9B%AE%E6%A0%87"><span class="nav-number">1.7.1.</span> <span class="nav-text">7.1 先分清目标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-%E6%9C%80%E5%B0%8F%E5%8D%8F%E8%AE%AE%E5%A4%B4%E5%8F%AF%E4%BB%A5%E8%BF%99%E6%A0%B7%E8%AE%BE%E8%AE%A1"><span class="nav-number">1.7.2.</span> <span class="nav-text">7.2 最小协议头可以这样设计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-3-%E6%8A%8A-TCP-%E7%9A%84%E8%83%BD%E5%8A%9B%E6%8B%86%E6%88%90-6-%E5%B1%82%E5%8A%9F%E8%83%BD"><span class="nav-number">1.7.3.</span> <span class="nav-text">7.3 把 TCP 的能力拆成 6 层功能</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E8%BF%9E%E6%8E%A5%E7%AE%A1%E7%90%86"><span class="nav-number">1.7.3.1.</span> <span class="nav-text">1. 连接管理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E5%8F%AF%E9%9D%A0%E6%80%A7"><span class="nav-number">1.7.3.2.</span> <span class="nav-text">2. 可靠性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E6%9C%89%E5%BA%8F%E4%BA%A4%E4%BB%98"><span class="nav-number">1.7.3.3.</span> <span class="nav-text">3. 有序交付</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6"><span class="nav-number">1.7.3.4.</span> <span class="nav-text">4. 流量控制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6"><span class="nav-number">1.7.3.5.</span> <span class="nav-text">5. 拥塞控制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-%E5%85%B3%E9%97%AD%E8%BF%9E%E6%8E%A5"><span class="nav-number">1.7.3.6.</span> <span class="nav-text">6. 关闭连接</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-%E4%B8%80%E4%B8%AA%E2%80%9CUDP-%E7%89%88-TCP%E2%80%9D%E6%9C%80%E5%B0%8F%E5%AE%9E%E7%8E%B0%E6%A1%86%E6%9E%B6"><span class="nav-number">1.8.</span> <span class="nav-text">8. 一个“UDP 版 TCP”最小实现框架</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-%E7%9C%9F%E6%AD%A3%E8%90%BD%E5%9C%B0%E6%97%B6%E7%9A%84%E5%87%A0%E4%B8%AA%E5%85%B3%E9%94%AE%E5%8F%96%E8%88%8D"><span class="nav-number">1.9.</span> <span class="nav-text">9. 真正落地时的几个关键取舍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#9-1-%E5%85%88%E5%81%9A%E2%80%9C%E5%8F%AF%E9%9D%A0%E6%B6%88%E6%81%AF%E2%80%9D%EF%BC%8C%E5%86%8D%E5%81%9A%E2%80%9C%E5%8F%AF%E9%9D%A0%E5%AD%97%E8%8A%82%E6%B5%81%E2%80%9D"><span class="nav-number">1.9.1.</span> <span class="nav-text">9.1 先做“可靠消息”，再做“可靠字节流”</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-2-%E4%B8%8D%E8%A6%81%E4%B8%80%E5%BC%80%E5%A7%8B%E5%B0%B1%E8%AF%95%E5%9B%BE%E5%A4%8D%E5%88%BB%E5%86%85%E6%A0%B8-TCP"><span class="nav-number">1.9.2.</span> <span class="nav-text">9.2 不要一开始就试图复刻内核 TCP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-3-%E7%8E%B0%E4%BB%A3%E5%B7%A5%E7%A8%8B%E6%9B%B4%E5%B8%B8%E8%A7%81%E7%9A%84%E6%98%AF%E2%80%9C%E5%9C%A8-UDP-%E4%B8%8A%E5%81%9A%E5%AE%9A%E5%88%B6%E5%8D%8F%E8%AE%AE%E2%80%9D"><span class="nav-number">1.9.3.</span> <span class="nav-text">9.3 现代工程更常见的是“在 UDP 上做定制协议”</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-%E5%B0%8F%E7%BB%93"><span class="nav-number">1.10.</span> <span class="nav-text">10. 小结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">1.11.</span> <span class="nav-text">参考</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="楚天"
+      src="/img/me.jpg">
+  <p class="site-author-name" itemprop="name">楚天</p>
+  <div class="site-description" itemprop="description">记录深度学习、C++、游戏网络与生活旅行的学习笔记。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ChutianDuan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ChutianDuan" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:3383006954@qq.com" title="E-Mail → mailto:3383006954@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/linux%E9%AB%98%E6%80%A7%E8%83%BD%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BC%96%E7%A8%8B/udp/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="UDP 通信 | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          UDP 通信
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-04-09 17:50:24" itemprop="dateCreated datePublished" datetime="2026-04-09T17:50:24+08:00">2026-04-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/Linux%E9%AB%98%E6%80%A7%E8%83%BD%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Linux高性能服务器编程</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="UDP-通信"><a href="#UDP-通信" class="headerlink" title="UDP 通信"></a>UDP 通信</h1><p>时间：2026&#x2F;04&#x2F;09</p>
+<blockquote>
+<p>关键词：报文、无连接、不可靠传输、<code>sendto/recvfrom</code>、MTU、丢包重传、滑动窗口<br>核心目标：先把 UDP 的“简单”理解透，再搞清楚为什么很多实时协议愿意在 UDP 之上自己补可靠性。</p>
+</blockquote>
+<hr>
+<h2 id="1-UDP-是什么"><a href="#1-UDP-是什么" class="headerlink" title="1. UDP 是什么"></a>1. UDP 是什么</h2><p>UDP（User Datagram Protocol）是<strong>面向报文</strong>的传输层协议。</p>
+<p>它的特点很直接：</p>
+<ul>
+<li><strong>无连接</strong>：通信前不需要三次握手</li>
+<li><strong>报文边界保留</strong>：发送一次 <code>sendto</code>，接收端看到的是一个完整报文，天然没有 TCP 粘包问题</li>
+<li><strong>尽力而为</strong>：协议本身不保证送达、不保证顺序、不保证不重复</li>
+<li><strong>开销小、时延低</strong>：头部只有 8 字节，协议栈处理也更轻</li>
+</ul>
+<p>所以 UDP 很适合：</p>
+<ul>
+<li>实时音视频</li>
+<li>在线游戏</li>
+<li>DNS</li>
+<li>广播 &#x2F; 组播</li>
+<li>能容忍少量丢包，但很在意时延的业务</li>
+</ul>
+<hr>
+<h2 id="2-UDP-和-TCP-的核心差异"><a href="#2-UDP-和-TCP-的核心差异" class="headerlink" title="2. UDP 和 TCP 的核心差异"></a>2. UDP 和 TCP 的核心差异</h2><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>UDP</th>
+<th>TCP</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>连接语义</td>
+<td>无连接</td>
+<td>面向连接</td>
+</tr>
+<tr>
+<td>数据形式</td>
+<td>报文</td>
+<td>字节流</td>
+</tr>
+<tr>
+<td>可靠性</td>
+<td>不保证</td>
+<td>保证送达、按序、去重</td>
+</tr>
+<tr>
+<td>顺序</td>
+<td>不保证</td>
+<td>保证</td>
+</tr>
+<tr>
+<td>重传</td>
+<td>应用层自己做</td>
+<td>内核协议栈负责</td>
+</tr>
+<tr>
+<td>流量控制</td>
+<td>没有</td>
+<td>有</td>
+</tr>
+<tr>
+<td>拥塞控制</td>
+<td>没有</td>
+<td>有</td>
+</tr>
+<tr>
+<td>时延</td>
+<td>更低</td>
+<td>较稳定但更重</td>
+</tr>
+</tbody></table>
+<p>最重要的一点：</p>
+<blockquote>
+<p>UDP 只是“帮你发包”，TCP 则是“帮你把传输这件事做完整”。</p>
+</blockquote>
+<hr>
+<h2 id="3-Linux-下-UDP-的常用接口"><a href="#3-Linux-下-UDP-的常用接口" class="headerlink" title="3. Linux 下 UDP 的常用接口"></a>3. Linux 下 UDP 的常用接口</h2><h3 id="3-1-创建-socket"><a href="#3-1-创建-socket" class="headerlink" title="3.1 创建 socket"></a>3.1 创建 socket</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> fd = socket(AF_INET, SOCK_DGRAM, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
+<p><code>SOCK_DGRAM</code> 表示 UDP 套接字。</p>
+<h3 id="3-2-服务端绑定地址"><a href="#3-2-服务端绑定地址" class="headerlink" title="3.2 服务端绑定地址"></a>3.2 服务端绑定地址</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bind(fd, (<span class="keyword">struct</span> sockaddr*)&amp;addr, <span class="keyword">sizeof</span>(addr));</span><br></pre></td></tr></table></figure>
+
+<p>和 TCP 一样，服务端通常需要 <code>bind</code> 到固定 IP&#x2F;端口。</p>
+<h3 id="3-3-接收与发送"><a href="#3-3-接收与发送" class="headerlink" title="3.3 接收与发送"></a>3.3 接收与发送</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ssize_t</span> n = recvfrom(fd, buf, <span class="keyword">sizeof</span>(buf), <span class="number">0</span>,</span><br><span class="line">                     (<span class="keyword">struct</span> sockaddr*)&amp;peer, &amp;peer_len);</span><br><span class="line"></span><br><span class="line">sendto(fd, data, len, <span class="number">0</span>,</span><br><span class="line">       (<span class="keyword">struct</span> sockaddr*)&amp;peer, peer_len);</span><br></pre></td></tr></table></figure>
+
+<p>这是一对最常见的 UDP I&#x2F;O 接口：</p>
+<ul>
+<li><code>recvfrom</code>：收到数据时，顺便告诉你包来自谁</li>
+<li><code>sendto</code>：每次发送时明确指定目标地址</li>
+</ul>
+<h3 id="3-4-connect-对-UDP-也有用"><a href="#3-4-connect-对-UDP-也有用" class="headerlink" title="3.4 connect() 对 UDP 也有用"></a>3.4 <code>connect()</code> 对 UDP 也有用</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">connect(fd, (<span class="keyword">struct</span> sockaddr*)&amp;peer, <span class="keyword">sizeof</span>(peer));</span><br></pre></td></tr></table></figure>
+
+<p>UDP 上的 <code>connect()</code> <strong>不是建立连接</strong>，而是：</p>
+<ul>
+<li>给这个 socket 绑定一个默认对端</li>
+<li>之后可以直接用 <code>send/recv</code></li>
+<li>内核只接收该对端发来的报文</li>
+<li>某些错误能更直接反馈给调用方</li>
+</ul>
+<p>所以很多客户端 UDP 程序也会先 <code>connect()</code>，这样代码更简洁。</p>
+<hr>
+<h2 id="4-UDP-通信的基本流程"><a href="#4-UDP-通信的基本流程" class="headerlink" title="4. UDP 通信的基本流程"></a>4. UDP 通信的基本流程</h2><h3 id="4-1-服务端"><a href="#4-1-服务端" class="headerlink" title="4.1 服务端"></a>4.1 服务端</h3><ol>
+<li><code>socket(AF_INET, SOCK_DGRAM, 0)</code></li>
+<li><code>bind()</code></li>
+<li>循环 <code>recvfrom()</code></li>
+<li>根据来源地址决定回包对象</li>
+<li><code>sendto()</code> 返回结果</li>
+</ol>
+<h3 id="4-2-客户端"><a href="#4-2-客户端" class="headerlink" title="4.2 客户端"></a>4.2 客户端</h3><ol>
+<li><code>socket(AF_INET, SOCK_DGRAM, 0)</code></li>
+<li>可选：<code>connect()</code></li>
+<li><code>sendto()</code> 或 <code>send()</code></li>
+<li><code>recvfrom()</code> 或 <code>recv()</code></li>
+</ol>
+<p>和 TCP 相比，UDP 没有：</p>
+<ul>
+<li><code>listen()</code></li>
+<li><code>accept()</code></li>
+</ul>
+<p>因为它没有连接队列这一层。</p>
+<hr>
+<h2 id="5-UDP-的工程注意点"><a href="#5-UDP-的工程注意点" class="headerlink" title="5. UDP 的工程注意点"></a>5. UDP 的工程注意点</h2><h3 id="5-1-没有粘包，不等于没有协议设计"><a href="#5-1-没有粘包，不等于没有协议设计" class="headerlink" title="5.1 没有粘包，不等于没有协议设计"></a>5.1 没有粘包，不等于没有协议设计</h3><p>UDP 保留报文边界，但应用层仍然要定义：</p>
+<ul>
+<li>包头</li>
+<li>消息类型</li>
+<li>序号</li>
+<li>校验</li>
+<li>重传策略</li>
+</ul>
+<p>否则出了问题很难排查。</p>
+<h3 id="5-2-丢包、乱序、重复都是正常现象"><a href="#5-2-丢包、乱序、重复都是正常现象" class="headerlink" title="5.2 丢包、乱序、重复都是正常现象"></a>5.2 丢包、乱序、重复都是正常现象</h3><p>UDP 编程默认就要接受这些情况：</p>
+<ul>
+<li>某个包永远收不到</li>
+<li>后发的包先到</li>
+<li>同一个包被收到两次</li>
+</ul>
+<p>这不是异常，而是 UDP 的正常工作方式。</p>
+<h3 id="5-3-尽量避免-IP-分片"><a href="#5-3-尽量避免-IP-分片" class="headerlink" title="5.3 尽量避免 IP 分片"></a>5.3 尽量避免 IP 分片</h3><p>如果 UDP 报文过大，IP 层可能分片。分片带来的问题：</p>
+<ul>
+<li>任一分片丢失，整个报文作废</li>
+<li>网络设备对分片不友好</li>
+<li>性能和稳定性都变差</li>
+</ul>
+<p>工程上通常建议：</p>
+<ul>
+<li>单个应用层包尽量控制在 <strong>MTU 以下</strong></li>
+<li>以太网常见安全值可以先按 <code>1200</code> 字节左右设计</li>
+</ul>
+<p>这也是 QUIC 常见的保守做法之一。</p>
+<h3 id="5-4-高性能场景通常要配合事件循环"><a href="#5-4-高性能场景通常要配合事件循环" class="headerlink" title="5.4 高性能场景通常要配合事件循环"></a>5.4 高性能场景通常要配合事件循环</h3><p>在 Linux 上，大量 UDP socket 或高频收发通常会配合：</p>
+<ul>
+<li><code>epoll</code></li>
+<li>非阻塞 socket</li>
+<li>定时器管理重传</li>
+<li>批量收发（如 <code>recvmmsg/sendmmsg</code>）</li>
+</ul>
+<p>单线程阻塞式 <code>recvfrom()</code> 适合入门，不适合高并发服务。</p>
+<hr>
+<h2 id="6-一个最小-UDP-回显服务端"><a href="#6-一个最小-UDP-回显服务端" class="headerlink" title="6. 一个最小 UDP 回显服务端"></a>6. 一个最小 UDP 回显服务端</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netinet/in.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">int</span> fd = socket(AF_INET, SOCK_DGRAM, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">addr</span>;</span></span><br><span class="line">    <span class="built_in">memset</span>(&amp;addr, <span class="number">0</span>, <span class="keyword">sizeof</span>(addr));</span><br><span class="line">    addr.sin_family = AF_INET;</span><br><span class="line">    addr.sin_addr.s_addr = htonl(INADDR_ANY);</span><br><span class="line">    addr.sin_port = htons(<span class="number">9999</span>);</span><br><span class="line"></span><br><span class="line">    bind(fd, (<span class="keyword">struct</span> sockaddr*)&amp;addr, <span class="keyword">sizeof</span>(addr));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (;;) &#123;</span><br><span class="line">        <span class="type">char</span> buf[<span class="number">2048</span>];</span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">peer</span>;</span></span><br><span class="line">        <span class="type">socklen_t</span> len = <span class="keyword">sizeof</span>(peer);</span><br><span class="line"></span><br><span class="line">        <span class="type">ssize_t</span> n = recvfrom(fd, buf, <span class="keyword">sizeof</span>(buf), <span class="number">0</span>,</span><br><span class="line">                             (<span class="keyword">struct</span> sockaddr*)&amp;peer, &amp;len);</span><br><span class="line">        <span class="keyword">if</span> (n &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        sendto(fd, buf, (<span class="type">size_t</span>)n, <span class="number">0</span>,</span><br><span class="line">               (<span class="keyword">struct</span> sockaddr*)&amp;peer, len);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    close(fd);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个例子足够说明 UDP 服务端的基本模型：</p>
+<ul>
+<li>一个 socket</li>
+<li>不断收报文</li>
+<li>每个报文都自带来源地址</li>
+<li>回包时显式指定目标</li>
+</ul>
+<hr>
+<h2 id="7-用-UDP-实现-TCP，应该怎么想"><a href="#7-用-UDP-实现-TCP，应该怎么想" class="headerlink" title="7. 用 UDP 实现 TCP，应该怎么想"></a>7. 用 UDP 实现 TCP，应该怎么想</h2><p>这里更准确的说法不是“把 TCP 原样重写一遍”，而是：</p>
+<blockquote>
+<p>在 UDP 之上补齐 TCP 的核心能力，做出一个“可靠、有序、可控”的传输层。</p>
+</blockquote>
+<p>这是很多实时网络框架的常见思路，例如：</p>
+<ul>
+<li><strong>KCP</strong>：在 UDP 上实现可靠传输，强调低延迟</li>
+<li><strong>QUIC</strong>：在 UDP 上实现更现代的连接、多路复用、拥塞控制与加密</li>
+</ul>
+<h3 id="7-1-先分清目标"><a href="#7-1-先分清目标" class="headerlink" title="7.1 先分清目标"></a>7.1 先分清目标</h3><p>如果你只是想让消息“更可靠”，那通常只需要做：</p>
+<ul>
+<li>序号</li>
+<li>ACK</li>
+<li>超时重传</li>
+<li>简单窗口</li>
+</ul>
+<p>如果你想完整模拟 TCP，则还要补：</p>
+<ul>
+<li>连接管理</li>
+<li>按序交付</li>
+<li>流量控制</li>
+<li>拥塞控制</li>
+<li>RTT 估计与重传定时器</li>
+<li>关闭连接</li>
+</ul>
+<p>真正困难的部分其实不是“发包”，而是：</p>
+<ul>
+<li><strong>如何在复杂网络环境里稳定地控制发送节奏</strong></li>
+</ul>
+<h3 id="7-2-最小协议头可以这样设计"><a href="#7-2-最小协议头可以这样设计" class="headerlink" title="7.2 最小协议头可以这样设计"></a>7.2 最小协议头可以这样设计</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">PacketHeader</span> &#123;</span></span><br><span class="line">    <span class="type">uint32_t</span> conn_id;    <span class="comment">// 连接标识</span></span><br><span class="line">    <span class="type">uint32_t</span> seq;        <span class="comment">// 当前包序号</span></span><br><span class="line">    <span class="type">uint32_t</span> ack;        <span class="comment">// 已确认到的对端序号</span></span><br><span class="line">    <span class="type">uint16_t</span> flags;      <span class="comment">// SYN / ACK / FIN / RST 等</span></span><br><span class="line">    <span class="type">uint16_t</span> wnd;        <span class="comment">// 通告接收窗口</span></span><br><span class="line">    <span class="type">uint32_t</span> ts;         <span class="comment">// 时间戳，用于 RTT 估计</span></span><br><span class="line">    <span class="type">uint16_t</span> len;        <span class="comment">// payload 长度</span></span><br><span class="line">    <span class="type">uint16_t</span> checksum;   <span class="comment">// 包头+包体校验</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>如果只是做“可靠消息”而不是“字节流”，这个头已经够搭框架了。</p>
+<h3 id="7-3-把-TCP-的能力拆成-6-层功能"><a href="#7-3-把-TCP-的能力拆成-6-层功能" class="headerlink" title="7.3 把 TCP 的能力拆成 6 层功能"></a>7.3 把 TCP 的能力拆成 6 层功能</h3><h4 id="1-连接管理"><a href="#1-连接管理" class="headerlink" title="1. 连接管理"></a>1. 连接管理</h4><p>在 UDP 上自己定义连接状态：</p>
+<ul>
+<li><code>CLOSED</code></li>
+<li><code>SYN_SENT</code></li>
+<li><code>SYN_RECV</code></li>
+<li><code>ESTABLISHED</code></li>
+<li><code>FIN_WAIT</code></li>
+</ul>
+<p>可以直接借用 TCP 的思路：</p>
+<ol>
+<li>客户端发 <code>SYN(seq=x)</code></li>
+<li>服务端回 <code>SYN|ACK(seq=y, ack=x+1)</code></li>
+<li>客户端再发 <code>ACK(ack=y+1)</code></li>
+</ol>
+<p>这样做的价值是：</p>
+<ul>
+<li>双方都知道初始序号</li>
+<li>可以建立会话状态</li>
+<li>便于后续超时、重传和断线清理</li>
+</ul>
+<h4 id="2-可靠性"><a href="#2-可靠性" class="headerlink" title="2. 可靠性"></a>2. 可靠性</h4><p>发送端维护一个<strong>未确认发送队列</strong>：</p>
+<ul>
+<li>每发一个包，都放进 <code>unacked_map</code></li>
+<li>记录发送时间、重传次数</li>
+<li>定时扫描超时包并重发</li>
+</ul>
+<p>接收端收到包后返回 ACK。</p>
+<p>最简单的 ACK 策略可以先做：</p>
+<ul>
+<li><strong>累计确认</strong>：<code>ack = 下一个期待收到的序号</code></li>
+</ul>
+<p>再进一步可做：</p>
+<ul>
+<li><strong>选择确认</strong>（SACK）：显式告诉对端哪些乱序包已经收到</li>
+</ul>
+<h4 id="3-有序交付"><a href="#3-有序交付" class="headerlink" title="3. 有序交付"></a>3. 有序交付</h4><p>如果包乱序到达：</p>
+<ul>
+<li>先放入接收缓冲区</li>
+<li>只有当 <code>seq == expected_seq</code> 时才向上层提交</li>
+<li>提交后继续检查后续缓存是否已连续</li>
+</ul>
+<p>这就是 TCP “按序交付”的核心。</p>
+<h4 id="4-流量控制"><a href="#4-流量控制" class="headerlink" title="4. 流量控制"></a>4. 流量控制</h4><p>需要告诉对方：</p>
+<ul>
+<li>我这边接收缓冲还有多大</li>
+</ul>
+<p>也就是在包头里放 <code>wnd</code>，类似 TCP 的接收窗口。</p>
+<p>否则发送方可能发得太快，把接收方内存顶爆。</p>
+<h4 id="5-拥塞控制"><a href="#5-拥塞控制" class="headerlink" title="5. 拥塞控制"></a>5. 拥塞控制</h4><p>这是最难的一层。</p>
+<p>最偷懒的版本可以先不做，只设固定发送速率，但这不是真正的 TCP 级能力。</p>
+<p>更接近 TCP 的做法是引入：</p>
+<ul>
+<li>慢启动</li>
+<li>拥塞避免</li>
+<li>丢包后乘法减小</li>
+</ul>
+<p>如果没有拥塞控制，你的协议在局域网看起来正常，到了公网通常就会失控。</p>
+<h4 id="6-关闭连接"><a href="#6-关闭连接" class="headerlink" title="6. 关闭连接"></a>6. 关闭连接</h4><p>同样可以模仿 TCP：</p>
+<ul>
+<li>一端发 <code>FIN</code></li>
+<li>对端回 <code>ACK</code></li>
+<li>双方完成收尾和资源回收</li>
+</ul>
+<p>否则 session 容易泄漏。</p>
+<hr>
+<h2 id="8-一个“UDP-版-TCP”最小实现框架"><a href="#8-一个“UDP-版-TCP”最小实现框架" class="headerlink" title="8. 一个“UDP 版 TCP”最小实现框架"></a>8. 一个“UDP 版 TCP”最小实现框架</h2><p>如果从工程结构上设计，可以拆成下面几层：</p>
+<ol>
+<li><strong>UdpSocket 层</strong><br>负责 <code>socket/bind/sendto/recvfrom</code> 和 <code>epoll</code></li>
+<li><strong>Session 层</strong><br>用 <code>peer_addr + conn_id</code> 管理会话状态</li>
+<li><strong>Reliability 层</strong><br>管理 <code>seq/ack</code>、发送窗口、重传队列、乱序缓冲</li>
+<li><strong>Timer 层</strong><br>负责 RTO、心跳、超时断线</li>
+<li><strong>Congestion &#x2F; Flow Control 层</strong><br>控制能发多少、发多快</li>
+<li><strong>Application 层</strong><br>真正的业务协议</li>
+</ol>
+<p>一个发送端主循环大概是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">应用层提交消息</span><br><span class="line">-&gt; 分配 seq</span><br><span class="line">-&gt; 封包并发送</span><br><span class="line">-&gt; 放入未确认队列</span><br><span class="line">-&gt; 等待 ACK</span><br><span class="line">-&gt; 超时则重传</span><br><span class="line">-&gt; 收到 ACK 后从队列删除</span><br></pre></td></tr></table></figure>
+
+<p>一个接收端主循环大概是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">收到 UDP 报文</span><br><span class="line">-&gt; 校验包头</span><br><span class="line">-&gt; 根据 conn_id 找到 session</span><br><span class="line">-&gt; 判断 seq 是否重复 / 乱序 / 正常</span><br><span class="line">-&gt; 更新接收窗口</span><br><span class="line">-&gt; 发送 ACK</span><br><span class="line">-&gt; 按序把数据交给上层</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="9-真正落地时的几个关键取舍"><a href="#9-真正落地时的几个关键取舍" class="headerlink" title="9. 真正落地时的几个关键取舍"></a>9. 真正落地时的几个关键取舍</h2><h3 id="9-1-先做“可靠消息”，再做“可靠字节流”"><a href="#9-1-先做“可靠消息”，再做“可靠字节流”" class="headerlink" title="9.1 先做“可靠消息”，再做“可靠字节流”"></a>9.1 先做“可靠消息”，再做“可靠字节流”</h3><p>如果目标是游戏状态同步、命令包、RPC：</p>
+<ul>
+<li>做<strong>可靠消息协议</strong>通常更简单</li>
+</ul>
+<p>如果非要完全模拟 TCP 的“字节流语义”，复杂度会显著上升，因为你还要处理：</p>
+<ul>
+<li>流式重组</li>
+<li>半关闭</li>
+<li>更复杂的缓冲管理</li>
+</ul>
+<h3 id="9-2-不要一开始就试图复刻内核-TCP"><a href="#9-2-不要一开始就试图复刻内核-TCP" class="headerlink" title="9.2 不要一开始就试图复刻内核 TCP"></a>9.2 不要一开始就试图复刻内核 TCP</h3><p>更现实的路线是：</p>
+<ol>
+<li>先做连接 + seq + ack + 重传</li>
+<li>再做乱序缓存 + 滑动窗口</li>
+<li>再补 RTT &#x2F; RTO</li>
+<li>最后再考虑拥塞控制</li>
+</ol>
+<p>否则很容易一上来就把实现写散。</p>
+<h3 id="9-3-现代工程更常见的是“在-UDP-上做定制协议”"><a href="#9-3-现代工程更常见的是“在-UDP-上做定制协议”" class="headerlink" title="9.3 现代工程更常见的是“在 UDP 上做定制协议”"></a>9.3 现代工程更常见的是“在 UDP 上做定制协议”</h3><p>很多时候我们并不是要“重新发明 TCP”，而是要：</p>
+<ul>
+<li>保留 UDP 的低时延和灵活性</li>
+<li>只补自己需要的那部分可靠性</li>
+</ul>
+<p>例如：</p>
+<ul>
+<li>关键帧可靠重传</li>
+<li>状态包不重传，只发送最新值</li>
+<li>控制消息必须有 ACK</li>
+</ul>
+<p>这比完整复刻 TCP 更符合实时系统的实际需求。</p>
+<hr>
+<h2 id="10-小结"><a href="#10-小结" class="headerlink" title="10. 小结"></a>10. 小结</h2><p>可以把 UDP 记成一句话：</p>
+<blockquote>
+<p>UDP 提供的是“轻量发报文”的能力，可靠、有序、流控、拥塞控制都要你自己决定要不要补。</p>
+</blockquote>
+<p>如果要用 UDP 实现类似 TCP 的能力，最关键不是 API，而是这几个机制：</p>
+<ul>
+<li>序号 <code>seq</code></li>
+<li>确认 <code>ack</code></li>
+<li>超时重传</li>
+<li>滑动窗口</li>
+<li>按序交付</li>
+<li>流控 &#x2F; 拥塞控制</li>
+</ul>
+<p>把这些拆开理解之后，“UDP 实现 TCP”就不再神秘，本质上就是：</p>
+<ul>
+<li><strong>在用户态自己维护传输状态机</strong></li>
+</ul>
+<hr>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/yangykaifa/p/19447080">Linux网络基础——传输层协议 UDP 与 TCP</a></li>
+<li>RFC 768: UDP</li>
+<li>RFC 793: TCP</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>楚天
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://chutianduan.github.io/notes/linux%E9%AB%98%E6%80%A7%E8%83%BD%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BC%96%E7%A8%8B/udp/" title="UDP 通信">https://chutianduan.github.io/notes/linux高性能服务器编程/udp/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%85%B3%E7%B3%BB/" rel="prev" title="数据库关系">
+                  <i class="fa fa-angle-left"></i> 数据库关系
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/notes/linux%E9%AB%98%E6%80%A7%E8%83%BD%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BC%96%E7%A8%8B/%E9%AB%98%E6%80%A7%E8%83%BD%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BC%96%E7%A8%8B%E7%AC%94%E8%AE%B0%E4%B8%80/" rel="next" title="高性能服务器编程笔记一">
+                  高性能服务器编程笔记一 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-code"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">楚天</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

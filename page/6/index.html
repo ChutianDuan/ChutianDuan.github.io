@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chutianduan.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":2,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="楚天">
+<meta property="og:url" content="https://chutianduan.github.io/page/6/index.html">
+<meta property="og:site_name" content="楚天">
+<meta property="og:description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="楚天">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="游戏网络">
+<meta property="article:tag" content="技术博客">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://chutianduan.github.io/page/6/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":true,"isPost":false,"lang":"zh-CN","comments":"","permalink":"","path":"page/6/index.html","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>楚天</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">楚天</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">惟楚有材，于斯为盛</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-友情链接"><a href="/link/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-overview-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="楚天"
+      src="/img/me.jpg">
+  <p class="site-author-name" itemprop="name">楚天</p>
+  <div class="site-description" itemprop="description">记录深度学习、C++、游戏网络与生活旅行的学习笔记。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ChutianDuan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ChutianDuan" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:3383006954@qq.com" title="E-Mail → mailto:3383006954@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/2026/01/24/hello-world/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2026/01/24/hello-world/" class="post-title-link" itemprop="url">Hello World</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2026-01-24 10:08:22 / 修改时间：10:43:15" itemprop="dateCreated datePublished" datetime="2026-01-24T10:08:22+08:00">2026-01-24</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/%E5%AE%9E%E6%97%B6%E7%AB%9E%E6%8A%80%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/client/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/notes/%E5%AE%9E%E6%97%B6%E7%AB%9E%E6%8A%80%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/client/" class="post-title-link" itemprop="url">Client 实现分析</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-01-21 15:25:43" itemprop="dateCreated datePublished" datetime="2026-01-21T15:25:43+08:00">2026-01-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/%E5%AE%9E%E6%97%B6%E7%AB%9E%E6%8A%80%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">实时竞技游戏开发</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="Client-实现分析"><a href="#Client-实现分析" class="headerlink" title="Client 实现分析"></a>Client 实现分析</h1><p>time：2026_1_21</p>
+<h2 id="app-依赖包"><a href="#app-依赖包" class="headerlink" title="app 依赖包"></a>app 依赖包</h2><p>ClientRender<br>    可视化</p>
+<p>GameConfig<br>    client 基础信息参数 后续可以扩展到server 公用一个确保准确</p>
+<p>InputPredicition<br>    预测 x,y 的动作</p>
+<h2 id="主体部分"><a href="#主体部分" class="headerlink" title="主体部分"></a>主体部分</h2><p>ClientCtx</p>
+<pre><code>lab::net::UdpSocket sock; 发收
+lab::net::UdpAddr server&#123;&#125;; server 接受
+
+localHist 本地
+remoteHist 预测
+stateHist 权威
+</code></pre>
+<p>BuildCmdVec （localPid localCmd remoteCmds）<br>    通过pid识别是否是本段，保存一个vector<inputcmd>cmds size &#x3D; 2的状态，本段保存输入，对端保存预测<br>    return （输入， 预测）&#x2F;&#x2F; vector<inputcmd>cmds size 2</p>
+<p>GetRemoteCmdForTick  ctx pid t</p>
+<pre><code>return (预测)
+</code></pre>
+<p>ApplyAuthoritativeState ctx st</p>
+<h2 id="整理"><a href="#整理" class="headerlink" title="整理"></a>整理</h2><p>主要就就两条思路 接受处理，发收处理维护不同的状态</p>
+<p>OnUdp<br>Recv：只负责收包 -&gt; 更新 ack&#x2F;state -&gt; 更新对手预测&#x2F;触发回滚</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/%E5%AE%9E%E6%97%B6%E7%AB%9E%E6%8A%80%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/%E7%BD%91%E7%BB%9C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/notes/%E5%AE%9E%E6%97%B6%E7%AB%9E%E6%8A%80%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/%E7%BD%91%E7%BB%9C/" class="post-title-link" itemprop="url">网络开发总结</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-01-21 14:18:34" itemprop="dateCreated datePublished" datetime="2026-01-21T14:18:34+08:00">2026-01-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/%E5%AE%9E%E6%97%B6%E7%AB%9E%E6%8A%80%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">实时竞技游戏开发</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="网络开发总结"><a href="#网络开发总结" class="headerlink" title="网络开发总结"></a>网络开发总结</h1><h2 id="模块"><a href="#模块" class="headerlink" title="模块"></a>模块</h2><h3 id="NetCodec"><a href="#NetCodec" class="headerlink" title="NetCodec"></a>NetCodec</h3><ol>
+<li><p>Input<br> ID,count, client(本端)最新tick, clientAckServerTick（server确认最新tick） cmd包</p>
+</li>
+<li><p>Ack<br> 权威tick， 最后tick 以及hash验证</p>
+</li>
+<li><p>Statae<br> 权威状态包</p>
+</li>
+<li><p>Start<br> 游戏开始通知</p>
+</li>
+</ol>
+<h3 id="NetStub"><a href="#NetStub" class="headerlink" title="NetStub"></a>NetStub</h3><pre><code>废弃 tick 模拟状态发送和打印监控，状态发送已改为键盘输入
+</code></pre>
+<h3 id="Packets"><a href="#Packets" class="headerlink" title="Packets"></a>Packets</h3><ol>
+<li>PacketType 状态，input ack state start</li>
+<li>InputPacket 包 冗余发松多个InputCmd 包以防丢包</li>
+<li>start 包<br> 对局状态信息</li>
+</ol>
+<h3 id="UdpSocket"><a href="#UdpSocket" class="headerlink" title="UdpSocket"></a>UdpSocket</h3><p>udp 连接比tcp简单，持续监听端口</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/%E5%AE%9E%E6%97%B6%E7%AB%9E%E6%8A%80%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/server/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/notes/%E5%AE%9E%E6%97%B6%E7%AB%9E%E6%8A%80%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/server/" class="post-title-link" itemprop="url">服务器分析</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-01-20 10:39:22" itemprop="dateCreated datePublished" datetime="2026-01-20T10:39:22+08:00">2026-01-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/%E5%AE%9E%E6%97%B6%E7%AB%9E%E6%8A%80%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">实时竞技游戏开发</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="服务器分析"><a href="#服务器分析" class="headerlink" title="服务器分析"></a>服务器分析</h1><p>time：2026_1_20</p>
+<p>ClientConn<br>    历史缓存<br>    tick<br>        最后输入tick<br>        最后权威tick<br>    最后输入包<br>    玩家数量</p>
+<p>ServerCtx<br>    基础信息<br>        对局设置<br>        帧同步设置<br>        世界设置<br>    sock 网络<br>    clients 存储客户端状态<br>函数<br>    AssignSlot 分配id 1，2<br>    GetPlayer 从ServerCtx-&gt;clients 取出ClientConn<br>    OnlineCount 在线玩家统计<br>    GetCmdForTick 从ClientConn中获取动作信息，正常接受，如果出现延迟但小于延迟设置，着延续上一次包，但是出现过大延迟直接采用默认信息</p>
+<pre><code>OnUdp 收包加入缓存
+MaybeStartMatch for pid 轮训发收start包，其中通过利用getplayer 吧serverctx中的clientconn取出，同时检测ctx中的状态已start则跳过
+
+OnTick
+    整体事件监听
+    推进世界 + 给两边发 State/Ack
+</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/%E5%AE%9E%E6%97%B6%E7%AB%9E%E6%8A%80%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/%E6%A8%A1%E6%8B%9F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/notes/%E5%AE%9E%E6%97%B6%E7%AB%9E%E6%8A%80%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/%E6%A8%A1%E6%8B%9F/" class="post-title-link" itemprop="url">模拟</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-01-19 09:49:24" itemprop="dateCreated datePublished" datetime="2026-01-19T09:49:24+08:00">2026-01-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/%E5%AE%9E%E6%97%B6%E7%AB%9E%E6%8A%80%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">实时竞技游戏开发</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/%E5%AE%9E%E6%97%B6%E7%AB%9E%E6%8A%80%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/%E6%B8%B2%E6%9F%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/notes/%E5%AE%9E%E6%97%B6%E7%AB%9E%E6%8A%80%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/%E6%B8%B2%E6%9F%93/" class="post-title-link" itemprop="url">渲染</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-01-19 09:49:03" itemprop="dateCreated datePublished" datetime="2026-01-19T09:49:03+08:00">2026-01-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/%E5%AE%9E%E6%97%B6%E7%AB%9E%E6%8A%80%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">实时竞技游戏开发</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/linux%E9%AB%98%E6%80%A7%E8%83%BD%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BC%96%E7%A8%8B/2-libevent/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/notes/linux%E9%AB%98%E6%80%A7%E8%83%BD%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BC%96%E7%A8%8B/2-libevent/" class="post-title-link" itemprop="url">bufferevent</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-01-07 10:41:47" itemprop="dateCreated datePublished" datetime="2026-01-07T10:41:47+08:00">2026-01-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/Linux%E9%AB%98%E6%80%A7%E8%83%BD%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Linux高性能服务器编程</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="bufferevent"><a href="#bufferevent" class="headerlink" title="bufferevent"></a>bufferevent</h1><h2 id="1-基本概念"><a href="#1-基本概念" class="headerlink" title="1. 基本概念"></a>1. 基本概念</h2><ul>
+<li><strong>bufferevent</strong>：在套接字之上封装了<strong>输入&#x2F;输出缓冲</strong>与<strong>回调</strong>机制的 I&#x2F;O 对象，避免手写 <code>read/write</code> 和边沿触发细节。</li>
+<li><strong>事件循环</strong>：<code>event_base</code> 驱动，所有 I&#x2F;O、超时、信号都在此 loop 内调度。</li>
+</ul>
+<hr>
+<h2 id="2-关键-API"><a href="#2-关键-API" class="headerlink" title="2. 关键 API"></a>2. 关键 API</h2><h3 id="buferevent-socket-new"><a href="#buferevent-socket-new" class="headerlink" title="buferevent_socket_new()"></a>buferevent_socket_new()</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> bufferevent* <span class="title function_">bufferevent_socket_new</span><span class="params">(</span></span><br><span class="line"><span class="params">    <span class="keyword">struct</span> event_base *base,</span></span><br><span class="line"><span class="params">    <span class="type">evutil_socket_t</span> fd,           <span class="comment">// 通常传 -1，让 libevent 自己创建 socket</span></span></span><br><span class="line"><span class="params">    <span class="type">int</span> options                   <span class="comment">// 常用：BEV_OPT_CLOSE_ON_FREE | BEV_OPT_DEFER_CALLBACKS</span></span></span><br><span class="line"><span class="params">)</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>说明</strong></p>
+<ul>
+<li><code>fd = -1</code>：由 libevent 负责创建 socket，更简洁。</li>
+<li><code>BEV_OPT_CLOSE_ON_FREE</code>：在 <code>bufferevent_free()</code> 时自动关闭 socket。</li>
+<li><code>BEV_OPT_DEFER_CALLBACKS</code>：把回调延迟到事件循环安全点执行，减少重入问题。</li>
+</ul>
+<h3 id="buferevent-socket-connect"><a href="#buferevent-socket-connect" class="headerlink" title="buferevent_socket_connect()"></a>buferevent_socket_connect()</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">bufferevent_socket_connect</span><span class="params">(</span></span><br><span class="line"><span class="params">    <span class="keyword">struct</span> bufferevent *bev,</span></span><br><span class="line"><span class="params">    <span class="keyword">struct</span> sockaddr *addr,</span></span><br><span class="line"><span class="params">    <span class="type">int</span> addrlen</span></span><br><span class="line"><span class="params">)</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>说明</strong></p>
+<ul>
+<li>非阻塞发起连接；成功返回 0，失败返回 -1（同时触发 event 回调中的 <code>BEV_EVENT_ERROR</code>）。</li>
+<li>连接成功后会触发 event 回调中的 <code>BEV_EVENT_CONNECTED</code>。</li>
+</ul>
+<blockquote>
+<p>如果要用主机名而非 IP，推荐 <code>bufferevent_socket_connect_hostname()</code>（需配合 <code>evdns_base</code> 进行异步解析）。</p>
+</blockquote>
+<hr>
+<h2 id="3-最小可用示例（IPv4）"><a href="#3-最小可用示例（IPv4）" class="headerlink" title="3. 最小可用示例（IPv4）"></a>3. 最小可用示例（IPv4）</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;event2/event.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;event2/bufferevent.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;event2/buffer.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;event2/util.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">read_cb</span><span class="params">(<span class="keyword">struct</span> bufferevent* bev, <span class="type">void</span>* ctx)</span> &#123;</span><br><span class="line">    <span class="type">char</span> buf[<span class="number">4096</span>];</span><br><span class="line">    <span class="type">size_t</span> n;</span><br><span class="line">    <span class="keyword">while</span> ((n = bufferevent_read(bev, buf, <span class="keyword">sizeof</span>(buf))) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        fwrite(buf, <span class="number">1</span>, n, <span class="built_in">stdout</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">event_cb</span><span class="params">(<span class="keyword">struct</span> bufferevent* bev, <span class="type">short</span> what, <span class="type">void</span>* ctx)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (what &amp; BEV_EVENT_CONNECTED) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;[OK] connected\n&quot;</span>);</span><br><span class="line">        <span class="type">const</span> <span class="type">char</span>* msg = <span class="string">&quot;GET / HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n&quot;</span>;</span><br><span class="line">        bufferevent_write(bev, msg, <span class="built_in">strlen</span>(msg));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (what &amp; BEV_EVENT_EOF) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;[*] server closed\n&quot;</span>);</span><br><span class="line">        bufferevent_free(bev);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (what &amp; BEV_EVENT_ERROR) &#123;</span><br><span class="line">        <span class="type">int</span> err = EVUTIL_SOCKET_ERROR();</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">&quot;[ERR] %s\n&quot;</span>, evutil_socket_error_to_string(err));</span><br><span class="line">        bufferevent_free(bev);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (what &amp; BEV_EVENT_TIMEOUT) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;[!] timeout\n&quot;</span>);</span><br><span class="line">        bufferevent_free(bev);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">event_base</span>* <span class="title">base</span> =</span> event_base_new();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//创建套字 socket</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">bufferevent</span>* <span class="title">bev</span> =</span> bufferevent_socket_new(</span><br><span class="line">        base, <span class="number">-1</span>, BEV_OPT_CLOSE_ON_FREE | BEV_OPT_DEFER_CALLBACKS);</span><br><span class="line">    <span class="comment">// 将read_cb event_cb 回调函数先绑定防止漏听</span></span><br><span class="line">    bufferevent_setcb(bev, read_cb, <span class="literal">NULL</span>, event_cb, <span class="literal">NULL</span>);</span><br><span class="line">    bufferevent_enable(bev, EV_READ | EV_WRITE);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 可选：设置读/写超时（连接阶段通常走写超时）</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">timeval</span> <span class="title">rto</span> =</span> &#123;<span class="number">10</span>, <span class="number">0</span>&#125;, wto = &#123;<span class="number">10</span>, <span class="number">0</span>&#125;;</span><br><span class="line">    bufferevent_set_timeouts(bev, &amp;rto, &amp;wto);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 目标地址</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">sin</span>;</span></span><br><span class="line">    <span class="built_in">memset</span>(&amp;<span class="built_in">sin</span>, <span class="number">0</span>, <span class="keyword">sizeof</span>(<span class="built_in">sin</span>));</span><br><span class="line">    <span class="built_in">sin</span>.sin_family = AF_INET;</span><br><span class="line">    <span class="built_in">sin</span>.sin_port   = htons(<span class="number">8080</span>);</span><br><span class="line">    evutil_inet_pton(AF_INET, <span class="string">&quot;127.0.0.1&quot;</span>, &amp;<span class="built_in">sin</span>.sin_addr);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (bufferevent_socket_connect(bev, (<span class="keyword">struct</span> sockaddr*)&amp;<span class="built_in">sin</span>, <span class="keyword">sizeof</span>(<span class="built_in">sin</span>)) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        perror(<span class="string">&quot;connect&quot;</span>);</span><br><span class="line">        bufferevent_free(bev);</span><br><span class="line">        event_base_free(base);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    event_base_dispatch(base);</span><br><span class="line"></span><br><span class="line">    event_base_free(base);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="4-使用要点与常见坑"><a href="#4-使用要点与常见坑" class="headerlink" title="4. 使用要点与常见坑"></a>4. 使用要点与常见坑</h2><ol>
+<li><p><strong>回调必须先设再 connect</strong><br>先 <code>bufferevent_setcb()</code> + <code>bufferevent_enable()</code>，再调用 <code>bufferevent_socket_connect()</code>，避免早到事件丢失。</p>
+</li>
+<li><p><strong>超时设置</strong></p>
+<ul>
+<li><code>bufferevent_set_timeouts()</code> 同时设置读&#x2F;写超时。</li>
+<li>连接阶段通常依赖<strong>写超时</strong>触发（因为 connect 过程中会等待可写）。</li>
+</ul>
+</li>
+<li><p><strong>水位（可选）</strong></p>
+<ul>
+<li>读水位：<code>bufferevent_setwatermark(bev, EV_READ, low, high)</code><br>当输入缓冲超过 <code>high</code> 时会<strong>暂时禁用读事件</strong>，防止内存暴涨。</li>
+<li>写水位：同理控制输出缓冲积压。</li>
+</ul>
+</li>
+<li><p><strong>线程安全</strong></p>
+<ul>
+<li>libevent 可多线程，但一个 <code>event_base</code> 通常<strong>只在一个线程</strong>内跑；跨线程提交任务请用 <code>event_base_once()</code> 或管道&#x2F;通知机制。</li>
+</ul>
+</li>
+<li><p><strong>DNS 支持（推荐）</strong></p>
+<ul>
+<li>异步解析：<code>evdns_base_new(base, 1)</code> + <code>bufferevent_socket_connect_hostname(bev, dns, AF_UNSPEC, &quot;example.com&quot;, 80)</code></li>
+<li>避免阻塞式 <code>getaddrinfo()</code>。</li>
+</ul>
+</li>
+<li><p><strong>清理顺序</strong></p>
+<ul>
+<li>一般在 <code>event_cb</code> 收到 <code>EOF/ERROR/TIMEOUT</code> 后 <code>bufferevent_free()</code>；loop 退出后 <code>event_base_free()</code>。</li>
+</ul>
+</li>
+<li><p><strong>错误定位</strong></p>
+<ul>
+<li><code>BEV_EVENT_ERROR</code> 时使用 <code>EVUTIL_SOCKET_ERROR()</code> + <code>evutil_socket_error_to_string()</code> 打印 errno。</li>
+<li>常见：<code>ECONNREFUSED</code>（服务未起）、<code>ETIMEDOUT</code>（网络&#x2F;防火墙&#x2F;超时）、<code>EHOSTUNREACH</code>。</li>
+</ul>
+</li>
+<li><p><strong>选项建议</strong></p>
+<ul>
+<li><code>BEV_OPT_CLOSE_ON_FREE</code>：免漏句柄</li>
+<li><code>BEV_OPT_DEFER_CALLBACKS</code>：减少重入与回调嵌套</li>
+<li>如需<strong>逐线程</strong>回调可考虑 <code>BEV_OPT_THREADSAFE</code>（需要启用 <code>evthread_use_pthreads()</code> 等）。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="5-主机名连接（带-DNS）的示例（简版）"><a href="#5-主机名连接（带-DNS）的示例（简版）" class="headerlink" title="5. 主机名连接（带 DNS）的示例（简版）"></a>5. 主机名连接（带 DNS）的示例（简版）</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;event2/dns.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">evdns_base</span>* <span class="title">dns</span> =</span> evdns_base_new(base, <span class="number">1</span>); <span class="comment">// 1=初始化内置解析器</span></span><br><span class="line"><span class="type">int</span> rc = bufferevent_socket_connect_hostname(</span><br><span class="line">    bev, dns, AF_UNSPEC, <span class="string">&quot;example.com&quot;</span>, <span class="number">80</span>);</span><br><span class="line"><span class="keyword">if</span> (rc &lt; <span class="number">0</span>) &#123; <span class="comment">/* handle error */</span> &#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="6-小结（流程速记）"><a href="#6-小结（流程速记）" class="headerlink" title="6. 小结（流程速记）"></a>6. 小结（流程速记）</h2><ol>
+<li><code>event_base_new()</code></li>
+<li><code>bufferevent_socket_new(base, -1, BEV_OPT_CLOSE_ON_FREE | BEV_OPT_DEFER_CALLBACKS)</code></li>
+<li><code>bufferevent_setcb()</code> → <code>bufferevent_enable(EV_READ|EV_WRITE)</code> → <code>bufferevent_set_timeouts()</code></li>
+<li><code>bufferevent_socket_connect()</code>（或 <code>_connect_hostname()</code>）</li>
+<li>在 <code>event_cb</code> 处理 <code>BEV_EVENT_CONNECTED / EOF / ERROR / TIMEOUT</code></li>
+<li>退出时 <code>bufferevent_free()</code>、<code>event_base_free()</code></li>
+</ol>
+<hr>
+<h2 id="7-进阶建议"><a href="#7-进阶建议" class="headerlink" title="7. 进阶建议"></a>7. 进阶建议</h2><ul>
+<li><strong>TLS</strong>：用 <code>bufferevent_openssl_socket_new()</code> 包装 SSL 会话，接口与普通 <code>bev</code> 基本一致。</li>
+<li><strong>背压控制</strong>：配合水位、分块写入，避免写缓冲过大。</li>
+<li><strong>协议层</strong>：在 <code>read_cb</code> 内从 <code>evbuffer</code> 取数据，做<strong>半包&#x2F;粘包</strong>处理（如定长头 + 可变体）。</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/linux%E9%AB%98%E6%80%A7%E8%83%BD%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BC%96%E7%A8%8B/1-libevent/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/notes/linux%E9%AB%98%E6%80%A7%E8%83%BD%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BC%96%E7%A8%8B/1-libevent/" class="post-title-link" itemprop="url">libevent 笔记</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-01-07 10:41:29" itemprop="dateCreated datePublished" datetime="2026-01-07T10:41:29+08:00">2026-01-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/Linux%E9%AB%98%E6%80%A7%E8%83%BD%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Linux高性能服务器编程</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="libevent-笔记"><a href="#libevent-笔记" class="headerlink" title="libevent 笔记"></a>libevent 笔记</h1><h2 id="TCP-evconnlistener"><a href="#TCP-evconnlistener" class="headerlink" title="TCP evconnlistener"></a>TCP evconnlistener</h2><p>evconnlistener机制替代了之前socket bind listen 监听套字的创立</p>
+<h3 id="创建evconnlistener-接口"><a href="#创建evconnlistener-接口" class="headerlink" title="创建evconnlistener 接口"></a>创建evconnlistener 接口</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">evconnlistener</span> *<span class="built_in">evconnlistener_new</span>(<span class="keyword">struct</span> event_base *base,</span><br><span class="line">    evconnlistener_cb cb, <span class="type">void</span> *ptr, <span class="type">unsigned</span> flags, <span class="type">int</span> backlog,</span><br><span class="line">    <span class="type">evutil_socket_t</span> fd);</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">evconnlistener</span> *<span class="built_in">evconnlistener_new_bind</span>(<span class="keyword">struct</span> event_base *base,</span><br><span class="line">    evconnlistener_cb cb, <span class="type">void</span> *ptr, <span class="type">unsigned</span> flags, <span class="type">int</span> backlog,</span><br><span class="line">    <span class="type">const</span> <span class="keyword">struct</span> sockaddr *sa, <span class="type">int</span> socklen);</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">evconnlistener_free</span><span class="params">(<span class="keyword">struct</span> evconnlistener *lev)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>evconnlistener_new和evconnlistener_new_bind都用于分配和返回一个新的用于监听连接的对象。 每个用于监听的对象都使用event_base来维护一个建立的连接。当有新的TCP 连接发生时，回调函数就会调用.</p>
+<p>base： event_base对象。参考event_base。<br>cb： 回调函数， 当有新的TCP连接发生时，会唤醒回调函数。<br>ptr： 传递给回调函数的参数。<br>flags： 一些标志， 后面会进一步介绍。<br>backlog： 监听队列允许容纳的最大连接数。<br>fd： 函数evconnlistener_new假设我们已经绑定了套接字到要监听的端口上，fd参数就是我们已经绑定的socket套接字。<br>sa： evconnlistener_new_bind帮助我们绑定监听地址。sa就是传入的监听地址。<br>socklen： sa的长度。</p>
+<p>一般通常情况下flags设置LEV_OPT_CLOSE_ON_FREE，LEV_OPT_REUSEABLE</p>
+<h3 id="回调函数"><a href="#回调函数" class="headerlink" title="回调函数"></a>回调函数</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">void</span> <span class="params">(*evconnlistener_cb)</span><span class="params">(<span class="keyword">struct</span> evconnlistener *listener,</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="type">evutil_socket_t</span> sock, <span class="keyword">struct</span> sockaddr *addr, <span class="type">int</span> len, <span class="type">void</span> *ptr)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="监听开启和关闭"><a href="#监听开启和关闭" class="headerlink" title="监听开启和关闭"></a>监听开启和关闭</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">evconnlistener_disable</span><span class="params">(<span class="keyword">struct</span> evconnlistener *lev)</span></span>;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">evconnlistener_enable</span><span class="params">(<span class="keyword">struct</span> evconnlistener *lev)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="从enconnlistener-中获取信息"><a href="#从enconnlistener-中获取信息" class="headerlink" title="从enconnlistener 中获取信息"></a>从enconnlistener 中获取信息</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获得一个evconnlistener对象的套接字</span></span><br><span class="line"><span class="function"><span class="type">evutil_socket_t</span> <span class="title">evconnlistener_get_fd</span><span class="params">(<span class="keyword">struct</span> evconnlistener *lev)</span></span>;</span><br><span class="line"><span class="comment">// 获得一个evconnlistener对象event_base对象</span></span><br><span class="line"><span class="function"><span class="type">evutil_socket_t</span> <span class="title">evconnlistener_get_base</span><span class="params">(<span class="keyword">struct</span> evconnlistener *lev)</span></span>;</span><br></pre></td></tr></table></figure>
+<h3 id="完整示范"><a href="#完整示范" class="headerlink" title="完整示范"></a>完整示范</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;event2/listener.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;event2/bufferevent.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;event2/buffer.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;errno.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span></span></span><br><span class="line"><span class="function"><span class="title">echo_read_cb</span><span class="params">(<span class="keyword">struct</span> bufferevent *bev, <span class="type">void</span> *ctx)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">        <span class="comment">/*获取读入读出缓冲区*/</span></span><br><span class="line">        <span class="keyword">struct</span> <span class="title class_">evbuffer</span> *input = <span class="built_in">bufferevent_get_input</span>(bev);</span><br><span class="line">        <span class="keyword">struct</span> <span class="title class_">evbuffer</span> *output = <span class="built_in">bufferevent_get_output</span>(bev);</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* 将输入缓冲区的内容添加到输出缓冲区，实现回声功能 */</span></span><br><span class="line">        <span class="built_in">evbuffer_add_buffer</span>(output, input);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span></span></span><br><span class="line"><span class="function"><span class="title">echo_event_cb</span><span class="params">(<span class="keyword">struct</span> bufferevent *bev, <span class="type">short</span> events, <span class="type">void</span> *ctx)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (events &amp; BEV_EVENT_ERROR)</span><br><span class="line">                <span class="built_in">perror</span>(<span class="string">&quot;Error from bufferevent&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span> (events &amp; (BEV_EVENT_EOF | BEV_EVENT_ERROR)) &#123;</span><br><span class="line">                <span class="built_in">bufferevent_free</span>(bev);</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span></span></span><br><span class="line"><span class="function"><span class="title">accept_conn_cb</span><span class="params">(<span class="keyword">struct</span> evconnlistener *listener,</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="type">evutil_socket_t</span> fd, <span class="keyword">struct</span> sockaddr *address, <span class="type">int</span> socklen,</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="type">void</span> *ctx)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">        <span class="keyword">struct</span> <span class="title class_">event_base</span> *base = <span class="built_in">evconnlistener_get_base</span>(listener);<span class="comment">//获取事件</span></span><br><span class="line">        <span class="keyword">struct</span> <span class="title class_">bufferevent</span> *bev = <span class="built_in">bufferevent_socket_new</span>(</span><br><span class="line">                base, fd, BEV_OPT_CLOSE_ON_FREE);<span class="comment">//建立连接</span></span><br><span class="line"></span><br><span class="line">        <span class="built_in">bufferevent_setcb</span>(bev, echo_read_cb, <span class="literal">NULL</span>, echo_event_cb, <span class="literal">NULL</span>);<span class="comment">//设置read和错误回调函数，传入参数为0</span></span><br><span class="line"></span><br><span class="line">        <span class="built_in">bufferevent_enable</span>(bev, EV_READ|EV_WRITE);<span class="comment">//设置出发条件，EV_READ 读入时触发，EV_WRITE 错误是触发</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span></span></span><br><span class="line"><span class="function"><span class="title">accept_error_cb</span><span class="params">(<span class="keyword">struct</span> evconnlistener *listener, <span class="type">void</span> *ctx)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">        <span class="keyword">struct</span> <span class="title class_">event_base</span> *base = <span class="built_in">evconnlistener_get_base</span>(listener);</span><br><span class="line">        <span class="type">int</span> err = <span class="built_in">EVUTIL_SOCKET_ERROR</span>();</span><br><span class="line">        <span class="built_in">fprintf</span>(stderr, <span class="string">&quot;Got an error %d (%s) on the listener. &quot;</span></span><br><span class="line">                <span class="string">&quot;Shutting down.\n&quot;</span>, err, <span class="built_in">evutil_socket_error_to_string</span>(err));</span><br><span class="line"></span><br><span class="line">        <span class="built_in">event_base_loopexit</span>(base, <span class="literal">NULL</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span></span></span><br><span class="line"><span class="function"><span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> **argv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">        <span class="keyword">struct</span> <span class="title class_">event_base</span> *base;</span><br><span class="line">        <span class="keyword">struct</span> <span class="title class_">evconnlistener</span> *listener;</span><br><span class="line">        <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> sin;</span><br><span class="line"></span><br><span class="line">        <span class="type">int</span> port = <span class="number">9876</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (argc &gt; <span class="number">1</span>) &#123;</span><br><span class="line">                port = <span class="built_in">atoi</span>(argv[<span class="number">1</span>]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (port&lt;=<span class="number">0</span> || port&gt;<span class="number">65535</span>) &#123;</span><br><span class="line">                <span class="built_in">puts</span>(<span class="string">&quot;Invalid port&quot;</span>);</span><br><span class="line">                <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        base = <span class="built_in">event_base_new</span>();</span><br><span class="line">        <span class="keyword">if</span> (!base) &#123;</span><br><span class="line">                <span class="built_in">puts</span>(<span class="string">&quot;Couldn&#x27;t open event base&quot;</span>);</span><br><span class="line">                <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">memset</span>(&amp;sin, <span class="number">0</span>, <span class="built_in">sizeof</span>(sin));</span><br><span class="line"></span><br><span class="line">        sin.sin_family = AF_INET;</span><br><span class="line">        sin.sin_addr.s_addr = <span class="built_in">htonl</span>(<span class="number">0</span>);</span><br><span class="line">        sin.sin_port = <span class="built_in">htons</span>(port);</span><br><span class="line"></span><br><span class="line">        listener = <span class="built_in">evconnlistener_new_bind</span>(base, accept_conn_cb, <span class="literal">NULL</span>,</span><br><span class="line">            LEV_OPT_CLOSE_ON_FREE|LEV_OPT_REUSEABLE, <span class="number">-1</span>,</span><br><span class="line">            (<span class="keyword">struct</span> sockaddr*)&amp;sin, <span class="built_in">sizeof</span>(sin));</span><br><span class="line">        <span class="keyword">if</span> (!listener) &#123;</span><br><span class="line">                <span class="built_in">perror</span>(<span class="string">&quot;Couldn&#x27;t create listener&quot;</span>);</span><br><span class="line">                <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">evconnlistener_set_error_cb</span>(listener, accept_error_cb);</span><br><span class="line"></span><br><span class="line">        <span class="built_in">event_base_dispatch</span>(base);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="bufferevents"><a href="#bufferevents" class="headerlink" title="bufferevents"></a>bufferevents</h2><p>bufferevent 由一个底层传输系统（比如socket），一个读缓冲区和一个写缓冲区组成</p>
+<h3 id="bufferevent和evbuffers"><a href="#bufferevent和evbuffers" class="headerlink" title="bufferevent和evbuffers"></a>bufferevent和evbuffers</h3><p>每一个bufferevent 都有一个输入缓冲区和输出缓冲区， 这些缓冲区（buffer）都是struct evbuffer 类型</p>
+<h3 id="基于socket-的bufferevent"><a href="#基于socket-的bufferevent" class="headerlink" title="基于socket 的bufferevent"></a>基于socket 的bufferevent</h3><p>bufferevent_socket_new()<br>struct bufferevent *bufferevent_socket_new(<br>    struct event_base *base,<br>    evutil_socket_t fd,<br>    enum bufferevent_options options);</p>
+<p>正常通过ip host进行访问 后续可以使用socket进行构建client客户端连接简化实现<br>int bufferevent_socket_connect(struct bufferevent *bev,<br>    struct sockaddr *address, int addrlen);<br>通过域名进行解析访问<br> int bufferevent_socket_connect_hostname(struct bufferevent *bev,<br>    struct evdns_base *dns_base, int family, const char *hostname,<br>    int port);<br>int bufferevent_socket_get_dns_error(struct bufferevent *bev);</p>
+<p>注：<br>bufferevent_socket_connect和evconnlistener_new_bind的区别<br>bufferevent_socket_connect：用于主动建立连接，即作为客户端去连接服务器。<br>evconnlistener_new_bind：用于被动接受连接，即作为服务器监听端口并接受客户端的连接。</p>
+<h3 id="回调函数-水位线操作"><a href="#回调函数-水位线操作" class="headerlink" title="回调函数 &amp; 水位线操作"></a>回调函数 &amp; 水位线操作</h3><p>水位线设置<br>void bufferevent_setwatermark(struct bufferevent *bufev, short events,<br>    size_t lowmark, size_t highmark);<br>events参数传入决定设置不同的水危险<br>EV_WRITE、 EV_READ</p>
+<p>读、写、报错回调函数调用<br>void bufferevent_setcb(struct bufferevent *bufev,<br>    bufferevent_data_cb readcb, bufferevent_data_cb writecb,<br>    bufferevent_event_cb eventcb, void *cbarg);</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;event2/event.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;event2/bufferevent.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;event2/buffer.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;event2/util.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">info</span> &#123;</span><br><span class="line">    <span class="type">const</span> <span class="type">char</span> *name;</span><br><span class="line">    <span class="type">size_t</span> total_drained;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">read_callback</span><span class="params">(<span class="keyword">struct</span> bufferevent *bev, <span class="type">void</span> *ctx)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">info</span> *inf = ctx;</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">evbuffer</span> *input = <span class="built_in">bufferevent_get_input</span>(bev);</span><br><span class="line">    <span class="type">size_t</span> len = <span class="built_in">evbuffer_get_length</span>(input);</span><br><span class="line">    <span class="keyword">if</span> (len) &#123;</span><br><span class="line">        inf-&gt;total_drained += len;</span><br><span class="line">        <span class="built_in">evbuffer_drain</span>(input, len);<span class="comment">// 和evbuffer_remove()操作类似，但不执行copy工作仅删除长度len的缓冲</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Drained %lu bytes from %s\n&quot;</span>,</span><br><span class="line">             (<span class="type">unsigned</span> <span class="type">long</span>) len, inf-&gt;name);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">event_callback</span><span class="params">(<span class="keyword">struct</span> bufferevent *bev, <span class="type">short</span> events, <span class="type">void</span> *ctx)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">info</span> *inf = ctx;</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">evbuffer</span> *input = <span class="built_in">bufferevent_get_input</span>(bev);</span><br><span class="line">    <span class="type">int</span> finished = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (events &amp; BEV_EVENT_EOF) &#123;</span><br><span class="line">        <span class="type">size_t</span> len = <span class="built_in">evbuffer_get_length</span>(input);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Got a close from %s.  We drained %lu bytes from it, &quot;</span></span><br><span class="line">            <span class="string">&quot;and have %lu left.\n&quot;</span>, inf-&gt;name,</span><br><span class="line">            (<span class="type">unsigned</span> <span class="type">long</span>)inf-&gt;total_drained, (<span class="type">unsigned</span> <span class="type">long</span>)len);</span><br><span class="line">        finished = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (events &amp; BEV_EVENT_ERROR) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Got an error from %s: %s\n&quot;</span>,</span><br><span class="line">            inf-&gt;name, <span class="built_in">evutil_socket_error_to_string</span>(<span class="built_in">EVUTIL_SOCKET_ERROR</span>()));</span><br><span class="line">        finished = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (finished) &#123;</span><br><span class="line">        <span class="built_in">free</span>(ctx);</span><br><span class="line">        <span class="built_in">bufferevent_free</span>(bev);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">bufferevent</span> *<span class="built_in">setup_bufferevent</span>(<span class="type">void</span>)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">bufferevent</span> *b1 = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">info</span> *info1;</span><br><span class="line"></span><br><span class="line">    info1 = <span class="built_in">malloc</span>(<span class="built_in">sizeof</span>(<span class="keyword">struct</span> info));</span><br><span class="line">    info1-&gt;name = <span class="string">&quot;buffer 1&quot;</span>;</span><br><span class="line">    info1-&gt;total_drained = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* ... Here we should set up the bufferevent and make sure it gets</span></span><br><span class="line"><span class="comment">       connected... */</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Trigger the read callback only whenever there is at least 128 bytes</span></span><br><span class="line"><span class="comment">       of data in the buffer. */</span></span><br><span class="line">    <span class="built_in">bufferevent_setwatermark</span>(b1, EV_READ, <span class="number">128</span>, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">bufferevent_setcb</span>(b1, read_callback, <span class="literal">NULL</span>, event_callback, info1);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">bufferevent_enable</span>(b1, EV_READ); <span class="comment">/* Start reading. */</span></span><br><span class="line">    <span class="keyword">return</span> b1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="bufferevent中的数据操作"><a href="#bufferevent中的数据操作" class="headerlink" title="bufferevent中的数据操作"></a>bufferevent中的数据操作</h3><p>获取不同缓冲区的evbuffer描述符<br>struct evbuffer *bufferevent_get_input(struct bufferevent *bufev);<br>struct evbuffer *bufferevent_get_output(struct bufferevent *bufev);</p>
+<p>写入读入操作<br>int  bufferevent_write(struct  bufferevent <em>bufev,  const  void</em>data,  size_t  size);<br>int  bufferevent_write_buffer(struct  bufferevent <em>bufev,  struct  evbuffer</em>buf);</p>
+<p>size_t bufferevent_read(struct bufferevent *bufev, void *data, size_t size);<br>int bufferevent_read_buffer(struct bufferevent *bufev,<br>    struct evbuffer *buf);</p>
+<h3 id="程序自我通信"><a href="#程序自我通信" class="headerlink" title="程序自我通信"></a>程序自我通信</h3><p>int bufferevent_pair_new(struct event_base *base, int options,<br>    struct bufferevent *pair[2]);</p>
+<p>pair[0]和pair[1] 设置为一对相互连接的bufferevent</p>
+<h2 id="evbuffer缓冲IO的实用功能"><a href="#evbuffer缓冲IO的实用功能" class="headerlink" title="evbuffer缓冲IO的实用功能"></a>evbuffer缓冲IO的实用功能</h2><p>创建和释放<br>struct evbuffer *evbuffer_new(void);<br>void evbuffer_free(struct evbuffer *buf);</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/11-cuda%E5%BC%80%E5%90%AF%E7%9A%84gpu%E7%BC%96%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/11-cuda%E5%BC%80%E5%90%AF%E7%9A%84gpu%E7%BC%96%E7%A8%8B/" class="post-title-link" itemprop="url">CUDA 开启的 GPU 编程</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-01-04 09:31:05" itemprop="dateCreated datePublished" datetime="2026-01-04T09:31:05+08:00">2026-01-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/%E9%AB%98%E6%80%A7%E8%83%BDC-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">高性能C++并行编程</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="CUDA-开启的-GPU-编程"><a href="#CUDA-开启的-GPU-编程" class="headerlink" title="CUDA 开启的 GPU 编程"></a>CUDA 开启的 GPU 编程</h1><p>time：2025_12_26</p>
+<hr>
+<h2 id="1-工程与编译（CMake-nvcc）"><a href="#1-工程与编译（CMake-nvcc）" class="headerlink" title="1. 工程与编译（CMake &#x2F; nvcc）"></a>1. 工程与编译（CMake &#x2F; nvcc）</h2><h3 id="1-1-最小-CMake-工程"><a href="#1-1-最小-CMake-工程" class="headerlink" title="1.1 最小 CMake 工程"></a>1.1 最小 CMake 工程</h3><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.18</span>)</span><br><span class="line"><span class="keyword">project</span>(hellocuda LANGUAGES CXX CUDA)</span><br><span class="line"></span><br><span class="line"><span class="keyword">add_executable</span>(main main.cu)</span><br><span class="line"></span><br><span class="line"><span class="keyword">set_target_properties</span>(main PROPERTIES</span><br><span class="line">  CUDA_STANDARD <span class="number">17</span></span><br><span class="line">  CUDA_STANDARD_REQUIRED <span class="keyword">ON</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 需要跨 .cu 调用 device 函数/做 device link 时开启</span></span><br><span class="line"><span class="keyword">set_target_properties</span>(main PROPERTIES CUDA_SEPARABLE_COMPILATION <span class="keyword">ON</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 常用 CUDA 编译选项（按需启用）</span></span><br><span class="line"><span class="keyword">target_compile_options</span>(main PUBLIC</span><br><span class="line">  $&lt;$&lt;COMPILE_LANGUAGE:CUDA&gt;:--expt-relaxed-constexpr&gt;</span><br><span class="line">  $&lt;$&lt;COMPILE_LANGUAGE:CUDA&gt;:--expt-extended-lambda&gt;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-2-推荐的基础错误检查宏"><a href="#1-2-推荐的基础错误检查宏" class="headerlink" title="1.2 推荐的基础错误检查宏"></a>1.2 推荐的基础错误检查宏</h3><p>避免依赖 sample 的 <code>helper_cuda.h</code>，直接自带一个最小版：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstdlib&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cuda_runtime.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> CUDA_CHECK(call) do &#123;                                  \</span></span><br><span class="line"><span class="meta">  cudaError_t err = (call);                                    \</span></span><br><span class="line"><span class="meta">  <span class="keyword">if</span> (err != cudaSuccess) &#123;                                    \</span></span><br><span class="line"><span class="meta">    std::fprintf(stderr, <span class="string">&quot;CUDA error %s:%d: %s\n&quot;</span>,             \</span></span><br><span class="line"><span class="meta">      __FILE__, __LINE__, cudaGetErrorString(err));            \</span></span><br><span class="line"><span class="meta">    std::exit(1);                                              \</span></span><br><span class="line"><span class="meta">  &#125;                                                            \</span></span><br><span class="line"><span class="meta">&#125; while(0)</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="2-CUDA-基础：函数修饰符与执行位置"><a href="#2-CUDA-基础：函数修饰符与执行位置" class="headerlink" title="2. CUDA 基础：函数修饰符与执行位置"></a>2. CUDA 基础：函数修饰符与执行位置</h2><h3 id="2-1-global-device-host"><a href="#2-1-global-device-host" class="headerlink" title="2.1 __global__ / __device__ / __host__"></a>2.1 <code>__global__ / __device__ / __host__</code></h3><ul>
+<li><p><code>__global__</code>：核函数（kernel）</p>
+<ul>
+<li>在 GPU 上并行执行</li>
+<li>由主机端（CPU）发起 <code>&lt;&lt;&lt;...&gt;&gt;&gt;</code></li>
+<li>返回类型必须为 <code>void</code>（通常通过指针写回结果）</li>
+</ul>
+</li>
+<li><p><code>__device__</code>：设备函数</p>
+<ul>
+<li>在 GPU 上执行</li>
+<li>只能从 device&#x2F;global 调用</li>
+</ul>
+</li>
+<li><p><code>__host__</code>：主机函数</p>
+<ul>
+<li>在 CPU 上执行</li>
+<li>未标注的普通函数默认就是 host</li>
+</ul>
+</li>
+</ul>
+<p>组合：</p>
+<ul>
+<li><code>__host__ __device__</code>：同一函数在 CPU&#x2F;GPU 两侧都可用（注意 device 侧不支持完整的 C++ 标准库能力）</li>
+</ul>
+<h3 id="2-2-CUDA-ARCH-（区分-device-host-编译路径）"><a href="#2-2-CUDA-ARCH-（区分-device-host-编译路径）" class="headerlink" title="2.2 __CUDA_ARCH__（区分 device&#x2F;host 编译路径）"></a>2.2 <code>__CUDA_ARCH__</code>（区分 device&#x2F;host 编译路径）</h3><ul>
+<li><code>__CUDA_ARCH__</code> 只在 device 编译路径中定义，值为计算能力架构号（例如 750&#x2F;800 等）</li>
+<li>常用于同一个函数在 host&#x2F;device 的条件编译</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">__host__ __device__ inline int where_am_i() &#123;</span><br><span class="line">#ifdef __CUDA_ARCH__</span><br><span class="line">    return __CUDA_ARCH__;   // device：架构号</span><br><span class="line">#else</span><br><span class="line">    return -1;              // host：标记</span><br><span class="line">#endif</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-3-constexpr-与-device-代码"><a href="#2-3-constexpr-与-device-代码" class="headerlink" title="2.3 constexpr 与 device 代码"></a>2.3 <code>constexpr</code> 与 device 代码</h3><ul>
+<li>如需更宽松的 <code>constexpr</code> 在 device 侧工作，常用 <code>--expt-relaxed-constexpr</code></li>
+<li>device 侧 lambda 扩展常用 <code>--expt-extended-lambda</code></li>
+</ul>
+<hr>
+<h2 id="3-Kernel-启动、线程块模型与索引"><a href="#3-Kernel-启动、线程块模型与索引" class="headerlink" title="3. Kernel 启动、线程块模型与索引"></a>3. Kernel 启动、线程块模型与索引</h2><h3 id="3-1-Kernel-启动语法"><a href="#3-1-Kernel-启动语法" class="headerlink" title="3.1 Kernel 启动语法"></a>3.1 Kernel 启动语法</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kernel&lt;&lt;&lt;grid, block, shared_bytes, stream&gt;&gt;&gt;(args...);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>常用：<code>&lt;&lt;&lt;grid, block&gt;&gt;&gt;</code></li>
+<li><code>shared_bytes</code>：动态共享内存字节数（默认 0）</li>
+<li><code>stream</code>：CUDA 流（默认 0）</li>
+</ul>
+<h3 id="3-2-线程-块索引"><a href="#3-2-线程-块索引" class="headerlink" title="3.2 线程&#x2F;块索引"></a>3.2 线程&#x2F;块索引</h3><ul>
+<li><code>threadIdx.&#123;x,y,z&#125;</code>：线程在块内索引</li>
+<li><code>blockIdx.&#123;x,y,z&#125;</code>：块在网格内索引</li>
+<li><code>blockDim.&#123;x,y,z&#125;</code>：每块线程数维度</li>
+<li><code>gridDim.&#123;x,y,z&#125;</code>：网格块数维度</li>
+</ul>
+<h3 id="3-3-典型打印示例（便于理解执行模型）"><a href="#3-3-典型打印示例（便于理解执行模型）" class="headerlink" title="3.3 典型打印示例（便于理解执行模型）"></a>3.3 典型打印示例（便于理解执行模型）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;cstdio&gt;</span><br><span class="line">#include &lt;cuda_runtime.h&gt;</span><br><span class="line"></span><br><span class="line">__global__ void kernel() &#123;</span><br><span class="line">    printf(&quot;block %d/%d, thread %d/%d\n&quot;,</span><br><span class="line">           blockIdx.x, gridDim.x,</span><br><span class="line">           threadIdx.x, blockDim.x);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main() &#123;</span><br><span class="line">    kernel&lt;&lt;&lt;2, 3&gt;&gt;&gt;();</span><br><span class="line">    cudaDeviceSynchronize();</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-4-Grid-Stride-Loop（通用遍历范式）"><a href="#3-4-Grid-Stride-Loop（通用遍历范式）" class="headerlink" title="3.4 Grid-Stride Loop（通用遍历范式）"></a>3.4 Grid-Stride Loop（通用遍历范式）</h3><p>适用于任意大小数据与任意 grid&#x2F;block 配置：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">__global__ void work(int* a, int n) &#123;</span><br><span class="line">    for (int i = blockIdx.x * blockDim.x + threadIdx.x;</span><br><span class="line">         i &lt; n;</span><br><span class="line">         i += blockDim.x * gridDim.x) &#123;</span><br><span class="line">        a[i] = i;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="4-同步与错误处理"><a href="#4-同步与错误处理" class="headerlink" title="4. 同步与错误处理"></a>4. 同步与错误处理</h2><h3 id="4-1-CPU-GPU-默认异步"><a href="#4-1-CPU-GPU-默认异步" class="headerlink" title="4.1 CPU&#x2F;GPU 默认异步"></a>4.1 CPU&#x2F;GPU 默认异步</h3><ul>
+<li><p>kernel launch 对 host 来说通常是异步的</p>
+</li>
+<li><p>常用同步：</p>
+<ul>
+<li><code>cudaDeviceSynchronize()</code>：等待当前设备上所有已提交工作完成</li>
+<li><code>cudaStreamSynchronize(stream)</code>：等待某个流完成</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-2-推荐的-launch-后检查模板"><a href="#4-2-推荐的-launch-后检查模板" class="headerlink" title="4.2 推荐的 launch 后检查模板"></a>4.2 推荐的 launch 后检查模板</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kernel&lt;&lt;&lt;grid, block&gt;&gt;&gt;(...);</span><br><span class="line"><span class="built_in">CUDA_CHECK</span>(<span class="built_in">cudaGetLastError</span>());</span><br><span class="line"><span class="built_in">CUDA_CHECK</span>(<span class="built_in">cudaDeviceSynchronize</span>());</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="5-内存管理（Host-Device-Unified）"><a href="#5-内存管理（Host-Device-Unified）" class="headerlink" title="5. 内存管理（Host&#x2F;Device&#x2F;Unified）"></a>5. 内存管理（Host&#x2F;Device&#x2F;Unified）</h2><h3 id="5-1-经典模式：cudaMalloc-cudaMemcpy"><a href="#5-1-经典模式：cudaMalloc-cudaMemcpy" class="headerlink" title="5.1 经典模式：cudaMalloc + cudaMemcpy"></a>5.1 经典模式：<code>cudaMalloc + cudaMemcpy</code></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;cstdio&gt;</span><br><span class="line">#include &lt;cuda_runtime.h&gt;</span><br><span class="line"></span><br><span class="line">#define CUDA_CHECK(call) do &#123; \</span><br><span class="line">  cudaError_t err = (call); \</span><br><span class="line">  if (err != cudaSuccess) &#123; \</span><br><span class="line">    std::fprintf(stderr, &quot;CUDA error: %s\n&quot;, cudaGetErrorString(err)); \</span><br><span class="line">    std::exit(1); \</span><br><span class="line">  &#125; \</span><br><span class="line">&#125; while(0)</span><br><span class="line"></span><br><span class="line">__global__ void kernel(int* out) &#123; *out = 42; &#125;</span><br><span class="line"></span><br><span class="line">int main() &#123;</span><br><span class="line">    int* d_out = nullptr;</span><br><span class="line">    CUDA_CHECK(cudaMalloc(&amp;d_out, sizeof(int)));</span><br><span class="line"></span><br><span class="line">    kernel&lt;&lt;&lt;1,1&gt;&gt;&gt;(d_out);</span><br><span class="line">    CUDA_CHECK(cudaGetLastError());</span><br><span class="line">    CUDA_CHECK(cudaDeviceSynchronize());</span><br><span class="line"></span><br><span class="line">    int h_out = 0;</span><br><span class="line">    CUDA_CHECK(cudaMemcpy(&amp;h_out, d_out, sizeof(int), cudaMemcpyDeviceToHost));</span><br><span class="line"></span><br><span class="line">    std::printf(&quot;ret=%d\n&quot;, h_out);</span><br><span class="line"></span><br><span class="line">    CUDA_CHECK(cudaFree(d_out));</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-2-统一内存（Unified-Memory）：cudaMallocManaged"><a href="#5-2-统一内存（Unified-Memory）：cudaMallocManaged" class="headerlink" title="5.2 统一内存（Unified Memory）：cudaMallocManaged"></a>5.2 统一内存（Unified Memory）：<code>cudaMallocManaged</code></h3><ul>
+<li>一份指针同时可被 CPU&#x2F;GPU 访问</li>
+<li>常配合同步；性能敏感时可用预取提升稳定性</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;cstdio&gt;</span><br><span class="line">#include &lt;cuda_runtime.h&gt;</span><br><span class="line"></span><br><span class="line">__global__ void fill(int* a, int n) &#123;</span><br><span class="line">    for (int i = blockIdx.x * blockDim.x + threadIdx.x;</span><br><span class="line">         i &lt; n; i += blockDim.x * gridDim.x) &#123;</span><br><span class="line">        a[i] = i;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main() &#123;</span><br><span class="line">    int n = 32;</span><br><span class="line">    int* a = nullptr;</span><br><span class="line">    cudaMallocManaged(&amp;a, sizeof(int) * n);</span><br><span class="line"></span><br><span class="line">    fill&lt;&lt;&lt;1, 128&gt;&gt;&gt;(a, n);</span><br><span class="line">    cudaDeviceSynchronize();</span><br><span class="line"></span><br><span class="line">    for (int i = 0; i &lt; n; ++i) std::printf(&quot;a[%d]=%d\n&quot;, i, a[i]);</span><br><span class="line">    cudaFree(a);</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-3-预取（Prefetch）与驻留优化（进阶但常用）"><a href="#5-3-预取（Prefetch）与驻留优化（进阶但常用）" class="headerlink" title="5.3 预取（Prefetch）与驻留优化（进阶但常用）"></a>5.3 预取（Prefetch）与驻留优化（进阶但常用）</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> dev = <span class="number">0</span>;</span><br><span class="line"><span class="built_in">cudaGetDevice</span>(&amp;dev);</span><br><span class="line"><span class="built_in">cudaMemPrefetchAsync</span>(a, <span class="built_in">sizeof</span>(<span class="type">int</span>)*n, dev, <span class="number">0</span>);     <span class="comment">// 预取到 GPU</span></span><br><span class="line"><span class="comment">// kernel ...</span></span><br><span class="line"><span class="built_in">cudaMemPrefetchAsync</span>(a, <span class="built_in">sizeof</span>(<span class="type">int</span>)*n, cudaCpuDeviceId, <span class="number">0</span>); <span class="comment">// 预取回 CPU</span></span><br><span class="line"><span class="built_in">cudaDeviceSynchronize</span>();</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="6-C-封装：RAII-与可复用接口"><a href="#6-C-封装：RAII-与可复用接口" class="headerlink" title="6. C++ 封装：RAII 与可复用接口"></a>6. C++ 封装：RAII 与可复用接口</h2><h3 id="6-1-RAII-管理-Unified-Memory-指针（简单、可靠、适合入门）"><a href="#6-1-RAII-管理-Unified-Memory-指针（简单、可靠、适合入门）" class="headerlink" title="6.1 RAII 管理 Unified Memory 指针（简单、可靠、适合入门）"></a>6.1 RAII 管理 Unified Memory 指针（简单、可靠、适合入门）</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cuda_runtime.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstddef&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">class</span> <span class="title class_">T</span>&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">ManagedArray</span> &#123;</span><br><span class="line">    T* p&#123;<span class="literal">nullptr</span>&#125;;</span><br><span class="line">    <span class="type">size_t</span> n&#123;<span class="number">0</span>&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">explicit</span> <span class="title">ManagedArray</span><span class="params">(<span class="type">size_t</span> n_)</span> : n(n_) &#123;</span></span><br><span class="line">        <span class="built_in">cudaMallocManaged</span>(&amp;p, <span class="built_in">sizeof</span>(T) * n);</span><br><span class="line">    &#125;</span><br><span class="line">    ~<span class="built_in">ManagedArray</span>() &#123;</span><br><span class="line">        <span class="keyword">if</span> (p) <span class="built_in">cudaFree</span>(p);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function">T* <span class="title">data</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> p; &#125;</span><br><span class="line">    <span class="function"><span class="type">const</span> T* <span class="title">data</span><span class="params">()</span> <span class="type">const</span> </span>&#123; <span class="keyword">return</span> p; &#125;</span><br><span class="line">    T&amp; <span class="keyword">operator</span>[](<span class="type">size_t</span> i) &#123; <span class="keyword">return</span> p[i]; &#125;</span><br><span class="line">    <span class="type">const</span> T&amp; <span class="keyword">operator</span>[](<span class="type">size_t</span> i) <span class="type">const</span> &#123; <span class="keyword">return</span> p[i]; &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-2-结合-kernel-使用"><a href="#6-2-结合-kernel-使用" class="headerlink" title="6.2 结合 kernel 使用"></a>6.2 结合 kernel 使用</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">__global__ void init(int* a, int n) &#123;</span><br><span class="line">    for (int i = blockIdx.x * blockDim.x + threadIdx.x;</span><br><span class="line">         i &lt; n; i += blockDim.x * gridDim.x) &#123;</span><br><span class="line">        a[i] = i;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main() &#123;</span><br><span class="line">    int n = 1000;</span><br><span class="line">    ManagedArray&lt;int&gt; a(n);</span><br><span class="line">    init&lt;&lt;&lt;32, 128&gt;&gt;&gt;(a.data(), n);</span><br><span class="line">    cudaDeviceSynchronize();</span><br><span class="line">    // CPU 侧直接读</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>allocator 方式也可把 unified memory 接入 <code>std::vector</code>，但 allocator 细节较多；建议先把 RAII 指针与 <code>.data()</code> 传参掌握牢。</p>
+</blockquote>
+<hr>
+<h2 id="7-Thrust-库：容器与算法（高层-CUDA）"><a href="#7-Thrust-库：容器与算法（高层-CUDA）" class="headerlink" title="7. Thrust 库：容器与算法（高层 CUDA）"></a>7. Thrust 库：容器与算法（高层 CUDA）</h2><h3 id="7-1-常用容器"><a href="#7-1-常用容器" class="headerlink" title="7.1 常用容器"></a>7.1 常用容器</h3><ul>
+<li><code>thrust::host_vector&lt;T&gt;</code>：主机端 vector</li>
+<li><code>thrust::device_vector&lt;T&gt;</code>：设备端 vector</li>
+<li>通过赋值可触发 H2D &#x2F; D2H 拷贝（更准确地说：构造&#x2F;赋值会在 host&#x2F;device 容器之间进行数据迁移）</li>
+</ul>
+<h3 id="7-2-AXPY-示例（device-vector-自写-kernel）"><a href="#7-2-AXPY-示例（device-vector-自写-kernel）" class="headerlink" title="7.2 AXPY 示例（device_vector + 自写 kernel）"></a>7.2 AXPY 示例（device_vector + 自写 kernel）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;thrust/host_vector.h&gt;</span><br><span class="line">#include &lt;thrust/device_vector.h&gt;</span><br><span class="line">#include &lt;cuda_runtime.h&gt;</span><br><span class="line">#include &lt;cstdio&gt;</span><br><span class="line"></span><br><span class="line">__global__ void axpy(float* x, const float* y, float a, int n) &#123;</span><br><span class="line">    for (int i = blockIdx.x * blockDim.x + threadIdx.x;</span><br><span class="line">         i &lt; n; i += blockDim.x * gridDim.x) &#123;</span><br><span class="line">        x[i] = a * x[i] + y[i];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main() &#123;</span><br><span class="line">    int n = 1 &lt;&lt; 20;</span><br><span class="line">    float a = 3.14f;</span><br><span class="line"></span><br><span class="line">    thrust::host_vector&lt;float&gt; hx(n), hy(n);</span><br><span class="line">    for (int i = 0; i &lt; n; ++i) &#123; hx[i] = i * 0.001f; hy[i] = 1.0f; &#125;</span><br><span class="line"></span><br><span class="line">    thrust::device_vector&lt;float&gt; dx = hx;</span><br><span class="line">    thrust::device_vector&lt;float&gt; dy = hy;</span><br><span class="line"></span><br><span class="line">    axpy&lt;&lt;&lt;256, 256&gt;&gt;&gt;(thrust::raw_pointer_cast(dx.data()),</span><br><span class="line">                       thrust::raw_pointer_cast(dy.data()),</span><br><span class="line">                       a, n);</span><br><span class="line">    cudaDeviceSynchronize();</span><br><span class="line"></span><br><span class="line">    hx = dx;</span><br><span class="line">    std::printf(&quot;hx[0]=%f, hx[n-1]=%f\n&quot;, hx[0], hx[n-1]);</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="8-原子操作（Atomic）"><a href="#8-原子操作（Atomic）" class="headerlink" title="8. 原子操作（Atomic）"></a>8. 原子操作（Atomic）</h2><h3 id="8-1-常用原子"><a href="#8-1-常用原子" class="headerlink" title="8.1 常用原子"></a>8.1 常用原子</h3><ul>
+<li><code>atomicAdd / atomicSub</code></li>
+<li><code>atomicAnd / atomicOr / atomicXor</code></li>
+<li><code>atomicMin / atomicMax</code></li>
+<li><code>atomicCAS</code>：Compare-And-Swap，可用于构造自定义原子操作</li>
+</ul>
+<h3 id="8-2-用-CAS-实现自定义原子加"><a href="#8-2-用-CAS-实现自定义原子加" class="headerlink" title="8.2 用 CAS 实现自定义原子加"></a>8.2 用 CAS 实现自定义原子加</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">__device__ __forceinline__ int my_atomic_add(int* dst, int val) &#123;</span><br><span class="line">    int old = *dst;</span><br><span class="line">    int assumed;</span><br><span class="line">    do &#123;</span><br><span class="line">        assumed = old;</span><br><span class="line">        old = atomicCAS(dst, assumed, assumed + val);</span><br><span class="line">    &#125; while (assumed != old);</span><br><span class="line">    return old;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="8-3-朴素并行求和（全局原子累加）"><a href="#8-3-朴素并行求和（全局原子累加）" class="headerlink" title="8.3 朴素并行求和（全局原子累加）"></a>8.3 朴素并行求和（全局原子累加）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">__global__ void parallel_sum(int* sum, const int* arr, int n) &#123;</span><br><span class="line">    for (int i = blockIdx.x * blockDim.x + threadIdx.x;</span><br><span class="line">         i &lt; n; i += blockDim.x * gridDim.x) &#123;</span><br><span class="line">        atomicAdd(sum, arr[i]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="9-线程块与共享内存（Shared-Memory）"><a href="#9-线程块与共享内存（Shared-Memory）" class="headerlink" title="9. 线程块与共享内存（Shared Memory）"></a>9. 线程块与共享内存（Shared Memory）</h2><h3 id="9-1-核心概念"><a href="#9-1-核心概念" class="headerlink" title="9.1 核心概念"></a>9.1 核心概念</h3><ul>
+<li><code>__shared__</code>：块内共享内存（一个 block 内所有线程可见）</li>
+<li><code>__syncthreads()</code>：块内同步屏障（必须保证同一 block 的线程都能到达）</li>
+</ul>
+<p>共享内存常用于：</p>
+<ul>
+<li>块内复用数据（减少 global memory 访问）</li>
+<li>块内归约（reduce）</li>
+<li>tile-based 计算（矩阵乘、卷积、图像算子）</li>
+</ul>
+<h3 id="9-2-块内归约：每块只做一次全局原子"><a href="#9-2-块内归约：每块只做一次全局原子" class="headerlink" title="9.2 块内归约：每块只做一次全局原子"></a>9.2 块内归约：每块只做一次全局原子</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;cuda_runtime.h&gt;</span><br><span class="line"></span><br><span class="line">__global__ void reduce_sum(const int* arr, int n, int* out) &#123;</span><br><span class="line">    extern __shared__ int sdata[]; // 动态共享内存</span><br><span class="line">    int tid = threadIdx.x;</span><br><span class="line">    int i = blockIdx.x * blockDim.x + tid;</span><br><span class="line"></span><br><span class="line">    sdata[tid] = (i &lt; n) ? arr[i] : 0;</span><br><span class="line">    __syncthreads();</span><br><span class="line"></span><br><span class="line">    for (int s = blockDim.x / 2; s &gt; 0; s &gt;&gt;= 1) &#123;</span><br><span class="line">        if (tid &lt; s) sdata[tid] += sdata[tid + s];</span><br><span class="line">        __syncthreads();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (tid == 0) atomicAdd(out, sdata[0]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>启动方式（动态共享内存大小）：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> threads = <span class="number">256</span>;</span><br><span class="line"><span class="type">int</span> blocks = (n + threads - <span class="number">1</span>) / threads;</span><br><span class="line">reduce_sum&lt;&lt;&lt;blocks, threads, <span class="function">threads * <span class="title">sizeof</span><span class="params">(<span class="type">int</span>)</span>&gt;&gt;&gt;<span class="params">(arr, n, out)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="9-3-Tile-示例：2D-图像-3x3-均值滤波（共享内存加速范式）"><a href="#9-3-Tile-示例：2D-图像-3x3-均值滤波（共享内存加速范式）" class="headerlink" title="9.3 Tile 示例：2D 图像 3x3 均值滤波（共享内存加速范式）"></a>9.3 Tile 示例：2D 图像 3x3 均值滤波（共享内存加速范式）</h3><p>适用于图像&#x2F;矩阵类任务（tile + halo）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;cuda_runtime.h&gt;</span><br><span class="line"></span><br><span class="line">__global__ void mean3x3(const float* in, float* out, int H, int W) &#123;</span><br><span class="line">    // blockDim = (Bx, By)</span><br><span class="line">    const int x = blockIdx.x * blockDim.x + threadIdx.x;</span><br><span class="line">    const int y = blockIdx.y * blockDim.y + threadIdx.y;</span><br><span class="line"></span><br><span class="line">    // tile 尺寸：块大小 + halo(上下左右各1)</span><br><span class="line">    const int Bx = blockDim.x;</span><br><span class="line">    const int By = blockDim.y;</span><br><span class="line">    extern __shared__ float tile[];</span><br><span class="line"></span><br><span class="line">    // tile 索引函数</span><br><span class="line">    auto t = [&amp;](int ty, int tx) -&gt; float&amp; &#123;</span><br><span class="line">        return tile[ty * (Bx + 2) + tx];</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    // 对应 tile 坐标（+1 是为了留 halo）</span><br><span class="line">    const int tx = threadIdx.x + 1;</span><br><span class="line">    const int ty = threadIdx.y + 1;</span><br><span class="line"></span><br><span class="line">    // 读主区域</span><br><span class="line">    float v = 0.f;</span><br><span class="line">    if (x &lt; W &amp;&amp; y &lt; H) v = in[y * W + x];</span><br><span class="line">    t(ty, tx) = v;</span><br><span class="line"></span><br><span class="line">    // 读 halo（边界处做 clamp 或置零，这里用置零策略）</span><br><span class="line">    if (threadIdx.x == 0) &#123;</span><br><span class="line">        float lv = (x &gt; 0 &amp;&amp; y &lt; H) ? in[y * W + (x - 1)] : 0.f;</span><br><span class="line">        t(ty, 0) = lv;</span><br><span class="line">    &#125;</span><br><span class="line">    if (threadIdx.x == Bx - 1) &#123;</span><br><span class="line">        float rv = (x + 1 &lt; W &amp;&amp; y &lt; H) ? in[y * W + (x + 1)] : 0.f;</span><br><span class="line">        t(ty, Bx + 1) = rv;</span><br><span class="line">    &#125;</span><br><span class="line">    if (threadIdx.y == 0) &#123;</span><br><span class="line">        float uv = (y &gt; 0 &amp;&amp; x &lt; W) ? in[(y - 1) * W + x] : 0.f;</span><br><span class="line">        t(0, tx) = uv;</span><br><span class="line">    &#125;</span><br><span class="line">    if (threadIdx.y == By - 1) &#123;</span><br><span class="line">        float dv = (y + 1 &lt; H &amp;&amp; x &lt; W) ? in[(y + 1) * W + x] : 0.f;</span><br><span class="line">        t(By + 1, tx) = dv;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 角落 halo（四个角）</span><br><span class="line">    if (threadIdx.x == 0 &amp;&amp; threadIdx.y == 0) &#123;</span><br><span class="line">        t(0,0) = (x&gt;0 &amp;&amp; y&gt;0) ? in[(y-1)*W + (x-1)] : 0.f;</span><br><span class="line">    &#125;</span><br><span class="line">    if (threadIdx.x == Bx-1 &amp;&amp; threadIdx.y == 0) &#123;</span><br><span class="line">        t(0,Bx+1) = (x+1&lt;W &amp;&amp; y&gt;0) ? in[(y-1)*W + (x+1)] : 0.f;</span><br><span class="line">    &#125;</span><br><span class="line">    if (threadIdx.x == 0 &amp;&amp; threadIdx.y == By-1) &#123;</span><br><span class="line">        t(By+1,0) = (x&gt;0 &amp;&amp; y+1&lt;H) ? in[(y+1)*W + (x-1)] : 0.f;</span><br><span class="line">    &#125;</span><br><span class="line">    if (threadIdx.x == Bx-1 &amp;&amp; threadIdx.y == By-1) &#123;</span><br><span class="line">        t(By+1,Bx+1) = (x+1&lt;W &amp;&amp; y+1&lt;H) ? in[(y+1)*W + (x+1)] : 0.f;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    __syncthreads();</span><br><span class="line"></span><br><span class="line">    if (x &lt; W &amp;&amp; y &lt; H) &#123;</span><br><span class="line">        float sum = 0.f;</span><br><span class="line">        sum += t(ty-1, tx-1); sum += t(ty-1, tx); sum += t(ty-1, tx+1);</span><br><span class="line">        sum += t(ty,   tx-1); sum += t(ty,   tx); sum += t(ty,   tx+1);</span><br><span class="line">        sum += t(ty+1, tx-1); sum += t(ty+1, tx); sum += t(ty+1, tx+1);</span><br><span class="line">        out[y * W + x] = sum / 9.f;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>共享内存大小（字节）：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">dim3 <span class="title">block</span><span class="params">(<span class="number">16</span>, <span class="number">16</span>)</span></span>;</span><br><span class="line"><span class="function">dim3 <span class="title">grid</span><span class="params">((W + block.x - <span class="number">1</span>) / block.x, (H + block.y - <span class="number">1</span>) / block.y)</span></span>;</span><br><span class="line"><span class="type">size_t</span> shared_bytes = (block.x + <span class="number">2</span>) * (block.y + <span class="number">2</span>) * <span class="built_in">sizeof</span>(<span class="type">float</span>);</span><br><span class="line">mean3x3&lt;&lt;&lt;grid, block, shared_bytes&gt;&gt;&gt;(in, out, H, W);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="10-CUDA-Streams-与异步拷贝"><a href="#10-CUDA-Streams-与异步拷贝" class="headerlink" title="10. CUDA Streams 与异步拷贝"></a>10. CUDA Streams 与异步拷贝</h2><h3 id="10-1-为什么需要-streams"><a href="#10-1-为什么需要-streams" class="headerlink" title="10.1 为什么需要 streams"></a>10.1 为什么需要 streams</h3><ul>
+<li><p>默认 stream（stream 0）会形成较强的串行依赖</p>
+</li>
+<li><p>多 stream 可以实现：</p>
+<ul>
+<li>H2D 拷贝与 kernel 重叠</li>
+<li>多批次流水线（pipeline）</li>
+<li>与 <code>cudaMemcpyAsync</code> 配合提升吞吐</li>
+</ul>
+</li>
+</ul>
+<h3 id="10-2-pinned（页锁定）主机内存：提升异步拷贝效率"><a href="#10-2-pinned（页锁定）主机内存：提升异步拷贝效率" class="headerlink" title="10.2 pinned（页锁定）主机内存：提升异步拷贝效率"></a>10.2 pinned（页锁定）主机内存：提升异步拷贝效率</h3><ul>
+<li><code>cudaMallocHost</code> &#x2F; <code>cudaFreeHost</code></li>
+<li>pinned 内存更利于 DMA，<code>cudaMemcpyAsync</code> 才更有意义</li>
+</ul>
+<h3 id="10-3-基本模板：两条-stream-流水搬运"><a href="#10-3-基本模板：两条-stream-流水搬运" class="headerlink" title="10.3 基本模板：两条 stream 流水搬运"></a>10.3 基本模板：两条 stream 流水搬运</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;cstdio&gt;</span><br><span class="line">#include &lt;cuda_runtime.h&gt;</span><br><span class="line"></span><br><span class="line">#define CUDA_CHECK(call) do &#123;                                  \</span><br><span class="line">  cudaError_t err = (call);                                    \</span><br><span class="line">  if (err != cudaSuccess) &#123;                                    \</span><br><span class="line">    std::fprintf(stderr, &quot;CUDA error %s:%d: %s\n&quot;,             \</span><br><span class="line">      __FILE__, __LINE__, cudaGetErrorString(err));            \</span><br><span class="line">    std::exit(1);                                              \</span><br><span class="line">  &#125;                                                            \</span><br><span class="line">&#125; while(0)</span><br><span class="line"></span><br><span class="line">__global__ void scale(float* x, int n, float a) &#123;</span><br><span class="line">    for (int i = blockIdx.x * blockDim.x + threadIdx.x;</span><br><span class="line">         i &lt; n; i += blockDim.x * gridDim.x) &#123;</span><br><span class="line">        x[i] *= a;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main() &#123;</span><br><span class="line">    const int n = 1 &lt;&lt; 20;</span><br><span class="line">    const size_t bytes = n * sizeof(float);</span><br><span class="line"></span><br><span class="line">    // pinned host memory</span><br><span class="line">    float* h = nullptr;</span><br><span class="line">    CUDA_CHECK(cudaMallocHost(&amp;h, bytes));</span><br><span class="line"></span><br><span class="line">    // device memory</span><br><span class="line">    float* d = nullptr;</span><br><span class="line">    CUDA_CHECK(cudaMalloc(&amp;d, bytes));</span><br><span class="line"></span><br><span class="line">    // init host</span><br><span class="line">    for (int i = 0; i &lt; n; ++i) h[i] = 1.0f;</span><br><span class="line"></span><br><span class="line">    cudaStream_t s;</span><br><span class="line">    CUDA_CHECK(cudaStreamCreate(&amp;s));</span><br><span class="line"></span><br><span class="line">    // async H2D</span><br><span class="line">    CUDA_CHECK(cudaMemcpyAsync(d, h, bytes, cudaMemcpyHostToDevice, s));</span><br><span class="line"></span><br><span class="line">    // kernel in same stream (will wait for H2D in this stream)</span><br><span class="line">    scale&lt;&lt;&lt;256, 256, 0, s&gt;&gt;&gt;(d, n, 2.0f);</span><br><span class="line">    CUDA_CHECK(cudaGetLastError());</span><br><span class="line"></span><br><span class="line">    // async D2H</span><br><span class="line">    CUDA_CHECK(cudaMemcpyAsync(h, d, bytes, cudaMemcpyDeviceToHost, s));</span><br><span class="line"></span><br><span class="line">    // wait stream done</span><br><span class="line">    CUDA_CHECK(cudaStreamSynchronize(s));</span><br><span class="line"></span><br><span class="line">    std::printf(&quot;h[0]=%f, h[n-1]=%f\n&quot;, h[0], h[n-1]);</span><br><span class="line"></span><br><span class="line">    CUDA_CHECK(cudaStreamDestroy(s));</span><br><span class="line">    CUDA_CHECK(cudaFree(d));</span><br><span class="line">    CUDA_CHECK(cudaFreeHost(h));</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="10-4-事件计时（event-timing）"><a href="#10-4-事件计时（event-timing）" class="headerlink" title="10.4 事件计时（event timing）"></a>10.4 事件计时（event timing）</h3><p>用于测量 GPU 端耗时：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">cudaEvent_t st, ed;</span><br><span class="line"><span class="built_in">cudaEventCreate</span>(&amp;st); <span class="built_in">cudaEventCreate</span>(&amp;ed);</span><br><span class="line"></span><br><span class="line"><span class="built_in">cudaEventRecord</span>(st, stream);</span><br><span class="line"><span class="comment">// kernel / memcpyAsync ...</span></span><br><span class="line"><span class="built_in">cudaEventRecord</span>(ed, stream);</span><br><span class="line"><span class="built_in">cudaEventSynchronize</span>(ed);</span><br><span class="line"></span><br><span class="line"><span class="type">float</span> ms = <span class="number">0.f</span>;</span><br><span class="line"><span class="built_in">cudaEventElapsedTime</span>(&amp;ms, st, ed);</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/2025/12/25/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/cmake%E7%8E%AF%E5%A2%83%E6%9E%84%E5%BB%BA%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/12/25/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/cmake%E7%8E%AF%E5%A2%83%E6%9E%84%E5%BB%BA%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9/" class="post-title-link" itemprop="url">cmake环境构建注意事项</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-12-25 20:37:25" itemprop="dateCreated datePublished" datetime="2025-12-25T20:37:25+08:00">2025-12-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-01-24 10:43:15" itemprop="dateModified" datetime="2026-01-24T10:43:15+08:00">2026-01-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/" itemprop="url" rel="index"><span itemprop="name">杂七杂八</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="cmake环境构建注意事项"><a href="#cmake环境构建注意事项" class="headerlink" title="cmake环境构建注意事项"></a>cmake环境构建注意事项</h1><p>后续要装更多包：通用“镜像下载 + 安装模板”</p>
+<p>你以后新增包基本分三类：CMake &#x2F; Autotools &#x2F; 纯 Make。建议统一规则：</p>
+<p>下载：都落到 &#x2F;opt&#x2F;tp-downloads</p>
+<p>解压构建：都在 &#x2F;opt&#x2F;src_clean&#x2F;<pkg></p>
+<p>安装：统一 –prefix&#x3D;&#x2F;opt&#x2F;tp 或 -DCMAKE_INSTALL_PREFIX&#x3D;&#x2F;opt&#x2F;tp</p>
+<p>使用：工程端统一 CMAKE_PREFIX_PATH&#x3D;&#x2F;opt&#x2F;tp</p>
+<p>7.1 通用下载函数（带镜像）</p>
+<p>建议你写个小函数（放到 ~&#x2F;.bashrc 或单独脚本）：</p>
+<p>fetch_gh () {</p>
+<h1 id="用法：fetch-gh-owner-repo-ref-output-tar-gz"><a href="#用法：fetch-gh-owner-repo-ref-output-tar-gz" class="headerlink" title="用法：fetch_gh owner repo ref output.tar.gz"></a>用法：fetch_gh owner repo ref output.tar.gz</h1><h1 id="例：fetch-gh-sewenew-redis-plus-plus-refs-tags-1-3-15-redis-plus-plus-1-3-15-tar-gz"><a href="#例：fetch-gh-sewenew-redis-plus-plus-refs-tags-1-3-15-redis-plus-plus-1-3-15-tar-gz" class="headerlink" title="例：fetch_gh sewenew redis-plus-plus refs&#x2F;tags&#x2F;1.3.15 redis-plus-plus-1.3.15.tar.gz"></a>例：fetch_gh sewenew redis-plus-plus refs&#x2F;tags&#x2F;1.3.15 redis-plus-plus-1.3.15.tar.gz</h1><p>  local owner&#x3D;”$1” repo&#x3D;”$2” ref&#x3D;”$3” out&#x3D;”$4”<br>  mkdir -p &#x2F;opt&#x2F;tp-downloads<br>  curl -L –fail <br>    “<a target="_blank" rel="noopener" href="https://gh-proxy.org/https://github.com/$%7Bowner%7D/$%7Brepo%7D/archive/$%7Bref%7D.tar.gz">https://gh-proxy.org/https://github.com/${owner}/${repo}/archive/${ref}.tar.gz</a>“ <br>    -o “&#x2F;opt&#x2F;tp-downloads&#x2F;${out}”<br>}</p>
+<p>7.2 CMake 类包安装模板<br>source &#x2F;opt&#x2F;tp&#x2F;env.sh<br>cd &#x2F;opt&#x2F;src_clean&#x2F;<pkg><br>rm -rf build &amp;&amp; mkdir build &amp;&amp; cd build<br>&#x2F;opt&#x2F;tp&#x2F;bin&#x2F;cmake .. -G Ninja <br>  -DCMAKE_BUILD_TYPE&#x3D;Release <br>  -DCMAKE_INSTALL_PREFIX&#x3D;&#x2F;opt&#x2F;tp <br>  -DCMAKE_PREFIX_PATH&#x3D;&#x2F;opt&#x2F;tp<br>&#x2F;opt&#x2F;tp&#x2F;bin&#x2F;cmake –build . -j”$(nproc)”<br>&#x2F;opt&#x2F;tp&#x2F;bin&#x2F;cmake –install .</p>
+<p>7.3 Autotools 类包安装模板<br>.&#x2F;configure –prefix&#x3D;&#x2F;opt&#x2F;tp<br>make -j”$(nproc)”<br>make install</p>
+<ol>
+<li>下载 redis-plus-plus（走 GitHub 镜像）</li>
+</ol>
+<p>redis-plus-plus 最新 release&#x2F;tag 是 1.3.15。<br>GitHub</p>
+<p>mkdir -p &#x2F;opt&#x2F;tp-downloads<br>cd &#x2F;opt&#x2F;tp-downloads</p>
+<p>curl -L –fail <br>  “<a target="_blank" rel="noopener" href="https://gh-proxy.org/https://github.com/sewenew/redis-plus-plus/archive/refs/tags/1.3.15.tar.gz">https://gh-proxy.org/https://github.com/sewenew/redis-plus-plus/archive/refs/tags/1.3.15.tar.gz</a>“ <br>  -o redis-plus-plus-1.3.15.tar.gz</p>
+<ol start="2">
+<li>解压、编译、安装到 &#x2F;opt&#x2F;tp</li>
+</ol>
+<p>关键 CMake 选项：</p>
+<p>-DREDIS_PLUS_PLUS_BUILD_TEST&#x3D;OFF：不编测试，加速且避免额外依赖<br>GitHub<br>+1</p>
+<p>-DCMAKE_PREFIX_PATH&#x3D;&#x2F;opt&#x2F;tp：让它找到你已装的 hiredis（以及未来其他依赖）</p>
+<p>source &#x2F;opt&#x2F;tp&#x2F;env.sh</p>
+<p>cd &#x2F;opt&#x2F;src_clean<br>rm -rf redis-plus-plus-1.3.15<br>tar -xf &#x2F;opt&#x2F;tp-downloads&#x2F;redis-plus-plus-1.3.15.tar.gz<br>cd redis-plus-plus-1.3.15</p>
+<p>rm -rf build<br>mkdir -p build<br>cd build</p>
+<p>&#x2F;opt&#x2F;tp&#x2F;bin&#x2F;cmake .. -G Ninja <br>  -DCMAKE_BUILD_TYPE&#x3D;Release <br>  -DCMAKE_INSTALL_PREFIX&#x3D;&#x2F;opt&#x2F;tp <br>  -DCMAKE_PREFIX_PATH&#x3D;&#x2F;opt&#x2F;tp <br>  -DREDIS_PLUS_PLUS_BUILD_TEST&#x3D;OFF</p>
+<p>&#x2F;opt&#x2F;tp&#x2F;bin&#x2F;cmake –build . -j”$(nproc)”<br>&#x2F;opt&#x2F;tp&#x2F;bin&#x2F;cmake –install .</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/5/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/7/"><i class="fa fa-angle-right"></i></a>
+  </nav>
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-code"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">楚天</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

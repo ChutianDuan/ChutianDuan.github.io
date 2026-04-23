@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chutianduan.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":2,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="现代 C++ 常用工具类型时间：2026&#x2F;04&#x2F;09  关键词：optional、variant、any、string_view、span、expected核心目标：掌握几个现代 C++ 里非常高频、能直接改善接口表达和代码质量的标准库类型。   1. 为什么这些类型重要现代 C++ 的很多进步，不只在语法，还在于：  用更明确的类型表达意图  比如：  “可能没有值” “可能">
+<meta property="og:type" content="article">
+<meta property="og:title" content="现代 C++ 常用工具类型">
+<meta property="og:url" content="https://chutianduan.github.io/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/11-%E7%8E%B0%E4%BB%A3c-%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E7%B1%BB%E5%9E%8B/index.html">
+<meta property="og:site_name" content="楚天">
+<meta property="og:description" content="现代 C++ 常用工具类型时间：2026&#x2F;04&#x2F;09  关键词：optional、variant、any、string_view、span、expected核心目标：掌握几个现代 C++ 里非常高频、能直接改善接口表达和代码质量的标准库类型。   1. 为什么这些类型重要现代 C++ 的很多进步，不只在语法，还在于：  用更明确的类型表达意图  比如：  “可能没有值” “可能">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-04-09T02:39:21.000Z">
+<meta property="article:modified_time" content="2026-04-09T02:39:21.000Z">
+<meta property="article:author" content="楚天">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="游戏网络">
+<meta property="article:tag" content="技术博客">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://chutianduan.github.io/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/11-%E7%8E%B0%E4%BB%A3c-%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E7%B1%BB%E5%9E%8B/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://chutianduan.github.io/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/11-%E7%8E%B0%E4%BB%A3c-%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E7%B1%BB%E5%9E%8B/","path":"/notes/现代c-实践/11-现代c-常用工具类型/","title":"现代 C++ 常用工具类型"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>现代 C++ 常用工具类型 | 楚天</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">楚天</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">惟楚有材，于斯为盛</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-友情链接"><a href="/link/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%8E%B0%E4%BB%A3-C-%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">现代 C++ 常用工具类型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E4%BA%9B%E7%B1%BB%E5%9E%8B%E9%87%8D%E8%A6%81"><span class="nav-number">1.1.</span> <span class="nav-text">1. 为什么这些类型重要</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-std-optional%EF%BC%9A%E5%8F%AF%E8%83%BD%E6%9C%89%EF%BC%8C%E4%B9%9F%E5%8F%AF%E8%83%BD%E6%B2%A1%E6%9C%89"><span class="nav-number">1.2.</span> <span class="nav-text">2. std::optional&lt;T&gt;：可能有，也可能没有</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-std-variant%EF%BC%9A%E7%B1%BB%E5%9E%8B%E5%AE%89%E5%85%A8%E7%9A%84%E8%81%94%E5%90%88%E4%BD%93"><span class="nav-number">1.3.</span> <span class="nav-text">3. std::variant：类型安全的联合体</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-std-any%EF%BC%9A%E5%AE%8C%E5%85%A8%E5%8A%A8%E6%80%81%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.4.</span> <span class="nav-text">4. std::any：完全动态类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-std-string-view%EF%BC%9A%E6%97%A0%E6%8B%B7%E8%B4%9D%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%A7%86%E5%9B%BE"><span class="nav-number">1.5.</span> <span class="nav-text">5. std::string_view：无拷贝字符串视图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-std-span%EF%BC%9A%E6%97%A0%E6%8B%B7%E8%B4%9D%E8%BF%9E%E7%BB%AD%E5%86%85%E5%AD%98%E8%A7%86%E5%9B%BE"><span class="nav-number">1.6.</span> <span class="nav-text">6. std::span&lt;T&gt;：无拷贝连续内存视图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-std-expected%EF%BC%9A%E5%80%BC%E6%88%96%E9%94%99%E8%AF%AF"><span class="nav-number">1.7.</span> <span class="nav-text">7. std::expected：值或错误</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-%E8%BF%99%E4%BA%9B%E7%B1%BB%E5%9E%8B%E6%9C%80%E6%A0%B8%E5%BF%83%E7%9A%84%E6%8E%A5%E5%8F%A3%E6%94%B6%E7%9B%8A"><span class="nav-number">1.8.</span> <span class="nav-text">8. 这些类型最核心的接口收益</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-optional"><span class="nav-number">1.8.1.</span> <span class="nav-text">8.1 optional</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-variant"><span class="nav-number">1.8.2.</span> <span class="nav-text">8.2 variant</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-string-view"><span class="nav-number">1.8.3.</span> <span class="nav-text">8.3 string_view</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-4-span"><span class="nav-number">1.8.4.</span> <span class="nav-text">8.4 span</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-%E5%B8%B8%E8%A7%81%E5%9D%91"><span class="nav-number">1.9.</span> <span class="nav-text">9. 常见坑</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#9-1-string-view-span-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E9%94%99%E8%AF%AF"><span class="nav-number">1.9.1.</span> <span class="nav-text">9.1 string_view &#x2F; span 生命周期错误</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-2-%E7%94%A8-any-%E4%BB%A3%E6%9B%BF%E6%B8%85%E6%99%B0%E8%AE%BE%E8%AE%A1"><span class="nav-number">1.9.2.</span> <span class="nav-text">9.2 用 any 代替清晰设计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-3-optional-%E9%87%8C%E5%A1%9E%E9%87%8D%E5%AF%B9%E8%B1%A1%E5%8D%B4%E9%A2%91%E7%B9%81%E6%8B%B7%E8%B4%9D"><span class="nav-number">1.9.3.</span> <span class="nav-text">9.3 optional 里塞重对象却频繁拷贝</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-%E4%B8%80%E9%A1%B5%E6%80%BB%E7%BB%93"><span class="nav-number">1.10.</span> <span class="nav-text">10. 一页总结</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="楚天"
+      src="/img/me.jpg">
+  <p class="site-author-name" itemprop="name">楚天</p>
+  <div class="site-description" itemprop="description">记录深度学习、C++、游戏网络与生活旅行的学习笔记。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ChutianDuan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ChutianDuan" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:3383006954@qq.com" title="E-Mail → mailto:3383006954@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/11-%E7%8E%B0%E4%BB%A3c-%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E7%B1%BB%E5%9E%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="现代 C++ 常用工具类型 | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          现代 C++ 常用工具类型
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-04-09 10:39:21" itemprop="dateCreated datePublished" datetime="2026-04-09T10:39:21+08:00">2026-04-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/%E7%8E%B0%E4%BB%A3C-%E5%AE%9E%E8%B7%B5/" itemprop="url" rel="index"><span itemprop="name">现代C++实践</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="现代-C-常用工具类型"><a href="#现代-C-常用工具类型" class="headerlink" title="现代 C++ 常用工具类型"></a>现代 C++ 常用工具类型</h1><p>时间：2026&#x2F;04&#x2F;09</p>
+<blockquote>
+<p>关键词：<code>optional</code>、<code>variant</code>、<code>any</code>、<code>string_view</code>、<code>span</code>、<code>expected</code><br>核心目标：掌握几个现代 C++ 里非常高频、能直接改善接口表达和代码质量的标准库类型。</p>
+</blockquote>
+<hr>
+<h2 id="1-为什么这些类型重要"><a href="#1-为什么这些类型重要" class="headerlink" title="1. 为什么这些类型重要"></a>1. 为什么这些类型重要</h2><p>现代 C++ 的很多进步，不只在语法，还在于：</p>
+<ul>
+<li>用更明确的类型表达意图</li>
+</ul>
+<p>比如：</p>
+<ul>
+<li>“可能没有值”</li>
+<li>“可能是多种类型之一”</li>
+<li>“只读字符串视图”</li>
+<li>“一段连续内存视图”</li>
+</ul>
+<p>这些都不该继续靠：</p>
+<ul>
+<li><code>nullptr</code></li>
+<li>魔法值</li>
+<li><code>void*</code></li>
+<li>裸指针 + 长度</li>
+</ul>
+<p>来硬撑。</p>
+<hr>
+<h2 id="2-std-optional：可能有，也可能没有"><a href="#2-std-optional：可能有，也可能没有" class="headerlink" title="2. std::optional&lt;T&gt;：可能有，也可能没有"></a>2. <code>std::optional&lt;T&gt;</code>：可能有，也可能没有</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;optional&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function">std::optional&lt;<span class="type">int</span>&gt; <span class="title">find_id</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>它适合表达：</p>
+<ul>
+<li>成功返回一个值</li>
+<li>失败时没有值</li>
+</ul>
+<p>比“返回 <code>-1</code> 表示失败”更清晰。</p>
+<p>常用接口：</p>
+<ul>
+<li><code>has_value()</code></li>
+<li><code>value()</code></li>
+<li><code>value_or(default)</code></li>
+</ul>
+<hr>
+<h2 id="3-std-variant：类型安全的联合体"><a href="#3-std-variant：类型安全的联合体" class="headerlink" title="3. std::variant：类型安全的联合体"></a>3. <code>std::variant</code>：类型安全的联合体</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;variant&gt;</span></span></span><br><span class="line"></span><br><span class="line">std::variant&lt;<span class="type">int</span>, std::string&gt; v;</span><br></pre></td></tr></table></figure>
+
+<p>它表示：</p>
+<ul>
+<li>值一定是若干候选类型中的一个</li>
+</ul>
+<p>相比传统 <code>union</code>，它：</p>
+<ul>
+<li>类型安全</li>
+<li>自动管理对象生命周期</li>
+</ul>
+<p>配合 <code>std::visit</code> 很常见。</p>
+<hr>
+<h2 id="4-std-any：完全动态类型"><a href="#4-std-any：完全动态类型" class="headerlink" title="4. std::any：完全动态类型"></a>4. <code>std::any</code>：完全动态类型</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;any&gt;</span></span></span><br><span class="line"></span><br><span class="line">std::any x = <span class="number">42</span>;</span><br><span class="line">x = std::<span class="built_in">string</span>(<span class="string">&quot;hello&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>它适合：</p>
+<ul>
+<li>真正不知道运行期会是什么类型</li>
+</ul>
+<p>但代价是：</p>
+<ul>
+<li>类型信息晚到运行期</li>
+<li>可读性和性能都不如 <code>variant</code></li>
+</ul>
+<p>经验上：</p>
+<ul>
+<li>能用 <code>variant</code> 就不要先上 <code>any</code></li>
+</ul>
+<hr>
+<h2 id="5-std-string-view：无拷贝字符串视图"><a href="#5-std-string-view：无拷贝字符串视图" class="headerlink" title="5. std::string_view：无拷贝字符串视图"></a>5. <code>std::string_view</code>：无拷贝字符串视图</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string_view&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">print</span><span class="params">(std::string_view s)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>优点：</p>
+<ul>
+<li>不拥有字符串</li>
+<li>不分配内存</li>
+<li>可接 <code>std::string</code>、字面量、子串视图</li>
+</ul>
+<p>风险：</p>
+<ul>
+<li>它不延长底层字符串生命周期</li>
+</ul>
+<p>所以不能把它保存得比源字符串活得更久。</p>
+<hr>
+<h2 id="6-std-span：无拷贝连续内存视图"><a href="#6-std-span：无拷贝连续内存视图" class="headerlink" title="6. std::span&lt;T&gt;：无拷贝连续内存视图"></a>6. <code>std::span&lt;T&gt;</code>：无拷贝连续内存视图</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;span&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">process</span><span class="params">(std::span&lt;<span class="type">const</span> <span class="type">int</span>&gt; xs)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>适合：</p>
+<ul>
+<li>数组</li>
+<li><code>std::vector</code></li>
+<li><code>std::array</code></li>
+</ul>
+<p>相比传：</p>
+<ul>
+<li>裸指针 + 长度</li>
+</ul>
+<p>更清晰，也更安全。</p>
+<hr>
+<h2 id="7-std-expected：值或错误"><a href="#7-std-expected：值或错误" class="headerlink" title="7. std::expected：值或错误"></a>7. <code>std::expected</code>：值或错误</h2><p>如果你的环境支持 C++23，可以关注：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">std::expected&lt;Value, Error&gt;</span><br></pre></td></tr></table></figure>
+
+<p>它适合表达：</p>
+<ul>
+<li>成功时返回值</li>
+<li>失败时返回明确错误信息</li>
+</ul>
+<p>相比 <code>optional</code>，它多了：</p>
+<ul>
+<li>为什么失败</li>
+</ul>
+<hr>
+<h2 id="8-这些类型最核心的接口收益"><a href="#8-这些类型最核心的接口收益" class="headerlink" title="8. 这些类型最核心的接口收益"></a>8. 这些类型最核心的接口收益</h2><h3 id="8-1-optional"><a href="#8-1-optional" class="headerlink" title="8.1 optional"></a>8.1 <code>optional</code></h3><p>不再靠魔法值表示“没有结果”。</p>
+<h3 id="8-2-variant"><a href="#8-2-variant" class="headerlink" title="8.2 variant"></a>8.2 <code>variant</code></h3><p>不再靠手写 tag + union。</p>
+<h3 id="8-3-string-view"><a href="#8-3-string-view" class="headerlink" title="8.3 string_view"></a>8.3 <code>string_view</code></h3><p>函数参数更轻、更泛化。</p>
+<h3 id="8-4-span"><a href="#8-4-span" class="headerlink" title="8.4 span"></a>8.4 <code>span</code></h3><p>数组接口更现代。</p>
+<hr>
+<h2 id="9-常见坑"><a href="#9-常见坑" class="headerlink" title="9. 常见坑"></a>9. 常见坑</h2><h3 id="9-1-string-view-span-生命周期错误"><a href="#9-1-string-view-span-生命周期错误" class="headerlink" title="9.1 string_view &#x2F; span 生命周期错误"></a>9.1 <code>string_view</code> &#x2F; <code>span</code> 生命周期错误</h3><p>它们都只是视图，不拥有数据。</p>
+<h3 id="9-2-用-any-代替清晰设计"><a href="#9-2-用-any-代替清晰设计" class="headerlink" title="9.2 用 any 代替清晰设计"></a>9.2 用 <code>any</code> 代替清晰设计</h3><p>很多时候 <code>any</code> 只是把类型问题往后拖。</p>
+<h3 id="9-3-optional-里塞重对象却频繁拷贝"><a href="#9-3-optional-里塞重对象却频繁拷贝" class="headerlink" title="9.3 optional 里塞重对象却频繁拷贝"></a>9.3 <code>optional</code> 里塞重对象却频繁拷贝</h3><p>虽然语义清晰，但也要注意值类别和性能。</p>
+<hr>
+<h2 id="10-一页总结"><a href="#10-一页总结" class="headerlink" title="10. 一页总结"></a>10. 一页总结</h2><p>这几个类型的价值可以压缩成一句话：</p>
+<blockquote>
+<p>用更准确的标准库类型表达接口语义，减少魔法值、裸指针和不透明约定。</p>
+</blockquote>
+<p>最值得优先掌握的顺序通常是：</p>
+<ol>
+<li><code>optional</code></li>
+<li><code>string_view</code></li>
+<li><code>span</code></li>
+<li><code>variant</code></li>
+<li><code>any</code></li>
+<li><code>expected</code></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>楚天
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://chutianduan.github.io/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/11-%E7%8E%B0%E4%BB%A3c-%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E7%B1%BB%E5%9E%8B/" title="现代 C++ 常用工具类型">https://chutianduan.github.io/notes/现代c-实践/11-现代c-常用工具类型/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/09-%E7%BD%91%E7%BB%9C%E6%9C%8D%E5%8A%A1%E5%9F%BA%E7%A1%80-tcp%E7%B2%98%E5%8C%85-%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E4%B8%8Ehttp-s/" rel="prev" title="网络服务基础：TCP 粘包、线程模型与 HTTP(S)">
+                  <i class="fa fa-angle-left"></i> 网络服务基础：TCP 粘包、线程模型与 HTTP(S)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/10-c-20%E5%8D%8F%E7%A8%8B%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/" rel="next" title="C++20 协程入门与实践">
+                  C++20 协程入门与实践 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-code"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">楚天</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

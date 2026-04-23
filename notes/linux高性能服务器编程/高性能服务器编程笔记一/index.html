@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chutianduan.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":2,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="高性能服务器编程笔记一时间：2026&#x2F;04&#x2F;10  关键词：epoll、LT &#x2F; ET、Reactor、非阻塞 socket、timerfd、eventfd、signalfd、线程池、HTTP、网络调优核心目标：把 Linux 服务端里最常见的一条工程主线串起来，即“事件循环 + 非阻塞 I&#x2F;O + 协议解析 + 任务分发 + 排障调优”。   1. epo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="高性能服务器编程笔记一">
+<meta property="og:url" content="https://chutianduan.github.io/notes/linux%E9%AB%98%E6%80%A7%E8%83%BD%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BC%96%E7%A8%8B/%E9%AB%98%E6%80%A7%E8%83%BD%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BC%96%E7%A8%8B%E7%AC%94%E8%AE%B0%E4%B8%80/index.html">
+<meta property="og:site_name" content="楚天">
+<meta property="og:description" content="高性能服务器编程笔记一时间：2026&#x2F;04&#x2F;10  关键词：epoll、LT &#x2F; ET、Reactor、非阻塞 socket、timerfd、eventfd、signalfd、线程池、HTTP、网络调优核心目标：把 Linux 服务端里最常见的一条工程主线串起来，即“事件循环 + 非阻塞 I&#x2F;O + 协议解析 + 任务分发 + 排障调优”。   1. epo">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-04-10T01:32:59.000Z">
+<meta property="article:modified_time" content="2026-04-10T01:32:59.000Z">
+<meta property="article:author" content="楚天">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="游戏网络">
+<meta property="article:tag" content="技术博客">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://chutianduan.github.io/notes/linux%E9%AB%98%E6%80%A7%E8%83%BD%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BC%96%E7%A8%8B/%E9%AB%98%E6%80%A7%E8%83%BD%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BC%96%E7%A8%8B%E7%AC%94%E8%AE%B0%E4%B8%80/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://chutianduan.github.io/notes/linux%E9%AB%98%E6%80%A7%E8%83%BD%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BC%96%E7%A8%8B/%E9%AB%98%E6%80%A7%E8%83%BD%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BC%96%E7%A8%8B%E7%AC%94%E8%AE%B0%E4%B8%80/","path":"/notes/linux高性能服务器编程/高性能服务器编程笔记一/","title":"高性能服务器编程笔记一"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>高性能服务器编程笔记一 | 楚天</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">楚天</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">惟楚有材，于斯为盛</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-友情链接"><a href="/link/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%AB%98%E6%80%A7%E8%83%BD%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BC%96%E7%A8%8B%E7%AC%94%E8%AE%B0%E4%B8%80"><span class="nav-number">1.</span> <span class="nav-text">高性能服务器编程笔记一</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-epoll-%E7%9A%84-LT-ET-%E6%A8%A1%E5%BC%8F%E4%B8%8E-Reactor"><span class="nav-number">1.1.</span> <span class="nav-text">1. epoll 的 LT &#x2F; ET 模式与 Reactor</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-Reactor-%E5%88%B0%E5%BA%95%E5%9C%A8%E5%81%9A%E4%BB%80%E4%B9%88"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 Reactor 到底在做什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-LT-%E5%92%8C-ET-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 LT 和 ET 的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-ET-%E4%B8%8B%E4%B8%BA%E4%BB%80%E4%B9%88%E5%BF%85%E9%A1%BB%E2%80%9C%E8%AF%BB%E7%A9%BA-%E5%86%99%E5%B0%BD%E2%80%9D"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 ET 下为什么必须“读空 &#x2F; 写尽”</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-epoll-%E4%B8%AD%E5%B8%B8%E8%A7%81%E7%9A%84%E4%BA%8B%E4%BB%B6%E7%BB%84%E5%90%88"><span class="nav-number">1.1.4.</span> <span class="nav-text">1.4 epoll 中常见的事件组合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-LT-ET-%E6%80%8E%E4%B9%88%E9%80%89"><span class="nav-number">1.1.5.</span> <span class="nav-text">1.5 LT &#x2F; ET 怎么选</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E9%9D%9E%E9%98%BB%E5%A1%9E-socket-%E7%9A%84%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="nav-number">1.2.</span> <span class="nav-text">2. 非阻塞 socket 的错误处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E9%9D%9E%E9%98%BB%E5%A1%9E%E4%B8%8D%E6%98%AF%E2%80%9C%E6%B2%A1%E6%9C%89%E9%98%BB%E5%A1%9E%E2%80%9D%EF%BC%8C%E8%80%8C%E6%98%AF%E2%80%9C%E9%98%BB%E5%A1%9E%E5%8F%98%E6%88%90%E8%BF%94%E5%9B%9E%E7%A0%81%E2%80%9D"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 非阻塞不是“没有阻塞”，而是“阻塞变成返回码”</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-connect-%E7%9A%84%E5%A4%84%E7%90%86"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 connect() 的处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-accept-%E7%9A%84%E5%A4%84%E7%90%86"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 accept() 的处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-recv-read-%E7%9A%84%E5%A4%84%E7%90%86"><span class="nav-number">1.2.4.</span> <span class="nav-text">2.4 recv() &#x2F; read() 的处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-send-write-%E7%9A%84%E5%A4%84%E7%90%86"><span class="nav-number">1.2.5.</span> <span class="nav-text">2.5 send() &#x2F; write() 的处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-6-%E4%B8%80%E4%BA%9B%E5%B7%A5%E7%A8%8B%E4%B8%8A%E5%BF%85%E9%A1%BB%E8%AE%B0%E4%BD%8F%E7%9A%84%E7%82%B9"><span class="nav-number">1.2.6.</span> <span class="nav-text">2.6 一些工程上必须记住的点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-timerfd-eventfd-signalfd"><span class="nav-number">1.3.</span> <span class="nav-text">3. timerfd &#x2F; eventfd &#x2F; signalfd</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E4%B8%89%E4%B8%AA-fd-%E5%BE%88%E9%87%8D%E8%A6%81"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 为什么这三个 fd 很重要</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-timerfd"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 timerfd</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-eventfd"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 eventfd</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-signalfd"><span class="nav-number">1.3.4.</span> <span class="nav-text">3.4 signalfd</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-%E4%B8%89%E8%80%85%E5%A6%82%E4%BD%95%E5%92%8C-Reactor-%E9%85%8D%E5%90%88"><span class="nav-number">1.3.5.</span> <span class="nav-text">3.5 三者如何和 Reactor 配合</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E7%BA%BF%E7%A8%8B%E6%B1%A0%E4%B8%8E-I-O-%E7%BA%BF%E7%A8%8B%E5%88%86%E5%B1%82"><span class="nav-number">1.4.</span> <span class="nav-text">4. 线程池与 I&#x2F;O 线程分层</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E4%B8%80%E4%B8%AA%E6%9B%B4%E7%A8%B3%E7%9A%84%E5%88%86%E5%B1%82%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 一个更稳的分层模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%AE%A9%E5%B7%A5%E4%BD%9C%E7%BA%BF%E7%A8%8B%E7%9B%B4%E6%8E%A5%E6%93%8D%E4%BD%9C-socket"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 为什么不让工作线程直接操作 socket</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E4%B8%80%E4%B8%AA%E5%B8%B8%E8%A7%81%E7%9A%84%E4%BB%BB%E5%8A%A1%E6%B5%81"><span class="nav-number">1.4.3.</span> <span class="nav-text">4.3 一个常见的任务流</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-%E7%BA%BF%E7%A8%8B%E6%95%B0%E6%80%8E%E4%B9%88%E5%AE%9A"><span class="nav-number">1.4.4.</span> <span class="nav-text">4.4 线程数怎么定</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5-%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E9%87%8C%E7%9A%84%E5%B8%B8%E8%A7%81%E5%9D%91"><span class="nav-number">1.4.5.</span> <span class="nav-text">4.5 线程模型里的常见坑</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-HTTP-%E8%A7%A3%E6%9E%90%E4%B8%8E%E5%BA%94%E7%94%A8%E5%B1%82%E5%8D%8F%E8%AE%AE%E8%AE%BE%E8%AE%A1"><span class="nav-number">1.5.</span> <span class="nav-text">5. HTTP 解析与应用层协议设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-HTTP-%E8%A7%A3%E6%9E%90%E4%B8%8D%E8%A6%81%E9%9D%A0%E2%80%9C%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%A2%B0%E8%BF%90%E6%B0%94%E2%80%9D"><span class="nav-number">1.5.1.</span> <span class="nav-text">5.1 HTTP 解析不要靠“字符串碰运气”</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-%E4%B8%80%E4%B8%AA%E6%9B%B4%E5%90%88%E7%90%86%E7%9A%84-HTTP-%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B"><span class="nav-number">1.5.2.</span> <span class="nav-text">5.2 一个更合理的 HTTP 处理流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-HTTP-%E5%B7%A5%E7%A8%8B%E4%B8%8A%E5%B8%B8%E8%A7%81%E5%9D%91"><span class="nav-number">1.5.3.</span> <span class="nav-text">5.3 HTTP 工程上常见坑</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-%E5%BA%94%E7%94%A8%E5%B1%82%E5%8D%8F%E8%AE%AE%E8%AE%BE%E8%AE%A1%EF%BC%8C%E6%AF%94%E2%80%9C%E8%83%BD%E4%BC%A0%E8%BE%93%E2%80%9D%E6%9B%B4%E9%87%8D%E8%A6%81"><span class="nav-number">1.5.4.</span> <span class="nav-text">5.4 应用层协议设计，比“能传输”更重要</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-5-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%8D%8F%E8%AE%AE%E5%BB%BA%E8%AE%AE%E8%87%B3%E5%B0%91%E5%8C%85%E5%90%AB%E8%BF%99%E4%BA%9B%E5%85%83%E7%B4%A0"><span class="nav-number">1.5.5.</span> <span class="nav-text">5.5 自定义协议建议至少包含这些元素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-6-%E5%8D%8F%E8%AE%AE%E8%AE%BE%E8%AE%A1%E5%92%8C%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E5%85%B6%E5%AE%9E%E6%98%AF%E8%BF%9E%E5%9C%A8%E4%B8%80%E8%B5%B7%E7%9A%84"><span class="nav-number">1.5.6.</span> <span class="nav-text">5.6 协议设计和线程模型其实是连在一起的</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-Linux-%E7%BD%91%E7%BB%9C%E8%B0%83%E4%BC%98%E5%8F%82%E6%95%B0%E4%B8%8E%E6%8E%92%E9%9A%9C%E6%96%B9%E6%B3%95"><span class="nav-number">1.6.</span> <span class="nav-text">6. Linux 网络调优参数与排障方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-%E5%85%88%E8%AE%B0%E4%BD%8F%E4%B8%80%E4%B8%AA%E5%8E%9F%E5%88%99%EF%BC%9A%E5%85%88%E8%A7%82%E5%AF%9F%EF%BC%8C%E5%86%8D%E8%B0%83%E5%8F%82"><span class="nav-number">1.6.1.</span> <span class="nav-text">6.1 先记住一个原则：先观察，再调参</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-%E5%B8%B8%E8%A7%81%E8%B0%83%E4%BC%98%E9%A1%B9"><span class="nav-number">1.6.2.</span> <span class="nav-text">6.2 常见调优项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-%E5%87%A0%E7%B1%BB%E5%85%B8%E5%9E%8B%E7%8E%B0%E8%B1%A1%E6%80%8E%E4%B9%88%E6%9F%A5"><span class="nav-number">1.6.3.</span> <span class="nav-text">6.3 几类典型现象怎么查</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E6%96%B0%E8%BF%9E%E6%8E%A5%E8%BF%9B%E4%B8%8D%E6%9D%A5"><span class="nav-number">1.6.3.1.</span> <span class="nav-text">1. 新连接进不来</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E8%BF%9E%E6%8E%A5%E5%BE%88%E5%A4%9A%EF%BC%8C%E4%BD%86%E5%90%9E%E5%90%90%E5%BE%88%E4%BD%8E"><span class="nav-number">1.6.3.2.</span> <span class="nav-text">2. 连接很多，但吞吐很低</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E5%BB%B6%E8%BF%9F%E6%8A%96%E5%8A%A8%E5%A4%A7%E3%80%81%E5%B0%BE%E5%BB%B6%E8%BF%9F%E9%AB%98"><span class="nav-number">1.6.3.3.</span> <span class="nav-text">3. 延迟抖动大、尾延迟高</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-%E8%BF%9E%E6%8E%A5%E8%8E%AB%E5%90%8D%E8%A2%AB%E6%96%AD%E5%BC%80"><span class="nav-number">1.6.3.4.</span> <span class="nav-text">4. 连接莫名被断开</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-4-%E6%8E%92%E9%9A%9C%E6%97%B6%E5%BB%BA%E8%AE%AE%E6%8C%89%E8%BF%99%E6%9D%A1%E7%BA%BF%E8%B5%B0"><span class="nav-number">1.6.4.</span> <span class="nav-text">6.4 排障时建议按这条线走</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-5-%E4%B8%80%E4%BA%9B%E5%BE%88%E5%AE%9E%E7%94%A8%E7%9A%84%E6%8E%92%E9%9A%9C%E6%B8%85%E5%8D%95"><span class="nav-number">1.6.5.</span> <span class="nav-text">6.5 一些很实用的排障清单</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-%E5%B0%8F%E7%BB%93"><span class="nav-number">1.7.</span> <span class="nav-text">7. 小结</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="楚天"
+      src="/img/me.jpg">
+  <p class="site-author-name" itemprop="name">楚天</p>
+  <div class="site-description" itemprop="description">记录深度学习、C++、游戏网络与生活旅行的学习笔记。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ChutianDuan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ChutianDuan" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:3383006954@qq.com" title="E-Mail → mailto:3383006954@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/linux%E9%AB%98%E6%80%A7%E8%83%BD%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BC%96%E7%A8%8B/%E9%AB%98%E6%80%A7%E8%83%BD%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BC%96%E7%A8%8B%E7%AC%94%E8%AE%B0%E4%B8%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="高性能服务器编程笔记一 | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          高性能服务器编程笔记一
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-04-10 09:32:59" itemprop="dateCreated datePublished" datetime="2026-04-10T09:32:59+08:00">2026-04-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/Linux%E9%AB%98%E6%80%A7%E8%83%BD%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Linux高性能服务器编程</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="高性能服务器编程笔记一"><a href="#高性能服务器编程笔记一" class="headerlink" title="高性能服务器编程笔记一"></a>高性能服务器编程笔记一</h1><p>时间：2026&#x2F;04&#x2F;10</p>
+<blockquote>
+<p>关键词：<code>epoll</code>、LT &#x2F; ET、Reactor、非阻塞 socket、<code>timerfd</code>、<code>eventfd</code>、<code>signalfd</code>、线程池、HTTP、网络调优<br>核心目标：把 Linux 服务端里最常见的一条工程主线串起来，即“事件循环 + 非阻塞 I&#x2F;O + 协议解析 + 任务分发 + 排障调优”。</p>
+</blockquote>
+<hr>
+<h2 id="1-epoll-的-LT-ET-模式与-Reactor"><a href="#1-epoll-的-LT-ET-模式与-Reactor" class="headerlink" title="1. epoll 的 LT &#x2F; ET 模式与 Reactor"></a>1. <code>epoll</code> 的 LT &#x2F; ET 模式与 Reactor</h2><h3 id="1-1-Reactor-到底在做什么"><a href="#1-1-Reactor-到底在做什么" class="headerlink" title="1.1 Reactor 到底在做什么"></a>1.1 Reactor 到底在做什么</h3><p>Reactor 的核心不是“某个库”，而是一种组织方式：</p>
+<ol>
+<li>用 <code>epoll_wait()</code> 等待一批就绪事件</li>
+<li>根据 fd 和事件类型找到对应处理器</li>
+<li>执行 <code>accept/read/write/timer/signal</code> 等处理逻辑</li>
+<li>业务计算如果比较重，就把它移交给工作线程</li>
+<li>结果回到 I&#x2F;O 线程后，再负责发包</li>
+</ol>
+<p>可以把它理解成：</p>
+<blockquote>
+<p><code>epoll</code> 负责告诉你“谁准备好了”，Reactor 负责定义“准备好之后该怎么处理”。</p>
+</blockquote>
+<p>一个典型 TCP Reactor 流程：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">listen fd -&gt; accept -&gt; conn fd</span><br><span class="line">conn fd readable -&gt; read into buffer</span><br><span class="line">buffer -&gt; parse protocol -&gt; dispatch business task</span><br><span class="line">business result -&gt; enqueue response</span><br><span class="line">conn fd writable -&gt; flush output buffer</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-2-LT-和-ET-的区别"><a href="#1-2-LT-和-ET-的区别" class="headerlink" title="1.2 LT 和 ET 的区别"></a>1.2 LT 和 ET 的区别</h3><table>
+<thead>
+<tr>
+<th>模式</th>
+<th>含义</th>
+<th>行为特点</th>
+<th>优点</th>
+<th>风险</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>LT</td>
+<td>Level Triggered，水平触发</td>
+<td>只要 fd 仍可读&#x2F;可写，就会反复通知</td>
+<td>语义直观，代码更稳</td>
+<td>重复通知较多</td>
+</tr>
+<tr>
+<td>ET</td>
+<td>Edge Triggered，边沿触发</td>
+<td>只在状态从“不可读”变“可读”时通知一次</td>
+<td>通知更少，适合高并发</td>
+<td>容易因为没读干净而丢事件</td>
+</tr>
+</tbody></table>
+<p>LT 是默认模式，更像“提醒式”：</p>
+<ul>
+<li>套接字里还有数据没读完，下一轮 <code>epoll_wait()</code> 还会继续通知</li>
+<li>对初学和排查问题更友好</li>
+</ul>
+<p>ET 更像“状态变化通知”：</p>
+<ul>
+<li>一次从无到有的变化，只提醒一次</li>
+<li>如果你这次没把数据读到 <code>EAGAIN</code>，内核通常不会再额外提醒你</li>
+</ul>
+<p>所以 ET 的两个前提几乎是硬规则：</p>
+<ul>
+<li>fd 必须设成非阻塞</li>
+<li><code>read/write/accept</code> 都要循环到 <code>EAGAIN</code> 或 <code>EWOULDBLOCK</code></li>
+</ul>
+<h3 id="1-3-ET-下为什么必须“读空-写尽”"><a href="#1-3-ET-下为什么必须“读空-写尽”" class="headerlink" title="1.3 ET 下为什么必须“读空 &#x2F; 写尽”"></a>1.3 ET 下为什么必须“读空 &#x2F; 写尽”</h3><p>ET 的常见错误写法是：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 错误示意：只读一次</span></span><br><span class="line"><span class="type">ssize_t</span> n = recv(fd, buf, <span class="keyword">sizeof</span>(buf), <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
+<p>如果内核缓冲区里其实还有数据没读完，那么这批“剩余数据”不会再触发新边沿，连接就可能卡住。</p>
+<p>正确思路是：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (;;) &#123;</span><br><span class="line">    <span class="type">ssize_t</span> n = recv(fd, buf, <span class="keyword">sizeof</span>(buf), <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (n &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">// 处理数据</span></span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (n == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">// 对端关闭</span></span><br><span class="line">        close(fd);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (errno == EINTR) &#123;</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (errno == EAGAIN || errno == EWOULDBLOCK) &#123;</span><br><span class="line">        <span class="comment">// 真的读空了</span></span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 其他错误</span></span><br><span class="line">    close(fd);</span><br><span class="line">    <span class="keyword">break</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>accept()</code> 也是同样逻辑。监听 fd 用 ET 时，应该把已完成连接队列里的连接一次性 <code>accept</code> 干净。</p>
+<h3 id="1-4-epoll-中常见的事件组合"><a href="#1-4-epoll-中常见的事件组合" class="headerlink" title="1.4 epoll 中常见的事件组合"></a>1.4 <code>epoll</code> 中常见的事件组合</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ev.events = EPOLLIN | EPOLLRDHUP | EPOLLERR;</span><br></pre></td></tr></table></figure>
+
+<p>常见关注点：</p>
+<ul>
+<li><code>EPOLLIN</code>：可读</li>
+<li><code>EPOLLOUT</code>：可写</li>
+<li><code>EPOLLRDHUP</code>：对端半关闭，常用于尽早发现连接关闭</li>
+<li><code>EPOLLERR</code>：错误事件</li>
+<li><code>EPOLLHUP</code>：挂起</li>
+<li><code>EPOLLET</code>：启用 ET</li>
+<li><code>EPOLLONESHOT</code>：触发一次后自动失活，适合多线程下避免同一连接被并发处理</li>
+</ul>
+<p>工程上常见搭配：</p>
+<ul>
+<li>单线程 Reactor：<code>EPOLLIN | EPOLLRDHUP</code></li>
+<li>ET Reactor：<code>EPOLLIN | EPOLLRDHUP | EPOLLET</code></li>
+<li>多线程连接处理：<code>EPOLLIN | EPOLLRDHUP | EPOLLONESHOT</code></li>
+</ul>
+<p>还有一个常见实践：</p>
+<ul>
+<li><code>EPOLLOUT</code> 往往只在“发送缓冲里还有没发完的数据”时才临时关注</li>
+<li>如果平时一直常驻监听 <code>EPOLLOUT</code>，很多 socket 会长期表现为“可写”，导致无意义唤醒</li>
+</ul>
+<h3 id="1-5-LT-ET-怎么选"><a href="#1-5-LT-ET-怎么选" class="headerlink" title="1.5 LT &#x2F; ET 怎么选"></a>1.5 LT &#x2F; ET 怎么选</h3><p>建议顺序很明确：</p>
+<ol>
+<li>先用 LT 把协议、状态机、错误处理做对</li>
+<li>确认瓶颈真的在事件通知频率，再考虑 ET</li>
+<li>如果用了 ET，先检查“是否所有 I&#x2F;O 路径都循环到 <code>EAGAIN</code>”</li>
+</ol>
+<p>不要把 ET 当成“默认更高级”的模式。很多线上服务最后依然选择 LT，因为：</p>
+<ul>
+<li>业务瓶颈常常不在 <code>epoll</code></li>
+<li>LT 更容易做正确</li>
+<li>排障成本明显更低</li>
+</ul>
+<hr>
+<h2 id="2-非阻塞-socket-的错误处理"><a href="#2-非阻塞-socket-的错误处理" class="headerlink" title="2. 非阻塞 socket 的错误处理"></a>2. 非阻塞 socket 的错误处理</h2><h3 id="2-1-非阻塞不是“没有阻塞”，而是“阻塞变成返回码”"><a href="#2-1-非阻塞不是“没有阻塞”，而是“阻塞变成返回码”" class="headerlink" title="2.1 非阻塞不是“没有阻塞”，而是“阻塞变成返回码”"></a>2.1 非阻塞不是“没有阻塞”，而是“阻塞变成返回码”</h3><p>设置非阻塞通常是：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> flags = fcntl(fd, F_GETFL, <span class="number">0</span>);</span><br><span class="line">fcntl(fd, F_SETFL, flags | O_NONBLOCK);</span><br></pre></td></tr></table></figure>
+
+<p>设置后，很多原本会阻塞的操作不再睡眠，而是直接返回：</p>
+<ul>
+<li><code>EAGAIN</code></li>
+<li><code>EWOULDBLOCK</code></li>
+<li><code>EINPROGRESS</code></li>
+</ul>
+<p>这意味着：</p>
+<blockquote>
+<p>非阻塞编程的关键不是“调用成功”，而是“正确解释暂时失败”。</p>
+</blockquote>
+<h3 id="2-2-connect-的处理"><a href="#2-2-connect-的处理" class="headerlink" title="2.2 connect() 的处理"></a>2.2 <code>connect()</code> 的处理</h3><p>非阻塞 <code>connect()</code> 最常见的返回是：</p>
+<ul>
+<li><code>0</code>：立即连接成功</li>
+<li><code>-1 + errno == EINPROGRESS</code>：连接正在进行中，这是正常路径</li>
+<li><code>-1 + errno == EINTR</code>：被信号打断，通常继续按“连接中”处理或重试检查</li>
+<li><code>-1 + ECONNREFUSED / ENETUNREACH / ETIMEDOUT</code>：明确失败</li>
+</ul>
+<p><code>EINPROGRESS</code> 之后，不能仅凭“fd 可写”就认定连接成功。正确做法是：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> err = <span class="number">0</span>;</span><br><span class="line"><span class="type">socklen_t</span> len = <span class="keyword">sizeof</span>(err);</span><br><span class="line">getsockopt(fd, SOL_SOCKET, SO_ERROR, &amp;err, &amp;len);</span><br><span class="line"><span class="keyword">if</span> (err == <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="comment">// connect 成功</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// connect 失败，err 才是真正错误码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-3-accept-的处理"><a href="#2-3-accept-的处理" class="headerlink" title="2.3 accept() 的处理"></a>2.3 <code>accept()</code> 的处理</h3><p>非阻塞监听 fd 常见返回：</p>
+<ul>
+<li><code>EAGAIN / EWOULDBLOCK</code>：当前已没有新连接，退出循环</li>
+<li><code>EINTR</code>：被信号打断，继续</li>
+<li><code>ECONNABORTED</code>：连接在 <code>accept</code> 前就中止了，记录后继续接下一个</li>
+<li><code>EMFILE / ENFILE</code>：进程或系统 fd 用尽，这是高优先级故障</li>
+</ul>
+<p><code>EMFILE</code> 的工程应对通常包括：</p>
+<ul>
+<li>提前把 <code>ulimit -n</code> 和系统文件句柄上限调够</li>
+<li>预留一个“空闲 fd”作为应急位</li>
+<li>日志里把错误打出来，不要静默丢掉</li>
+</ul>
+<h3 id="2-4-recv-read-的处理"><a href="#2-4-recv-read-的处理" class="headerlink" title="2.4 recv() &#x2F; read() 的处理"></a>2.4 <code>recv()</code> &#x2F; <code>read()</code> 的处理</h3><table>
+<thead>
+<tr>
+<th>返回值 &#x2F; 错误码</th>
+<th>含义</th>
+<th>处理建议</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>n &gt; 0</code></td>
+<td>收到数据</td>
+<td>进入协议解析</td>
+</tr>
+<tr>
+<td><code>n == 0</code></td>
+<td>对端正常关闭</td>
+<td>回收连接</td>
+</tr>
+<tr>
+<td><code>EAGAIN/EWOULDBLOCK</code></td>
+<td>当前读空了</td>
+<td>等下次读事件</td>
+</tr>
+<tr>
+<td><code>EINTR</code></td>
+<td>被信号打断</td>
+<td>继续读</td>
+</tr>
+<tr>
+<td><code>ECONNRESET</code></td>
+<td>对端复位</td>
+<td>记录并关闭</td>
+</tr>
+<tr>
+<td>其他错误</td>
+<td>异常</td>
+<td>记录并关闭</td>
+</tr>
+</tbody></table>
+<p>注意：</p>
+<ul>
+<li><code>n == 0</code> 不是“没数据”，而是 EOF</li>
+<li><code>EAGAIN</code> 不是错误，而是“暂时读不到”</li>
+</ul>
+<h3 id="2-5-send-write-的处理"><a href="#2-5-send-write-的处理" class="headerlink" title="2.5 send() &#x2F; write() 的处理"></a>2.5 <code>send()</code> &#x2F; <code>write()</code> 的处理</h3><p>非阻塞写最容易踩的坑有两个：</p>
+<ol>
+<li>只写了一部分</li>
+<li>对已关闭连接写，触发 <code>EPIPE</code> &#x2F; <code>SIGPIPE</code></li>
+</ol>
+<p>正确思路：</p>
+<ul>
+<li>维护用户态发送缓冲区</li>
+<li><code>send()</code> 返回部分字节时，把未发送部分保留到下次继续</li>
+<li><code>EAGAIN</code> 时注册 <code>EPOLLOUT</code>，等可写后继续刷</li>
+<li>用 <code>MSG_NOSIGNAL</code> 或忽略 <code>SIGPIPE</code></li>
+</ul>
+<p>一个典型发送循环：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (;;) &#123;</span><br><span class="line">    <span class="type">ssize_t</span> n = send(fd, out + sent, len - sent, MSG_NOSIGNAL);</span><br><span class="line">    <span class="keyword">if</span> (n &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        sent += (<span class="type">size_t</span>)n;</span><br><span class="line">        <span class="keyword">if</span> (sent == len) &#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (n &lt; <span class="number">0</span> &amp;&amp; errno == EINTR) &#123;</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (n &lt; <span class="number">0</span> &amp;&amp; (errno == EAGAIN || errno == EWOULDBLOCK)) &#123;</span><br><span class="line">        <span class="comment">// 还没发完，等 EPOLLOUT</span></span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// EPIPE / ECONNRESET / 其他错误</span></span><br><span class="line">    close(fd);</span><br><span class="line">    <span class="keyword">break</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-6-一些工程上必须记住的点"><a href="#2-6-一些工程上必须记住的点" class="headerlink" title="2.6 一些工程上必须记住的点"></a>2.6 一些工程上必须记住的点</h3><ul>
+<li><code>EINTR</code> 通常不是失败，而是“重来一次”</li>
+<li><code>EAGAIN</code> 通常不是失败，而是“现在先停一下”</li>
+<li><code>EPOLLERR</code> 到来时，要用 <code>getsockopt(... SO_ERROR ...)</code> 取真实错误</li>
+<li>半关闭连接要配合 <code>EPOLLRDHUP</code>、协议状态和发送缓冲综合判断</li>
+<li>非阻塞只是避免线程睡死，不会替你处理半包、乱序状态和应用层背压</li>
+</ul>
+<hr>
+<h2 id="3-timerfd-eventfd-signalfd"><a href="#3-timerfd-eventfd-signalfd" class="headerlink" title="3. timerfd &#x2F; eventfd &#x2F; signalfd"></a>3. <code>timerfd</code> &#x2F; <code>eventfd</code> &#x2F; <code>signalfd</code></h2><h3 id="3-1-为什么这三个-fd-很重要"><a href="#3-1-为什么这三个-fd-很重要" class="headerlink" title="3.1 为什么这三个 fd 很重要"></a>3.1 为什么这三个 fd 很重要</h3><p>它们的共同价值是：</p>
+<blockquote>
+<p>把“时间、线程通知、信号”也统一成 fd，交给 <code>epoll</code> 一起处理。</p>
+</blockquote>
+<p>这样事件循环里就不需要：</p>
+<ul>
+<li>到处插异步回调</li>
+<li>自己维护复杂的管道唤醒逻辑</li>
+<li>在信号处理函数里做太多不安全操作</li>
+</ul>
+<h3 id="3-2-timerfd"><a href="#3-2-timerfd" class="headerlink" title="3.2 timerfd"></a>3.2 <code>timerfd</code></h3><p><code>timerfd</code> 用于把定时器变成可读 fd。</p>
+<p>常见用途：</p>
+<ul>
+<li>心跳检测</li>
+<li>超时连接清理</li>
+<li>定时重传</li>
+<li>周期性统计采样</li>
+</ul>
+<p>基本用法：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> tfd = timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK | TFD_CLOEXEC);</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">itimerspec</span> <span class="title">its</span>;</span></span><br><span class="line"><span class="built_in">memset</span>(&amp;its, <span class="number">0</span>, <span class="keyword">sizeof</span>(its));</span><br><span class="line">its.it_value.tv_sec = <span class="number">1</span>;      <span class="comment">// 1 秒后首次触发</span></span><br><span class="line">its.it_interval.tv_sec = <span class="number">1</span>;   <span class="comment">// 之后每秒触发一次</span></span><br><span class="line">timerfd_settime(tfd, <span class="number">0</span>, &amp;its, <span class="literal">NULL</span>);</span><br></pre></td></tr></table></figure>
+
+<p>事件到来后要 <code>read()</code> 一个 <code>uint64_t</code>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">uint64_t</span> expirations = <span class="number">0</span>;</span><br><span class="line">read(tfd, &amp;expirations, <span class="keyword">sizeof</span>(expirations));</span><br></pre></td></tr></table></figure>
+
+<p>这个值表示自上次读取以来一共超时了多少次，避免丢 tick。</p>
+<h3 id="3-3-eventfd"><a href="#3-3-eventfd" class="headerlink" title="3.3 eventfd"></a>3.3 <code>eventfd</code></h3><p><code>eventfd</code> 本质是一个 64 位计数器，特别适合做线程间唤醒。</p>
+<p>常见用途：</p>
+<ul>
+<li>工作线程把结果投递给 I&#x2F;O 线程后，唤醒它</li>
+<li>多生产者向事件循环提交异步任务</li>
+<li>替代“自建 pipe + 一个字节通知”的老办法</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> efd = eventfd(<span class="number">0</span>, EFD_NONBLOCK | EFD_CLOEXEC);</span><br></pre></td></tr></table></figure>
+
+<p>写端：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">uint64_t</span> one = <span class="number">1</span>;</span><br><span class="line">write(efd, &amp;one, <span class="keyword">sizeof</span>(one));</span><br></pre></td></tr></table></figure>
+
+<p>读端：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">uint64_t</span> cnt = <span class="number">0</span>;</span><br><span class="line">read(efd, &amp;cnt, <span class="keyword">sizeof</span>(cnt));</span><br></pre></td></tr></table></figure>
+
+<p>读出来的是累计值，所以常见模式是：</p>
+<ul>
+<li>读一次把计数清掉</li>
+<li>顺手把任务队列里的任务批量取完</li>
+</ul>
+<h3 id="3-4-signalfd"><a href="#3-4-signalfd" class="headerlink" title="3.4 signalfd"></a>3.4 <code>signalfd</code></h3><p><code>signalfd</code> 用来把信号也纳入事件循环。</p>
+<p>典型场景：</p>
+<ul>
+<li>收到 <code>SIGTERM</code> 时优雅退出</li>
+<li>收到 <code>SIGHUP</code> 时重载配置</li>
+<li>不想把复杂逻辑塞进传统信号处理函数</li>
+</ul>
+<p>用法关键点：</p>
+<ol>
+<li>先用 <code>sigprocmask()</code> 阻塞这些信号</li>
+<li>再创建 <code>signalfd</code></li>
+<li>在 <code>epoll</code> 里监听它</li>
+</ol>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">sigset_t</span> mask;</span><br><span class="line">sigemptyset(&amp;mask);</span><br><span class="line">sigaddset(&amp;mask, SIGINT);</span><br><span class="line">sigaddset(&amp;mask, SIGTERM);</span><br><span class="line">sigprocmask(SIG_BLOCK, &amp;mask, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> sfd = signalfd(<span class="number">-1</span>, &amp;mask, SFD_NONBLOCK | SFD_CLOEXEC);</span><br></pre></td></tr></table></figure>
+
+<p>读取后可得到：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">signalfd_siginfo</span> <span class="title">si</span>;</span></span><br><span class="line">read(sfd, &amp;si, <span class="keyword">sizeof</span>(si));</span><br></pre></td></tr></table></figure>
+
+<p>然后根据 <code>si.ssi_signo</code> 做统一处理。</p>
+<h3 id="3-5-三者如何和-Reactor-配合"><a href="#3-5-三者如何和-Reactor-配合" class="headerlink" title="3.5 三者如何和 Reactor 配合"></a>3.5 三者如何和 Reactor 配合</h3><p>一个典型事件循环会把它们全放进 <code>epoll</code>：</p>
+<ul>
+<li>连接 fd：读写事件</li>
+<li><code>timerfd</code>：超时检查、定时任务</li>
+<li><code>eventfd</code>：跨线程任务投递</li>
+<li><code>signalfd</code>：退出 &#x2F; 重载 &#x2F; 信号治理</li>
+</ul>
+<p>这样主循环就更像一个统一调度器，而不是“网络逻辑 + 一堆额外异步机制拼起来的东西”。</p>
+<hr>
+<h2 id="4-线程池与-I-O-线程分层"><a href="#4-线程池与-I-O-线程分层" class="headerlink" title="4. 线程池与 I&#x2F;O 线程分层"></a>4. 线程池与 I&#x2F;O 线程分层</h2><h3 id="4-1-一个更稳的分层模型"><a href="#4-1-一个更稳的分层模型" class="headerlink" title="4.1 一个更稳的分层模型"></a>4.1 一个更稳的分层模型</h3><p>高性能服务器里，一个常见的稳定结构是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">主线程/Acceptor</span><br><span class="line">    -&gt; 接连接并分发到某个 I/O 线程</span><br><span class="line"></span><br><span class="line">I/O 线程</span><br><span class="line">    -&gt; 跑 event loop</span><br><span class="line">    -&gt; 管 socket、收发包、协议解析、连接状态机</span><br><span class="line"></span><br><span class="line">Worker 线程池</span><br><span class="line">    -&gt; 跑 CPU 密集或潜在阻塞的业务逻辑</span><br><span class="line"></span><br><span class="line">回到 I/O 线程</span><br><span class="line">    -&gt; 序列化响应并发送</span><br></pre></td></tr></table></figure>
+
+<p>核心原则是：</p>
+<blockquote>
+<p>socket 的生命周期和输出顺序，最好由固定 I&#x2F;O 线程拥有。</p>
+</blockquote>
+<h3 id="4-2-为什么不让工作线程直接操作-socket"><a href="#4-2-为什么不让工作线程直接操作-socket" class="headerlink" title="4.2 为什么不让工作线程直接操作 socket"></a>4.2 为什么不让工作线程直接操作 socket</h3><p>因为这样很容易引入：</p>
+<ul>
+<li>一个连接被多个线程同时读写</li>
+<li>发送顺序被打乱</li>
+<li>锁粒度变大，缓存局部性变差</li>
+<li>排障时很难定位“这个连接到底归谁管”</li>
+</ul>
+<p>更稳的做法是：</p>
+<ul>
+<li>I&#x2F;O 线程负责网络层和协议层</li>
+<li>Worker 线程只处理业务输入，生成业务结果</li>
+<li>结果通过无锁队列或锁队列回投给归属 I&#x2F;O 线程</li>
+<li>用 <code>eventfd</code> 唤醒 I&#x2F;O 线程继续发送</li>
+</ul>
+<h3 id="4-3-一个常见的任务流"><a href="#4-3-一个常见的任务流" class="headerlink" title="4.3 一个常见的任务流"></a>4.3 一个常见的任务流</h3><ol>
+<li>I&#x2F;O 线程收到请求，完成协议解析</li>
+<li>组装一个“业务任务”对象，投递到线程池</li>
+<li>Worker 线程执行业务逻辑，得到响应对象</li>
+<li>把响应对象投递回对应 I&#x2F;O 线程的待发送队列</li>
+<li>向该 I&#x2F;O 线程的 <code>eventfd</code> 写入计数</li>
+<li>I&#x2F;O 线程被唤醒，刷新待发送队列并 <code>send</code></li>
+</ol>
+<p>这个结构有两个直接好处：</p>
+<ul>
+<li>连接状态不跨线程乱跑</li>
+<li>网络收发和业务执行都能独立扩缩</li>
+</ul>
+<h3 id="4-4-线程数怎么定"><a href="#4-4-线程数怎么定" class="headerlink" title="4.4 线程数怎么定"></a>4.4 线程数怎么定</h3><p>经验上可以先这样起步：</p>
+<ul>
+<li>I&#x2F;O 线程数：先从 <code>1 ~ CPU 核数</code> 之间选，小步压测</li>
+<li>纯 CPU 业务线程池：通常接近 CPU 核数</li>
+<li>会阻塞的业务：单独拆出阻塞线程池，不要和 CPU 任务混用</li>
+</ul>
+<p>不要一开始就把线程开得很多。线程越多，不一定吞吐越高，反而可能带来：</p>
+<ul>
+<li>调度开销</li>
+<li>锁竞争</li>
+<li>cache miss</li>
+<li>尾延迟抖动</li>
+</ul>
+<h3 id="4-5-线程模型里的常见坑"><a href="#4-5-线程模型里的常见坑" class="headerlink" title="4.5 线程模型里的常见坑"></a>4.5 线程模型里的常见坑</h3><ul>
+<li>把数据库、磁盘、RPC 阻塞调用放进 I&#x2F;O 线程</li>
+<li>一个大线程池同时跑 CPU 任务和慢 I&#x2F;O 任务</li>
+<li>没有限制任务队列长度，导致内存膨胀</li>
+<li>没做背压，读得太快、处理太慢、写缓冲越积越大</li>
+<li>让 worker 直接 <code>close(fd)</code> 或直接修改连接对象状态</li>
+</ul>
+<p>更稳的工程实践通常包括：</p>
+<ul>
+<li>每个连接有明确 owner I&#x2F;O 线程</li>
+<li>回投结果时只传消息，不直接抢 socket</li>
+<li>对线程池队列、连接输入缓冲、输出缓冲都设上限</li>
+<li>把“超时、丢弃、降级”当成正式设计，而不是补丁</li>
+</ul>
+<hr>
+<h2 id="5-HTTP-解析与应用层协议设计"><a href="#5-HTTP-解析与应用层协议设计" class="headerlink" title="5. HTTP 解析与应用层协议设计"></a>5. HTTP 解析与应用层协议设计</h2><h3 id="5-1-HTTP-解析不要靠“字符串碰运气”"><a href="#5-1-HTTP-解析不要靠“字符串碰运气”" class="headerlink" title="5.1 HTTP 解析不要靠“字符串碰运气”"></a>5.1 HTTP 解析不要靠“字符串碰运气”</h3><p>HTTP&#x2F;1.1 在服务端最常见的解析路径是增量状态机：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">REQUEST_LINE -&gt; HEADERS -&gt; BODY -&gt; DONE</span><br></pre></td></tr></table></figure>
+
+<p>原因很简单，TCP 是字节流，所以：</p>
+<ul>
+<li>一次 <code>recv()</code> 可能只收到半个请求行</li>
+<li>也可能一次收到“一个半请求”</li>
+<li>keep-alive 连接上还可能连续收到多个请求</li>
+</ul>
+<p>所以解析器一般要面对的是“缓冲区里的不完整字节流”，而不是“一次 <code>recv()</code> 就是一条完整 HTTP 请求”。</p>
+<h3 id="5-2-一个更合理的-HTTP-处理流程"><a href="#5-2-一个更合理的-HTTP-处理流程" class="headerlink" title="5.2 一个更合理的 HTTP 处理流程"></a>5.2 一个更合理的 HTTP 处理流程</h3><ol>
+<li>I&#x2F;O 线程把字节流追加到连接输入缓冲</li>
+<li>解析器尝试从当前缓冲推进状态机</li>
+<li>如果请求还不完整，就停下来等更多数据</li>
+<li>如果请求完整，就生成请求对象</li>
+<li>业务层处理后，再序列化成 HTTP 响应</li>
+</ol>
+<p>最少要覆盖这些点：</p>
+<ul>
+<li>请求行解析：方法、URL、版本</li>
+<li>头部解析：按 <code>\r\n</code> 切分</li>
+<li>空行判定：头部结束</li>
+<li>body 长度：<code>Content-Length</code></li>
+<li>分块传输：<code>Transfer-Encoding: chunked</code></li>
+<li>keep-alive：一条连接上连续请求</li>
+<li>大包限制：头部长度、body 长度都要有限制</li>
+</ul>
+<h3 id="5-3-HTTP-工程上常见坑"><a href="#5-3-HTTP-工程上常见坑" class="headerlink" title="5.3 HTTP 工程上常见坑"></a>5.3 HTTP 工程上常见坑</h3><ul>
+<li>只支持 <code>Content-Length</code>，完全忽略 chunked</li>
+<li>没有限制 header 大小，容易被慢请求或畸形请求拖死</li>
+<li>把一整个大 body 一次性读入内存，导致峰值过高</li>
+<li>没处理 pipeline&#x2F;连续请求，缓冲区里残留数据被误丢</li>
+<li>业务处理过慢但连接持续可读，导致输入缓冲无限增长</li>
+</ul>
+<p>如果是自己练习写 HTTP server，建议至少加上：</p>
+<ul>
+<li>header 大小上限</li>
+<li>body 大小上限</li>
+<li>header 读取超时</li>
+<li>空闲连接超时</li>
+<li>非法请求快速返回 <code>400</code></li>
+</ul>
+<h3 id="5-4-应用层协议设计，比“能传输”更重要"><a href="#5-4-应用层协议设计，比“能传输”更重要" class="headerlink" title="5.4 应用层协议设计，比“能传输”更重要"></a>5.4 应用层协议设计，比“能传输”更重要</h3><p>如果不是做 HTTP，而是做自定义 RPC &#x2F; 游戏 &#x2F; 推送协议，最重要的是先把“帧边界”定义清楚。</p>
+<p>最常见的做法是长度字段协议：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">| magic | version | type | request_id | body_len | body... |</span><br></pre></td></tr></table></figure>
+
+<p>这样解析时可以先读固定头，再按 <code>body_len</code> 判断包体是否完整。</p>
+<p>比起纯文本协议，它的优势是：</p>
+<ul>
+<li>包边界明确</li>
+<li>解析开销更稳定</li>
+<li>扩展字段更容易版本化</li>
+</ul>
+<h3 id="5-5-自定义协议建议至少包含这些元素"><a href="#5-5-自定义协议建议至少包含这些元素" class="headerlink" title="5.5 自定义协议建议至少包含这些元素"></a>5.5 自定义协议建议至少包含这些元素</h3><ul>
+<li><code>magic</code>：快速识别协议，防止串流或脏数据</li>
+<li><code>version</code>：协议演进时兼容旧客户端</li>
+<li><code>type</code>：请求类型 &#x2F; 响应类型 &#x2F; 心跳 &#x2F; 控制消息</li>
+<li><code>request_id</code>：做请求响应关联，便于并发与排障</li>
+<li><code>body_len</code>：确定包体边界</li>
+<li>可选 <code>flags</code>：压缩、序列化格式、错误码等</li>
+</ul>
+<p>还要配套以下约束：</p>
+<ul>
+<li>最大包长限制</li>
+<li>超时与重试语义</li>
+<li>幂等语义</li>
+<li>错误响应格式</li>
+<li>压缩&#x2F;加密是否协商</li>
+</ul>
+<h3 id="5-6-协议设计和线程模型其实是连在一起的"><a href="#5-6-协议设计和线程模型其实是连在一起的" class="headerlink" title="5.6 协议设计和线程模型其实是连在一起的"></a>5.6 协议设计和线程模型其实是连在一起的</h3><p>如果协议天然支持：</p>
+<ul>
+<li>明确包边界</li>
+<li>快速校验合法性</li>
+<li>带 <code>request_id</code></li>
+<li>支持分片&#x2F;流式 body</li>
+</ul>
+<p>那么线程池和 I&#x2F;O 线程的协作会简单很多。</p>
+<p>反过来，如果协议定义含糊，后面就容易出现：</p>
+<ul>
+<li>半包难处理</li>
+<li>多请求复用难关联</li>
+<li>排障日志定位困难</li>
+<li>一旦扩协议版本就全链路改动</li>
+</ul>
+<hr>
+<h2 id="6-Linux-网络调优参数与排障方法"><a href="#6-Linux-网络调优参数与排障方法" class="headerlink" title="6. Linux 网络调优参数与排障方法"></a>6. Linux 网络调优参数与排障方法</h2><h3 id="6-1-先记住一个原则：先观察，再调参"><a href="#6-1-先记住一个原则：先观察，再调参" class="headerlink" title="6.1 先记住一个原则：先观察，再调参"></a>6.1 先记住一个原则：先观察，再调参</h3><p>网络调优里最常见的误区是：</p>
+<ul>
+<li>一看到超时就改 <code>sysctl</code></li>
+<li>一看到连接多就盲目加线程</li>
+<li>一看到吞吐不高就切 ET</li>
+</ul>
+<p>更稳的方法是先回答三个问题：</p>
+<ol>
+<li>瓶颈在应用、内核、网卡，还是对端？</li>
+<li>问题是吞吐不够、延迟过高，还是抖动严重？</li>
+<li>是连接建立阶段有问题，还是已建立连接的收发有问题？</li>
+</ol>
+<h3 id="6-2-常见调优项"><a href="#6-2-常见调优项" class="headerlink" title="6.2 常见调优项"></a>6.2 常见调优项</h3><p>下面这些参数最常见，但不应该脱离场景硬改。</p>
+<table>
+<thead>
+<tr>
+<th>方向</th>
+<th>参数&#x2F;项</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>fd 上限</td>
+<td><code>ulimit -n</code>、<code>fs.file-max</code></td>
+<td>控制可打开文件句柄数量</td>
+</tr>
+<tr>
+<td>监听队列</td>
+<td><code>net.core.somaxconn</code></td>
+<td>限制 listen backlog 上限</td>
+</tr>
+<tr>
+<td>SYN 队列</td>
+<td><code>net.ipv4.tcp_max_syn_backlog</code></td>
+<td>半连接队列容量</td>
+</tr>
+<tr>
+<td>网卡收包积压</td>
+<td><code>net.core.netdev_max_backlog</code></td>
+<td>网卡到协议栈的积压队列</td>
+</tr>
+<tr>
+<td>Socket 缓冲</td>
+<td><code>net.core.rmem_max</code>、<code>net.core.wmem_max</code></td>
+<td>接收&#x2F;发送缓冲上限</td>
+</tr>
+<tr>
+<td>TCP 缓冲</td>
+<td><code>net.ipv4.tcp_rmem</code>、<code>net.ipv4.tcp_wmem</code></td>
+<td>TCP 自适应缓冲范围</td>
+</tr>
+<tr>
+<td>端口范围</td>
+<td><code>net.ipv4.ip_local_port_range</code></td>
+<td>客户端侧临时端口范围</td>
+</tr>
+<tr>
+<td>TIME_WAIT</td>
+<td><code>net.ipv4.tcp_tw_reuse</code></td>
+<td>特定场景下重用 TIME_WAIT，需谨慎</td>
+</tr>
+<tr>
+<td>SYN 防护</td>
+<td><code>net.ipv4.tcp_syncookies</code></td>
+<td>SYN flood 防护</td>
+</tr>
+</tbody></table>
+<p>还要配合关注：</p>
+<ul>
+<li><code>SO_REUSEADDR</code></li>
+<li><code>SO_REUSEPORT</code></li>
+<li><code>TCP_NODELAY</code></li>
+<li><code>TCP_QUICKACK</code></li>
+<li>进程实际打开 fd 数量</li>
+<li>网卡多队列、RSS、RPS&#x2F;XPS 是否匹配</li>
+</ul>
+<h3 id="6-3-几类典型现象怎么查"><a href="#6-3-几类典型现象怎么查" class="headerlink" title="6.3 几类典型现象怎么查"></a>6.3 几类典型现象怎么查</h3><h4 id="1-新连接进不来"><a href="#1-新连接进不来" class="headerlink" title="1. 新连接进不来"></a>1. 新连接进不来</h4><p>先看：</p>
+<ul>
+<li><code>ss -lnt</code></li>
+<li><code>ss -s</code></li>
+<li><code>cat /proc/sys/net/core/somaxconn</code></li>
+<li><code>cat /proc/sys/net/ipv4/tcp_max_syn_backlog</code></li>
+</ul>
+<p>再判断是：</p>
+<ul>
+<li>应用根本没及时 <code>accept</code></li>
+<li>accept 队列太小</li>
+<li>SYN 队列顶满</li>
+<li>进程 fd 已耗尽</li>
+</ul>
+<h4 id="2-连接很多，但吞吐很低"><a href="#2-连接很多，但吞吐很低" class="headerlink" title="2. 连接很多，但吞吐很低"></a>2. 连接很多，但吞吐很低</h4><p>优先排查：</p>
+<ul>
+<li>I&#x2F;O 线程是否被业务阻塞</li>
+<li>发送缓冲是否长期积压</li>
+<li>是否出现大量重传</li>
+<li>对端是否慢读</li>
+</ul>
+<p>常用命令：</p>
+<ul>
+<li><code>ss -tin</code></li>
+<li><code>sar -n DEV 1</code></li>
+<li><code>ethtool -S eth0</code></li>
+<li><code>ip -s link</code></li>
+<li><code>perf top -p &lt;pid&gt;</code></li>
+</ul>
+<h4 id="3-延迟抖动大、尾延迟高"><a href="#3-延迟抖动大、尾延迟高" class="headerlink" title="3. 延迟抖动大、尾延迟高"></a>3. 延迟抖动大、尾延迟高</h4><p>常见方向：</p>
+<ul>
+<li>线程太多导致调度抖动</li>
+<li>GC &#x2F; 内存分配 &#x2F; 大对象复制</li>
+<li>某些慢任务卡住 worker</li>
+<li>日志同步刷盘</li>
+<li>I&#x2F;O 线程偶发做了阻塞操作</li>
+</ul>
+<p>这时经常要结合：</p>
+<ul>
+<li><code>pidstat -t 1 -p &lt;pid&gt;</code></li>
+<li><code>perf record/report</code></li>
+<li><code>strace -tt -p &lt;pid&gt;</code></li>
+</ul>
+<h4 id="4-连接莫名被断开"><a href="#4-连接莫名被断开" class="headerlink" title="4. 连接莫名被断开"></a>4. 连接莫名被断开</h4><p>需要区分：</p>
+<ul>
+<li>对端主动关闭</li>
+<li>中间网络设备超时清理</li>
+<li>写关闭触发 <code>EPIPE</code></li>
+<li><code>ECONNRESET</code></li>
+<li>自己应用层超时策略太激进</li>
+</ul>
+<p>这时 <code>tcpdump</code> 很有价值：</p>
+<ul>
+<li><code>tcpdump -nn -i any tcp port 8080</code></li>
+</ul>
+<p>抓包后重点看：</p>
+<ul>
+<li>谁先发 <code>FIN</code></li>
+<li>是否有 <code>RST</code></li>
+<li>是否反复重传</li>
+<li>三次握手是否完整</li>
+</ul>
+<h3 id="6-4-排障时建议按这条线走"><a href="#6-4-排障时建议按这条线走" class="headerlink" title="6.4 排障时建议按这条线走"></a>6.4 排障时建议按这条线走</h3><ol>
+<li>先看应用日志和连接状态</li>
+<li>再看 <code>ss</code>、<code>sar</code>、<code>pidstat</code>、<code>perf</code></li>
+<li>再看 <code>/proc</code>、<code>sysctl</code>、网卡统计</li>
+<li>最后再决定是否抓包</li>
+</ol>
+<p>不要一上来就抓包，也不要一上来就调内核参数。</p>
+<h3 id="6-5-一些很实用的排障清单"><a href="#6-5-一些很实用的排障清单" class="headerlink" title="6.5 一些很实用的排障清单"></a>6.5 一些很实用的排障清单</h3><p>看到“连接接不进来”时，先检查：</p>
+<ul>
+<li>进程是否在监听正确地址和端口</li>
+<li>backlog 是否足够</li>
+<li>fd 是否打满</li>
+<li>是否被防火墙或安全组拦截</li>
+</ul>
+<p>看到“CPU 很高”时，先检查：</p>
+<ul>
+<li>热点在业务代码、锁、内存分配，还是系统调用</li>
+<li><code>epoll_wait</code> 是否其实不忙，真正忙的是工作线程</li>
+<li>是否有大量空转 wakeup</li>
+</ul>
+<p>看到“内存一直涨”时，先检查：</p>
+<ul>
+<li>输入缓冲 &#x2F; 输出缓冲是否无上限</li>
+<li>请求队列是否积压</li>
+<li>是否慢连接太多</li>
+<li>是否大包被整包缓存</li>
+</ul>
+<hr>
+<h2 id="7-小结"><a href="#7-小结" class="headerlink" title="7. 小结"></a>7. 小结</h2><p>把这些主题串起来，其实就是一条完整的服务端工程路径：</p>
+<ol>
+<li>用 <code>epoll</code> 搭 Reactor，先 LT 做对，再考虑 ET</li>
+<li>用非阻塞 socket 正确处理 <code>EINPROGRESS</code>、<code>EAGAIN</code>、部分读写和连接关闭</li>
+<li>用 <code>timerfd</code>、<code>eventfd</code>、<code>signalfd</code> 把“时间 &#x2F; 线程通知 &#x2F; 信号”并入统一事件循环</li>
+<li>让 I&#x2F;O 线程管连接，让线程池管业务，结果再回到 I&#x2F;O 线程发出</li>
+<li>用状态机解析 HTTP 或自定义协议，把包边界、版本和错误语义设计清楚</li>
+<li>出问题时先观察现象和链路，再做内核调优</li>
+</ol>
+<p>如果把这些基础打稳，后面再看：</p>
+<ul>
+<li><code>sendfile/splice</code> 零拷贝</li>
+<li><code>SO_REUSEPORT</code> + 多队列</li>
+<li><code>io_uring</code></li>
+<li>更复杂的 RPC 框架</li>
+</ul>
+<p>就会轻松很多。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>楚天
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://chutianduan.github.io/notes/linux%E9%AB%98%E6%80%A7%E8%83%BD%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BC%96%E7%A8%8B/%E9%AB%98%E6%80%A7%E8%83%BD%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BC%96%E7%A8%8B%E7%AC%94%E8%AE%B0%E4%B8%80/" title="高性能服务器编程笔记一">https://chutianduan.github.io/notes/linux高性能服务器编程/高性能服务器编程笔记一/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/notes/linux%E9%AB%98%E6%80%A7%E8%83%BD%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BC%96%E7%A8%8B/udp/" rel="prev" title="UDP 通信">
+                  <i class="fa fa-angle-left"></i> UDP 通信
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/notes/linux%E9%AB%98%E6%80%A7%E8%83%BD%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BC%96%E7%A8%8B/" rel="next" title="Linux 高性能服务器编程">
+                  Linux 高性能服务器编程 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-code"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">楚天</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

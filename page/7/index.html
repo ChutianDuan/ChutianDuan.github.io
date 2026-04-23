@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chutianduan.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":2,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="楚天">
+<meta property="og:url" content="https://chutianduan.github.io/page/7/index.html">
+<meta property="og:site_name" content="楚天">
+<meta property="og:description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="楚天">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="游戏网络">
+<meta property="article:tag" content="技术博客">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://chutianduan.github.io/page/7/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":true,"isPost":false,"lang":"zh-CN","comments":"","permalink":"","path":"page/7/index.html","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>楚天</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">楚天</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">惟楚有材，于斯为盛</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-友情链接"><a href="/link/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-overview-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="楚天"
+      src="/img/me.jpg">
+  <p class="site-author-name" itemprop="name">楚天</p>
+  <div class="site-description" itemprop="description">记录深度学习、C++、游戏网络与生活旅行的学习笔记。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ChutianDuan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ChutianDuan" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:3383006954@qq.com" title="E-Mail → mailto:3383006954@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/10-tbb%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B%E4%B9%8B%E6%97%85/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/10-tbb%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B%E4%B9%8B%E6%97%85/" class="post-title-link" itemprop="url">TBB 开启的并行编程之旅</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-12-23 15:24:08" itemprop="dateCreated datePublished" datetime="2025-12-23T15:24:08+08:00">2025-12-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/%E9%AB%98%E6%80%A7%E8%83%BDC-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">高性能C++并行编程</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="TBB-开启的并行编程之旅"><a href="#TBB-开启的并行编程之旅" class="headerlink" title="TBB 开启的并行编程之旅"></a>TBB 开启的并行编程之旅</h1><p>time: 2025-12-23</p>
+<h2 id="1-并发与并行：概念与-TBB-的定位"><a href="#1-并发与并行：概念与-TBB-的定位" class="headerlink" title="1. 并发与并行：概念与 TBB 的定位"></a>1. 并发与并行：概念与 TBB 的定位</h2><ul>
+<li><strong>并发（Concurrency）</strong>：关注“任务结构”。多个任务在同一时间段内推进即可（单核也能并发）。</li>
+<li><strong>并行（Parallelism）</strong>：关注“同时执行”。多个任务在同一时刻运行（通常依赖多核）。</li>
+</ul>
+<h2 id="2-并发任务：task-group-与-parallel-invoke"><a href="#2-并发任务：task-group-与-parallel-invoke" class="headerlink" title="2. 并发任务：task_group 与 parallel_invoke"></a>2. 并发任务：<code>task_group</code> 与 <code>parallel_invoke</code></h2><h3 id="2-1-task-group：提交多个独立任务"><a href="#2-1-task-group：提交多个独立任务" class="headerlink" title="2.1 task_group：提交多个独立任务"></a>2.1 <code>task_group</code>：提交多个独立任务</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tbb/task_group.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;thread&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;chrono&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">download</span><span class="params">(<span class="type">const</span> std::string&amp; file)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; ++i) &#123;</span><br><span class="line">        std::this_thread::<span class="built_in">sleep_for</span>(std::chrono::<span class="built_in">milliseconds</span>(<span class="number">400</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Downloaded: &quot;</span> &lt;&lt; file &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">interact</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::string name;</span><br><span class="line">    std::cin &gt;&gt; name;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Hello, &quot;</span> &lt;&lt; name &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    tbb::task_group tg;</span><br><span class="line">    tg.<span class="built_in">run</span>([&amp;]&#123; <span class="built_in">download</span>(<span class="string">&quot;hello.zip&quot;</span>); &#125;);</span><br><span class="line">    tg.<span class="built_in">run</span>([&amp;]&#123; <span class="built_in">interact</span>(); &#125;);</span><br><span class="line">    tg.<span class="built_in">wait</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2-parallel-invoke：更简洁的并发调用"><a href="#2-2-parallel-invoke：更简洁的并发调用" class="headerlink" title="2.2 parallel_invoke：更简洁的并发调用"></a>2.2 <code>parallel_invoke</code>：更简洁的并发调用</h3><p>当只是“并行执行几个函数”，优先用 <code>parallel_invoke</code>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tbb/parallel_invoke.h&gt;</span></span></span><br><span class="line"></span><br><span class="line">tbb::<span class="built_in">parallel_invoke</span>(</span><br><span class="line">    [&amp;]&#123; <span class="built_in">download</span>(<span class="string">&quot;hello.zip&quot;</span>); &#125;,</span><br><span class="line">    [&amp;]&#123; <span class="built_in">interact</span>(); &#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="3-数据并行：parallel-for-parallel-for-each"><a href="#3-数据并行：parallel-for-parallel-for-each" class="headerlink" title="3. 数据并行：parallel_for &#x2F; parallel_for_each"></a>3. 数据并行：<code>parallel_for</code> &#x2F; <code>parallel_for_each</code></h2><h3 id="3-1-手动分块（task-group）→-推荐替换为-parallel-for"><a href="#3-1-手动分块（task-group）→-推荐替换为-parallel-for" class="headerlink" title="3.1 手动分块（task_group）→ 推荐替换为 parallel_for"></a>3.1 手动分块（<code>task_group</code>）→ 推荐替换为 <code>parallel_for</code></h3><p>手动分块能跑，但属于“自己实现调度”。TBB 风格是把“范围”交给调度器切分。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tbb/parallel_for.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tbb/blocked_range.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cmath&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstddef&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">const</span> <span class="type">size_t</span> n = <span class="number">1u</span> &lt;&lt; <span class="number">16</span>;</span><br><span class="line">    <span class="function">std::vector&lt;<span class="type">float</span>&gt; <span class="title">dp</span><span class="params">(n)</span></span>;</span><br><span class="line"></span><br><span class="line">    tbb::<span class="built_in">parallel_for</span>(</span><br><span class="line">        tbb::<span class="built_in">blocked_range</span>&lt;<span class="type">size_t</span>&gt;(<span class="number">0</span>, n),</span><br><span class="line">        [&amp;](<span class="type">const</span> tbb::blocked_range&lt;<span class="type">size_t</span>&gt;&amp; r) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">size_t</span> i = r.<span class="built_in">begin</span>(); i != r.<span class="built_in">end</span>(); ++i) &#123;</span><br><span class="line">                dp[i] = std::<span class="built_in">sinf</span>(<span class="built_in">static_cast</span>&lt;<span class="type">float</span>&gt;(i));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-parallel-for-begin-end-body-：最短常用写法"><a href="#3-2-parallel-for-begin-end-body-：最短常用写法" class="headerlink" title="3.2 parallel_for(begin,end,body)：最短常用写法"></a>3.2 <code>parallel_for(begin,end,body)</code>：最短常用写法</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tbb/parallel_for.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cmath&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">const</span> <span class="type">size_t</span> n = <span class="number">1u</span> &lt;&lt; <span class="number">16</span>;</span><br><span class="line">    <span class="function">std::vector&lt;<span class="type">float</span>&gt; <span class="title">dp</span><span class="params">(n)</span></span>;</span><br><span class="line"></span><br><span class="line">    tbb::<span class="built_in">parallel_for</span>((<span class="type">size_t</span>)<span class="number">0</span>, n, [&amp;](<span class="type">size_t</span> i)&#123;</span><br><span class="line">        dp[i] = std::<span class="built_in">sinf</span>((<span class="type">float</span>)i);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-3-parallel-for-each：并行遍历容器元素"><a href="#3-3-parallel-for-each：并行遍历容器元素" class="headerlink" title="3.3 parallel_for_each：并行遍历容器元素"></a>3.3 <code>parallel_for_each</code>：并行遍历容器元素</h3><p>语义：对 <code>[first,last)</code> 每个元素并行调用一次 <code>func(element)</code>；要求元素之间无数据冲突。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tbb/parallel_for_each.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cmath&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function">std::vector&lt;<span class="type">float</span>&gt; <span class="title">a</span><span class="params">(<span class="number">1</span>&lt;&lt;<span class="number">16</span>, <span class="number">1.0f</span>)</span></span>;</span><br><span class="line">    tbb::<span class="built_in">parallel_for_each</span>(a.<span class="built_in">begin</span>(), a.<span class="built_in">end</span>(), [&amp;](<span class="type">float</span>&amp; f)&#123;</span><br><span class="line">        f = std::<span class="built_in">sinf</span>(f);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="4-多维并行：blocked-range2d-3d"><a href="#4-多维并行：blocked-range2d-3d" class="headerlink" title="4. 多维并行：blocked_range2d / 3d"></a>4. 多维并行：<code>blocked_range2d / 3d</code></h2><h3 id="4-1-二维：blocked-range2d（rows-cols）"><a href="#4-1-二维：blocked-range2d（rows-cols）" class="headerlink" title="4.1 二维：blocked_range2d（rows&#x2F;cols）"></a>4.1 二维：<code>blocked_range2d</code>（rows&#x2F;cols）</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tbb/parallel_for.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tbb/blocked_range2d.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cmath&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstddef&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">const</span> <span class="type">size_t</span> n = <span class="number">1024</span>;</span><br><span class="line">    <span class="function">std::vector&lt;<span class="type">float</span>&gt; <span class="title">a</span><span class="params">(n * n)</span></span>;</span><br><span class="line"></span><br><span class="line">    tbb::<span class="built_in">parallel_for</span>(</span><br><span class="line">        tbb::<span class="built_in">blocked_range2d</span>&lt;<span class="type">size_t</span>&gt;(<span class="number">0</span>, n, <span class="number">0</span>, n),</span><br><span class="line">        [&amp;](<span class="type">const</span> tbb::blocked_range2d&lt;<span class="type">size_t</span>&gt;&amp; r) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">size_t</span> i = r.<span class="built_in">rows</span>().<span class="built_in">begin</span>(); i != r.<span class="built_in">rows</span>().<span class="built_in">end</span>(); ++i) &#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="type">size_t</span> j = r.<span class="built_in">cols</span>().<span class="built_in">begin</span>(); j != r.<span class="built_in">cols</span>().<span class="built_in">end</span>(); ++j) &#123;</span><br><span class="line">                    a[i*n + j] = std::<span class="built_in">sinf</span>((<span class="type">float</span>)(i*n + j));</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    );</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-2-维度记忆"><a href="#4-2-维度记忆" class="headerlink" title="4.2 维度记忆"></a>4.2 维度记忆</h3><ul>
+<li>1D：<code>tbb::blocked_range&lt;T&gt;</code></li>
+<li>2D：<code>tbb::blocked_range2d&lt;T&gt;</code>：<code>rows()</code>、<code>cols()</code></li>
+<li>3D：<code>tbb::blocked_range3d&lt;T&gt;</code>：<code>pages()</code>、<code>rows()</code>、<code>cols()</code></li>
+</ul>
+<hr>
+<h2 id="5-缩并（Reduce）：从“共享变量”到-parallel-reduce"><a href="#5-缩并（Reduce）：从“共享变量”到-parallel-reduce" class="headerlink" title="5. 缩并（Reduce）：从“共享变量”到 parallel_reduce"></a>5. 缩并（Reduce）：从“共享变量”到 <code>parallel_reduce</code></h2><p>当任务存在“跨迭代依赖”（比如求和、统计），不要用共享变量直接累加，会数据竞争或锁开销巨大。<br>标准范式：<strong>局部累加 + 合并</strong>。</p>
+<h3 id="5-1-parallel-reduce（lambda-版：最常用）"><a href="#5-1-parallel-reduce（lambda-版：最常用）" class="headerlink" title="5.1 parallel_reduce（lambda 版：最常用）"></a>5.1 <code>parallel_reduce</code>（lambda 版：最常用）</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tbb/parallel_reduce.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tbb/blocked_range.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cmath&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstddef&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">const</span> <span class="type">size_t</span> n = <span class="number">1u</span> &lt;&lt; <span class="number">26</span>;</span><br><span class="line"></span><br><span class="line">    <span class="type">float</span> sum = tbb::<span class="built_in">parallel_reduce</span>(</span><br><span class="line">        tbb::<span class="built_in">blocked_range</span>&lt;<span class="type">size_t</span>&gt;(<span class="number">0</span>, n),</span><br><span class="line">        <span class="number">0.0f</span>, <span class="comment">// identity</span></span><br><span class="line">        [&amp;](<span class="type">const</span> tbb::blocked_range&lt;<span class="type">size_t</span>&gt;&amp; r, <span class="type">float</span> local) -&gt; <span class="type">float</span> &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">size_t</span> i = r.<span class="built_in">begin</span>(); i != r.<span class="built_in">end</span>(); ++i) &#123;</span><br><span class="line">                local += std::<span class="built_in">sinf</span>((<span class="type">float</span>)i);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> local;</span><br><span class="line">        &#125;,</span><br><span class="line">        [](<span class="type">float</span> a, <span class="type">float</span> b) -&gt; <span class="type">float</span> &#123; <span class="keyword">return</span> a + b; &#125; <span class="comment">// combine</span></span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    (<span class="type">void</span>)sum;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-2-parallel-deterministic-reduce"><a href="#5-2-parallel-deterministic-reduce" class="headerlink" title="5.2 parallel_deterministic_reduce"></a>5.2 <code>parallel_deterministic_reduce</code></h3><p>浮点加法不满足结合律：合并顺序不同，末位可能不同。<br>若需要“每次运行更一致的合并顺序”，可考虑 deterministic 版本（可能略慢）。</p>
+<hr>
+<h2 id="6-缩并（工程写法）：Reducer-结构体"><a href="#6-缩并（工程写法）：Reducer-结构体" class="headerlink" title="6. 缩并（工程写法）：Reducer 结构体"></a>6. 缩并（工程写法）：Reducer 结构体</h2><p>当归约逻辑变复杂（多个字段、多统计量、希望复用），用结构体 reducer 更稳、更清晰。</p>
+<h3 id="6-1-结构体-reducer：并行-sum-sin-i"><a href="#6-1-结构体-reducer：并行-sum-sin-i" class="headerlink" title="6.1 结构体 reducer：并行 sum sin(i)"></a>6.1 结构体 reducer：并行 <code>sum sin(i)</code></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tbb/parallel_reduce.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tbb/blocked_range.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cmath&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstddef&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">SinSumReducer</span> &#123;</span><br><span class="line">    <span class="type">float</span> sum;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">SinSumReducer</span>() : <span class="built_in">sum</span>(<span class="number">0.0f</span>) &#123;&#125;                       <span class="comment">// identity</span></span><br><span class="line">    <span class="built_in">SinSumReducer</span>(SinSumReducer&amp;, tbb::split) : <span class="built_in">sum</span>(<span class="number">0.0f</span>) &#123;&#125; <span class="comment">// split ctor</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">operator</span><span class="params">()</span><span class="params">(<span class="type">const</span> tbb::blocked_range&lt;<span class="type">size_t</span>&gt;&amp; r)</span> </span>&#123;</span><br><span class="line">        <span class="type">float</span> local = sum;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">size_t</span> i = r.<span class="built_in">begin</span>(); i != r.<span class="built_in">end</span>(); ++i) &#123;</span><br><span class="line">            local += std::<span class="built_in">sinf</span>((<span class="type">float</span>)i);</span><br><span class="line">        &#125;</span><br><span class="line">        sum = local;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">join</span><span class="params">(<span class="type">const</span> SinSumReducer&amp; rhs)</span> </span>&#123;</span><br><span class="line">        sum += rhs.sum;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">const</span> <span class="type">size_t</span> n = <span class="number">1u</span> &lt;&lt; <span class="number">26</span>;</span><br><span class="line">    SinSumReducer body;</span><br><span class="line">    tbb::<span class="built_in">parallel_reduce</span>(tbb::<span class="built_in">blocked_range</span>&lt;<span class="type">size_t</span>&gt;(<span class="number">0</span>, n), body);</span><br><span class="line">    <span class="type">float</span> result = body.sum;</span><br><span class="line">    (<span class="type">void</span>)result;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-2-多字段统计：sum-min-max-count"><a href="#6-2-多字段统计：sum-min-max-count" class="headerlink" title="6.2 多字段统计：sum &#x2F; min &#x2F; max &#x2F; count"></a>6.2 多字段统计：sum &#x2F; min &#x2F; max &#x2F; count</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tbb/parallel_reduce.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tbb/blocked_range.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;limits&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstddef&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">StatsReducer</span> &#123;</span><br><span class="line">    <span class="type">double</span> sum;</span><br><span class="line">    <span class="type">float</span>  mn;</span><br><span class="line">    <span class="type">float</span>  mx;</span><br><span class="line">    <span class="type">size_t</span> cnt;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">StatsReducer</span>()</span><br><span class="line">        : <span class="built_in">sum</span>(<span class="number">0.0</span>),</span><br><span class="line">          <span class="built_in">mn</span>(std::numeric_limits&lt;<span class="type">float</span>&gt;::<span class="built_in">infinity</span>()),</span><br><span class="line">          <span class="built_in">mx</span>(-std::numeric_limits&lt;<span class="type">float</span>&gt;::<span class="built_in">infinity</span>()),</span><br><span class="line">          <span class="built_in">cnt</span>(<span class="number">0</span>) &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">StatsReducer</span>(StatsReducer&amp;, tbb::split)</span><br><span class="line">        : <span class="built_in">sum</span>(<span class="number">0.0</span>),</span><br><span class="line">          <span class="built_in">mn</span>(std::numeric_limits&lt;<span class="type">float</span>&gt;::<span class="built_in">infinity</span>()),</span><br><span class="line">          <span class="built_in">mx</span>(-std::numeric_limits&lt;<span class="type">float</span>&gt;::<span class="built_in">infinity</span>()),</span><br><span class="line">          <span class="built_in">cnt</span>(<span class="number">0</span>) &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">const</span> std::vector&lt;<span class="type">float</span>&gt;* a = <span class="literal">nullptr</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">operator</span><span class="params">()</span><span class="params">(<span class="type">const</span> tbb::blocked_range&lt;<span class="type">size_t</span>&gt;&amp; r)</span> </span>&#123;</span><br><span class="line">        <span class="type">double</span> s = sum;</span><br><span class="line">        <span class="type">float</span>  lo = mn, hi = mx;</span><br><span class="line">        <span class="type">size_t</span> c = cnt;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">size_t</span> i = r.<span class="built_in">begin</span>(); i != r.<span class="built_in">end</span>(); ++i) &#123;</span><br><span class="line">            <span class="type">float</span> v = (*a)[i];</span><br><span class="line">            s += v;</span><br><span class="line">            <span class="keyword">if</span> (v &lt; lo) lo = v;</span><br><span class="line">            <span class="keyword">if</span> (v &gt; hi) hi = v;</span><br><span class="line">            ++c;</span><br><span class="line">        &#125;</span><br><span class="line">        sum = s; mn = lo; mx = hi; cnt = c;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">join</span><span class="params">(<span class="type">const</span> StatsReducer&amp; rhs)</span> </span>&#123;</span><br><span class="line">        sum += rhs.sum;</span><br><span class="line">        <span class="keyword">if</span> (rhs.mn &lt; mn) mn = rhs.mn;</span><br><span class="line">        <span class="keyword">if</span> (rhs.mx &gt; mx) mx = rhs.mx;</span><br><span class="line">        cnt += rhs.cnt;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function">std::vector&lt;<span class="type">float</span>&gt; <span class="title">a</span><span class="params">(<span class="number">1u</span>&lt;&lt;<span class="number">20</span>, <span class="number">1.0f</span>)</span></span>;</span><br><span class="line"></span><br><span class="line">    StatsReducer body;</span><br><span class="line">    body.a = &amp;a;</span><br><span class="line">    tbb::<span class="built_in">parallel_reduce</span>(tbb::<span class="built_in">blocked_range</span>&lt;<span class="type">size_t</span>&gt;(<span class="number">0</span>, a.<span class="built_in">size</span>()), body);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// body.sum/body.mn/body.mx/body.cnt</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="7-线程本地累加器：combinable-enumerable-thread-specific"><a href="#7-线程本地累加器：combinable-enumerable-thread-specific" class="headerlink" title="7. 线程本地累加器：combinable &#x2F; enumerable_thread_specific"></a>7. 线程本地累加器：<code>combinable</code> &#x2F; <code>enumerable_thread_specific</code></h2><p>当模式是“每线程一份局部值，最后合并”，这两者非常实用。</p>
+<h3 id="7-1-tbb-combinable（标量-小对象）"><a href="#7-1-tbb-combinable（标量-小对象）" class="headerlink" title="7.1 tbb::combinable&lt;T&gt;（标量&#x2F;小对象）"></a>7.1 <code>tbb::combinable&lt;T&gt;</code>（标量&#x2F;小对象）</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tbb/parallel_for.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tbb/combinable.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cmath&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstddef&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">const</span> <span class="type">size_t</span> n = <span class="number">1u</span> &lt;&lt; <span class="number">26</span>;</span><br><span class="line">    <span class="function">tbb::combinable&lt;<span class="type">double</span>&gt; <span class="title">tls_sum</span><span class="params">([]&#123; <span class="keyword">return</span> <span class="number">0.0</span>; &#125;)</span></span>;</span><br><span class="line"></span><br><span class="line">    tbb::<span class="built_in">parallel_for</span>((<span class="type">size_t</span>)<span class="number">0</span>, n, [&amp;](<span class="type">size_t</span> i)&#123;</span><br><span class="line">        tls_sum.<span class="built_in">local</span>() += std::<span class="built_in">sin</span>((<span class="type">double</span>)i);</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="type">double</span> sum = tls_sum.<span class="built_in">combine</span>([](<span class="type">double</span> a, <span class="type">double</span> b)&#123; <span class="keyword">return</span> a + b; &#125;);</span><br><span class="line">    (<span class="type">void</span>)sum;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="7-2-tbb-enumerable-thread-specific"><a href="#7-2-tbb-enumerable-thread-specific" class="headerlink" title="7.2 tbb::enumerable_thread_specific&lt;T&gt;"></a>7.2 <code>tbb::enumerable_thread_specific&lt;T&gt;</code></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tbb/parallel_for.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tbb/enumerable_thread_specific.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstddef&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">const</span> <span class="type">size_t</span> n = <span class="number">1u</span> &lt;&lt; <span class="number">20</span>;</span><br><span class="line">    <span class="function">std::vector&lt;<span class="type">int</span>&gt; <span class="title">data</span><span class="params">(n, <span class="number">0</span>)</span></span>; <span class="comment">// 假设值域 [0,255]</span></span><br><span class="line"></span><br><span class="line">    tbb::enumerable_thread_specific&lt;std::vector&lt;<span class="type">size_t</span>&gt;&gt; <span class="built_in">tls_hist</span>(</span><br><span class="line">        []&#123; <span class="keyword">return</span> std::<span class="built_in">vector</span>&lt;<span class="type">size_t</span>&gt;(<span class="number">256</span>, <span class="number">0</span>); &#125;</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    tbb::<span class="built_in">parallel_for</span>((<span class="type">size_t</span>)<span class="number">0</span>, n, [&amp;](<span class="type">size_t</span> i)&#123;</span><br><span class="line">        tls_hist.<span class="built_in">local</span>()[(<span class="type">unsigned</span>)data[i]] += <span class="number">1</span>;</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="function">std::vector&lt;<span class="type">size_t</span>&gt; <span class="title">hist</span><span class="params">(<span class="number">256</span>, <span class="number">0</span>)</span></span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span>&amp; h : tls_hist)</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> b = <span class="number">0</span>; b &lt; <span class="number">256</span>; ++b) hist[b] += h[b];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="8-扫描（Scan）：parallel-scan（前缀和-累计输出）"><a href="#8-扫描（Scan）：parallel-scan（前缀和-累计输出）" class="headerlink" title="8. 扫描（Scan）：parallel_scan（前缀和&#x2F;累计输出）"></a>8. 扫描（Scan）：<code>parallel_scan</code>（前缀和&#x2F;累计输出）</h2><p><code>parallel_scan</code> 常用于：前缀和、累计概率、积分图等。<br>关键机制：两阶段（pre-scan &#x2F; final-scan），用 <code>is_final</code> 控制是否写输出。</p>
+<h3 id="8-1-parallel-scan（lambda-版）"><a href="#8-1-parallel-scan（lambda-版）" class="headerlink" title="8.1 parallel_scan（lambda 版）"></a>8.1 <code>parallel_scan</code>（lambda 版）</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tbb/parallel_scan.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tbb/blocked_range.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cmath&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstddef&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">const</span> <span class="type">size_t</span> n = <span class="number">1u</span> &lt;&lt; <span class="number">20</span>;</span><br><span class="line">    <span class="function">std::vector&lt;<span class="type">float</span>&gt; <span class="title">prefix</span><span class="params">(n)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="type">float</span> total = tbb::<span class="built_in">parallel_scan</span>(</span><br><span class="line">        tbb::<span class="built_in">blocked_range</span>&lt;<span class="type">size_t</span>&gt;(<span class="number">0</span>, n),</span><br><span class="line">        <span class="number">0.0f</span>,</span><br><span class="line">        [&amp;](<span class="type">const</span> tbb::blocked_range&lt;<span class="type">size_t</span>&gt;&amp; r, <span class="type">float</span> running, <span class="type">bool</span> is_final) -&gt; <span class="type">float</span> &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">size_t</span> i = r.<span class="built_in">begin</span>(); i != r.<span class="built_in">end</span>(); ++i) &#123;</span><br><span class="line">                running += std::<span class="built_in">sinf</span>((<span class="type">float</span>)i);</span><br><span class="line">                <span class="keyword">if</span> (is_final) prefix[i] = running;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> running;</span><br><span class="line">        &#125;,</span><br><span class="line">        [](<span class="type">float</span> a, <span class="type">float</span> b) -&gt; <span class="type">float</span> &#123; <span class="keyword">return</span> a + b; &#125;</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; prefix[n/<span class="number">2</span>] &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">    std::cout &lt;&lt; total &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="8-2-parallel-scan（结构体版：工程范式）"><a href="#8-2-parallel-scan（结构体版：工程范式）" class="headerlink" title="8.2 parallel_scan（结构体版：工程范式）"></a>8.2 <code>parallel_scan</code>（结构体版：工程范式）</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tbb/parallel_scan.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tbb/blocked_range.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;type_traits&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstddef&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">PrefixScanBody</span> &#123;</span><br><span class="line">    <span class="type">const</span> std::vector&lt;<span class="type">float</span>&gt;&amp; in;</span><br><span class="line">    std::vector&lt;<span class="type">float</span>&gt;&amp; out;</span><br><span class="line">    <span class="type">float</span> sum;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">PrefixScanBody</span>(<span class="type">const</span> std::vector&lt;<span class="type">float</span>&gt;&amp; in_, std::vector&lt;<span class="type">float</span>&gt;&amp; out_)</span><br><span class="line">        : <span class="built_in">in</span>(in_), <span class="built_in">out</span>(out_), <span class="built_in">sum</span>(<span class="number">0.0f</span>) &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">PrefixScanBody</span>(PrefixScanBody&amp; b, tbb::split)</span><br><span class="line">        : <span class="built_in">in</span>(b.in), <span class="built_in">out</span>(b.out), <span class="built_in">sum</span>(<span class="number">0.0f</span>) &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Tag&gt;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">operator</span><span class="params">()</span><span class="params">(<span class="type">const</span> tbb::blocked_range&lt;<span class="type">size_t</span>&gt;&amp; r, Tag)</span> </span>&#123;</span><br><span class="line">        <span class="type">float</span> temp = sum;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">size_t</span> i = r.<span class="built_in">begin</span>(); i != r.<span class="built_in">end</span>(); ++i) &#123;</span><br><span class="line">            temp += in[i];</span><br><span class="line">            <span class="function"><span class="keyword">if</span> <span class="title">constexpr</span> <span class="params">(std::is_same_v&lt;Tag, tbb::final_scan_tag&gt;)</span> </span>&#123;</span><br><span class="line">                out[i] = temp;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        sum = temp;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">reverse_join</span><span class="params">(PrefixScanBody&amp; rhs)</span> </span>&#123; sum += rhs.sum; &#125;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">assign</span><span class="params">(PrefixScanBody&amp; rhs)</span>       </span>&#123; sum  = rhs.sum; &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">const</span> <span class="type">size_t</span> n = <span class="number">1u</span> &lt;&lt; <span class="number">20</span>;</span><br><span class="line">    <span class="function">std::vector&lt;<span class="type">float</span>&gt; <span class="title">in</span><span class="params">(n, <span class="number">1.0f</span>)</span></span>;</span><br><span class="line">    <span class="function">std::vector&lt;<span class="type">float</span>&gt; <span class="title">out</span><span class="params">(n, <span class="number">0.0f</span>)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function">PrefixScanBody <span class="title">body</span><span class="params">(in, out)</span></span>;</span><br><span class="line">    tbb::<span class="built_in">parallel_scan</span>(tbb::<span class="built_in">blocked_range</span>&lt;<span class="type">size_t</span>&gt;(<span class="number">0</span>, n), body);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="9-任务域与嵌套：task-arena-isolate"><a href="#9-任务域与嵌套：task-arena-isolate" class="headerlink" title="9. 任务域与嵌套：task_arena &#x2F; isolate"></a>9. 任务域与嵌套：<code>task_arena</code> &#x2F; <code>isolate</code></h2><h3 id="9-1-task-arena：限制并行度-隔离并行区域"><a href="#9-1-task-arena：限制并行度-隔离并行区域" class="headerlink" title="9.1 task_arena：限制并行度 &#x2F; 隔离并行区域"></a>9.1 <code>task_arena</code>：限制并行度 &#x2F; 隔离并行区域</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tbb/task_arena.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tbb/parallel_for.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cmath&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">const</span> <span class="type">size_t</span> n = <span class="number">1u</span> &lt;&lt; <span class="number">20</span>;</span><br><span class="line">    <span class="function">std::vector&lt;<span class="type">float</span>&gt; <span class="title">a</span><span class="params">(n)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function">tbb::task_arena <span class="title">arena</span><span class="params">(<span class="number">4</span>)</span></span>; <span class="comment">// 该区域最多 4 个线程参与</span></span><br><span class="line">    arena.<span class="built_in">execute</span>([&amp;]&#123;</span><br><span class="line">        tbb::<span class="built_in">parallel_for</span>((<span class="type">size_t</span>)<span class="number">0</span>, n, [&amp;](<span class="type">size_t</span> i)&#123;</span><br><span class="line">            a[i] = std::<span class="built_in">sinf</span>((<span class="type">float</span>)i);</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="9-2-this-task-arena-isolate：禁止内部任务被窃取（隔离干扰）"><a href="#9-2-this-task-arena-isolate：禁止内部任务被窃取（隔离干扰）" class="headerlink" title="9.2 this_task_arena::isolate：禁止内部任务被窃取（隔离干扰）"></a>9.2 <code>this_task_arena::isolate</code>：禁止内部任务被窃取（隔离干扰）</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tbb/this_task_arena.h&gt;</span></span></span><br><span class="line"></span><br><span class="line">tbb::this_task_arena::<span class="built_in">isolate</span>([&amp;]&#123;</span><br><span class="line">    <span class="comment">// 这里 spawn 的任务更隔离，不易跨域被 steal</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>实务提醒：嵌套并行时不要依赖“线程固定&#x2F;执行路径固定”。更推荐减少共享状态、用 reduce&#x2F;tls 合并，或用 arena&#x2F;isolate 控制并行边界。</p>
+</blockquote>
+<hr>
+<h2 id="10-分块策略（Partitioner）：性能与可预测性"><a href="#10-分块策略（Partitioner）：性能与可预测性" class="headerlink" title="10. 分块策略（Partitioner）：性能与可预测性"></a>10. 分块策略（Partitioner）：性能与可预测性</h2><p>TBB 切分范围时可以指定 partitioner：</p>
+<ul>
+<li><code>tbb::static_partitioner</code>：划分更固定、可预测</li>
+<li><code>tbb::affinity_partitioner</code>：记录历史映射，提高缓存命中（适合重复执行的相似循环）</li>
+<li><code>tbb::simple_partitioner</code>：简单切分策略</li>
+</ul>
+<p>示例：观察每个线程拿到的块</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tbb/parallel_for.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tbb/blocked_range.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tbb/task_arena.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tbb/this_task_arena.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">const</span> <span class="type">size_t</span> n = <span class="number">32</span>;</span><br><span class="line">    <span class="function">tbb::task_arena <span class="title">arena</span><span class="params">(<span class="number">4</span>)</span></span>;</span><br><span class="line"></span><br><span class="line">    arena.<span class="built_in">execute</span>([&amp;]&#123;</span><br><span class="line">        tbb::<span class="built_in">parallel_for</span>(</span><br><span class="line">            tbb::<span class="built_in">blocked_range</span>&lt;<span class="type">size_t</span>&gt;(<span class="number">0</span>, n),</span><br><span class="line">            [&amp;](<span class="type">const</span> tbb::blocked_range&lt;<span class="type">size_t</span>&gt;&amp; r)&#123;</span><br><span class="line">                std::cout</span><br><span class="line">                    &lt;&lt; <span class="string">&quot;tid=&quot;</span> &lt;&lt; tbb::this_task_arena::<span class="built_in">current_thread_index</span>()</span><br><span class="line">                    &lt;&lt; <span class="string">&quot; range=[&quot;</span> &lt;&lt; r.<span class="built_in">begin</span>() &lt;&lt; <span class="string">&quot;,&quot;</span> &lt;&lt; r.<span class="built_in">end</span>() &lt;&lt; <span class="string">&quot;)&quot;</span></span><br><span class="line">                    &lt;&lt; <span class="string">&quot; size=&quot;</span> &lt;&lt; r.<span class="built_in">size</span>() &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">            &#125;,</span><br><span class="line">            tbb::static_partitioner&#123;&#125;</span><br><span class="line">        );</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="11-全局并行度控制：global-control（工程常用）"><a href="#11-全局并行度控制：global-control（工程常用）" class="headerlink" title="11. 全局并行度控制：global_control（工程常用）"></a>11. 全局并行度控制：<code>global_control</code>（工程常用）</h2><p>当你不希望 TBB “吃满所有核”，可全局限制：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tbb/global_control.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function">tbb::global_control <span class="title">gc</span><span class="params">(tbb::global_control::max_allowed_parallelism, <span class="number">8</span>)</span></span>;</span><br><span class="line">    <span class="comment">// 后续 TBB 并行算法最多使用 8 个线程</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="12-并发容器：concurrent-vector"><a href="#12-并发容器：concurrent-vector" class="headerlink" title="12. 并发容器：concurrent_vector"></a>12. 并发容器：<code>concurrent_vector</code></h2><p>特点：并发 push 更友好，但实现上可能是分段存储，不等同于 <code>std::vector</code> 的严格连续内存语义。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tbb/concurrent_vector.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tbb/parallel_for.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    tbb::concurrent_vector&lt;std::string&gt; out;</span><br><span class="line"></span><br><span class="line">    tbb::<span class="built_in">parallel_for</span>(<span class="number">0</span>, <span class="number">1000</span>, [&amp;](<span class="type">int</span> i)&#123;</span><br><span class="line">        out.<span class="built_in">push_back</span>(<span class="string">&quot;item_&quot;</span> + std::<span class="built_in">to_string</span>(i));</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="13-流水线并行：parallel-pipeline（I-O-compute-的标准解法）"><a href="#13-流水线并行：parallel-pipeline（I-O-compute-的标准解法）" class="headerlink" title="13. 流水线并行：parallel_pipeline（I&#x2F;O + compute 的标准解法）"></a>13. 流水线并行：<code>parallel_pipeline</code>（I&#x2F;O + compute 的标准解法）</h2><p>适用：读入→解析→计算→写出，多阶段、不同并行度需求。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tbb/parallel_pipeline.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tbb/flow_control.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> x = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    tbb::<span class="built_in">parallel_pipeline</span>(</span><br><span class="line">        <span class="number">4</span>, <span class="comment">// max live tokens</span></span><br><span class="line"></span><br><span class="line">        tbb::<span class="built_in">make_filter</span>&lt;<span class="type">void</span>, <span class="type">int</span>&gt;(</span><br><span class="line">            tbb::filter_mode::serial_in_order,</span><br><span class="line">            [&amp;](tbb::flow_control&amp; fc) -&gt; <span class="type">int</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (x &gt;= <span class="number">20</span>) &#123; fc.<span class="built_in">stop</span>(); <span class="keyword">return</span> <span class="number">0</span>; &#125;</span><br><span class="line">                <span class="keyword">return</span> x++;</span><br><span class="line">            &#125;</span><br><span class="line">        )</span><br><span class="line">        &amp;</span><br><span class="line">        tbb::<span class="built_in">make_filter</span>&lt;<span class="type">int</span>, <span class="type">int</span>&gt;(</span><br><span class="line">            tbb::filter_mode::parallel,</span><br><span class="line">            [&amp;](<span class="type">int</span> v) -&gt; <span class="type">int</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> v * v; <span class="comment">// heavy compute</span></span><br><span class="line">            &#125;</span><br><span class="line">        )</span><br><span class="line">        &amp;</span><br><span class="line">        tbb::<span class="built_in">make_filter</span>&lt;<span class="type">int</span>, <span class="type">void</span>&gt;(</span><br><span class="line">            tbb::filter_mode::serial_in_order,</span><br><span class="line">            [&amp;](<span class="type">int</span> y) &#123;</span><br><span class="line">                std::cout &lt;&lt; y &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        )</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><p><a target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/language/access.html?utm_source=chatgpt.com">https://en.cppreference.com/w/cpp/language/access.html?utm_source=chatgpt.com</a><br><a target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/language/operators.html?utm_source=chatgpt.com">https://en.cppreference.com/w/cpp/language/operators.html?utm_source=chatgpt.com</a><br><a target="_blank" rel="noopener" href="https://mooshak.dcc.fc.up.pt/~oni-judge/doc/cppreference/reference/en/cpp/language/constructor.html?utm_source=chatgpt.com">https://mooshak.dcc.fc.up.pt/~oni-judge/doc/cppreference/reference/en/cpp/language/constructor.html?utm_source=chatgpt.com</a></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/08-c-11%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%BC%96%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/08-c-11%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%BC%96%E7%A8%8B/" class="post-title-link" itemprop="url">C++11 起的多线程编程笔记</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-12-19 09:26:01" itemprop="dateCreated datePublished" datetime="2025-12-19T09:26:01+08:00">2025-12-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/%E9%AB%98%E6%80%A7%E8%83%BDC-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">高性能C++并行编程</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="C-11-起的多线程编程笔记"><a href="#C-11-起的多线程编程笔记" class="headerlink" title="C++11 起的多线程编程笔记"></a>C++11 起的多线程编程笔记</h1><blockquote>
+<p>C++11 标准库并发组件：<code>&lt;thread&gt; / &lt;mutex&gt; / &lt;condition_variable&gt; / &lt;future&gt; / &lt;atomic&gt; / &lt;chrono&gt;</code><br>目标：并发执行（性能） + 正确同步（安全） + 生命周期可控（可维护）。</p>
+</blockquote>
+<h2 id="1-时间与计时-std-chrono"><a href="#1-时间与计时-std-chrono" class="headerlink" title="1. 时间与计时 std::chrono"></a>1. 时间与计时 <code>std::chrono</code></h2><h3 id="1-1-三个核心类型"><a href="#1-1-三个核心类型" class="headerlink" title="1.1 三个核心类型"></a>1.1 三个核心类型</h3><ul>
+<li><code>clock</code>：时钟（如 <code>steady_clock</code>、<code>system_clock</code>）</li>
+<li><code>time_point</code>：时间点（<code>clock::time_point</code>）</li>
+<li><code>duration</code>：时长（<code>seconds/milliseconds/...</code>）</li>
+</ul>
+<h3 id="1-2-计时：推荐-steady-clock（不会被系统调时影响）"><a href="#1-2-计时：推荐-steady-clock（不会被系统调时影响）" class="headerlink" title="1.2 计时：推荐 steady_clock（不会被系统调时影响）"></a>1.2 计时：推荐 <code>steady_clock</code>（不会被系统调时影响）</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;chrono&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstdint&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> t0 = std::chrono::steady_clock::<span class="built_in">now</span>();</span><br><span class="line">    <span class="keyword">auto</span> t1 = t0 + std::chrono::<span class="built_in">seconds</span>(<span class="number">30</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">auto</span> dt = t1 - t0; <span class="comment">// duration</span></span><br><span class="line">    std::<span class="type">int64_t</span> sec = std::chrono::<span class="built_in">duration_cast</span>&lt;std::chrono::seconds&gt;(dt).<span class="built_in">count</span>();</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;dt = &quot;</span> &lt;&lt; sec &lt;&lt; <span class="string">&quot; s\n&quot;</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-3-常见时间单位"><a href="#1-3-常见时间单位" class="headerlink" title="1.3 常见时间单位"></a>1.3 常见时间单位</h3><ul>
+<li><code>std::chrono::seconds(x)</code></li>
+<li><code>std::chrono::milliseconds(x)</code></li>
+<li><code>std::chrono::microseconds(x)</code></li>
+<li><code>std::chrono::nanoseconds(x)</code></li>
+</ul>
+<h3 id="1-4-测耗时并转-double-毫秒"><a href="#1-4-测耗时并转-double-毫秒" class="headerlink" title="1.4 测耗时并转 double 毫秒"></a>1.4 测耗时并转 double 毫秒</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;chrono&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> t0 = std::chrono::steady_clock::<span class="built_in">now</span>();</span><br><span class="line"></span><br><span class="line">    std::<span class="type">uint64_t</span> acc = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">1&#x27;000&#x27;000</span>; ++i) acc += i;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">auto</span> t1 = std::chrono::steady_clock::<span class="built_in">now</span>();</span><br><span class="line">    <span class="keyword">using</span> double_ms = std::chrono::duration&lt;<span class="type">double</span>, std::milli&gt;;</span><br><span class="line">    <span class="type">double</span> ms = std::chrono::<span class="built_in">duration_cast</span>&lt;double_ms&gt;(t1 - t0).<span class="built_in">count</span>();</span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;cost = &quot;</span> &lt;&lt; ms &lt;&lt; <span class="string">&quot; ms, acc=&quot;</span> &lt;&lt; acc &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="2-线程休眠：避免忙等"><a href="#2-线程休眠：避免忙等" class="headerlink" title="2. 线程休眠：避免忙等"></a>2. 线程休眠：避免忙等</h2><h3 id="2-1-sleep-for"><a href="#2-1-sleep-for" class="headerlink" title="2.1 sleep_for"></a>2.1 <code>sleep_for</code></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;thread&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;chrono&gt;</span></span></span><br><span class="line"></span><br><span class="line">std::this_thread::<span class="built_in">sleep_for</span>(std::chrono::<span class="built_in">milliseconds</span>(<span class="number">400</span>));</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2-sleep-until（对齐节拍更合适）"><a href="#2-2-sleep-until（对齐节拍更合适）" class="headerlink" title="2.2 sleep_until（对齐节拍更合适）"></a>2.2 <code>sleep_until</code>（对齐节拍更合适）</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;thread&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;chrono&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">auto</span> t = std::chrono::steady_clock::<span class="built_in">now</span>() + std::chrono::<span class="built_in">milliseconds</span>(<span class="number">400</span>);</span><br><span class="line">std::this_thread::<span class="built_in">sleep_until</span>(t);</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-3-实例：固定频率循环（推荐写法）"><a href="#2-3-实例：固定频率循环（推荐写法）" class="headerlink" title="2.3 实例：固定频率循环（推荐写法）"></a>2.3 实例：固定频率循环（推荐写法）</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;chrono&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;thread&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">using</span> clock = std::chrono::steady_clock;</span><br><span class="line">    <span class="keyword">auto</span> next = clock::<span class="built_in">now</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; ++i) &#123;</span><br><span class="line">        next += std::chrono::<span class="built_in">milliseconds</span>(<span class="number">100</span>);</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;tick &quot;</span> &lt;&lt; i &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">        std::this_thread::<span class="built_in">sleep_until</span>(next);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="3-基础线程-std-thread"><a href="#3-基础线程-std-thread" class="headerlink" title="3. 基础线程 std::thread"></a>3. 基础线程 <code>std::thread</code></h2><h3 id="3-1-启动线程与-join（必须）"><a href="#3-1-启动线程与-join（必须）" class="headerlink" title="3.1 启动线程与 join（必须）"></a>3.1 启动线程与 join（必须）</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;thread&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">work</span><span class="params">(<span class="type">int</span> id)</span> </span>&#123; std::cout &lt;&lt; <span class="string">&quot;worker &quot;</span> &lt;&lt; id &lt;&lt; <span class="string">&quot;\n&quot;</span>; &#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function">std::thread <span class="title">t</span><span class="params">(work, <span class="number">1</span>)</span></span>;</span><br><span class="line">    t.<span class="built_in">join</span>(); <span class="comment">// 必须 join 或 detach，否则析构会 std::terminate</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>join()</code>：等待线程结束（最常用）</li>
+<li><code>detach()</code>：放飞线程（风险高：对象生命周期&#x2F;退出时机难控）</li>
+</ul>
+<hr>
+<h2 id="4-异步与返回值：std-async-std-future"><a href="#4-异步与返回值：std-async-std-future" class="headerlink" title="4. 异步与返回值：std::async &#x2F; std::future"></a>4. 异步与返回值：<code>std::async</code> &#x2F; <code>std::future</code></h2><h3 id="4-1-基本用法（带返回值）"><a href="#4-1-基本用法（带返回值）" class="headerlink" title="4.1 基本用法（带返回值）"></a>4.1 基本用法（带返回值）</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;future&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;thread&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;chrono&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">download</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::this_thread::<span class="built_in">sleep_for</span>(std::chrono::<span class="built_in">milliseconds</span>(<span class="number">200</span>));</span><br><span class="line">    <span class="keyword">return</span> <span class="number">404</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> fut = std::<span class="built_in">async</span>(std::launch::async, [] &#123; <span class="keyword">return</span> <span class="built_in">download</span>(); &#125;);</span><br><span class="line">    <span class="type">int</span> ret = fut.<span class="built_in">get</span>(); <span class="comment">// get 只能调用一次</span></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;ret=&quot;</span> &lt;&lt; ret &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-2-启动策略"><a href="#4-2-启动策略" class="headerlink" title="4.2 启动策略"></a>4.2 启动策略</h3><ul>
+<li><code>std::launch::async</code>：倾向于并行执行</li>
+<li><code>std::launch::deferred</code>：延迟到 <code>get()/wait()</code> 才在当前线程执行</li>
+</ul>
+<h3 id="4-3-wait-wait-for-wait-until"><a href="#4-3-wait-wait-for-wait-until" class="headerlink" title="4.3 wait &#x2F; wait_for &#x2F; wait_until"></a>4.3 wait &#x2F; wait_for &#x2F; wait_until</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> fut = std::<span class="built_in">async</span>(std::launch::async, []&#123;</span><br><span class="line">    std::this_thread::<span class="built_in">sleep_for</span>(std::chrono::<span class="built_in">seconds</span>(<span class="number">2</span>));</span><br><span class="line">    <span class="keyword">return</span> <span class="number">123</span>;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">fut.<span class="built_in">wait</span>(); <span class="comment">// 等到完成</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">auto</span> st = fut.<span class="built_in">wait_for</span>(std::chrono::<span class="built_in">milliseconds</span>(<span class="number">100</span>));</span><br><span class="line"><span class="keyword">if</span> (st == std::future_status::timeout) &#123;</span><br><span class="line">    <span class="comment">// 还没完成</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-4-异常会在-get-处重抛（非常实用）"><a href="#4-4-异常会在-get-处重抛（非常实用）" class="headerlink" title="4.4 异常会在 get() 处重抛（非常实用）"></a>4.4 异常会在 get() 处重抛（非常实用）</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> fut = std::<span class="built_in">async</span>(std::launch::async, []() -&gt; <span class="type">int</span> &#123;</span><br><span class="line">    <span class="keyword">throw</span> std::<span class="built_in">runtime_error</span>(<span class="string">&quot;boom&quot;</span>);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span> &#123; fut.<span class="built_in">get</span>(); &#125;</span><br><span class="line"><span class="built_in">catch</span> (<span class="type">const</span> std::exception&amp; e) &#123; std::cout &lt;&lt; e.<span class="built_in">what</span>() &lt;&lt; <span class="string">&quot;\n&quot;</span>; &#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="5-互斥锁-std-mutex：保护共享数据"><a href="#5-互斥锁-std-mutex：保护共享数据" class="headerlink" title="5. 互斥锁 std::mutex：保护共享数据"></a>5. 互斥锁 <code>std::mutex</code>：保护共享数据</h2><h3 id="5-1-lock-guard（RAII-自动解锁）"><a href="#5-1-lock-guard（RAII-自动解锁）" class="headerlink" title="5.1 lock_guard（RAII 自动解锁）"></a>5.1 <code>lock_guard</code>（RAII 自动解锁）</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;mutex&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;thread&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::mutex m;</span><br><span class="line">    <span class="type">int</span> counter = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">auto</span> inc = [&amp;] &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100000</span>; ++i) &#123;</span><br><span class="line">            std::lock_guard&lt;std::mutex&gt; <span class="built_in">lk</span>(m);</span><br><span class="line">            ++counter;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="function">std::thread <span class="title">t1</span><span class="params">(inc)</span>, <span class="title">t2</span><span class="params">(inc)</span></span>;</span><br><span class="line">    t<span class="number">1.</span><span class="built_in">join</span>(); t<span class="number">2.</span><span class="built_in">join</span>();</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;counter=&quot;</span> &lt;&lt; counter &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-2-死锁规避（两个锁）"><a href="#5-2-死锁规避（两个锁）" class="headerlink" title="5.2 死锁规避（两个锁）"></a>5.2 死锁规避（两个锁）</h3><p>C++11 可用 <code>std::lock</code> + <code>std::adopt_lock</code>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;mutex&gt;</span></span></span><br><span class="line"></span><br><span class="line">std::mutex m1, m2;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">f</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::<span class="built_in">lock</span>(m1, m2);</span><br><span class="line">    <span class="function">std::lock_guard&lt;std::mutex&gt; <span class="title">lk1</span><span class="params">(m1, std::adopt_lock)</span></span>;</span><br><span class="line">    <span class="function">std::lock_guard&lt;std::mutex&gt; <span class="title">lk2</span><span class="params">(m2, std::adopt_lock)</span></span>;</span><br><span class="line">    <span class="comment">// 临界区</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="6-条件变量-std-condition-variable：生产者-消费者（比-sleep-正确）"><a href="#6-条件变量-std-condition-variable：生产者-消费者（比-sleep-正确）" class="headerlink" title="6. 条件变量 std::condition_variable：生产者-消费者（比 sleep 正确）"></a>6. 条件变量 <code>std::condition_variable</code>：生产者-消费者（比 sleep 正确）</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;mutex&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;condition_variable&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;queue&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;thread&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::mutex m;</span><br><span class="line">    std::condition_variable cv;</span><br><span class="line">    std::queue&lt;<span class="type">int</span>&gt; q;</span><br><span class="line">    <span class="type">bool</span> done = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function">std::thread <span class="title">producer</span><span class="params">([&amp;]&#123;</span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; ++i) &#123;</span></span></span><br><span class="line"><span class="params"><span class="function">            &#123; std::lock_guard&lt;std::mutex&gt; lk(m); q.push(i); &#125;</span></span></span><br><span class="line"><span class="params"><span class="function">            cv.notify_one();</span></span></span><br><span class="line"><span class="params"><span class="function">        &#125;</span></span></span><br><span class="line"><span class="params"><span class="function">        &#123; std::lock_guard&lt;std::mutex&gt; lk(m); done = <span class="literal">true</span>; &#125;</span></span></span><br><span class="line"><span class="params"><span class="function">        cv.notify_one();</span></span></span><br><span class="line"><span class="params"><span class="function">    &#125;)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function">std::thread <span class="title">consumer</span><span class="params">([&amp;]&#123;</span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span></span></span><br><span class="line"><span class="params"><span class="function">            std::unique_lock&lt;std::mutex&gt; lk(m);</span></span></span><br><span class="line"><span class="params"><span class="function">            cv.wait(lk, [&amp;]&#123; <span class="keyword">return</span> done || !q.empty(); &#125;); <span class="comment">// 带谓词防虚假唤醒</span></span></span></span><br><span class="line"><span class="params"><span class="function">            <span class="keyword">while</span> (!q.empty()) &#123;</span></span></span><br><span class="line"><span class="params"><span class="function">                std::cout &lt;&lt; <span class="string">&quot;consume &quot;</span> &lt;&lt; q.front() &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span></span></span><br><span class="line"><span class="params"><span class="function">                q.pop();</span></span></span><br><span class="line"><span class="params"><span class="function">            &#125;</span></span></span><br><span class="line"><span class="params"><span class="function">            <span class="keyword">if</span> (done) <span class="keyword">break</span>;</span></span></span><br><span class="line"><span class="params"><span class="function">        &#125;</span></span></span><br><span class="line"><span class="params"><span class="function">    &#125;)</span></span>;</span><br><span class="line"></span><br><span class="line">    producer.<span class="built_in">join</span>();</span><br><span class="line">    consumer.<span class="built_in">join</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="7-原子-std-atomic：轻量同步（计数-标志位）"><a href="#7-原子-std-atomic：轻量同步（计数-标志位）" class="headerlink" title="7. 原子 std::atomic：轻量同步（计数&#x2F;标志位）"></a>7. 原子 <code>std::atomic</code>：轻量同步（计数&#x2F;标志位）</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;atomic&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;thread&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::atomic&lt;<span class="type">int</span>&gt; counter&#123;<span class="number">0</span>&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">auto</span> inc = [&amp;] &#123; <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100000</span>; ++i) ++counter; &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="function">std::thread <span class="title">t1</span><span class="params">(inc)</span>, <span class="title">t2</span><span class="params">(inc)</span></span>;</span><br><span class="line">    t<span class="number">1.</span><span class="built_in">join</span>(); t<span class="number">2.</span><span class="built_in">join</span>();</span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;counter=&quot;</span> &lt;&lt; counter.<span class="built_in">load</span>() &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="8-线程池-任务队列（C-11-可直接用）"><a href="#8-线程池-任务队列（C-11-可直接用）" class="headerlink" title="8. 线程池&#x2F;任务队列（C++11 可直接用）"></a>8. 线程池&#x2F;任务队列（C++11 可直接用）</h2><blockquote>
+<p>线程池 &#x3D; 固定 worker 线程 + 任务队列（阻塞队列）<br>典型价值：避免频繁创建&#x2F;销毁线程，提高吞吐；统一任务提交接口，支持 <code>future</code> 返回值与异常回传。</p>
+</blockquote>
+<h3 id="8-1-任务队列：BlockingQueue（阻塞队列）"><a href="#8-1-任务队列：BlockingQueue（阻塞队列）" class="headerlink" title="8.1 任务队列：BlockingQueue（阻塞队列）"></a>8.1 任务队列：BlockingQueue（阻塞队列）</h3><p>特性：</p>
+<ul>
+<li><code>push()</code> 入队并唤醒消费者</li>
+<li><code>pop()</code> 阻塞等待任务；队列关闭且为空时返回 <code>false</code></li>
+<li><code>close()</code> 关闭队列并唤醒全部等待线程</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">pragma</span> once</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;queue&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;mutex&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;condition_variable&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;utility&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">T</span>&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">BlockingQueue</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">BlockingQueue</span>() : <span class="built_in">closed_</span>(<span class="literal">false</span>) &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">BlockingQueue</span>(<span class="type">const</span> BlockingQueue&amp;) = <span class="keyword">delete</span>;</span><br><span class="line">    BlockingQueue&amp; <span class="keyword">operator</span>=(<span class="type">const</span> BlockingQueue&amp;) = <span class="keyword">delete</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">push</span><span class="params">(T value)</span> </span>&#123;</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="function">std::lock_guard&lt;std::mutex&gt; <span class="title">lk</span><span class="params">(m_)</span></span>;</span><br><span class="line">            <span class="keyword">if</span> (closed_) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            q_.<span class="built_in">push</span>(std::<span class="built_in">move</span>(value));</span><br><span class="line">        &#125;</span><br><span class="line">        cv_.<span class="built_in">notify_one</span>();</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">pop</span><span class="params">(T&amp; out)</span> </span>&#123;</span><br><span class="line">        <span class="function">std::unique_lock&lt;std::mutex&gt; <span class="title">lk</span><span class="params">(m_)</span></span>;</span><br><span class="line">        cv_.<span class="built_in">wait</span>(lk, [&amp;]&#123; <span class="keyword">return</span> closed_ || !q_.<span class="built_in">empty</span>(); &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (q_.<span class="built_in">empty</span>()) <span class="keyword">return</span> <span class="literal">false</span>; <span class="comment">// closed_ &amp;&amp; empty</span></span><br><span class="line">        out = std::<span class="built_in">move</span>(q_.<span class="built_in">front</span>());</span><br><span class="line">        q_.<span class="built_in">pop</span>();</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">close</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="function">std::lock_guard&lt;std::mutex&gt; <span class="title">lk</span><span class="params">(m_)</span></span>;</span><br><span class="line">            closed_ = <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        cv_.<span class="built_in">notify_all</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    std::mutex m_;</span><br><span class="line">    std::condition_variable cv_;</span><br><span class="line">    std::queue&lt;T&gt; q_;</span><br><span class="line">    <span class="type">bool</span> closed_;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="8-2-线程池：ThreadPool（enqueue-返回-future）"><a href="#8-2-线程池：ThreadPool（enqueue-返回-future）" class="headerlink" title="8.2 线程池：ThreadPool（enqueue 返回 future）"></a>8.2 线程池：ThreadPool（enqueue 返回 future）</h3><p>特性：</p>
+<ul>
+<li>固定线程数 worker</li>
+<li><code>enqueue(f, args...)</code> 返回 <code>std::future&lt;R&gt;</code></li>
+<li>任务抛异常 → 在 <code>future.get()</code> 时重抛</li>
+<li>析构&#x2F;<code>shutdown()</code>：停止接收新任务 + 关闭队列 + <code>join</code> 所有 worker</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">pragma</span> once</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;thread&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;future&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;functional&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdexcept&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;type_traits&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;atomic&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;utility&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;blocking_queue.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ThreadPool</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">explicit</span> <span class="title">ThreadPool</span><span class="params">(<span class="type">size_t</span> nthreads)</span> : accept_(true) &#123;</span></span><br><span class="line">        <span class="keyword">if</span> (nthreads == <span class="number">0</span>) nthreads = <span class="number">1</span>;</span><br><span class="line">        workers_.<span class="built_in">reserve</span>(nthreads);</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; nthreads; ++i) &#123;</span><br><span class="line">            workers_.<span class="built_in">push_back</span>(std::<span class="built_in">thread</span>([<span class="keyword">this</span>]&#123; <span class="built_in">worker_loop</span>(); &#125;));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">ThreadPool</span>(<span class="type">const</span> ThreadPool&amp;) = <span class="keyword">delete</span>;</span><br><span class="line">    ThreadPool&amp; <span class="keyword">operator</span>=(<span class="type">const</span> ThreadPool&amp;) = <span class="keyword">delete</span>;</span><br><span class="line"></span><br><span class="line">    ~<span class="built_in">ThreadPool</span>() &#123; <span class="built_in">shutdown</span>(); &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">F</span>, <span class="keyword">class</span>... Args&gt;</span><br><span class="line">    <span class="function"><span class="keyword">auto</span> <span class="title">enqueue</span><span class="params">(F&amp;&amp; f, Args&amp;&amp;... args)</span></span></span><br><span class="line"><span class="function">        -&gt; std::future&lt;<span class="keyword">typename</span> std::result_of&lt;<span class="title">F</span><span class="params">(Args...)</span>&gt;::type&gt;</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">typedef</span> <span class="keyword">typename</span> std::result_of&lt;<span class="built_in">F</span>(Args...)&gt;::type R;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (!accept_.<span class="built_in">load</span>()) &#123;</span><br><span class="line">            <span class="keyword">throw</span> std::<span class="built_in">runtime_error</span>(<span class="string">&quot;ThreadPool is not accepting new tasks.&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">auto</span> task_ptr = std::make_shared&lt;std::packaged_task&lt;<span class="built_in">R</span>()&gt;&gt;(</span><br><span class="line">            std::<span class="built_in">bind</span>(std::forward&lt;F&gt;(f), std::forward&lt;Args&gt;(args)...)</span><br><span class="line">        );</span><br><span class="line">        std::future&lt;R&gt; fut = task_ptr-&gt;<span class="built_in">get_future</span>();</span><br><span class="line"></span><br><span class="line">        <span class="type">bool</span> ok = tasks_.<span class="built_in">push</span>([task_ptr]&#123; (*task_ptr)(); &#125;);</span><br><span class="line">        <span class="keyword">if</span> (!ok) <span class="keyword">throw</span> std::<span class="built_in">runtime_error</span>(<span class="string">&quot;Task queue is closed.&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> fut;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">shutdown</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="type">bool</span> expected = <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">if</span> (accept_.<span class="built_in">compare_exchange_strong</span>(expected, <span class="literal">false</span>)) &#123;</span><br><span class="line">            tasks_.<span class="built_in">close</span>();</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">auto</span>&amp; t : workers_) &#123;</span><br><span class="line">                <span class="keyword">if</span> (t.<span class="built_in">joinable</span>()) t.<span class="built_in">join</span>();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">worker_loop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        std::function&lt;<span class="type">void</span>()&gt; task;</span><br><span class="line">        <span class="keyword">while</span> (tasks_.<span class="built_in">pop</span>(task)) &#123;</span><br><span class="line">            <span class="built_in">task</span>();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    std::vector&lt;std::thread&gt; workers_;</span><br><span class="line">    BlockingQueue&lt;std::function&lt;<span class="type">void</span>()&gt;&gt; tasks_;</span><br><span class="line">    std::atomic&lt;<span class="type">bool</span>&gt; accept_;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="8-3-线程池使用示例（返回值-异常回传）"><a href="#8-3-线程池使用示例（返回值-异常回传）" class="headerlink" title="8.3 线程池使用示例（返回值 + 异常回传）"></a>8.3 线程池使用示例（返回值 + 异常回传）</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;chrono&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;thread&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;thread_pool.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">slow_add</span><span class="params">(<span class="type">int</span> a, <span class="type">int</span> b)</span> </span>&#123;</span><br><span class="line">    std::this_thread::<span class="built_in">sleep_for</span>(std::chrono::<span class="built_in">milliseconds</span>(<span class="number">200</span>));</span><br><span class="line">    <span class="keyword">return</span> a + b;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function">ThreadPool <span class="title">pool</span><span class="params">(<span class="number">4</span>)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">auto</span> f1 = pool.<span class="built_in">enqueue</span>(slow_add, <span class="number">1</span>, <span class="number">2</span>);</span><br><span class="line">    <span class="keyword">auto</span> f2 = pool.<span class="built_in">enqueue</span>([](<span class="type">int</span> x)&#123; <span class="keyword">return</span> x * x; &#125;, <span class="number">12</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">auto</span> f3 = pool.<span class="built_in">enqueue</span>([]() -&gt; <span class="type">int</span> &#123;</span><br><span class="line">        <span class="keyword">throw</span> std::<span class="built_in">runtime_error</span>(<span class="string">&quot;boom&quot;</span>);</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;f1=&quot;</span> &lt;&lt; f<span class="number">1.</span><span class="built_in">get</span>() &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;f2=&quot;</span> &lt;&lt; f<span class="number">2.</span><span class="built_in">get</span>() &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;f3=&quot;</span> &lt;&lt; f<span class="number">3.</span><span class="built_in">get</span>() &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">    &#125; <span class="built_in">catch</span> (<span class="type">const</span> std::exception&amp; e) &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;caught: &quot;</span> &lt;&lt; e.<span class="built_in">what</span>() &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    pool.<span class="built_in">shutdown</span>(); <span class="comment">// 可省略：析构也会 shutdown</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/%E4%BB%A3%E7%A0%81%E7%BB%83%E4%B9%A0/%E5%8A%9B%E6%89%A3%E6%89%93%E5%8D%A1%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/notes/%E4%BB%A3%E7%A0%81%E7%BB%83%E4%B9%A0/%E5%8A%9B%E6%89%A3%E6%89%93%E5%8D%A1%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" class="post-title-link" itemprop="url">动态规划</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-12-16 10:44:29" itemprop="dateCreated datePublished" datetime="2025-12-16T10:44:29+08:00">2025-12-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/%E4%BB%A3%E7%A0%81%E7%BB%83%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">代码练习</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="动态规划"><a href="#动态规划" class="headerlink" title="动态规划"></a>动态规划</h1><h2 id="入门"><a href="#入门" class="headerlink" title="入门"></a>入门</h2><ol start="70">
+<li>爬楼梯</li>
+<li>使用最小花费爬楼梯</li>
+<li>爬楼梯 II<br>需要注意数组初始化问题</li>
+<li>组合总和 Ⅳ<br>翻译成爬楼梯的问题<br>这个题可以在想想扩展一下</li>
+<li>统计构造好字符串的方案数<br>在dp数组不确定初始化的情况下<br>采用dfs的方法通过规定边界实现初始化简化</li>
+<li>统计打字方案数【1】<br>好好在思考一下</li>
+</ol>
+<h2 id="打家劫舍"><a href="#打家劫舍" class="headerlink" title="打家劫舍"></a>打家劫舍</h2><ol start="198">
+<li>打家劫舍<br>lambda 在递归中应用需要补一下</li>
+<li>打家劫舍 II</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/2025/12/09/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E6%89%A9%E6%95%A3/[%E4%BD%95%E6%81%BA%E6%98%8E]Masked%20Autoencoders%20Are%20Scalable%20Vision%20Learners/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/12/09/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E6%89%A9%E6%95%A3/%5B%E4%BD%95%E6%81%BA%E6%98%8E%5DMasked%20Autoencoders%20Are%20Scalable%20Vision%20Learners/" class="post-title-link" itemprop="url">Masked Autoencoders Are Scalable Vision Learners</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-12-09 13:58:26" itemprop="dateCreated datePublished" datetime="2025-12-09T13:58:26+08:00">2025-12-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-01-24 10:43:15" itemprop="dateModified" datetime="2026-01-24T10:43:15+08:00">2026-01-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E6%89%A9%E6%95%A3/" itemprop="url" rel="index"><span itemprop="name">扩散</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="Masked-Autoencoders-Are-Scalable-Vision-Learners"><a href="#Masked-Autoencoders-Are-Scalable-Vision-Learners" class="headerlink" title="Masked Autoencoders Are Scalable Vision Learners"></a>Masked Autoencoders Are Scalable Vision Learners</h1><p>论文地址：<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2111.06377%E3%80%82">https://arxiv.org/pdf/2111.06377。</a><br>作者：何凯明<br>机构: Facebook</p>
+<h2 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h2><p>带掩码的自编码器是一个可拓展的视觉学习器<br>MAE基于两个核心设计，可以高效的训练大模型：<br>1、非对称的encoder-decoder架构编码器只作用在可见的patch中，对于丢掉的patch，编码器不会对它进行编码，这样能够节省一定的计算时间。解码器是一个比较轻量的解码器，拿到编码器的输出之后，重构被遮挡住的块。<br>2、使用较高的mask比例将mask比例设置为75%，迫使模型得到一个较好的自监督训练效果。如果只是遮住几块的话，只需要进行插值就可以出来了，模型可能学不到特别的东西。编码器只编码1&#x2F;4大小的图片，可以降低计算量，训练加速3倍或者以上模型结构。最终作者只使用一个最简单的ViT-Huge模型（模型结构来自ViT这篇文章），在ImageNet-1K（100万张图片）上预训练，准确率能达到87.8%；这个模型主要是用来做迁移学习，它证明了在迁移学习的其他任务上表现也非常好注：在ViT这篇文章的最后一段有提到过怎样做自监督学习，作者说效果并不是很好，结论是：用有标号的模型和大的训练集可以得到很好的效果。本文亮点是，只使用小的数据集（ImageNet-1k，100万张图片），而且是通过自监督，就能够做到跟之前可能效果一样好的模型了。</p>
+<h2 id="网络结构"><a href="#网络结构" class="headerlink" title="网络结构"></a>网络结构</h2><p><img src="/img/notes/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E6%89%A9%E6%95%A3/%E5%9B%BE%E5%BA%93/MAE/%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84.png" alt="网络图"></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/2025/12/09/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/%E8%AF%BB%E4%B9%A6%E6%9C%89%E6%84%9F/%E7%A6%85%E4%B8%8E%E6%91%A9%E6%89%98%E8%BD%A6%E7%BB%B4%E4%BF%AE%E8%89%BA%E6%9C%AF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/12/09/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/%E8%AF%BB%E4%B9%A6%E6%9C%89%E6%84%9F/%E7%A6%85%E4%B8%8E%E6%91%A9%E6%89%98%E8%BD%A6%E7%BB%B4%E4%BF%AE%E8%89%BA%E6%9C%AF/" class="post-title-link" itemprop="url">禅与摩托车维修艺术</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-12-09 07:29:44" itemprop="dateCreated datePublished" datetime="2025-12-09T07:29:44+08:00">2025-12-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-01-24 10:43:15" itemprop="dateModified" datetime="2026-01-24T10:43:15+08:00">2026-01-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/" itemprop="url" rel="index"><span itemprop="name">杂七杂八</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/%E8%AF%BB%E4%B9%A6%E6%9C%89%E6%84%9F/" itemprop="url" rel="index"><span itemprop="name">读书有感</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="良质"><a href="#良质" class="headerlink" title="良质"></a>良质</h1>
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/2025/11/28/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E8%B6%85%E5%88%86/%E7%9B%B2%E8%B6%85%E5%88%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/11/28/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E8%B6%85%E5%88%86/%E7%9B%B2%E8%B6%85%E5%88%86/" class="post-title-link" itemprop="url">盲超分</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-11-28 10:45:46" itemprop="dateCreated datePublished" datetime="2025-11-28T10:45:46+08:00">2025-11-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-01-24 10:43:15" itemprop="dateModified" datetime="2026-01-24T10:43:15+08:00">2026-01-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E8%B6%85%E5%88%86/" itemprop="url" rel="index"><span itemprop="name">超分</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="盲超分"><a href="#盲超分" class="headerlink" title="盲超分"></a>盲超分</h1><p>退化核？<br>综述：“看清”世界——从盲超分到真实超分 <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/657729852">https://zhuanlan.zhihu.com/p/657729852</a></p>
+<p>自监督：<a target="_blank" rel="noopener" href="https://ieeexplore.ieee.org/document/10868396">https://ieeexplore.ieee.org/document/10868396</a><br>自监督：单一遥感高光谱图像的盲超分辨率<a target="_blank" rel="noopener" href="https://github.com/zhiyuan0112/TSBSR">https://github.com/zhiyuan0112/TSBSR</a></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/2025/11/21/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E6%89%A9%E6%95%A3/%E4%BD%95%E5%87%AF%E6%98%8E%E8%AE%A9%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E5%9B%9E%E5%BD%92%E2%80%9C%E5%8E%BB%E5%99%AA%E2%80%9D%E6%9C%AC%E8%B4%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/11/21/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E6%89%A9%E6%95%A3/%E4%BD%95%E5%87%AF%E6%98%8E%E8%AE%A9%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E5%9B%9E%E5%BD%92%E2%80%9C%E5%8E%BB%E5%99%AA%E2%80%9D%E6%9C%AC%E8%B4%A8/" class="post-title-link" itemprop="url">让扩散模型回归“去噪”本质</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-11-21 16:03:30" itemprop="dateCreated datePublished" datetime="2025-11-21T16:03:30+08:00">2025-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-01-24 10:43:15" itemprop="dateModified" datetime="2026-01-24T10:43:15+08:00">2026-01-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E6%89%A9%E6%95%A3/" itemprop="url" rel="index"><span itemprop="name">扩散</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="让扩散模型回归“去噪”本质"><a href="#让扩散模型回归“去噪”本质" class="headerlink" title="让扩散模型回归“去噪”本质"></a>让扩散模型回归“去噪”本质</h1><p>论文标题: Back to Basics: Let Denoising Generative Models Denoise<br>作者: Tianhong Li(黎天鸿), Kaiming He(何恺明)<br>机构: 麻省理工学院 (MIT)<br>论文地址: <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2511.13720">https://arxiv.org/abs/2511.13720</a><br>代码仓库: <a target="_blank" rel="noopener" href="https://github.com/LTH14/JiT">https://github.com/LTH14/JiT</a><br>总结：本文指出了一个反常识问题，就是传统的去噪模型每步预测的唯噪声，而噪声在高维度中的分布是很难观察的，但是如果将预测噪声改为预测真实纯洁的图像就能改变这一问题。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/2025/11/16/%E7%94%9F%E6%B4%BB/%E6%97%85%E6%B8%B8%E6%94%BB%E7%95%A5/%E9%BB%84%E5%B1%B1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/11/16/%E7%94%9F%E6%B4%BB/%E6%97%85%E6%B8%B8%E6%94%BB%E7%95%A5/%E9%BB%84%E5%B1%B1/" class="post-title-link" itemprop="url">黄山</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-11-16 11:05:41" itemprop="dateCreated datePublished" datetime="2025-11-16T11:05:41+08:00">2025-11-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-01-24 10:43:15" itemprop="dateModified" datetime="2026-01-24T10:43:15+08:00">2026-01-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%94%9F%E6%B4%BB/" itemprop="url" rel="index"><span itemprop="name">生活</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%94%9F%E6%B4%BB/%E6%97%85%E6%B8%B8%E6%94%BB%E7%95%A5/" itemprop="url" rel="index"><span itemprop="name">旅游攻略</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="黄山"><a href="#黄山" class="headerlink" title="黄山"></a>黄山</h1><p><a target="_blank" rel="noopener" href="https://www.nipic.com/show/50091343.html?utm_source=chatgpt.com"><img src="https://tse4.mm.bing.net/th/id/OIP.a92obHwocDrNicbuQrWrswHaJ1?cb=ucfimg2&pid=Api&ucfimg=1" alt="AI创作图黄山 奇松 山谷 云海 松树 绿色 自然 风景 旅行 摄影 中国 安徽省 地理 生态 宁静 壮丽nipic.com-昵图网"></a></p>
+<h2 id="一、整体思路（预算版）"><a href="#一、整体思路（预算版）" class="headerlink" title="一、整体思路（预算版）"></a>一、整体思路（预算版）</h2><ul>
+<li><p><strong>出行方式</strong>：广州 → 黄山北 高铁往返，二等座一般单程 520–600 元左右，往返约 1100–1200 元。(<a target="_blank" rel="noopener" href="https://trains.ctrip.com/TrainBooking/guangzhounan-huangshan/gaotie/?utm_source=chatgpt.com" title="广州南到黄山高铁查询">携程火车票</a>)</p>
+</li>
+<li><p><strong>住宿策略</strong>：</p>
+<ul>
+<li>不住山上，<strong>两晚都住山下（汤口或者屯溪）</strong>，选 100–150&#x2F;晚的经济型酒店&#x2F;客栈。</li>
+</ul>
+</li>
+<li><p><strong>景点选择</strong>：</p>
+<ul>
+<li>D1–D2：黄山一日半：走索道+步行的轻量版线路</li>
+<li>D3：宏村半日 + 黄山市区随便逛，视预算可选</li>
+</ul>
+</li>
+<li><p><strong>控制花费的小技巧</strong>：</p>
+<ul>
+<li>索道只坐一段（上山坐，视体力下山走部分路）。</li>
+<li>山上的水&#x2F;零食尽量自带一些。</li>
+<li>宏村可以跟当地一日游&#x2F;拼车，省心也省一点车费。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="二、详细行程规划"><a href="#二、详细行程规划" class="headerlink" title="二、详细行程规划"></a>二、详细行程规划</h2><h3 id="▶-D1：广州-→-黄山北-→-汤口-屯溪（轻松抵达日）"><a href="#▶-D1：广州-→-黄山北-→-汤口-屯溪（轻松抵达日）" class="headerlink" title="▶ D1：广州 → 黄山北 → 汤口&#x2F;屯溪（轻松抵达日）"></a>▶ D1：广州 → 黄山北 → 汤口&#x2F;屯溪（轻松抵达日）</h3><p><strong>上午 &#x2F; 中午</strong></p>
+<ul>
+<li><p>从 <strong>广州南&#x2F;广州东&#x2F;广州新塘 → 黄山北</strong> 坐高铁，尽量选中午前出发、下午两三点到黄山北的车次（车程约 5 小时）。(<a target="_blank" rel="noopener" href="https://tw.trip.com/trains/china/route/guangzhou-to-huangshan/?utm_source=chatgpt.com" title="從廣州到黃山的高鐵預訂、票價及時刻表">Trip.com</a>)</p>
+</li>
+<li><p>黄山北出站后：</p>
+<ul>
+<li>若第二天一早上黄山：建议直接去 <strong>汤口镇（黄山南大门）</strong>，大巴或拼车约 1–1.5 小时。</li>
+<li>若想市区逛一逛：可以先住 <strong>屯溪老街附近</strong>，晚上吃吃逛逛。</li>
+</ul>
+</li>
+</ul>
+<p><strong>下午 &#x2F; 晚上</strong></p>
+<ul>
+<li>办理入住（控制在 <strong>100–150 元&#x2F;晚</strong> 的快捷酒店&#x2F;客栈）。</li>
+<li>在屯溪的话：逛 <strong>屯溪老街</strong>，吃一顿徽菜（毛豆腐、臭鳜鱼、刀板香等）。</li>
+<li>在汤口的话：熟悉第二天上山的大巴、售票处位置，早点休息。</li>
+</ul>
+<blockquote>
+<p>建议：预算紧 &amp; 主要目标是黄山 → <strong>D1 晚上住汤口</strong> 会更高效，第二天可以早早上山。</p>
+</blockquote>
+<hr>
+<h3 id="▶-D2：黄山一日游（索道-精华步行，不住山上）"><a href="#▶-D2：黄山一日游（索道-精华步行，不住山上）" class="headerlink" title="▶ D2：黄山一日游（索道 + 精华步行，不住山上）"></a>▶ D2：黄山一日游（索道 + 精华步行，不住山上）</h3><blockquote>
+<p>预算版选择：<strong>黄山一日“精华速刷版”</strong>，不上主峰也能感受到黄山特色。</p>
+</blockquote>
+<p><strong>早上</strong></p>
+<ol>
+<li><p>早起从酒店 → 汤口新国线换乘中心</p>
+</li>
+<li><p>买票：</p>
+<ul>
+<li>景区门票：平旺季 <strong>190 元&#x2F;人</strong>(<a target="_blank" rel="noopener" href="https://hf.bendibao.com/tour/2023331/91141.shtm?utm_source=chatgpt.com" title="黄山门票多少钱2025？附索道价格">hf.bendibao.com</a>)</li>
+<li>景区大巴：单程 19 元，上下山合计约 38 元。(<a target="_blank" rel="noopener" href="https://wap.huangshan.com.cn/hsdetail/ticket/park2017122114525726?addressLabel=04&utm_source=chatgpt.com" title="黄山风景区-门票索道详情">wap.huangshan.com.cn</a>)</li>
+</ul>
+</li>
+<li><p>坐大巴到 <strong>云谷寺（后山口）</strong> → 再坐 <strong>云谷索道上山</strong>，单程 80 元左右（平旺季）。(<a target="_blank" rel="noopener" href="https://hf.bendibao.com/tour/2023331/91141.shtm?utm_source=chatgpt.com" title="黄山门票多少钱2025？附索道价格">hf.bendibao.com</a>)</p>
+</li>
+</ol>
+<p><strong>上山后推荐线路（强度中等）：</strong></p>
+<ul>
+<li>索道上站（白鹅岭） → 始信峰（看奇松、怪石）</li>
+<li>北海景区：清凉台、猴子观海 等观景点</li>
+<li>喜欢走一点路的：可以往 西海入口 方向走一段，再折返，不进大峡谷深处（省体力）。</li>
+<li>中午在北海&#x2F;光明顶附近简单吃点自带干粮或景区快餐。</li>
+</ul>
+<p><strong>下午下山</strong></p>
+<ul>
+<li><p>体力不错：</p>
+<ul>
+<li>从北海 → 白鹅岭 → 步行下到 <strong>云谷寺</strong>（路程较长但一路风景不错）。</li>
+</ul>
+</li>
+<li><p>体力一般：</p>
+<ul>
+<li>返回云谷索道上站 → 再坐索道下山（再花 1×80 元）。</li>
+</ul>
+</li>
+</ul>
+<p>然后：云谷寺 → 大巴 → 汤口 → 回酒店休息。</p>
+<blockquote>
+<p>不上天都峰&#x2F;莲花峰，可以大幅度降低体力和时间消耗，一天玩得比较从容。</p>
+</blockquote>
+<hr>
+<h3 id="▶-D3：宏村半日游-回广州"><a href="#▶-D3：宏村半日游-回广州" class="headerlink" title="▶ D3：宏村半日游 + 回广州"></a>▶ D3：宏村半日游 + 回广州</h3><p><strong>早上：汤口&#x2F;屯溪 → 宏村</strong></p>
+<ul>
+<li>从汤口&#x2F;黄山市区报一个去 <strong>宏村的拼车&#x2F;一日游</strong>，或者去汽车站坐车，车程约 1–1.5 小时。</li>
+<li>宏村门票：成人约 <strong>90–100 元左右</strong>。(<a target="_blank" rel="noopener" href="https://touch.piao.qunar.com/touch/detail.htm?cat=from_area=ts_sku&from_index=4&from_value=%25E5%2590%2588%25E8%2582%25A5%25E5%25BF%2585%25E6%25B8%25B8&dist_city=%25E6%25B7%25AE%25E5%258C%2597&id=11072&utm_source=chatgpt.com" title="宏村景区门票 - 景点门票预订- 去哪儿网">去哪儿网</a>)</li>
+</ul>
+<p><strong>宏村游玩重点：</strong></p>
+<ul>
+<li>南湖、月沼：徽派建筑 + 水面倒影，拍照很好看。</li>
+<li>巷子里慢慢走走，找几家咖啡&#x2F;小吃店坐坐，体验古村氛围。</li>
+</ul>
+<p><strong>下午</strong></p>
+<ul>
+<li>午后从宏村 → 返回黄山北 &#x2F; 屯溪。</li>
+<li>预留足够时间，傍晚或晚上坐高铁 <strong>黄山北 → 广州</strong>。</li>
+</ul>
+<hr>
+<h2 id="三、人均费用粗算（按“2000-左右”来配）"><a href="#三、人均费用粗算（按“2000-左右”来配）" class="headerlink" title="三、人均费用粗算（按“2000 左右”来配）"></a>三、人均费用粗算（按“2000 左右”来配）</h2><blockquote>
+<p>下表是<strong>大致估算</strong>，实际以你订到的车票&#x2F;酒店为准。</p>
+</blockquote>
+<h3 id="1-大头：往返高铁"><a href="#1-大头：往返高铁" class="headerlink" title="1. 大头：往返高铁"></a>1. 大头：往返高铁</h3><ul>
+<li>广州 → 黄山北 二等座：约 520–600 元</li>
+<li>黄山北 → 广州 二等座：约 520–600 元<br>👉 合计按 <strong>1100–1200 元</strong> 预估。(<a target="_blank" rel="noopener" href="https://trains.ctrip.com/TrainBooking/guangzhounan-huangshan/gaotie/?utm_source=chatgpt.com" title="广州南到黄山高铁查询">携程火车票</a>)</li>
+</ul>
+<h3 id="2-景区门票-索道-大巴"><a href="#2-景区门票-索道-大巴" class="headerlink" title="2. 景区门票 + 索道 + 大巴"></a>2. 景区门票 + 索道 + 大巴</h3><ul>
+<li><p>黄山门票：190</p>
+</li>
+<li><p>黄山景区大巴：38（往返）</p>
+</li>
+<li><p>索道：</p>
+<ul>
+<li>只坐上行一次：80</li>
+<li>若上下都坐：160</li>
+</ul>
+</li>
+<li><p>宏村门票：约 94（按网上成人价估算）(<a target="_blank" rel="noopener" href="https://touch.piao.qunar.com/touch/detail.htm?cat=from_area=ts_sku&from_index=4&from_value=%25E5%2590%2588%25E8%2582%25A5%25E5%25BF%2585%25E6%25B8%25B8&dist_city=%25E6%25B7%25AE%25E5%258C%2597&id=11072&utm_source=chatgpt.com" title="宏村景区门票 - 景点门票预订- 去哪儿网">去哪儿网</a>)</p>
+</li>
+</ul>
+<p><strong>控制版（只坐单程索道）合计：</strong><br><code>190 + 38 + 80 + 94 ≈ 402 元</code></p>
+<p>如果你觉得体力一般，上下都坐索道：<br><code>190 + 38 + 160 + 94 ≈ 482 元</code></p>
+<h3 id="3-住宿"><a href="#3-住宿" class="headerlink" title="3. 住宿"></a>3. 住宿</h3><ul>
+<li>D1：汤口&#x2F;屯溪经济型酒店 100–150</li>
+<li>D2：同上，再 100–150<br>👉 住宿预估：<strong>200–300 元</strong></li>
+</ul>
+<h3 id="4-吃饭-当地交通"><a href="#4-吃饭-当地交通" class="headerlink" title="4. 吃饭 + 当地交通"></a>4. 吃饭 + 当地交通</h3><ul>
+<li>吃饭按 <strong>80–100 元&#x2F;天</strong> 算，3 天 ≈ 240–300 元</li>
+<li>市内&#x2F;镇内小交通、拼车到宏村等：预留 <strong>100–150 元</strong>。</li>
+</ul>
+<hr>
+<h3 id="5-总体汇总（偏省钱方案）"><a href="#5-总体汇总（偏省钱方案）" class="headerlink" title="5. 总体汇总（偏省钱方案）"></a>5. 总体汇总（偏省钱方案）</h3><p>按较省的方式估算（高铁 1100、索道只坐一次、酒店便宜点）：</p>
+<ul>
+<li>高铁：1100</li>
+<li>黄山 + 宏村门票&#x2F;车&#x2F;索道：约 400</li>
+<li>住宿：约 250</li>
+<li>吃饭 + 小交通：约 350</li>
+</ul>
+<p><strong>合计 ≈ 2100 元左右</strong></p>
+<blockquote>
+<p>也就是说：<strong>“两千左右”是可以做到的，但会略微紧张</strong>，主要看你高铁能不能抢到稍便宜的车次、酒店选多便宜的、索道坐几次。<br>如果你想更轻松一点（多坐索道、吃好一点），建议心里预留到 <strong>2200–2300</strong> 更舒服。</p>
+</blockquote>
+<hr>
+<h2 id="四、给你一个能直接照抄的简短行程版"><a href="#四、给你一个能直接照抄的简短行程版" class="headerlink" title="四、给你一个能直接照抄的简短行程版"></a>四、给你一个能直接照抄的简短行程版</h2><ul>
+<li><strong>D1</strong>：广州 → 黄山北（高铁）→ 汤口，入住；晚上简单逛逛、准备上山物资。</li>
+<li><strong>D2</strong>：汤口 → 黄山（云谷索道上 → 北海 → 始信峰 → 光明顶附近 → 视体力部分步行下山&#x2F;坐索道下），晚上回汤口 &#x2F; 屯溪休息。</li>
+<li><strong>D3</strong>：早上去宏村（南湖、月沼拍照闲逛），下午返回黄山北，傍晚&#x2F;晚上高铁回广州。</li>
+</ul>
+<p>如果你愿意告诉我<strong>大概出行月份 + 更偏“省钱”还是“轻松”</strong>，我可以帮你把上面每一天细到：大概几点出门、建议坐的车次时段、黄山具体走哪条步行路线，给你一个“可直接发给同伴&#x2F;直接订票用”的终版行程单。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/2024/09/13/%E7%AC%AC%E4%BA%8C%E6%AC%A1%E7%BB%84%E4%BC%9A/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/09/13/%E7%AC%AC%E4%BA%8C%E6%AC%A1%E7%BB%84%E4%BC%9A/" class="post-title-link" itemprop="url">第二次组会</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-09-13 22:33:37" itemprop="dateCreated datePublished" datetime="2024-09-13T22:33:37+08:00">2024-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-01-24 10:43:15" itemprop="dateModified" datetime="2026-01-24T10:43:15+08:00">2026-01-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%94%9F%E6%B4%BB/" itemprop="url" rel="index"><span itemprop="name">生活</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="第二次组会"><a href="#第二次组会" class="headerlink" title="第二次组会"></a>第二次组会</h1><p>一共四个人汇报，其中在投文献一篇方向为拉曼，三篇论汇报拉曼两片，层析一篇</p>
+<h2 id="在投文献"><a href="#在投文献" class="headerlink" title="在投文献"></a>在投文献</h2><p>深度学习预测单细胞H2O2含量</p>
+<h3 id="数据集"><a href="#数据集" class="headerlink" title="数据集"></a>数据集</h3><p>细胞的数据集在预测问题上可以看作为时间序列，或者弱化其时间的数据看为序列。这种序列和文字序列有一定的相识性，在处理这方面数据可以更多的考虑循环神经网络和注意力机制进行处理</p>
+<h3 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h3><p>注意力机制</p>
+<h3 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h3><p>未知</p>
+<h3 id="评价指标"><a href="#评价指标" class="headerlink" title="评价指标"></a>评价指标</h3><p>R^2</p>
+<h2 id="论文问题"><a href="#论文问题" class="headerlink" title="论文问题"></a>论文问题</h2><p>网络结构不清晰，深度学习三要素 网络模型、损失函数和评价指标的选取有问题</p>
+<h2 id="论文汇报"><a href="#论文汇报" class="headerlink" title="论文汇报"></a>论文汇报</h2><h3 id="transformer-RNN-超高清重建图像"><a href="#transformer-RNN-超高清重建图像" class="headerlink" title="transformer+RNN 超高清重建图像"></a>transformer+RNN 超高清重建图像</h3><h4 id="网络-1"><a href="#网络-1" class="headerlink" title="网络"></a>网络</h4><p>RNN(head)</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/2024/09/13/GAN%E7%BD%91%E7%BB%9C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/09/13/GAN%E7%BD%91%E7%BB%9C/" class="post-title-link" itemprop="url">GAN生成式对抗网络</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-09-13 00:00:00" itemprop="dateCreated datePublished" datetime="2024-09-13T00:00:00+08:00">2024-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-01-24 10:43:15" itemprop="dateModified" datetime="2026-01-24T10:43:15+08:00">2026-01-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="GAN生成式对抗网络"><a href="#GAN生成式对抗网络" class="headerlink" title="GAN生成式对抗网络"></a>GAN生成式对抗网络</h1><p>GAN生成式对抗网络，GAN网络由生成网络和判别网络两个网络组成，生成式网络通过学习图片后将噪声转换为图片，而判别式网络将区分数据集图片和生成图片进行判别。生成式与判别式网络类似与小偷与警察，通过不断的博弈互相升级，在这场游戏中我们更加希望小偷取得胜利。既是生成式网络生成的图片可以让判别器难以判断。</p>
+<h2 id="网络结构"><a href="#网络结构" class="headerlink" title="网络结构"></a>网络结构</h2><h3 id="网络模型"><a href="#网络模型" class="headerlink" title="网络模型"></a>网络模型</h3><h3 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h3><h3 id="评价指标"><a href="#评价指标" class="headerlink" title="评价指标"></a>评价指标</h3><h2 id="pytorch实现"><a href="#pytorch实现" class="headerlink" title="pytorch实现"></a>pytorch实现</h2><h2 id="GAN缺陷与改进"><a href="#GAN缺陷与改进" class="headerlink" title="GAN缺陷与改进"></a>GAN缺陷与改进</h2>
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/6/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/8/"><i class="fa fa-angle-right"></i></a>
+  </nav>
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-code"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">楚天</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

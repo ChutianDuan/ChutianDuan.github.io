@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chutianduan.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":2,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="内存泄漏检测与管理时间：2026&#x2F;04&#x2F;16  关键词：RAII、unique_ptr、shared_ptr 循环引用、Sanitizer、Valgrind、资源封装核心目标：把“谁释放、何时释放、怎么定位泄漏”变成工程上可检查的规则。   1. 什么才叫内存泄漏最典型的内存泄漏是：  一块堆内存已经没有任何有效路径再访问它 但它也永远不会被释放  例如： 123void ba">
+<meta property="og:type" content="article">
+<meta property="og:title" content="内存泄漏检测与管理">
+<meta property="og:url" content="https://chutianduan.github.io/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/14-%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E6%A3%80%E6%B5%8B%E4%B8%8E%E7%AE%A1%E7%90%86/index.html">
+<meta property="og:site_name" content="楚天">
+<meta property="og:description" content="内存泄漏检测与管理时间：2026&#x2F;04&#x2F;16  关键词：RAII、unique_ptr、shared_ptr 循环引用、Sanitizer、Valgrind、资源封装核心目标：把“谁释放、何时释放、怎么定位泄漏”变成工程上可检查的规则。   1. 什么才叫内存泄漏最典型的内存泄漏是：  一块堆内存已经没有任何有效路径再访问它 但它也永远不会被释放  例如： 123void ba">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-04-16T01:31:13.000Z">
+<meta property="article:modified_time" content="2026-04-16T01:31:13.000Z">
+<meta property="article:author" content="楚天">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="游戏网络">
+<meta property="article:tag" content="技术博客">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://chutianduan.github.io/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/14-%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E6%A3%80%E6%B5%8B%E4%B8%8E%E7%AE%A1%E7%90%86/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://chutianduan.github.io/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/14-%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E6%A3%80%E6%B5%8B%E4%B8%8E%E7%AE%A1%E7%90%86/","path":"/notes/现代c-实践/14-内存泄漏检测与管理/","title":"内存泄漏检测与管理"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>内存泄漏检测与管理 | 楚天</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">楚天</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">惟楚有材，于斯为盛</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-友情链接"><a href="/link/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E6%A3%80%E6%B5%8B%E4%B8%8E%E7%AE%A1%E7%90%86"><span class="nav-number">1.</span> <span class="nav-text">内存泄漏检测与管理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E4%BB%80%E4%B9%88%E6%89%8D%E5%8F%AB%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F"><span class="nav-number">1.1.</span> <span class="nav-text">1. 什么才叫内存泄漏</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%9C%80%E5%B8%B8%E8%A7%81%E7%9A%84%E6%B3%84%E6%BC%8F%E6%9D%A5%E6%BA%90"><span class="nav-number">1.2.</span> <span class="nav-text">2. 最常见的泄漏来源</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E8%A3%B8-new-delete-%E9%85%8D%E5%AF%B9%E5%A4%B1%E8%B4%A5"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 裸 new &#x2F; delete 配对失败</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E5%AE%B9%E5%99%A8%E9%87%8C%E6%94%BE-owning-raw-pointer"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 容器里放 owning raw pointer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-shared-ptr-%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 shared_ptr 循环引用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-C-%E9%A3%8E%E6%A0%BC%E8%B5%84%E6%BA%90%E6%B2%A1%E5%8F%8A%E6%97%B6%E5%B0%81%E8%A3%85"><span class="nav-number">1.2.4.</span> <span class="nav-text">2.4 C 风格资源没及时封装</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E7%AC%AC%E4%B8%80%E5%8E%9F%E5%88%99%EF%BC%9A%E5%85%88%E5%88%AB%E5%86%99%E5%87%BA%E4%BC%9A%E6%B3%84%E6%BC%8F%E7%9A%84%E4%BB%A3%E7%A0%81"><span class="nav-number">1.3.</span> <span class="nav-text">3. 第一原则：先别写出会泄漏的代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E4%B8%80%E4%B8%AA%E5%85%B8%E5%9E%8B%E6%B3%84%E6%BC%8F%E4%BE%8B%E5%AD%90"><span class="nav-number">1.4.</span> <span class="nav-text">4. 一个典型泄漏例子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E4%B9%9F%E4%B8%8D%E6%98%AF%E7%BB%9D%E5%AF%B9%E5%AE%89%E5%85%A8"><span class="nav-number">1.5.</span> <span class="nav-text">5. 智能指针也不是绝对安全</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E6%B3%84%E6%BC%8F%E5%92%8C%E2%80%9C%E5%86%85%E5%AD%98%E4%B8%80%E7%9B%B4%E6%B6%A8%E2%80%9D%E4%B8%8D%E6%98%AF%E4%B8%80%E5%9B%9E%E4%BA%8B"><span class="nav-number">1.6.</span> <span class="nav-text">6. 泄漏和“内存一直涨”不是一回事</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-%E6%80%8E%E4%B9%88%E6%A3%80%E6%B5%8B%E6%B3%84%E6%BC%8F"><span class="nav-number">1.7.</span> <span class="nav-text">7. 怎么检测泄漏</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-%E5%85%88%E4%B8%8A-Sanitizer"><span class="nav-number">1.7.1.</span> <span class="nav-text">7.1 先上 Sanitizer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-%E5%86%8D%E7%94%A8-Valgrind-%E7%9C%8B%E5%AD%98%E9%87%8F%E9%97%AE%E9%A2%98"><span class="nav-number">1.7.2.</span> <span class="nav-text">7.2 再用 Valgrind 看存量问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-3-%E5%88%AB%E5%8F%AA%E6%B5%8B%E2%80%9C%E6%AD%A3%E5%B8%B8%E9%80%80%E5%87%BA%E2%80%9D"><span class="nav-number">1.7.3.</span> <span class="nav-text">7.3 别只测“正常退出”</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-%E5%B7%A5%E7%A8%8B%E9%87%8C%E7%9A%84%E6%B3%84%E6%BC%8F%E7%AE%A1%E7%90%86%E6%B8%85%E5%8D%95"><span class="nav-number">1.8.</span> <span class="nav-text">8. 工程里的泄漏管理清单</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-%E4%B8%80%E9%A1%B5%E6%80%BB%E7%BB%93"><span class="nav-number">1.9.</span> <span class="nav-text">9. 一页总结</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="楚天"
+      src="/img/me.jpg">
+  <p class="site-author-name" itemprop="name">楚天</p>
+  <div class="site-description" itemprop="description">记录深度学习、C++、游戏网络与生活旅行的学习笔记。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ChutianDuan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ChutianDuan" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:3383006954@qq.com" title="E-Mail → mailto:3383006954@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/14-%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E6%A3%80%E6%B5%8B%E4%B8%8E%E7%AE%A1%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="内存泄漏检测与管理 | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          内存泄漏检测与管理
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-04-16 09:31:13" itemprop="dateCreated datePublished" datetime="2026-04-16T09:31:13+08:00">2026-04-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/%E7%8E%B0%E4%BB%A3C-%E5%AE%9E%E8%B7%B5/" itemprop="url" rel="index"><span itemprop="name">现代C++实践</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="内存泄漏检测与管理"><a href="#内存泄漏检测与管理" class="headerlink" title="内存泄漏检测与管理"></a>内存泄漏检测与管理</h1><p>时间：2026&#x2F;04&#x2F;16</p>
+<blockquote>
+<p>关键词：RAII、<code>unique_ptr</code>、<code>shared_ptr</code> 循环引用、Sanitizer、Valgrind、资源封装<br>核心目标：把“谁释放、何时释放、怎么定位泄漏”变成工程上可检查的规则。</p>
+</blockquote>
+<hr>
+<h2 id="1-什么才叫内存泄漏"><a href="#1-什么才叫内存泄漏" class="headerlink" title="1. 什么才叫内存泄漏"></a>1. 什么才叫内存泄漏</h2><p>最典型的内存泄漏是：</p>
+<ul>
+<li>一块堆内存已经没有任何有效路径再访问它</li>
+<li>但它也永远不会被释放</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">bad</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span>* p = <span class="keyword">new</span> <span class="built_in">int</span>(<span class="number">42</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>函数结束后，<code>p</code> 没了，这块内存也没人能再 <code>delete</code>。<br>这就是最标准的泄漏。</p>
+<p>但工程里还要区分另一类问题：</p>
+<ul>
+<li>对象严格来说还“可达”</li>
+<li>但长期不释放，内存占用持续上涨</li>
+</ul>
+<p>这未必是严格意义上的 leak，但同样会把服务拖垮。</p>
+<hr>
+<h2 id="2-最常见的泄漏来源"><a href="#2-最常见的泄漏来源" class="headerlink" title="2. 最常见的泄漏来源"></a>2. 最常见的泄漏来源</h2><h3 id="2-1-裸-new-delete-配对失败"><a href="#2-1-裸-new-delete-配对失败" class="headerlink" title="2.1 裸 new &#x2F; delete 配对失败"></a>2.1 裸 <code>new</code> &#x2F; <code>delete</code> 配对失败</h3><p>最常见的问题不是“不会 <code>delete</code>”，而是：</p>
+<ul>
+<li>提前 <code>return</code></li>
+<li>中途 <code>throw</code></li>
+<li>多分支路径漏掉释放</li>
+</ul>
+<h3 id="2-2-容器里放-owning-raw-pointer"><a href="#2-2-容器里放-owning-raw-pointer" class="headerlink" title="2.2 容器里放 owning raw pointer"></a>2.2 容器里放 owning raw pointer</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">std::vector&lt;Foo*&gt; items;</span><br><span class="line">items.<span class="built_in">push_back</span>(<span class="keyword">new</span> <span class="built_in">Foo</span>());</span><br></pre></td></tr></table></figure>
+
+<p>这种写法会把“谁来删”变成记忆题。</p>
+<h3 id="2-3-shared-ptr-循环引用"><a href="#2-3-shared-ptr-循环引用" class="headerlink" title="2.3 shared_ptr 循环引用"></a>2.3 <code>shared_ptr</code> 循环引用</h3><p>两个对象互相持有 <code>shared_ptr</code>，引用计数永远不会归零。</p>
+<h3 id="2-4-C-风格资源没及时封装"><a href="#2-4-C-风格资源没及时封装" class="headerlink" title="2.4 C 风格资源没及时封装"></a>2.4 C 风格资源没及时封装</h3><p>比如：</p>
+<ul>
+<li><code>FILE*</code></li>
+<li><code>malloc/free</code></li>
+<li>socket &#x2F; fd</li>
+<li>第三方库句柄</li>
+</ul>
+<p>如果它们在业务代码里裸奔，后面很容易漏掉释放。</p>
+<hr>
+<h2 id="3-第一原则：先别写出会泄漏的代码"><a href="#3-第一原则：先别写出会泄漏的代码" class="headerlink" title="3. 第一原则：先别写出会泄漏的代码"></a>3. 第一原则：先别写出会泄漏的代码</h2><p>现代 C++ 管理泄漏，重点不是“人工记得回收”，而是默认采用不容易泄漏的结构。</p>
+<p>优先顺序通常是：</p>
+<ol>
+<li>能值语义就值语义</li>
+<li>能栈对象就栈对象</li>
+<li>必须动态分配时优先 <code>std::unique_ptr</code></li>
+<li>确实需要共享拥有时才用 <code>std::shared_ptr</code></li>
+<li>裸指针和引用默认只表达观察，不表达拥有</li>
+</ol>
+<p>这背后的核心思想就是 RAII：</p>
+<ul>
+<li>对象析构时自动释放资源</li>
+</ul>
+<p>只要生命周期跟对象绑在一起，泄漏风险会大幅下降。</p>
+<hr>
+<h2 id="4-一个典型泄漏例子"><a href="#4-一个典型泄漏例子" class="headerlink" title="4. 一个典型泄漏例子"></a>4. 一个典型泄漏例子</h2><p>错误写法：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;memory&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Widget</span> &#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function">Widget* <span class="title">create_widget</span><span class="params">(<span class="type">bool</span> failed)</span> </span>&#123;</span><br><span class="line">    Widget* p = <span class="keyword">new</span> <span class="built_in">Widget</span>();</span><br><span class="line">    <span class="keyword">if</span> (failed) <span class="keyword">return</span> <span class="literal">nullptr</span>; <span class="comment">// 泄漏</span></span><br><span class="line">    <span class="keyword">return</span> p;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>问题不在 <code>new</code> 本身，而在：</p>
+<ul>
+<li>释放依赖调用路径是否完整</li>
+</ul>
+<p>更稳妥的写法：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;memory&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Widget</span> &#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function">std::unique_ptr&lt;Widget&gt; <span class="title">create_widget</span><span class="params">(<span class="type">bool</span> failed)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> p = std::<span class="built_in">make_unique</span>&lt;Widget&gt;();</span><br><span class="line">    <span class="keyword">if</span> (failed) <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">    <span class="keyword">return</span> p;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样即使中途提前返回，局部对象也会自动清理。</p>
+<hr>
+<h2 id="5-智能指针也不是绝对安全"><a href="#5-智能指针也不是绝对安全" class="headerlink" title="5. 智能指针也不是绝对安全"></a>5. 智能指针也不是绝对安全</h2><p><code>unique_ptr</code> 很少造成泄漏，真正容易出问题的是 <code>shared_ptr</code>。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;memory&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Node</span> &#123;</span><br><span class="line">    std::shared_ptr&lt;Node&gt; next;</span><br><span class="line">    std::shared_ptr&lt;Node&gt; prev; <span class="comment">// 错：可能形成环</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>如果两个节点互相持有，引用计数就会卡住。</p>
+<p>更常见的修正方式是：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;memory&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Node</span> &#123;</span><br><span class="line">    std::shared_ptr&lt;Node&gt; next;</span><br><span class="line">    std::weak_ptr&lt;Node&gt; prev; <span class="comment">// 观察，不拥有</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>经验上：</p>
+<ul>
+<li>形成树状、图状、双向关系时，先主动检查是否存在环</li>
+<li>“回指”通常更适合 <code>weak_ptr</code></li>
+</ul>
+<hr>
+<h2 id="6-泄漏和“内存一直涨”不是一回事"><a href="#6-泄漏和“内存一直涨”不是一回事" class="headerlink" title="6. 泄漏和“内存一直涨”不是一回事"></a>6. 泄漏和“内存一直涨”不是一回事</h2><p>下面这些情况不一定是严格意义上的 leak：</p>
+<ul>
+<li>全局缓存只增不减</li>
+<li><code>std::vector</code> &#x2F; <code>std::string</code> 容量长期不回收</li>
+<li>任务队列积压</li>
+<li>对象池尺寸只扩不缩</li>
+</ul>
+<p>它们的问题是：</p>
+<ul>
+<li>生命周期策略不合理</li>
+<li>上限控制缺失</li>
+</ul>
+<p>所以排查内存问题时，要先分清两类：</p>
+<ol>
+<li>对象已经不可达，但没释放</li>
+<li>对象还可达，但系统把它留得太久</li>
+</ol>
+<p>前者更像 bug，后者更像管理问题，但两者都要处理。</p>
+<hr>
+<h2 id="7-怎么检测泄漏"><a href="#7-怎么检测泄漏" class="headerlink" title="7. 怎么检测泄漏"></a>7. 怎么检测泄漏</h2><h3 id="7-1-先上-Sanitizer"><a href="#7-1-先上-Sanitizer" class="headerlink" title="7.1 先上 Sanitizer"></a>7.1 先上 Sanitizer</h3><p>本地开发最常用的办法通常是编译时打开 Sanitizer：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">clang++ -std=c++20 -g -O1 -fno-omit-frame-pointer -fsanitize=address main.cpp -o app</span><br><span class="line">ASAN_OPTIONS=detect_leaks=1 ./app</span><br></pre></td></tr></table></figure>
+
+<p>如果你的工具链把 leak 检测拆开，也可以按需使用：</p>
+<ul>
+<li><code>-fsanitize=leak</code></li>
+</ul>
+<p>它的优点是：</p>
+<ul>
+<li>定位快</li>
+<li>栈回溯清楚</li>
+<li>很适合集成到测试里</li>
+</ul>
+<h3 id="7-2-再用-Valgrind-看存量问题"><a href="#7-2-再用-Valgrind-看存量问题" class="headerlink" title="7.2 再用 Valgrind 看存量问题"></a>7.2 再用 Valgrind 看存量问题</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">valgrind --leak-check=full --show-leak-kinds=all ./app</span><br></pre></td></tr></table></figure>
+
+<p>它更慢，但对一些历史代码排查仍然很有价值。</p>
+<h3 id="7-3-别只测“正常退出”"><a href="#7-3-别只测“正常退出”" class="headerlink" title="7.3 别只测“正常退出”"></a>7.3 别只测“正常退出”</h3><p>很多泄漏只在这些场景出现：</p>
+<ul>
+<li>异常路径</li>
+<li>超时取消</li>
+<li>重试逻辑</li>
+<li>长时间运行</li>
+<li>高并发压力</li>
+</ul>
+<p>所以测试不能只跑正常路径。</p>
+<hr>
+<h2 id="8-工程里的泄漏管理清单"><a href="#8-工程里的泄漏管理清单" class="headerlink" title="8. 工程里的泄漏管理清单"></a>8. 工程里的泄漏管理清单</h2><p>真正有效的治理，通常不是靠某一个工具，而是靠几条长期规则：</p>
+<ul>
+<li>新代码默认不写“拥有语义的裸指针”</li>
+<li>业务代码里尽量不直接出现 <code>new</code> &#x2F; <code>delete</code></li>
+<li>工厂接口优先返回 <code>std::unique_ptr</code></li>
+<li>容器里优先放对象或智能指针，不放“需要人工回收”的裸指针</li>
+<li>第三方资源在进入系统边界时立即封装成 RAII 类型</li>
+<li><code>shared_ptr</code> 关系图需要专门检查循环引用</li>
+<li>测试或 CI 中固定开启 Sanitizer 版本</li>
+<li>对缓存、对象池、队列设置上限，而不是默认无限增长</li>
+</ul>
+<p>这才叫“管理”，不是出了问题再临时抓日志。</p>
+<hr>
+<h2 id="9-一页总结"><a href="#9-一页总结" class="headerlink" title="9. 一页总结"></a>9. 一页总结</h2><p>最值得记住的五条：</p>
+<ol>
+<li>泄漏治理的核心不是“记得释放”，而是明确所有权</li>
+<li>默认优先值语义、栈对象和 RAII</li>
+<li>动态分配优先 <code>unique_ptr</code>，不是裸指针</li>
+<li><code>shared_ptr</code> 最大的风险是循环引用</li>
+<li>用 Sanitizer 和 Valgrind 查问题，不要靠肉眼猜</li>
+</ol>
+<p>如果只记一句：</p>
+<blockquote>
+<p>预防内存泄漏最有效的方法，不是手写更多 <code>delete</code>，而是让代码结构默认不需要手写 <code>delete</code>。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>楚天
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://chutianduan.github.io/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/14-%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E6%A3%80%E6%B5%8B%E4%B8%8E%E7%AE%A1%E7%90%86/" title="内存泄漏检测与管理">https://chutianduan.github.io/notes/现代c-实践/14-内存泄漏检测与管理/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/00-%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5%E5%AF%BC%E8%AF%BB/" rel="prev" title="现代 C++ 实践导读">
+                  <i class="fa fa-angle-left"></i> 现代 C++ 实践导读
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/redis/" rel="next" title="Redis 学习笔记">
+                  Redis 学习笔记 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-code"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">楚天</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chutianduan.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":2,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="ranges 与 views时间：2026&#x2F;04&#x2F;09  关键词：std::ranges、std::views、惰性求值、管道风格、projection、view、dangling核心目标：理解 ranges 为什么不是“语法糖”，以及 views 在工程里到底解决了什么问题。   1. 为什么会有 ranges传统 STL 算法常见写法是： 12std::sort(v.beg">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ranges 与 views">
+<meta property="og:url" content="https://chutianduan.github.io/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/12-ranges%E4%B8%8Eviews/index.html">
+<meta property="og:site_name" content="楚天">
+<meta property="og:description" content="ranges 与 views时间：2026&#x2F;04&#x2F;09  关键词：std::ranges、std::views、惰性求值、管道风格、projection、view、dangling核心目标：理解 ranges 为什么不是“语法糖”，以及 views 在工程里到底解决了什么问题。   1. 为什么会有 ranges传统 STL 算法常见写法是： 12std::sort(v.beg">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-04-09T02:50:31.000Z">
+<meta property="article:modified_time" content="2026-04-09T02:50:31.000Z">
+<meta property="article:author" content="楚天">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="游戏网络">
+<meta property="article:tag" content="技术博客">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://chutianduan.github.io/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/12-ranges%E4%B8%8Eviews/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://chutianduan.github.io/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/12-ranges%E4%B8%8Eviews/","path":"/notes/现代c-实践/12-ranges与views/","title":"ranges 与 views"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ranges 与 views | 楚天</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">楚天</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">惟楚有材，于斯为盛</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-友情链接"><a href="/link/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ranges-%E4%B8%8E-views"><span class="nav-number">1.</span> <span class="nav-text">ranges 与 views</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E6%9C%89-ranges"><span class="nav-number">1.1.</span> <span class="nav-text">1. 为什么会有 ranges</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E4%BB%80%E4%B9%88%E6%98%AF-range"><span class="nav-number">1.2.</span> <span class="nav-text">2. 什么是 range</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-ranges-%E7%AE%97%E6%B3%95%E5%92%8C%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">1.3.</span> <span class="nav-text">3. ranges 算法和传统算法的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-views-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.4.</span> <span class="nav-text">4. views 是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E4%B8%BA%E4%BB%80%E4%B9%88-views-%E5%BE%88%E6%9C%89%E4%BB%B7%E5%80%BC"><span class="nav-number">1.5.</span> <span class="nav-text">5. 为什么 views 很有价值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E6%9C%80%E5%B8%B8%E8%A7%81%E7%9A%84-view-%E9%80%82%E9%85%8D%E5%99%A8"><span class="nav-number">1.6.</span> <span class="nav-text">6. 最常见的 view 适配器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-filter"><span class="nav-number">1.6.1.</span> <span class="nav-text">6.1 filter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-transform"><span class="nav-number">1.6.2.</span> <span class="nav-text">6.2 transform</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-take"><span class="nav-number">1.6.3.</span> <span class="nav-text">6.3 take</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-4-drop"><span class="nav-number">1.6.4.</span> <span class="nav-text">6.4 drop</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-5-keys-values"><span class="nav-number">1.6.5.</span> <span class="nav-text">6.5 keys &#x2F; values</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-%E7%AE%A1%E9%81%93%E9%A3%8E%E6%A0%BC%E6%9C%80%E7%9B%B4%E8%A7%82%E7%9A%84%E4%BE%8B%E5%AD%90"><span class="nav-number">1.7.</span> <span class="nav-text">7. 管道风格最直观的例子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-views-%E7%9A%84%E4%B8%80%E4%B8%AA%E5%85%B3%E9%94%AE%E7%82%B9%EF%BC%9A%E6%83%B0%E6%80%A7"><span class="nav-number">1.8.</span> <span class="nav-text">8. views 的一个关键点：惰性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-view-%E5%92%8C%E5%AE%B9%E5%99%A8%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">1.9.</span> <span class="nav-text">9. view 和容器的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E9%9C%80%E8%A6%81%E6%8A%8A-view-%E8%90%BD%E5%9C%B0%E6%88%90%E5%AE%B9%E5%99%A8"><span class="nav-number">1.10.</span> <span class="nav-text">10. 什么时候需要把 view 落地成容器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-projection%EF%BC%9Aranges-%E9%87%8C%E9%9D%9E%E5%B8%B8%E5%AE%9E%E7%94%A8%E4%BD%86%E7%BB%8F%E5%B8%B8%E8%A2%AB%E5%BF%BD%E7%95%A5%E7%9A%84%E7%82%B9"><span class="nav-number">1.11.</span> <span class="nav-text">11. projection：ranges 里非常实用但经常被忽略的点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-%E5%B8%B8%E8%A7%81%E7%AE%97%E6%B3%95%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.12.</span> <span class="nav-text">12. 常见算法示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E9%97%AE%E9%A2%98%EF%BC%9Aviews-%E6%9C%80%E5%A4%A7%E7%9A%84%E5%9D%91%E4%B9%8B%E4%B8%80"><span class="nav-number">1.13.</span> <span class="nav-text">13. 生命周期问题：views 最大的坑之一</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-%E5%B8%B8%E8%A7%81%E5%9D%91"><span class="nav-number">1.14.</span> <span class="nav-text">14. 常见坑</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#14-1-%E6%8A%8A-view-%E5%BD%93%E6%8B%A5%E6%9C%89%E7%BB%93%E6%9E%9C%E7%9A%84%E5%AE%B9%E5%99%A8"><span class="nav-number">1.14.1.</span> <span class="nav-text">14.1 把 view 当拥有结果的容器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14-2-%E5%BA%95%E5%B1%82%E5%AE%B9%E5%99%A8%E5%8F%98%E4%BA%86%EF%BC%8Cview-%E5%8D%B4%E8%BF%98%E5%9C%A8%E7%BB%A7%E7%BB%AD%E7%94%A8"><span class="nav-number">1.14.2.</span> <span class="nav-text">14.2 底层容器变了，view 却还在继续用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14-3-pipeline-%E8%BF%87%E9%95%BF%E4%B8%94%E5%B8%A6%E5%89%AF%E4%BD%9C%E7%94%A8"><span class="nav-number">1.14.3.</span> <span class="nav-text">14.3 pipeline 过长且带副作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14-4-%E8%AF%AF%E4%BB%A5%E4%B8%BA-ranges-%E4%B8%80%E5%AE%9A%E6%9B%B4%E5%BF%AB"><span class="nav-number">1.14.4.</span> <span class="nav-text">14.4 误以为 ranges 一定更快</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#15-%E4%B8%80%E9%A1%B5%E6%80%BB%E7%BB%93"><span class="nav-number">1.15.</span> <span class="nav-text">15. 一页总结</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="楚天"
+      src="/img/me.jpg">
+  <p class="site-author-name" itemprop="name">楚天</p>
+  <div class="site-description" itemprop="description">记录深度学习、C++、游戏网络与生活旅行的学习笔记。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ChutianDuan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ChutianDuan" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:3383006954@qq.com" title="E-Mail → mailto:3383006954@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/12-ranges%E4%B8%8Eviews/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ranges 与 views | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ranges 与 views
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-04-09 10:50:31" itemprop="dateCreated datePublished" datetime="2026-04-09T10:50:31+08:00">2026-04-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/%E7%8E%B0%E4%BB%A3C-%E5%AE%9E%E8%B7%B5/" itemprop="url" rel="index"><span itemprop="name">现代C++实践</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="ranges-与-views"><a href="#ranges-与-views" class="headerlink" title="ranges 与 views"></a>ranges 与 views</h1><p>时间：2026&#x2F;04&#x2F;09</p>
+<blockquote>
+<p>关键词：<code>std::ranges</code>、<code>std::views</code>、惰性求值、管道风格、projection、view、dangling<br>核心目标：理解 ranges 为什么不是“语法糖”，以及 views 在工程里到底解决了什么问题。</p>
+</blockquote>
+<hr>
+<h2 id="1-为什么会有-ranges"><a href="#1-为什么会有-ranges" class="headerlink" title="1. 为什么会有 ranges"></a>1. 为什么会有 ranges</h2><p>传统 STL 算法常见写法是：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">std::<span class="built_in">sort</span>(v.<span class="built_in">begin</span>(), v.<span class="built_in">end</span>());</span><br><span class="line"><span class="keyword">auto</span> it = std::<span class="built_in">find_if</span>(v.<span class="built_in">begin</span>(), v.<span class="built_in">end</span>(), pred);</span><br></pre></td></tr></table></figure>
+
+<p>它的问题不是不能用，而是：</p>
+<ul>
+<li><code>begin/end</code> 很机械</li>
+<li>容器、区间、子区间表达不统一</li>
+<li>组合多步处理时可读性一般</li>
+</ul>
+<p><code>std::ranges</code> 的目标是：</p>
+<ul>
+<li>直接面向“区间”编程</li>
+<li>让算法和数据视图更自然地组合</li>
+</ul>
+<hr>
+<h2 id="2-什么是-range"><a href="#2-什么是-range" class="headerlink" title="2. 什么是 range"></a>2. 什么是 range</h2><p>可以先粗略理解成：</p>
+<blockquote>
+<p>一个可以拿到 <code>begin</code> 和 <code>end</code> 的可遍历对象。</p>
+</blockquote>
+<p>例如：</p>
+<ul>
+<li><code>std::vector</code></li>
+<li><code>std::array</code></li>
+<li><code>std::string</code></li>
+<li>某些 view</li>
+</ul>
+<p>所以 <code>ranges</code> 的核心不是新容器，而是：</p>
+<ul>
+<li>一套更统一的区间抽象</li>
+</ul>
+<hr>
+<h2 id="3-ranges-算法和传统算法的区别"><a href="#3-ranges-算法和传统算法的区别" class="headerlink" title="3. ranges 算法和传统算法的区别"></a>3. ranges 算法和传统算法的区别</h2><p>传统写法：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">std::<span class="built_in">sort</span>(v.<span class="built_in">begin</span>(), v.<span class="built_in">end</span>());</span><br></pre></td></tr></table></figure>
+
+<p>ranges 写法：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">std::ranges::<span class="built_in">sort</span>(v);</span><br></pre></td></tr></table></figure>
+
+<p>优点：</p>
+<ul>
+<li>少写重复样板</li>
+<li>更容易配合子区间和 view</li>
+<li>接口更贴近“处理一段范围”这件事</li>
+</ul>
+<hr>
+<h2 id="4-views-是什么"><a href="#4-views-是什么" class="headerlink" title="4. views 是什么"></a>4. views 是什么</h2><p><code>view</code> 可以先理解成：</p>
+<blockquote>
+<p>一个轻量、通常不拥有数据、按需计算的区间视图。</p>
+</blockquote>
+<p>它最重要的特性通常是：</p>
+<ul>
+<li>不拷贝底层数据</li>
+<li>惰性求值</li>
+<li>可组合</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> even = v | std::views::<span class="built_in">filter</span>([](<span class="type">int</span> x) &#123; <span class="keyword">return</span> x % <span class="number">2</span> == <span class="number">0</span>; &#125;);</span><br></pre></td></tr></table></figure>
+
+<p>这里并没有立刻生成一个新容器。</p>
+<hr>
+<h2 id="5-为什么-views-很有价值"><a href="#5-为什么-views-很有价值" class="headerlink" title="5. 为什么 views 很有价值"></a>5. 为什么 views 很有价值</h2><p>如果没有 views，很多处理中间会写成：</p>
+<ul>
+<li>先过滤到一个新 vector</li>
+<li>再 transform 到另一个新 vector</li>
+<li>再截取前几个元素</li>
+</ul>
+<p>这样的问题是：</p>
+<ul>
+<li>中间容器多</li>
+<li>拷贝和分配多</li>
+<li>代码意图被“存中间结果”打断</li>
+</ul>
+<p>views 的思路是：</p>
+<ul>
+<li>先把处理流程串起来</li>
+<li>真正遍历时再逐步应用</li>
+</ul>
+<hr>
+<h2 id="6-最常见的-view-适配器"><a href="#6-最常见的-view-适配器" class="headerlink" title="6. 最常见的 view 适配器"></a>6. 最常见的 view 适配器</h2><h3 id="6-1-filter"><a href="#6-1-filter" class="headerlink" title="6.1 filter"></a>6.1 <code>filter</code></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> even = v | std::views::<span class="built_in">filter</span>([](<span class="type">int</span> x) &#123; <span class="keyword">return</span> x % <span class="number">2</span> == <span class="number">0</span>; &#125;);</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-2-transform"><a href="#6-2-transform" class="headerlink" title="6.2 transform"></a>6.2 <code>transform</code></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> sq = v | std::views::<span class="built_in">transform</span>([](<span class="type">int</span> x) &#123; <span class="keyword">return</span> x * x; &#125;);</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-3-take"><a href="#6-3-take" class="headerlink" title="6.3 take"></a>6.3 <code>take</code></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> first3 = v | std::views::<span class="built_in">take</span>(<span class="number">3</span>);</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-4-drop"><a href="#6-4-drop" class="headerlink" title="6.4 drop"></a>6.4 <code>drop</code></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> tail = v | std::views::<span class="built_in">drop</span>(<span class="number">5</span>);</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-5-keys-values"><a href="#6-5-keys-values" class="headerlink" title="6.5 keys &#x2F; values"></a>6.5 <code>keys</code> &#x2F; <code>values</code></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> ks = mp | std::views::keys;</span><br><span class="line"><span class="keyword">auto</span> vs = mp | std::views::values;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="7-管道风格最直观的例子"><a href="#7-管道风格最直观的例子" class="headerlink" title="7. 管道风格最直观的例子"></a>7. 管道风格最直观的例子</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;ranges&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::vector&lt;<span class="type">int</span>&gt; v = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">auto</span> result = v</span><br><span class="line">        | std::views::<span class="built_in">filter</span>([](<span class="type">int</span> x) &#123; <span class="keyword">return</span> x % <span class="number">2</span> == <span class="number">0</span>; &#125;)</span><br><span class="line">        | std::views::<span class="built_in">transform</span>([](<span class="type">int</span> x) &#123; <span class="keyword">return</span> x * x; &#125;)</span><br><span class="line">        | std::views::<span class="built_in">take</span>(<span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> x : result) &#123;</span><br><span class="line">        std::cout &lt;&lt; x &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="8-views-的一个关键点：惰性"><a href="#8-views-的一个关键点：惰性" class="headerlink" title="8. views 的一个关键点：惰性"></a>8. views 的一个关键点：惰性</h2><p>下面这句：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> result = v | std::views::<span class="built_in">filter</span>(pred);</span><br></pre></td></tr></table></figure>
+
+<p>通常不会立刻把所有元素筛一遍。<br>真正发生计算，往往是在你：</p>
+<ul>
+<li>遍历它</li>
+<li>构造新容器</li>
+<li>调用需要实际消费元素的算法</li>
+</ul>
+<p>所以 <code>view</code> 更像“处理规则的组合”，不是立即产出的结果集。</p>
+<hr>
+<h2 id="9-view-和容器的区别"><a href="#9-view-和容器的区别" class="headerlink" title="9. view 和容器的区别"></a>9. view 和容器的区别</h2><p>容器更像：</p>
+<ul>
+<li>真正拥有数据</li>
+<li>独立存储结果</li>
+</ul>
+<p>view 更像：</p>
+<ul>
+<li>一层观察或变换</li>
+<li>常常依赖底层对象继续存在</li>
+</ul>
+<p>这一点直接影响生命周期安全。</p>
+<hr>
+<h2 id="10-什么时候需要把-view-落地成容器"><a href="#10-什么时候需要把-view-落地成容器" class="headerlink" title="10. 什么时候需要把 view 落地成容器"></a>10. 什么时候需要把 view 落地成容器</h2><p>如果你需要：</p>
+<ul>
+<li>持久保存结果</li>
+<li>随机访问结果</li>
+<li>与不支持 ranges 的旧接口交互</li>
+</ul>
+<p>就需要把 view materialize 成容器。</p>
+<p>常见方式：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">std::vector&lt;<span class="type">int</span>&gt; <span class="title">out</span><span class="params">(std::ranges::begin(view), std::ranges::end(view))</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>如果是 C++23，还常见：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> out = view | std::ranges::<span class="built_in">to</span>&lt;std::vector&gt;();</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="11-projection：ranges-里非常实用但经常被忽略的点"><a href="#11-projection：ranges-里非常实用但经常被忽略的点" class="headerlink" title="11. projection：ranges 里非常实用但经常被忽略的点"></a>11. <code>projection</code>：ranges 里非常实用但经常被忽略的点</h2><p>很多 ranges 算法支持 projection。<br>意思是：</p>
+<ul>
+<li>比较或匹配前，先对元素投影出某个字段</li>
+</ul>
+<p>例如按成员排序：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">User</span> &#123;</span><br><span class="line">    <span class="type">int</span> id;</span><br><span class="line">    std::string name;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">std::ranges::<span class="built_in">sort</span>(users, &#123;&#125;, &amp;User::id);</span><br></pre></td></tr></table></figure>
+
+<p>这在工程里很实用。</p>
+<hr>
+<h2 id="12-常见算法示例"><a href="#12-常见算法示例" class="headerlink" title="12. 常见算法示例"></a>12. 常见算法示例</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> it = std::ranges::<span class="built_in">find</span>(v, <span class="number">42</span>);</span><br><span class="line">std::ranges::<span class="built_in">sort</span>(v);</span><br><span class="line"><span class="type">bool</span> ok = std::ranges::<span class="built_in">all_of</span>(v, pred);</span><br><span class="line">std::ranges::<span class="built_in">copy</span>(v, std::<span class="built_in">back_inserter</span>(out));</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="13-生命周期问题：views-最大的坑之一"><a href="#13-生命周期问题：views-最大的坑之一" class="headerlink" title="13. 生命周期问题：views 最大的坑之一"></a>13. 生命周期问题：views 最大的坑之一</h2><p>因为很多 view 不拥有数据，所以要小心底层对象生命周期。</p>
+<p>危险例子：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">auto</span> <span class="title">make_view</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::vector&lt;<span class="type">int</span>&gt; v = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;;</span><br><span class="line">    <span class="keyword">return</span> v | std::views::<span class="built_in">filter</span>([](<span class="type">int</span> x) &#123; <span class="keyword">return</span> x &gt; <span class="number">1</span>; &#125;); <span class="comment">// 危险</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>所以要记住：</p>
+<ul>
+<li>view 很轻，但通常不负责延长底层容器生命周期</li>
+</ul>
+<hr>
+<h2 id="14-常见坑"><a href="#14-常见坑" class="headerlink" title="14. 常见坑"></a>14. 常见坑</h2><h3 id="14-1-把-view-当拥有结果的容器"><a href="#14-1-把-view-当拥有结果的容器" class="headerlink" title="14.1 把 view 当拥有结果的容器"></a>14.1 把 view 当拥有结果的容器</h3><p>它通常不是。</p>
+<h3 id="14-2-底层容器变了，view-却还在继续用"><a href="#14-2-底层容器变了，view-却还在继续用" class="headerlink" title="14.2 底层容器变了，view 却还在继续用"></a>14.2 底层容器变了，view 却还在继续用</h3><p>例如容器被销毁、扩容、失效。</p>
+<h3 id="14-3-pipeline-过长且带副作用"><a href="#14-3-pipeline-过长且带副作用" class="headerlink" title="14.3 pipeline 过长且带副作用"></a>14.3 pipeline 过长且带副作用</h3><p>会让调试和推理变难。</p>
+<h3 id="14-4-误以为-ranges-一定更快"><a href="#14-4-误以为-ranges-一定更快" class="headerlink" title="14.4 误以为 ranges 一定更快"></a>14.4 误以为 ranges 一定更快</h3><p>语义更清晰不代表每个场景都自动最优。</p>
+<hr>
+<h2 id="15-一页总结"><a href="#15-一页总结" class="headerlink" title="15. 一页总结"></a>15. 一页总结</h2><p>ranges 与 views 最重要的理解链是：</p>
+<ol>
+<li>ranges 让算法直接面向区间</li>
+<li>views 提供不拥有数据、可组合、惰性的处理视图</li>
+<li>它们最擅长表达“数据处理流水线”</li>
+<li>真正要注意的是生命周期、materialize 时机和可读性边界</li>
+</ol>
+<p>如果只记一句：</p>
+<blockquote>
+<p>view 更像“处理规则”，容器才是“真正结果”。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>楚天
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://chutianduan.github.io/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/12-ranges%E4%B8%8Eviews/" title="ranges 与 views">https://chutianduan.github.io/notes/现代c-实践/12-ranges与views/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/13-%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86%E4%B8%8Eexpected-%E5%BC%82%E5%B8%B8%E8%AE%BE%E8%AE%A1/" rel="prev" title="错误处理与 &#96;expected&#96;、异常设计">
+                  <i class="fa fa-angle-left"></i> 错误处理与 `expected`、异常设计
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%85%B3%E7%B3%BB/" rel="next" title="数据库关系">
+                  数据库关系 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-code"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">楚天</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

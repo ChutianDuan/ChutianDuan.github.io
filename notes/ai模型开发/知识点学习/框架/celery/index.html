@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chutianduan.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":2,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Celery 学习笔记1. Celery 是什么Celery 是一个基于 Python 的分布式任务队列，用来把“耗时任务”从主业务流程里拆出去异步执行。 典型场景：  发送邮件、短信、消息通知 文件转码、图片处理、PDF 解析 大模型推理、批量数据处理 定时任务、周期性任务 需要失败重试的后台任务  先记住最实用的分工：FastAPI 负责接请求和返回结果，Celery 负责把耗时任务放到后台慢">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Celery 学习笔记">
+<meta property="og:url" content="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/celery/index.html">
+<meta property="og:site_name" content="楚天">
+<meta property="og:description" content="Celery 学习笔记1. Celery 是什么Celery 是一个基于 Python 的分布式任务队列，用来把“耗时任务”从主业务流程里拆出去异步执行。 典型场景：  发送邮件、短信、消息通知 文件转码、图片处理、PDF 解析 大模型推理、批量数据处理 定时任务、周期性任务 需要失败重试的后台任务  先记住最实用的分工：FastAPI 负责接请求和返回结果，Celery 负责把耗时任务放到后台慢">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-04-20T01:03:11.000Z">
+<meta property="article:modified_time" content="2026-04-20T01:03:11.000Z">
+<meta property="article:author" content="楚天">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="游戏网络">
+<meta property="article:tag" content="技术博客">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/celery/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/celery/","path":"/notes/ai模型开发/知识点学习/框架/celery/","title":"Celery 学习笔记"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Celery 学习笔记 | 楚天</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">楚天</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">惟楚有材，于斯为盛</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-友情链接"><a href="/link/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Celery-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0"><span class="nav-number">1.</span> <span class="nav-text">Celery 学习笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Celery-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.1.</span> <span class="nav-text">1. Celery 是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E7%94%A8-Celery"><span class="nav-number">1.2.</span> <span class="nav-text">2. 为什么要用 Celery</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Celery-%E6%A0%B8%E5%BF%83%E6%9E%B6%E6%9E%84"><span class="nav-number">1.3.</span> <span class="nav-text">3. Celery 核心架构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Broker"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 Broker</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-Worker"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 Worker</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-Result-Backend"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 Result Backend</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="nav-number">1.4.</span> <span class="nav-text">4. 工作流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E5%AE%89%E8%A3%85"><span class="nav-number">1.5.</span> <span class="nav-text">5. 安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E6%9C%80%E5%B0%8F%E5%8F%AF%E8%BF%90%E8%A1%8C%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.6.</span> <span class="nav-text">6. 最小可运行示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-%E7%BC%96%E5%86%99-Celery-%E5%BA%94%E7%94%A8"><span class="nav-number">1.6.1.</span> <span class="nav-text">6.1 编写 Celery 应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-%E5%AE%9A%E4%B9%89%E4%BB%BB%E5%8A%A1"><span class="nav-number">1.6.2.</span> <span class="nav-text">6.2 定义任务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-%E5%90%AF%E5%8A%A8-Worker"><span class="nav-number">1.6.3.</span> <span class="nav-text">6.3 启动 Worker</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-4-%E6%8F%90%E4%BA%A4%E4%BB%BB%E5%8A%A1"><span class="nav-number">1.6.4.</span> <span class="nav-text">6.4 提交任务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-5-%E6%9F%A5%E8%AF%A2%E4%BB%BB%E5%8A%A1%E7%BB%93%E6%9E%9C"><span class="nav-number">1.6.5.</span> <span class="nav-text">6.5 查询任务结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-delay-%E5%92%8C-apply-async-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">1.7.</span> <span class="nav-text">7. delay() 和 apply_async() 的区别</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-delay"><span class="nav-number">1.7.1.</span> <span class="nav-text">7.1 delay()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-apply-async"><span class="nav-number">1.7.2.</span> <span class="nav-text">7.2 apply_async()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-%E4%BB%BB%E5%8A%A1%E9%87%8D%E8%AF%95"><span class="nav-number">1.8.</span> <span class="nav-text">8. 任务重试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-%E9%98%9F%E5%88%97%E4%B8%8E%E8%B7%AF%E7%94%B1"><span class="nav-number">1.9.</span> <span class="nav-text">9. 队列与路由</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1"><span class="nav-number">1.10.</span> <span class="nav-text">10. 定时任务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-FastAPI-%E5%92%8C-Celery-%E6%80%8E%E4%B9%88%E9%85%8D%E5%90%88"><span class="nav-number">1.11.</span> <span class="nav-text">11. FastAPI 和 Celery 怎么配合</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#11-1-%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E7%94%A8-BackgroundTasks%EF%BC%8C%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E7%94%A8-Celery"><span class="nav-number">1.11.1.</span> <span class="nav-text">11.1 什么时候用 BackgroundTasks，什么时候用 Celery</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-FastAPI-Celery-%E6%A1%88%E4%BE%8B-1%EF%BC%9A%E6%8F%90%E4%BA%A4%E4%BB%BB%E5%8A%A1%E5%B9%B6%E6%9F%A5%E8%AF%A2%E7%8A%B6%E6%80%81"><span class="nav-number">1.12.</span> <span class="nav-text">12. FastAPI + Celery 案例 1：提交任务并查询状态</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#12-1-%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84"><span class="nav-number">1.12.1.</span> <span class="nav-text">12.1 目录结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-2-celery-app-py"><span class="nav-number">1.12.2.</span> <span class="nav-text">12.2 celery_app.py</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-3-tasks-py"><span class="nav-number">1.12.3.</span> <span class="nav-text">12.3 tasks.py</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-4-main-py"><span class="nav-number">1.12.4.</span> <span class="nav-text">12.4 main.py</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-5-%E5%90%AF%E5%8A%A8%E6%96%B9%E5%BC%8F"><span class="nav-number">1.12.5.</span> <span class="nav-text">12.5 启动方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-FastAPI-Celery-%E6%A1%88%E4%BE%8B-2%EF%BC%9A%E6%96%87%E4%BB%B6%E5%A4%84%E7%90%86%E4%BB%BB%E5%8A%A1"><span class="nav-number">1.13.</span> <span class="nav-text">13. FastAPI + Celery 案例 2：文件处理任务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#13-1-%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99"><span class="nav-number">1.13.1.</span> <span class="nav-text">13.1 设计原则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-2-%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.13.2.</span> <span class="nav-text">13.2 示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-FastAPI-Celery-%E6%A1%88%E4%BE%8B-3%EF%BC%9A%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%BB%BB%E5%8A%A1"><span class="nav-number">1.14.</span> <span class="nav-text">14. FastAPI + Celery 案例 3：模型推理任务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#14-1-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%82%E5%90%88-Celery"><span class="nav-number">1.14.1.</span> <span class="nav-text">14.1 为什么适合 Celery</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14-2-%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8C%96%E7%89%88%E4%BE%8B%E5%AD%90"><span class="nav-number">1.14.2.</span> <span class="nav-text">14.2 一个简化版例子</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#15-%E5%AE%9E%E6%88%98%E9%87%8C%E5%BE%88%E9%87%8D%E8%A6%81%E7%9A%84%E7%BB%86%E8%8A%82"><span class="nav-number">1.15.</span> <span class="nav-text">15. 实战里很重要的细节</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#15-1-%E4%BB%BB%E5%8A%A1%E5%8F%82%E6%95%B0%E5%B0%BD%E9%87%8F%E7%AE%80%E5%8D%95"><span class="nav-number">1.15.1.</span> <span class="nav-text">15.1 任务参数尽量简单</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-2-%E4%BB%BB%E5%8A%A1%E5%B0%BD%E9%87%8F%E5%B9%82%E7%AD%89"><span class="nav-number">1.15.2.</span> <span class="nav-text">15.2 任务尽量幂等</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-3-%E4%B8%8D%E8%A6%81%E5%9C%A8-API-%E8%BF%9B%E7%A8%8B%E9%87%8C%E6%89%A7%E8%A1%8C%E9%87%8D%E6%B4%BB"><span class="nav-number">1.15.3.</span> <span class="nav-text">15.3 不要在 API 进程里执行重活</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-4-%E7%BB%93%E6%9E%9C%E4%B8%8D%E6%98%AF%E5%BF%85%E9%A1%BB%E6%B0%B8%E4%B9%85%E4%BF%9D%E5%AD%98"><span class="nav-number">1.15.4.</span> <span class="nav-text">15.4 结果不是必须永久保存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-5-%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86%E4%B8%8D%E8%A6%81%E5%8F%AA%E9%9D%A0%E6%97%A5%E5%BF%97"><span class="nav-number">1.15.5.</span> <span class="nav-text">15.5 错误处理不要只靠日志</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-6-CPU-GPU-IO-%E4%BB%BB%E5%8A%A1%E5%88%86%E5%BC%80"><span class="nav-number">1.15.6.</span> <span class="nav-text">15.6 CPU &#x2F; GPU &#x2F; IO 任务分开</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-7-Worker-%E5%B9%B6%E5%8F%91%E8%A6%81%E6%8C%89%E4%BB%BB%E5%8A%A1%E7%B1%BB%E5%9E%8B%E8%B0%83"><span class="nav-number">1.15.7.</span> <span class="nav-text">15.7 Worker 并发要按任务类型调</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#16-%E5%B8%B8%E8%A7%81%E5%9D%91"><span class="nav-number">1.16.</span> <span class="nav-text">16. 常见坑</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#16-1-%E4%BB%BB%E5%8A%A1%E6%8F%90%E4%BA%A4%E6%88%90%E5%8A%9F%EF%BC%8C%E4%BD%86%E4%B8%80%E7%9B%B4%E4%B8%8D%E6%89%A7%E8%A1%8C"><span class="nav-number">1.16.1.</span> <span class="nav-text">16.1 任务提交成功，但一直不执行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16-2-%E8%83%BD%E6%9F%A5%E5%88%B0%E4%BB%BB%E5%8A%A1-ID%EF%BC%8C%E4%BD%86%E6%8B%BF%E4%B8%8D%E5%88%B0%E7%BB%93%E6%9E%9C"><span class="nav-number">1.16.2.</span> <span class="nav-text">16.2 能查到任务 ID，但拿不到结果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16-3-%E4%BB%BB%E5%8A%A1%E5%87%BD%E6%95%B0%E9%87%8C%E5%BC%95%E7%94%A8%E4%BA%86-Web-%E5%B1%82%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.16.3.</span> <span class="nav-text">16.3 任务函数里引用了 Web 层对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16-4-%E6%8A%8A-Celery-%E5%BD%93%E6%88%90%E5%90%8C%E6%AD%A5-RPC-%E7%94%A8"><span class="nav-number">1.16.4.</span> <span class="nav-text">16.4 把 Celery 当成同步 RPC 用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#17-%E4%B8%80%E5%A5%97%E6%AF%94%E8%BE%83%E5%AE%9E%E7%94%A8%E7%9A%84%E5%AD%A6%E4%B9%A0%E9%A1%BA%E5%BA%8F"><span class="nav-number">1.17.</span> <span class="nav-text">17. 一套比较实用的学习顺序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#18-%E6%80%BB%E7%BB%93"><span class="nav-number">1.18.</span> <span class="nav-text">18. 总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#19-%E5%8F%82%E8%80%83"><span class="nav-number">1.19.</span> <span class="nav-text">19. 参考</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="楚天"
+      src="/img/me.jpg">
+  <p class="site-author-name" itemprop="name">楚天</p>
+  <div class="site-description" itemprop="description">记录深度学习、C++、游戏网络与生活旅行的学习笔记。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ChutianDuan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ChutianDuan" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:3383006954@qq.com" title="E-Mail → mailto:3383006954@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/celery/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Celery 学习笔记 | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Celery 学习笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-04-20 09:03:11" itemprop="dateCreated datePublished" datetime="2026-04-20T09:03:11+08:00">2026-04-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/AI%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">AI模型开发</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/AI%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">知识点学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/AI%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/" itemprop="url" rel="index"><span itemprop="name">框架</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Celery-学习笔记"><a href="#Celery-学习笔记" class="headerlink" title="Celery 学习笔记"></a>Celery 学习笔记</h1><h2 id="1-Celery-是什么"><a href="#1-Celery-是什么" class="headerlink" title="1. Celery 是什么"></a>1. Celery 是什么</h2><p>Celery 是一个基于 Python 的分布式任务队列，用来把“耗时任务”从主业务流程里拆出去异步执行。</p>
+<p>典型场景：</p>
+<ul>
+<li>发送邮件、短信、消息通知</li>
+<li>文件转码、图片处理、PDF 解析</li>
+<li>大模型推理、批量数据处理</li>
+<li>定时任务、周期性任务</li>
+<li>需要失败重试的后台任务</li>
+</ul>
+<p>先记住最实用的分工：FastAPI 负责接请求和返回结果，Celery 负责把耗时任务放到后台慢慢执行。</p>
+<h2 id="2-为什么要用-Celery"><a href="#2-为什么要用-Celery" class="headerlink" title="2. 为什么要用 Celery"></a>2. 为什么要用 Celery</h2><p>如果一个接口内部要做很久的事情，比如：</p>
+<ul>
+<li>调第三方接口要 10 秒</li>
+<li>处理一批文件要 2 分钟</li>
+<li>模型推理要占满 CPU &#x2F; GPU</li>
+</ul>
+<p>那就不适合一直阻塞 HTTP 请求。更合理的做法是：</p>
+<ol>
+<li>FastAPI 收到请求</li>
+<li>把任务丢给 Celery</li>
+<li>立刻返回一个 <code>task_id</code></li>
+<li>前端或调用方再通过 <code>task_id</code> 查询执行结果</li>
+</ol>
+<p>这样接口响应会更快，系统也更容易扩展。</p>
+<h2 id="3-Celery-核心架构"><a href="#3-Celery-核心架构" class="headerlink" title="3. Celery 核心架构"></a>3. Celery 核心架构</h2><p>Celery 主要由 3 个角色组成：</p>
+<h3 id="3-1-Broker"><a href="#3-1-Broker" class="headerlink" title="3.1 Broker"></a>3.1 Broker</h3><p>消息中间件，负责存放“待执行任务”。</p>
+<p>常见选择：</p>
+<ul>
+<li>Redis</li>
+<li>RabbitMQ</li>
+</ul>
+<p>它就是任务排队和等待消费的地方。</p>
+<h3 id="3-2-Worker"><a href="#3-2-Worker" class="headerlink" title="3.2 Worker"></a>3.2 Worker</h3><p>执行任务的工作进程。</p>
+<p>它会不断从 Broker 中取任务，然后真正执行 Python 函数。</p>
+<h3 id="3-3-Result-Backend"><a href="#3-3-Result-Backend" class="headerlink" title="3.3 Result Backend"></a>3.3 Result Backend</h3><p>结果存储，用来保存任务状态和返回值。</p>
+<p>常见选择：</p>
+<ul>
+<li>Redis</li>
+<li>Database</li>
+<li>RPC</li>
+</ul>
+<p>如果你只关心“任务有没有执行”，不关心返回结果，也可以不配置结果后端；但实际项目里通常还是会配置，方便查状态。</p>
+<h2 id="4-工作流程"><a href="#4-工作流程" class="headerlink" title="4. 工作流程"></a>4. 工作流程</h2><p>Celery 的完整链路可以这样理解：</p>
+<ol>
+<li>客户端或 FastAPI 调用一个 Celery 任务</li>
+<li>任务消息被发送到 Broker</li>
+<li>Worker 从 Broker 取出任务</li>
+<li>Worker 执行任务函数</li>
+<li>执行结果和状态写入 Result Backend</li>
+<li>业务侧通过 <code>task_id</code> 查询任务状态和结果</li>
+</ol>
+<p>对应的状态通常有：</p>
+<ul>
+<li><code>PENDING</code>：任务还没开始，或者还查不到</li>
+<li><code>STARTED</code>：任务已开始执行</li>
+<li><code>SUCCESS</code>：执行成功</li>
+<li><code>FAILURE</code>：执行失败</li>
+<li><code>RETRY</code>：正在重试</li>
+<li><code>REVOKED</code>：任务被撤销</li>
+</ul>
+<p>说明：</p>
+<ul>
+<li>默认不一定会看到 <code>STARTED</code></li>
+<li>如果想更明确地看到运行中状态，可以开启 <code>task_track_started=True</code></li>
+</ul>
+<h2 id="5-安装"><a href="#5-安装" class="headerlink" title="5. 安装"></a>5. 安装</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install celery redis</span><br></pre></td></tr></table></figure>
+
+<p>如果使用 Redis 作为 Broker 和 Result Backend，需要先启动 Redis。</p>
+<h2 id="6-最小可运行示例"><a href="#6-最小可运行示例" class="headerlink" title="6. 最小可运行示例"></a>6. 最小可运行示例</h2><h3 id="6-1-编写-Celery-应用"><a href="#6-1-编写-Celery-应用" class="headerlink" title="6.1 编写 Celery 应用"></a>6.1 编写 Celery 应用</h3><p>文件：<code>celery_app.py</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> Celery</span><br><span class="line"></span><br><span class="line">app = Celery(</span><br><span class="line">    <span class="string">&quot;demo&quot;</span>,</span><br><span class="line">    broker=<span class="string">&quot;redis://127.0.0.1:6379/1&quot;</span>,</span><br><span class="line">    backend=<span class="string">&quot;redis://127.0.0.1:6379/2&quot;</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">app.conf.update(</span><br><span class="line">    task_track_started=<span class="literal">True</span>,</span><br><span class="line">    timezone=<span class="string">&quot;Asia/Shanghai&quot;</span>,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>说明：</p>
+<ul>
+<li><code>/1</code> 表示 Redis 的第 1 个逻辑库，用来当 Broker</li>
+<li><code>/2</code> 表示 Redis 的第 2 个逻辑库，用来存任务结果</li>
+<li>Broker 和 Backend 分开写更清晰，排查问题也更方便</li>
+</ul>
+<h3 id="6-2-定义任务"><a href="#6-2-定义任务" class="headerlink" title="6.2 定义任务"></a>6.2 定义任务</h3><p>文件：<code>tasks.py</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> celery_app <span class="keyword">import</span> app</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.task</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">a: <span class="built_in">int</span>, b: <span class="built_in">int</span></span>) -&gt; <span class="built_in">int</span>:</span><br><span class="line">    time.sleep(<span class="number">3</span>)</span><br><span class="line">    <span class="keyword">return</span> a + b</span><br></pre></td></tr></table></figure>
+
+<p>这里的 <code>add</code> 虽然是普通 Python 函数，但加了 <code>@app.task</code> 之后，它就成了 Celery 任务。</p>
+<h3 id="6-3-启动-Worker"><a href="#6-3-启动-Worker" class="headerlink" title="6.3 启动 Worker"></a>6.3 启动 Worker</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">celery -A tasks worker -l info</span><br></pre></td></tr></table></figure>
+
+<p>含义：</p>
+<ul>
+<li><code>-A tasks</code>：表示 Celery 应用和任务定义在 <code>tasks.py</code></li>
+<li><code>worker</code>：启动 worker 进程</li>
+<li><code>-l info</code>：日志级别为 <code>info</code></li>
+</ul>
+<h3 id="6-4-提交任务"><a href="#6-4-提交任务" class="headerlink" title="6.4 提交任务"></a>6.4 提交任务</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tasks <span class="keyword">import</span> add</span><br><span class="line"></span><br><span class="line">result = add.delay(<span class="number">3</span>, <span class="number">5</span>)</span><br><span class="line"><span class="built_in">print</span>(result.<span class="built_in">id</span>)</span><br></pre></td></tr></table></figure>
+
+<p>注意：</p>
+<ul>
+<li><code>delay()</code> 只是“提交任务”</li>
+<li>它不会在当前进程里同步执行</li>
+<li>返回的是 <code>AsyncResult</code></li>
+<li>真正执行任务的是独立的 Worker</li>
+</ul>
+<h3 id="6-5-查询任务结果"><a href="#6-5-查询任务结果" class="headerlink" title="6.5 查询任务结果"></a>6.5 查询任务结果</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> celery.result <span class="keyword">import</span> AsyncResult</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> celery_app <span class="keyword">import</span> app</span><br><span class="line"></span><br><span class="line">task = AsyncResult(<span class="string">&quot;任务ID&quot;</span>, app=app)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(task.status)</span><br><span class="line"><span class="built_in">print</span>(task.successful())</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> task.successful():</span><br><span class="line">    <span class="built_in">print</span>(task.get())</span><br></pre></td></tr></table></figure>
+
+<p>常用属性和方法：</p>
+<ul>
+<li><code>task.id</code>：任务 ID</li>
+<li><code>task.status</code>：任务状态</li>
+<li><code>task.successful()</code>：是否执行成功</li>
+<li><code>task.failed()</code>：是否执行失败</li>
+<li><code>task.ready()</code>：任务是否结束</li>
+<li><code>task.get()</code>：获取结果，可能会阻塞</li>
+</ul>
+<h2 id="7-delay-和-apply-async-的区别"><a href="#7-delay-和-apply-async-的区别" class="headerlink" title="7. delay() 和 apply_async() 的区别"></a>7. <code>delay()</code> 和 <code>apply_async()</code> 的区别</h2><h3 id="7-1-delay"><a href="#7-1-delay" class="headerlink" title="7.1 delay()"></a>7.1 <code>delay()</code></h3><p>最简单的调用方式，其实就是 <code>apply_async()</code> 的简写。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">add.delay(<span class="number">3</span>, <span class="number">5</span>)</span><br></pre></td></tr></table></figure>
+
+<p>适合：</p>
+<ul>
+<li>普通异步提交</li>
+<li>不需要额外参数时</li>
+</ul>
+<h3 id="7-2-apply-async"><a href="#7-2-apply-async" class="headerlink" title="7.2 apply_async()"></a>7.2 <code>apply_async()</code></h3><p>更灵活，支持倒计时、定时执行、路由到指定队列等。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">add.apply_async(args=[<span class="number">3</span>, <span class="number">5</span>], countdown=<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+
+<p>常见参数：</p>
+<ul>
+<li><code>args</code> &#x2F; <code>kwargs</code>：任务参数</li>
+<li><code>countdown=10</code>：10 秒后执行</li>
+<li><code>eta=...</code>：指定某个时间点执行</li>
+<li><code>expires=60</code>：60 秒后任务过期</li>
+<li><code>queue=&quot;email&quot;</code>：指定进入哪个队列</li>
+<li><code>routing_key=&quot;task.email&quot;</code>：指定路由键</li>
+</ul>
+<p>结论：</p>
+<ul>
+<li>简单任务用 <code>delay()</code></li>
+<li>有调度需求时用 <code>apply_async()</code></li>
+</ul>
+<h2 id="8-任务重试"><a href="#8-任务重试" class="headerlink" title="8. 任务重试"></a>8. 任务重试</h2><p>很多后台任务依赖外部资源，比如：</p>
+<ul>
+<li>第三方 API</li>
+<li>数据库</li>
+<li>对象存储</li>
+<li>模型服务</li>
+</ul>
+<p>这些服务不稳定时，直接失败往往不合理，更适合自动重试。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> celery_app <span class="keyword">import</span> app</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.task(<span class="params">bind=<span class="literal">True</span>, max_retries=<span class="number">3</span>, default_retry_delay=<span class="number">5</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">fetch_remote_data</span>(<span class="params">self, url: <span class="built_in">str</span></span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="comment"># 这里假设会调用外部接口</span></span><br><span class="line">        <span class="keyword">raise</span> RuntimeError(<span class="string">&quot;temporary error&quot;</span>)</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> exc:</span><br><span class="line">        <span class="keyword">raise</span> <span class="variable language_">self</span>.retry(exc=exc)</span><br></pre></td></tr></table></figure>
+
+<p>说明：</p>
+<ul>
+<li><code>bind=True</code> 后，任务第一个参数会变成 <code>self</code></li>
+<li><code>self.retry(...)</code> 可以重新入队</li>
+<li><code>max_retries=3</code> 表示最多重试 3 次</li>
+<li><code>default_retry_delay=5</code> 表示默认每次间隔 5 秒</li>
+</ul>
+<p>适合有“短暂失败可能恢复”的任务，不适合参数本身就错误的任务。</p>
+<h2 id="9-队列与路由"><a href="#9-队列与路由" class="headerlink" title="9. 队列与路由"></a>9. 队列与路由</h2><p>当任务类型越来越多时，通常不会把所有任务都丢到一个队列里。</p>
+<p>常见拆法：</p>
+<ul>
+<li><code>default</code>：普通任务</li>
+<li><code>email</code>：发邮件</li>
+<li><code>file</code>：文件处理</li>
+<li><code>gpu</code>：模型推理</li>
+</ul>
+<p>这样可以让不同 Worker 只处理自己擅长的任务。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> Celery</span><br><span class="line"><span class="keyword">from</span> kombu <span class="keyword">import</span> Exchange, Queue</span><br><span class="line"></span><br><span class="line">app = Celery(<span class="string">&quot;demo&quot;</span>)</span><br><span class="line"></span><br><span class="line">app.conf.task_queues = (</span><br><span class="line">    Queue(<span class="string">&quot;default&quot;</span>, Exchange(<span class="string">&quot;default&quot;</span>), routing_key=<span class="string">&quot;default&quot;</span>),</span><br><span class="line">    Queue(<span class="string">&quot;file&quot;</span>, Exchange(<span class="string">&quot;file&quot;</span>), routing_key=<span class="string">&quot;file.process&quot;</span>),</span><br><span class="line">    Queue(<span class="string">&quot;gpu&quot;</span>, Exchange(<span class="string">&quot;gpu&quot;</span>), routing_key=<span class="string">&quot;gpu.infer&quot;</span>),</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">app.conf.task_routes = &#123;</span><br><span class="line">    <span class="string">&quot;tasks.process_pdf&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;queue&quot;</span>: <span class="string">&quot;file&quot;</span>,</span><br><span class="line">        <span class="string">&quot;routing_key&quot;</span>: <span class="string">&quot;file.process&quot;</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">&quot;tasks.run_inference&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;queue&quot;</span>: <span class="string">&quot;gpu&quot;</span>,</span><br><span class="line">        <span class="string">&quot;routing_key&quot;</span>: <span class="string">&quot;gpu.infer&quot;</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>启动指定队列的 Worker：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">celery -A tasks worker -Q file -l info</span><br><span class="line">celery -A tasks worker -Q gpu -l info</span><br></pre></td></tr></table></figure>
+
+<p>这样做的好处：</p>
+<ul>
+<li>避免耗时任务阻塞普通任务</li>
+<li>可以按机器能力拆分 Worker</li>
+<li>GPU 任务和 CPU 任务可以隔离</li>
+</ul>
+<h2 id="10-定时任务"><a href="#10-定时任务" class="headerlink" title="10. 定时任务"></a>10. 定时任务</h2><p>Celery 可以配合 <code>celery beat</code> 做周期任务。</p>
+<p>例如：</p>
+<ul>
+<li>每天凌晨清理临时文件</li>
+<li>每小时刷新缓存</li>
+<li>每 10 分钟同步一次数据</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> celery.schedules <span class="keyword">import</span> crontab</span><br><span class="line"></span><br><span class="line">app.conf.beat_schedule = &#123;</span><br><span class="line">    <span class="string">&quot;cleanup-temp-files&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;task&quot;</span>: <span class="string">&quot;tasks.cleanup_temp_files&quot;</span>,</span><br><span class="line">        <span class="string">&quot;schedule&quot;</span>: crontab(hour=<span class="number">3</span>, minute=<span class="number">0</span>),</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>启动：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">celery -A tasks beat -l info</span><br></pre></td></tr></table></figure>
+
+<p>如果要实际执行任务，除了 <code>beat</code> 还要有 <code>worker</code> 在跑。</p>
+<h2 id="11-FastAPI-和-Celery-怎么配合"><a href="#11-FastAPI-和-Celery-怎么配合" class="headerlink" title="11. FastAPI 和 Celery 怎么配合"></a>11. FastAPI 和 Celery 怎么配合</h2><p>最常见的配合方式是：</p>
+<ol>
+<li>FastAPI 暴露 HTTP 接口</li>
+<li>接口中调用 Celery 提交任务</li>
+<li>Celery Worker 在后台执行</li>
+<li>再通过一个查询接口返回任务状态&#x2F;结果</li>
+</ol>
+<h3 id="11-1-什么时候用-BackgroundTasks，什么时候用-Celery"><a href="#11-1-什么时候用-BackgroundTasks，什么时候用-Celery" class="headerlink" title="11.1 什么时候用 BackgroundTasks，什么时候用 Celery"></a>11.1 什么时候用 <code>BackgroundTasks</code>，什么时候用 Celery</h3><p>FastAPI 自带 <code>BackgroundTasks</code>，但它和 Celery 不是一类东西。</p>
+<p><code>BackgroundTasks</code> 更适合：</p>
+<ul>
+<li>很轻量的后台操作</li>
+<li>跟当前服务进程强绑定</li>
+<li>不要求失败重试</li>
+<li>不要求多机器扩展</li>
+</ul>
+<p>Celery 更适合：</p>
+<ul>
+<li>任务耗时长</li>
+<li>任务量大</li>
+<li>需要重试</li>
+<li>需要队列隔离</li>
+<li>需要多个 Worker 扩展</li>
+<li>需要独立于 Web 进程运行</li>
+</ul>
+<p>一句话：</p>
+<blockquote>
+<p>轻任务用 <code>BackgroundTasks</code>，重任务用 Celery。</p>
+</blockquote>
+<h2 id="12-FastAPI-Celery-案例-1：提交任务并查询状态"><a href="#12-FastAPI-Celery-案例-1：提交任务并查询状态" class="headerlink" title="12. FastAPI + Celery 案例 1：提交任务并查询状态"></a>12. FastAPI + Celery 案例 1：提交任务并查询状态</h2><p>这是最常见的模式。</p>
+<h3 id="12-1-目录结构"><a href="#12-1-目录结构" class="headerlink" title="12.1 目录结构"></a>12.1 目录结构</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">project/</span><br><span class="line">├── main.py</span><br><span class="line">├── celery_app.py</span><br><span class="line">└── tasks.py</span><br></pre></td></tr></table></figure>
+
+<h3 id="12-2-celery-app-py"><a href="#12-2-celery-app-py" class="headerlink" title="12.2 celery_app.py"></a>12.2 <code>celery_app.py</code></h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> Celery</span><br><span class="line"></span><br><span class="line">celery_app = Celery(</span><br><span class="line">    <span class="string">&quot;fastapi_demo&quot;</span>,</span><br><span class="line">    broker=<span class="string">&quot;redis://127.0.0.1:6379/1&quot;</span>,</span><br><span class="line">    backend=<span class="string">&quot;redis://127.0.0.1:6379/2&quot;</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">celery_app.conf.update(</span><br><span class="line">    task_track_started=<span class="literal">True</span>,</span><br><span class="line">    result_expires=<span class="number">3600</span>,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="12-3-tasks-py"><a href="#12-3-tasks-py" class="headerlink" title="12.3 tasks.py"></a>12.3 <code>tasks.py</code></h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> celery_app <span class="keyword">import</span> celery_app</span><br><span class="line"></span><br><span class="line"><span class="meta">@celery_app.task(<span class="params">name=<span class="string">&quot;tasks.long_time_add&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">long_time_add</span>(<span class="params">a: <span class="built_in">int</span>, b: <span class="built_in">int</span></span>) -&gt; <span class="built_in">int</span>:</span><br><span class="line">    time.sleep(<span class="number">10</span>)</span><br><span class="line">    <span class="keyword">return</span> a + b</span><br></pre></td></tr></table></figure>
+
+<h3 id="12-4-main-py"><a href="#12-4-main-py" class="headerlink" title="12.4 main.py"></a>12.4 <code>main.py</code></h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI</span><br><span class="line"><span class="keyword">from</span> celery.result <span class="keyword">import</span> AsyncResult</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> celery_app <span class="keyword">import</span> celery_app</span><br><span class="line"><span class="keyword">from</span> tasks <span class="keyword">import</span> long_time_add</span><br><span class="line"></span><br><span class="line">app = FastAPI()</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.post(<span class="params"><span class="string">&quot;/tasks/add&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">create_add_task</span>(<span class="params">a: <span class="built_in">int</span>, b: <span class="built_in">int</span></span>):</span><br><span class="line">    task = long_time_add.delay(a, b)</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        <span class="string">&quot;message&quot;</span>: <span class="string">&quot;task submitted&quot;</span>,</span><br><span class="line">        <span class="string">&quot;task_id&quot;</span>: task.<span class="built_in">id</span>,</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.get(<span class="params"><span class="string">&quot;/tasks/&#123;task_id&#125;&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_task_result</span>(<span class="params">task_id: <span class="built_in">str</span></span>):</span><br><span class="line">    task = AsyncResult(task_id, app=celery_app)</span><br><span class="line"></span><br><span class="line">    response = &#123;</span><br><span class="line">        <span class="string">&quot;task_id&quot;</span>: task.<span class="built_in">id</span>,</span><br><span class="line">        <span class="string">&quot;status&quot;</span>: task.status,</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> task.successful():</span><br><span class="line">        response[<span class="string">&quot;result&quot;</span>] = task.result</span><br><span class="line">    <span class="keyword">elif</span> task.failed():</span><br><span class="line">        response[<span class="string">&quot;error&quot;</span>] = <span class="built_in">str</span>(task.result)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> response</span><br></pre></td></tr></table></figure>
+
+<h3 id="12-5-启动方式"><a href="#12-5-启动方式" class="headerlink" title="12.5 启动方式"></a>12.5 启动方式</h3><p>启动 FastAPI：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uvicorn main:app --reload</span><br></pre></td></tr></table></figure>
+
+<p>启动 Worker：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">celery -A tasks worker -l info</span><br></pre></td></tr></table></figure>
+
+<p>请求流程：</p>
+<ol>
+<li>调 <code>POST /tasks/add?a=3&amp;b=5</code></li>
+<li>接口立即返回 <code>task_id</code></li>
+<li>再调 <code>GET /tasks/&#123;task_id&#125;</code></li>
+<li>看任务是 <code>PENDING</code>、<code>STARTED</code> 还是 <code>SUCCESS</code></li>
+</ol>
+<p>这个模式非常适合前后端分离项目。</p>
+<h2 id="13-FastAPI-Celery-案例-2：文件处理任务"><a href="#13-FastAPI-Celery-案例-2：文件处理任务" class="headerlink" title="13. FastAPI + Celery 案例 2：文件处理任务"></a>13. FastAPI + Celery 案例 2：文件处理任务</h2><p>这个场景很常见，比如：</p>
+<ul>
+<li>上传 PDF 后做文本提取</li>
+<li>上传图片后做缩略图</li>
+<li>上传音频后做转写</li>
+</ul>
+<h3 id="13-1-设计原则"><a href="#13-1-设计原则" class="headerlink" title="13.1 设计原则"></a>13.1 设计原则</h3><p>不要把 <code>UploadFile</code>、数据库连接、请求对象直接传给 Celery。</p>
+<p>原因：</p>
+<ul>
+<li>Celery 任务参数通常需要能序列化</li>
+<li>这些对象往往不能直接被序列化</li>
+<li>跨进程后对象本身也失效了</li>
+</ul>
+<p>正确做法：</p>
+<ol>
+<li>FastAPI 先把文件保存到磁盘或对象存储</li>
+<li>把 <code>file_path</code> 或 <code>file_url</code> 传给 Celery</li>
+<li>Worker 根据路径再去处理文件</li>
+</ol>
+<h3 id="13-2-示例"><a href="#13-2-示例" class="headerlink" title="13.2 示例"></a>13.2 示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pathlib <span class="keyword">import</span> Path</span><br><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"><span class="keyword">import</span> uuid</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI, File, UploadFile</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> tasks <span class="keyword">import</span> process_pdf</span><br><span class="line"></span><br><span class="line">app = FastAPI()</span><br><span class="line"></span><br><span class="line">UPLOAD_DIR = Path(<span class="string">&quot;uploads&quot;</span>)</span><br><span class="line">UPLOAD_DIR.mkdir(exist_ok=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.post(<span class="params"><span class="string">&quot;/files/pdf&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">upload_pdf</span>(<span class="params">file: UploadFile = File(<span class="params">...</span>)</span>):</span><br><span class="line">    file_id = <span class="string">f&quot;<span class="subst">&#123;uuid.uuid4()&#125;</span>_<span class="subst">&#123;file.filename&#125;</span>&quot;</span></span><br><span class="line">    save_path = UPLOAD_DIR / file_id</span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> save_path.<span class="built_in">open</span>(<span class="string">&quot;wb&quot;</span>) <span class="keyword">as</span> buffer:</span><br><span class="line">        shutil.copyfileobj(file.file, buffer)</span><br><span class="line"></span><br><span class="line">    task = process_pdf.delay(<span class="built_in">str</span>(save_path))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        <span class="string">&quot;file_path&quot;</span>: <span class="built_in">str</span>(save_path),</span><br><span class="line">        <span class="string">&quot;task_id&quot;</span>: task.<span class="built_in">id</span>,</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>对应的 Celery 任务：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> celery_app <span class="keyword">import</span> celery_app</span><br><span class="line"></span><br><span class="line"><span class="meta">@celery_app.task(<span class="params">name=<span class="string">&quot;tasks.process_pdf&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">process_pdf</span>(<span class="params">file_path: <span class="built_in">str</span></span>):</span><br><span class="line">    <span class="comment"># 这里做 PDF 文本抽取、切分、向量化等操作</span></span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        <span class="string">&quot;file_path&quot;</span>: file_path,</span><br><span class="line">        <span class="string">&quot;message&quot;</span>: <span class="string">&quot;processed&quot;</span>,</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个思路很适合 AI 项目里的文档解析链路。</p>
+<h2 id="14-FastAPI-Celery-案例-3：模型推理任务"><a href="#14-FastAPI-Celery-案例-3：模型推理任务" class="headerlink" title="14. FastAPI + Celery 案例 3：模型推理任务"></a>14. FastAPI + Celery 案例 3：模型推理任务</h2><p>对于 AI 模型开发，这个场景更有代表性。</p>
+<p>例如：</p>
+<ul>
+<li>文本摘要</li>
+<li>图片分类</li>
+<li>批量 embedding</li>
+<li>长文本抽取</li>
+</ul>
+<h3 id="14-1-为什么适合-Celery"><a href="#14-1-为什么适合-Celery" class="headerlink" title="14.1 为什么适合 Celery"></a>14.1 为什么适合 Celery</h3><p>因为模型推理通常具备这些特点：</p>
+<ul>
+<li>耗时不稳定</li>
+<li>资源消耗高</li>
+<li>可能需要排队</li>
+<li>可能要分 CPU &#x2F; GPU Worker</li>
+</ul>
+<h3 id="14-2-一个简化版例子"><a href="#14-2-一个简化版例子" class="headerlink" title="14.2 一个简化版例子"></a>14.2 一个简化版例子</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> tasks <span class="keyword">import</span> run_inference</span><br><span class="line"></span><br><span class="line">app = FastAPI()</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.post(<span class="params"><span class="string">&quot;/infer&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">create_inference_task</span>(<span class="params">text: <span class="built_in">str</span></span>):</span><br><span class="line">    task = run_inference.apply_async(</span><br><span class="line">        kwargs=&#123;<span class="string">&quot;text&quot;</span>: text&#125;,</span><br><span class="line">        queue=<span class="string">&quot;gpu&quot;</span>,</span><br><span class="line">        routing_key=<span class="string">&quot;gpu.infer&quot;</span>,</span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;task_id&quot;</span>: task.<span class="built_in">id</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对应任务：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> celery_app <span class="keyword">import</span> celery_app</span><br><span class="line"></span><br><span class="line"><span class="meta">@celery_app.task(<span class="params">name=<span class="string">&quot;tasks.run_inference&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">run_inference</span>(<span class="params">text: <span class="built_in">str</span></span>):</span><br><span class="line">    time.sleep(<span class="number">5</span>)</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        <span class="string">&quot;text&quot;</span>: text,</span><br><span class="line">        <span class="string">&quot;label&quot;</span>: <span class="string">&quot;positive&quot;</span>,</span><br><span class="line">        <span class="string">&quot;score&quot;</span>: <span class="number">0.98</span>,</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的重点不在模型代码本身，而在架构思路：</p>
+<ul>
+<li>API 层只负责接收请求</li>
+<li>推理层在 Worker 中执行</li>
+<li>GPU 任务路由到专门队列</li>
+<li>可以单独扩容推理 Worker</li>
+</ul>
+<p>如果将来一张 GPU 卡只跑一个 Worker，也很好管理。</p>
+<h2 id="15-实战里很重要的细节"><a href="#15-实战里很重要的细节" class="headerlink" title="15. 实战里很重要的细节"></a>15. 实战里很重要的细节</h2><h3 id="15-1-任务参数尽量简单"><a href="#15-1-任务参数尽量简单" class="headerlink" title="15.1 任务参数尽量简单"></a>15.1 任务参数尽量简单</h3><p>建议只传这些：</p>
+<ul>
+<li>字符串</li>
+<li>数字</li>
+<li>布尔值</li>
+<li>列表 &#x2F; 字典</li>
+<li>文件路径</li>
+<li>数据库主键 ID</li>
+</ul>
+<p>不建议直接传：</p>
+<ul>
+<li>数据库 Session</li>
+<li>请求对象 <code>Request</code></li>
+<li><code>UploadFile</code></li>
+<li>大模型实例</li>
+<li>打开的文件句柄</li>
+</ul>
+<p>原则：</p>
+<blockquote>
+<p>任务参数最好是“可序列化、可重建、可追踪”的。</p>
+</blockquote>
+<h3 id="15-2-任务尽量幂等"><a href="#15-2-任务尽量幂等" class="headerlink" title="15.2 任务尽量幂等"></a>15.2 任务尽量幂等</h3><p>幂等的意思是：同一个任务重复执行多次，结果最好一致，或者至少不会造成严重副作用。</p>
+<p>因为这些情况都可能导致重复执行：</p>
+<ul>
+<li>Worker 崩溃</li>
+<li>消息重复投递</li>
+<li>任务重试</li>
+<li>手动补偿</li>
+</ul>
+<p>例如发通知、写数据库、扣费等场景，幂等性非常重要。</p>
+<h3 id="15-3-不要在-API-进程里执行重活"><a href="#15-3-不要在-API-进程里执行重活" class="headerlink" title="15.3 不要在 API 进程里执行重活"></a>15.3 不要在 API 进程里执行重活</h3><p>FastAPI 本身应该尽量保持：</p>
+<ul>
+<li>响应快</li>
+<li>逻辑薄</li>
+<li>只做参数校验、鉴权、任务分发</li>
+</ul>
+<p>重计算、长耗时 IO、批处理，尽量放 Worker。</p>
+<h3 id="15-4-结果不是必须永久保存"><a href="#15-4-结果不是必须永久保存" class="headerlink" title="15.4 结果不是必须永久保存"></a>15.4 结果不是必须永久保存</h3><p>很多项目会犯一个问题：任务结果一直存 Redis，时间一久就堆积很多垃圾数据。</p>
+<p>可以设置：</p>
+<ul>
+<li><code>result_expires</code></li>
+<li>任务完成后主动清理</li>
+<li>只保留必要结果，不保留大对象</li>
+</ul>
+<p>如果结果很大，不要直接把大块内容塞进 Redis，建议落库或存文件，再返回引用地址。</p>
+<h3 id="15-5-错误处理不要只靠日志"><a href="#15-5-错误处理不要只靠日志" class="headerlink" title="15.5 错误处理不要只靠日志"></a>15.5 错误处理不要只靠日志</h3><p>建议至少做到：</p>
+<ul>
+<li>任务失败后能看到 <code>FAILURE</code></li>
+<li>能根据 <code>task_id</code> 查到失败原因</li>
+<li>关键任务开启自动重试</li>
+<li>必要时记录业务日志或落库</li>
+</ul>
+<h3 id="15-6-CPU-GPU-IO-任务分开"><a href="#15-6-CPU-GPU-IO-任务分开" class="headerlink" title="15.6 CPU &#x2F; GPU &#x2F; IO 任务分开"></a>15.6 CPU &#x2F; GPU &#x2F; IO 任务分开</h3><p>这点在 AI 项目里尤其重要。</p>
+<p>建议：</p>
+<ul>
+<li>文件下载、上传、请求第三方 API 放一个队列</li>
+<li>CPU 预处理放一个队列</li>
+<li>GPU 推理放一个队列</li>
+</ul>
+<p>这样不会出现“一个长推理任务把所有普通任务都堵住”的问题。</p>
+<h3 id="15-7-Worker-并发要按任务类型调"><a href="#15-7-Worker-并发要按任务类型调" class="headerlink" title="15.7 Worker 并发要按任务类型调"></a>15.7 Worker 并发要按任务类型调</h3><p>Celery 的并发不是越大越好，要看任务类型。</p>
+<p>一般经验：</p>
+<ul>
+<li>IO 密集型任务可以适当提高并发</li>
+<li>CPU 密集型任务并发通常不要超过 CPU 核心数太多</li>
+<li>GPU 推理任务通常一个 Worker 进程绑定一张卡，甚至一个队列只开 <code>--concurrency=1</code></li>
+</ul>
+<p>例如 GPU Worker 常见写法：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">celery -A tasks worker -Q gpu --concurrency=1 -l info</span><br></pre></td></tr></table></figure>
+
+<p>如果推理模型本身已经很吃显存，再盲目开高并发，反而容易把机器打爆。</p>
+<h2 id="16-常见坑"><a href="#16-常见坑" class="headerlink" title="16. 常见坑"></a>16. 常见坑</h2><h3 id="16-1-任务提交成功，但一直不执行"><a href="#16-1-任务提交成功，但一直不执行" class="headerlink" title="16.1 任务提交成功，但一直不执行"></a>16.1 任务提交成功，但一直不执行</h3><p>通常排查：</p>
+<ul>
+<li>Redis 是否启动</li>
+<li>Worker 是否启动</li>
+<li><code>-A</code> 指向的模块是否正确</li>
+<li>任务有没有注册到当前 Worker</li>
+<li>是否路由到了某个没人消费的队列</li>
+</ul>
+<h3 id="16-2-能查到任务-ID，但拿不到结果"><a href="#16-2-能查到任务-ID，但拿不到结果" class="headerlink" title="16.2 能查到任务 ID，但拿不到结果"></a>16.2 能查到任务 ID，但拿不到结果</h3><p>通常是：</p>
+<ul>
+<li>没配置 <code>backend</code></li>
+<li><code>task_id</code> 查错了</li>
+<li>结果过期被清掉了</li>
+</ul>
+<h3 id="16-3-任务函数里引用了-Web-层对象"><a href="#16-3-任务函数里引用了-Web-层对象" class="headerlink" title="16.3 任务函数里引用了 Web 层对象"></a>16.3 任务函数里引用了 Web 层对象</h3><p>比如：</p>
+<ul>
+<li>直接把 <code>Request</code> 传进任务</li>
+<li>把 SQLAlchemy Session 传进任务</li>
+<li>把上传文件对象传进任务</li>
+</ul>
+<p>这类设计一般都会有问题。任务应该依赖“可序列化参数”，不要依赖当前请求上下文。</p>
+<h3 id="16-4-把-Celery-当成同步-RPC-用"><a href="#16-4-把-Celery-当成同步-RPC-用" class="headerlink" title="16.4 把 Celery 当成同步 RPC 用"></a>16.4 把 Celery 当成同步 RPC 用</h3><p>有些人虽然用了 Celery，但提交完任务后立刻 <code>.get()</code> 等待结果，这样就又退回同步调用了。</p>
+<p>如果接口本身必须立刻拿到结果，那就要重新评估：</p>
+<ul>
+<li>这个任务是否真的适合放到 Celery</li>
+<li>是否应该走同步推理接口</li>
+<li>是否应该拆成“提交任务 + 轮询结果”</li>
+</ul>
+<h2 id="17-一套比较实用的学习顺序"><a href="#17-一套比较实用的学习顺序" class="headerlink" title="17. 一套比较实用的学习顺序"></a>17. 一套比较实用的学习顺序</h2><p>建议按这个顺序掌握：</p>
+<ol>
+<li>先跑通最小示例</li>
+<li>理解 <code>delay()</code>、<code>AsyncResult</code></li>
+<li>学会查任务状态</li>
+<li>学会重试</li>
+<li>学会队列与路由</li>
+<li>再接入 FastAPI</li>
+<li>最后再做定时任务、监控、扩容</li>
+</ol>
+<h2 id="18-总结"><a href="#18-总结" class="headerlink" title="18. 总结"></a>18. 总结</h2><p>Celery 的本质就是：</p>
+<ul>
+<li>把耗时任务从主线程 &#x2F; 主服务里剥离出去</li>
+<li>通过消息队列异步执行</li>
+<li>通过 Worker 扩展执行能力</li>
+<li>通过结果后端查询状态和结果</li>
+</ul>
+<p>对于 FastAPI 项目，可以把它理解成一组固定分工：</p>
+<ul>
+<li>FastAPI：对外提供 API</li>
+<li>Redis &#x2F; RabbitMQ：负责排队</li>
+<li>Celery Worker：真正执行任务</li>
+<li>Result Backend：保存状态和结果</li>
+</ul>
+<p>如果项目里已经出现“接口慢、任务重、需要重试、需要排队、需要异步处理”的问题，那 Celery 基本就是很自然的选择。</p>
+<h2 id="19-参考"><a href="#19-参考" class="headerlink" title="19. 参考"></a>19. 参考</h2><ul>
+<li>Celery First Steps: <a target="_blank" rel="noopener" href="https://docs.celeryq.dev/en/main/getting-started/first-steps-with-celery.html">https://docs.celeryq.dev/en/main/getting-started/first-steps-with-celery.html</a></li>
+<li>Celery Calling Tasks: <a target="_blank" rel="noopener" href="https://docs.celeryq.dev/en/main/userguide/calling.html">https://docs.celeryq.dev/en/main/userguide/calling.html</a></li>
+<li>Celery Tasks Guide: <a target="_blank" rel="noopener" href="https://docs.celeryq.dev/en/main/userguide/tasks.html">https://docs.celeryq.dev/en/main/userguide/tasks.html</a></li>
+<li>Celery Routing Tasks: <a target="_blank" rel="noopener" href="https://docs.celeryq.dev/en/main/userguide/routing.html">https://docs.celeryq.dev/en/main/userguide/routing.html</a></li>
+<li>Celery Configuration: <a target="_blank" rel="noopener" href="https://docs.celeryq.dev/en/main/userguide/configuration.html">https://docs.celeryq.dev/en/main/userguide/configuration.html</a></li>
+<li>FastAPI Background Tasks: <a target="_blank" rel="noopener" href="https://fastapi.tiangolo.com/tutorial/background-tasks/">https://fastapi.tiangolo.com/tutorial/background-tasks/</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>楚天
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/celery/" title="Celery 学习笔记">https://chutianduan.github.io/notes/ai模型开发/知识点学习/框架/celery/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/ray/" rel="prev" title="Ray 学习笔记">
+                  <i class="fa fa-angle-left"></i> Ray 学习笔记
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/drogon/" rel="next" title="Drogon 学习笔记">
+                  Drogon 学习笔记 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-code"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">楚天</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

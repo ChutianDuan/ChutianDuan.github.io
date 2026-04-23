@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chutianduan.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":2,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="C++ 进阶编程：模板与元编程笔记时间：2025&#x2F;12&#x2F;16  关键词：泛型编程、编译期计算、零成本抽象、类型推导、约束、类型萃取核心目标：把“同一套逻辑支持多种类型”这件事交给编译器完成。   1. 模板到底在解决什么问题如果没有模板，很多函数只能为不同类型重复写多份： 123int twice(int x) &#123; return x * 2; &#125;float">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++ 进阶编程：模板与元编程笔记">
+<meta property="og:url" content="https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/04-%E6%A8%A1%E6%9D%BF%E4%B8%8E%E5%85%83%E7%BC%96%E7%A8%8B/index.html">
+<meta property="og:site_name" content="楚天">
+<meta property="og:description" content="C++ 进阶编程：模板与元编程笔记时间：2025&#x2F;12&#x2F;16  关键词：泛型编程、编译期计算、零成本抽象、类型推导、约束、类型萃取核心目标：把“同一套逻辑支持多种类型”这件事交给编译器完成。   1. 模板到底在解决什么问题如果没有模板，很多函数只能为不同类型重复写多份： 123int twice(int x) &#123; return x * 2; &#125;float">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-04-09T01:41:18.000Z">
+<meta property="article:modified_time" content="2026-04-09T01:41:18.000Z">
+<meta property="article:author" content="楚天">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="游戏网络">
+<meta property="article:tag" content="技术博客">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/04-%E6%A8%A1%E6%9D%BF%E4%B8%8E%E5%85%83%E7%BC%96%E7%A8%8B/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/04-%E6%A8%A1%E6%9D%BF%E4%B8%8E%E5%85%83%E7%BC%96%E7%A8%8B/","path":"/notes/高性能c-并行编程/04-模板与元编程/","title":"C++ 进阶编程：模板与元编程笔记"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>C++ 进阶编程：模板与元编程笔记 | 楚天</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">楚天</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">惟楚有材，于斯为盛</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-友情链接"><a href="/link/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#C-%E8%BF%9B%E9%98%B6%E7%BC%96%E7%A8%8B%EF%BC%9A%E6%A8%A1%E6%9D%BF%E4%B8%8E%E5%85%83%E7%BC%96%E7%A8%8B%E7%AC%94%E8%AE%B0"><span class="nav-number">1.</span> <span class="nav-text">C++ 进阶编程：模板与元编程笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%A8%A1%E6%9D%BF%E5%88%B0%E5%BA%95%E5%9C%A8%E8%A7%A3%E5%86%B3%E4%BB%80%E4%B9%88%E9%97%AE%E9%A2%98"><span class="nav-number">1.1.</span> <span class="nav-text">1. 模板到底在解决什么问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%87%BD%E6%95%B0%E6%A8%A1%E6%9D%BF"><span class="nav-number">1.2.</span> <span class="nav-text">2. 函数模板</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E6%9C%80%E5%9F%BA%E6%9C%AC%E5%86%99%E6%B3%95"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 最基本写法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E6%98%BE%E5%BC%8F%E6%8C%87%E5%AE%9A%E6%A8%A1%E6%9D%BF%E5%8F%82%E6%95%B0"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 显式指定模板参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E6%A8%A1%E6%9D%BF%E4%B8%8D%E6%98%AF%E2%80%9C%E8%87%AA%E5%8A%A8%E9%87%8D%E8%BD%BD%E4%B8%80%E5%88%87%E2%80%9D"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 模板不是“自动重载一切”</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E7%B1%BB%E6%A8%A1%E6%9D%BF"><span class="nav-number">1.3.</span> <span class="nav-text">3. 类模板</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E9%9D%9E%E7%B1%BB%E5%9E%8B%E6%A8%A1%E6%9D%BF%E5%8F%82%E6%95%B0"><span class="nav-number">1.4.</span> <span class="nav-text">4. 非类型模板参数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E7%BB%8F%E5%85%B8%E5%86%99%E6%B3%95"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 经典写法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E7%94%A8%E7%BC%96%E8%AF%91%E6%9C%9F%E5%B8%83%E5%B0%94%E5%80%BC%E6%8E%A7%E5%88%B6%E5%88%86%E6%94%AF"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 用编译期布尔值控制分支</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E7%8E%B0%E4%BB%A3-C-%E7%9A%84%E6%89%A9%E5%B1%95"><span class="nav-number">1.4.3.</span> <span class="nav-text">4.3 现代 C++ 的扩展</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E6%A8%A1%E6%9D%BF%E5%8F%82%E6%95%B0%E6%8E%A8%E5%AF%BC%E4%B8%8E-auto"><span class="nav-number">1.5.</span> <span class="nav-text">5. 模板参数推导与 auto</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-%E5%80%BC%E4%BC%A0%E9%80%92"><span class="nav-number">1.5.1.</span> <span class="nav-text">5.1 值传递</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-%E5%B7%A6%E5%80%BC%E5%BC%95%E7%94%A8"><span class="nav-number">1.5.2.</span> <span class="nav-text">5.2 左值引用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-%E4%B8%87%E8%83%BD%E5%BC%95%E7%94%A8-%E8%BD%AC%E5%8F%91%E5%BC%95%E7%94%A8"><span class="nav-number">1.5.3.</span> <span class="nav-text">5.3 万能引用 &#x2F; 转发引用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-auto-%E7%9A%84%E6%8E%A8%E5%AF%BC%E8%A7%84%E5%88%99%E5%92%8C%E6%A8%A1%E6%9D%BF%E5%BE%88%E5%83%8F"><span class="nav-number">1.5.4.</span> <span class="nav-text">5.4 auto 的推导规则和模板很像</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E5%87%BD%E6%95%B0%E5%AF%B9%E8%B1%A1%E4%B8%8E-lambda"><span class="nav-number">1.6.</span> <span class="nav-text">6. 函数对象与 lambda</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-%E5%87%BD%E6%95%B0%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.6.1.</span> <span class="nav-text">6.1 函数对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-lambda-%E6%9C%AC%E8%B4%A8%E4%B8%8A%E4%B9%9F%E6%98%AF%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.6.2.</span> <span class="nav-text">6.2 lambda 本质上也是对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-%E6%8D%95%E8%8E%B7%E6%96%B9%E5%BC%8F"><span class="nav-number">1.6.3.</span> <span class="nav-text">6.3 捕获方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-4-%E6%B3%9B%E5%9E%8B-lambda"><span class="nav-number">1.6.4.</span> <span class="nav-text">6.4 泛型 lambda</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-if-constexpr%EF%BC%9A%E6%A8%A1%E6%9D%BF%E6%97%B6%E4%BB%A3%E7%A0%81%E5%88%86%E6%94%AF%E7%9A%84%E5%85%B3%E9%94%AE%E5%B7%A5%E5%85%B7"><span class="nav-number">1.7.</span> <span class="nav-text">7. if constexpr：模板时代码分支的关键工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0%E6%A8%A1%E6%9D%BF"><span class="nav-number">1.8.</span> <span class="nav-text">8. 可变参数模板</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-%E5%9F%BA%E6%9C%AC%E5%86%99%E6%B3%95"><span class="nav-number">1.8.1.</span> <span class="nav-text">8.1 基本写法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-%E9%80%92%E5%BD%92%E5%B1%95%E5%BC%80"><span class="nav-number">1.8.2.</span> <span class="nav-text">8.2 递归展开</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-%E6%8A%98%E5%8F%A0%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-number">1.8.3.</span> <span class="nav-text">8.3 折叠表达式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-%E6%A8%A1%E6%9D%BF%E7%89%B9%E5%8C%96"><span class="nav-number">1.9.</span> <span class="nav-text">9. 模板特化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#9-1-%E5%85%A8%E7%89%B9%E5%8C%96"><span class="nav-number">1.9.1.</span> <span class="nav-text">9.1 全特化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-2-%E5%81%8F%E7%89%B9%E5%8C%96"><span class="nav-number">1.9.2.</span> <span class="nav-text">9.2 偏特化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-%E7%B1%BB%E5%9E%8B%E8%90%83%E5%8F%96-type-traits"><span class="nav-number">1.10.</span> <span class="nav-text">10. 类型萃取 type traits</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#10-1-%E4%B8%80%E4%B8%AA%E5%AE%9E%E7%94%A8%E4%BE%8B%E5%AD%90"><span class="nav-number">1.10.1.</span> <span class="nav-text">10.1 一个实用例子</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-tuple%EF%BC%9A%E6%8A%8A%E5%A4%9A%E4%B8%AA%E5%BC%82%E6%9E%84%E5%80%BC%E6%89%93%E5%8C%85"><span class="nav-number">1.11.</span> <span class="nav-text">11. tuple：把多个异构值打包</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#11-1-%E9%85%8D%E5%90%88-std-apply"><span class="nav-number">1.11.1.</span> <span class="nav-text">11.1 配合 std::apply</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-%E7%BC%96%E8%AF%91%E6%9C%9F%E8%AE%A1%E7%AE%97%E4%B8%8E%E5%85%83%E7%BC%96%E7%A8%8B"><span class="nav-number">1.12.</span> <span class="nav-text">12. 编译期计算与元编程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#12-1-%E7%BB%8F%E5%85%B8%E4%BE%8B%E5%AD%90%EF%BC%9A%E7%BC%96%E8%AF%91%E6%9C%9F%E9%98%B6%E4%B9%98"><span class="nav-number">1.12.1.</span> <span class="nav-text">12.1 经典例子：编译期阶乘</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-2-%E6%9B%B4%E7%8E%B0%E4%BB%A3%E7%9A%84%E5%86%99%E6%B3%95%EF%BC%9Aconstexpr"><span class="nav-number">1.12.2.</span> <span class="nav-text">12.2 更现代的写法：constexpr</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-SFINAE-%E4%B8%8E-Concepts"><span class="nav-number">1.13.</span> <span class="nav-text">13. SFINAE 与 Concepts</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#13-1-SFINAE-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.13.1.</span> <span class="nav-text">13.1 SFINAE 是什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-2-%E7%8E%B0%E4%BB%A3%E5%86%99%E6%B3%95%EF%BC%9AConcepts"><span class="nav-number">1.13.2.</span> <span class="nav-text">13.2 现代写法：Concepts</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-%E6%A8%A1%E6%9D%BF%E4%B8%8E%E9%AB%98%E6%80%A7%E8%83%BD%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">1.14.</span> <span class="nav-text">14. 模板与高性能的关系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#15-%E5%B8%B8%E8%A7%81%E5%9D%91"><span class="nav-number">1.15.</span> <span class="nav-text">15. 常见坑</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#15-1-%E6%A8%A1%E6%9D%BF%E6%8A%A5%E9%94%99%E9%80%9A%E5%B8%B8%E5%BE%88%E9%95%BF%EF%BC%8C%E5%85%88%E7%9C%8B%E2%80%9C%E7%AC%AC%E4%B8%80%E5%A4%84%E7%9C%9F%E6%AD%A3%E5%A4%B1%E8%B4%A5%E7%9A%84%E5%9C%B0%E6%96%B9%E2%80%9D"><span class="nav-number">1.15.1.</span> <span class="nav-text">15.1 模板报错通常很长，先看“第一处真正失败的地方”</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-2-%E5%87%BD%E6%95%B0%E6%A8%A1%E6%9D%BF%E4%B8%8D%E8%83%BD%E5%81%8F%E7%89%B9%E5%8C%96"><span class="nav-number">1.15.2.</span> <span class="nav-text">15.2 函数模板不能偏特化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-3-%E6%A8%A1%E6%9D%BF%E5%AE%9A%E4%B9%89%E9%80%9A%E5%B8%B8%E8%A6%81%E6%94%BE%E5%A4%B4%E6%96%87%E4%BB%B6"><span class="nav-number">1.15.3.</span> <span class="nav-text">15.3 模板定义通常要放头文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-4-typename-%E7%9A%84%E4%B8%A4%E4%B8%AA%E5%B8%B8%E8%A7%81%E4%BD%8D%E7%BD%AE"><span class="nav-number">1.15.4.</span> <span class="nav-text">15.4 typename 的两个常见位置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#16-%E8%BF%90%E8%A1%8C%E6%9C%9F%E5%B8%B8%E9%87%8F-vs-%E7%BC%96%E8%AF%91%E6%9C%9F%E5%B8%B8%E9%87%8F"><span class="nav-number">1.16.</span> <span class="nav-text">16. 运行期常量 vs 编译期常量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#17-%E4%B8%80%E9%A1%B5%E6%80%BB%E7%BB%93"><span class="nav-number">1.17.</span> <span class="nav-text">17. 一页总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#18-%E5%BB%BA%E8%AE%AE%E7%BB%A7%E7%BB%AD%E8%A1%A5%E5%85%85%E7%9A%84%E7%9B%B8%E5%85%B3%E4%B8%BB%E9%A2%98"><span class="nav-number">1.18.</span> <span class="nav-text">18. 建议继续补充的相关主题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#19-%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.19.</span> <span class="nav-text">19. 参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="楚天"
+      src="/img/me.jpg">
+  <p class="site-author-name" itemprop="name">楚天</p>
+  <div class="site-description" itemprop="description">记录深度学习、C++、游戏网络与生活旅行的学习笔记。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ChutianDuan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ChutianDuan" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:3383006954@qq.com" title="E-Mail → mailto:3383006954@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/04-%E6%A8%A1%E6%9D%BF%E4%B8%8E%E5%85%83%E7%BC%96%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="C++ 进阶编程：模板与元编程笔记 | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          C++ 进阶编程：模板与元编程笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-04-09 09:41:18" itemprop="dateCreated datePublished" datetime="2026-04-09T09:41:18+08:00">2026-04-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/%E9%AB%98%E6%80%A7%E8%83%BDC-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">高性能C++并行编程</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="C-进阶编程：模板与元编程笔记"><a href="#C-进阶编程：模板与元编程笔记" class="headerlink" title="C++ 进阶编程：模板与元编程笔记"></a>C++ 进阶编程：模板与元编程笔记</h1><p>时间：2025&#x2F;12&#x2F;16</p>
+<blockquote>
+<p>关键词：泛型编程、编译期计算、零成本抽象、类型推导、约束、类型萃取<br>核心目标：把“同一套逻辑支持多种类型”这件事交给编译器完成。</p>
+</blockquote>
+<hr>
+<h2 id="1-模板到底在解决什么问题"><a href="#1-模板到底在解决什么问题" class="headerlink" title="1. 模板到底在解决什么问题"></a>1. 模板到底在解决什么问题</h2><p>如果没有模板，很多函数只能为不同类型重复写多份：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">twice</span><span class="params">(<span class="type">int</span> x)</span> </span>&#123; <span class="keyword">return</span> x * <span class="number">2</span>; &#125;</span><br><span class="line"><span class="function"><span class="type">float</span> <span class="title">twice</span><span class="params">(<span class="type">float</span> x)</span> </span>&#123; <span class="keyword">return</span> x * <span class="number">2</span>; &#125;</span><br><span class="line"><span class="function"><span class="type">double</span> <span class="title">twice</span><span class="params">(<span class="type">double</span> x)</span> </span>&#123; <span class="keyword">return</span> x * <span class="number">2</span>; &#125;</span><br></pre></td></tr></table></figure>
+
+<p>模板的作用就是把“变化的类型”抽象成参数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">T</span>&gt;</span><br><span class="line"><span class="function">T <span class="title">twice</span><span class="params">(T x)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> x * <span class="number">2</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样带来的好处：</p>
+<ul>
+<li>一份代码可适配多种类型</li>
+<li>类型检查发生在编译期</li>
+<li>通常没有运行时额外开销</li>
+<li>很适合高性能场景中的“零成本抽象”</li>
+</ul>
+<hr>
+<h2 id="2-函数模板"><a href="#2-函数模板" class="headerlink" title="2. 函数模板"></a>2. 函数模板</h2><h3 id="2-1-最基本写法"><a href="#2-1-最基本写法" class="headerlink" title="2.1 最基本写法"></a>2.1 最基本写法</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">T</span>&gt;</span><br><span class="line"><span class="function">T <span class="title">twice</span><span class="params">(T x)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> x * <span class="number">2</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::cout &lt;&lt; <span class="built_in">twice</span>(<span class="number">2</span>) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;      <span class="comment">// T 推导为 int</span></span><br><span class="line">    std::cout &lt;&lt; <span class="built_in">twice</span>(<span class="number">3.5</span>) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;    <span class="comment">// T 推导为 double</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>class</code> 和 <code>typename</code> 在模板类型参数里通常等价：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function">T <span class="title">twice</span><span class="params">(T x)</span> </span>&#123; <span class="keyword">return</span> x * <span class="number">2</span>; &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2-显式指定模板参数"><a href="#2-2-显式指定模板参数" class="headerlink" title="2.2 显式指定模板参数"></a>2.2 显式指定模板参数</h3><p>有时可以手动指定：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">std::cout &lt;&lt; <span class="built_in">twice</span>&lt;<span class="type">int</span>&gt;(<span class="number">2</span>) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>但绝大多数情况下，函数模板都可以依靠参数自动推导。</p>
+<h3 id="2-3-模板不是“自动重载一切”"><a href="#2-3-模板不是“自动重载一切”" class="headerlink" title="2.3 模板不是“自动重载一切”"></a>2.3 模板不是“自动重载一切”</h3><p>模板函数会参与重载决议，但它不是“万能匹配”。<br>如果你还写了一个普通函数，编译器会按重载规则选择更合适的版本：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">T</span>&gt;</span><br><span class="line"><span class="function">T <span class="title">twice</span><span class="params">(T x)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> x * <span class="number">2</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">std::string <span class="title">twice</span><span class="params">(<span class="type">const</span> std::string&amp; s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> s + s;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::cout &lt;&lt; <span class="built_in">twice</span>(<span class="number">10</span>) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    std::cout &lt;&lt; <span class="built_in">twice</span>(std::<span class="built_in">string</span>(<span class="string">&quot;hi&quot;</span>)) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里字符串版本不是“模板自动生成”的，而是我们手动提供了一个更合适的重载。</p>
+<hr>
+<h2 id="3-类模板"><a href="#3-类模板" class="headerlink" title="3. 类模板"></a>3. 类模板</h2><p>函数可以模板化，类也可以：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">T</span>&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Box</span> &#123;</span><br><span class="line">    T value;</span><br><span class="line"></span><br><span class="line">    <span class="function">T <span class="title">get</span><span class="params">()</span> <span class="type">const</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> value;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Box&lt;<span class="type">int</span>&gt; a&#123;<span class="number">42</span>&#125;;</span><br><span class="line">    Box&lt;<span class="type">double</span>&gt; b&#123;<span class="number">3.14</span>&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>类模板常见用途：</p>
+<ul>
+<li>容器：<code>std::vector&lt;T&gt;</code></li>
+<li>智能指针：<code>std::unique_ptr&lt;T&gt;</code></li>
+<li>泛型工具类：<code>std::optional&lt;T&gt;</code>、<code>std::function&lt;T&gt;</code></li>
+</ul>
+<hr>
+<h2 id="4-非类型模板参数"><a href="#4-非类型模板参数" class="headerlink" title="4. 非类型模板参数"></a>4. 非类型模板参数</h2><p>模板参数不一定是类型，也可以是编译期常量。</p>
+<h3 id="4-1-经典写法"><a href="#4-1-经典写法" class="headerlink" title="4.1 经典写法"></a>4.1 经典写法</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="type">int</span> N&gt;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">show_times</span><span class="params">(<span class="type">const</span> std::string&amp; msg)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; N; ++i) &#123;</span><br><span class="line">        std::cout &lt;&lt; msg &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">show_times</span>&lt;<span class="number">3</span>&gt;(<span class="string">&quot;hello&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的 <code>N</code> 在编译期就已经确定。</p>
+<h3 id="4-2-用编译期布尔值控制分支"><a href="#4-2-用编译期布尔值控制分支" class="headerlink" title="4.2 用编译期布尔值控制分支"></a>4.2 用编译期布尔值控制分支</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="type">bool</span> Debug&gt;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">sum_to</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> res = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; ++i) &#123;</span><br><span class="line">        res += i;</span><br><span class="line">        <span class="function"><span class="keyword">if</span> <span class="title">constexpr</span> <span class="params">(Debug)</span> </span>&#123;</span><br><span class="line">            std::cout &lt;&lt; <span class="string">&quot;i=&quot;</span> &lt;&lt; i &lt;&lt; <span class="string">&quot;, res=&quot;</span> &lt;&lt; res &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::cout &lt;&lt; <span class="built_in">sum_to</span>&lt;<span class="literal">false</span>&gt;(<span class="number">10</span>) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>if constexpr</code> 的含义是：</p>
+<ul>
+<li>条件在编译期判断</li>
+<li>不满足条件的分支会被丢弃</li>
+<li>很适合模板里的静态分发</li>
+</ul>
+<h3 id="4-3-现代-C-的扩展"><a href="#4-3-现代-C-的扩展" class="headerlink" title="4.3 现代 C++ 的扩展"></a>4.3 现代 C++ 的扩展</h3><p>C++17 起可以写：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">auto</span> N&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">ConstValue</span> &#123;&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>也就是让非类型模板参数的类型由编译器推导。</p>
+<hr>
+<h2 id="5-模板参数推导与-auto"><a href="#5-模板参数推导与-auto" class="headerlink" title="5. 模板参数推导与 auto"></a>5. 模板参数推导与 <code>auto</code></h2><p>模板学习里最容易混乱的其实是“类型怎么被推导出来”。</p>
+<h3 id="5-1-值传递"><a href="#5-1-值传递" class="headerlink" title="5.1 值传递"></a>5.1 值传递</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">T</span>&gt;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">f</span><span class="params">(T x)</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果传入：</p>
+<ul>
+<li><code>int</code>，则 <code>T = int</code></li>
+<li><code>const int</code>，顶层 <code>const</code> 会被忽略，通常还是 <code>T = int</code></li>
+<li>引用也会退化为值</li>
+</ul>
+<h3 id="5-2-左值引用"><a href="#5-2-左值引用" class="headerlink" title="5.2 左值引用"></a>5.2 左值引用</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">T</span>&gt;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">f</span><span class="params">(T&amp; x)</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此时：</p>
+<ul>
+<li>传左值可以</li>
+<li><code>const</code> 属性会被保留</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> <span class="type">int</span> a = <span class="number">1</span>;</span><br><span class="line"><span class="built_in">f</span>(a); <span class="comment">// T = const int</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="5-3-万能引用-转发引用"><a href="#5-3-万能引用-转发引用" class="headerlink" title="5.3 万能引用 &#x2F; 转发引用"></a>5.3 万能引用 &#x2F; 转发引用</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">T</span>&gt;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">f</span><span class="params">(T&amp;&amp; x)</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当 <code>T</code> 需要推导且参数形式为 <code>T&amp;&amp;</code> 时，它是<strong>转发引用</strong>：</p>
+<ul>
+<li>传右值时，<code>T</code> 推导为普通类型</li>
+<li>传左值时，<code>T</code> 推导为左值引用</li>
+</ul>
+<p>这是完美转发的基础。</p>
+<h3 id="5-4-auto-的推导规则和模板很像"><a href="#5-4-auto-的推导规则和模板很像" class="headerlink" title="5.4 auto 的推导规则和模板很像"></a>5.4 <code>auto</code> 的推导规则和模板很像</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> x = <span class="number">1</span>;        <span class="comment">// int</span></span><br><span class="line"><span class="type">const</span> <span class="keyword">auto</span> y = x;  <span class="comment">// const int</span></span><br><span class="line"><span class="keyword">auto</span>&amp; z = y;       <span class="comment">// const int&amp;</span></span><br></pre></td></tr></table></figure>
+
+<p>可以粗略理解为：</p>
+<ul>
+<li><code>auto</code> 很像“让编译器帮你写模板参数推导”</li>
+<li><code>decltype(expr)</code> 则是“精确获取表达式类型”</li>
+</ul>
+<hr>
+<h2 id="6-函数对象与-lambda"><a href="#6-函数对象与-lambda" class="headerlink" title="6. 函数对象与 lambda"></a>6. 函数对象与 lambda</h2><p>模板经常和“可调用对象”配合使用。</p>
+<h3 id="6-1-函数对象"><a href="#6-1-函数对象" class="headerlink" title="6.1 函数对象"></a>6.1 函数对象</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Printer</span> &#123;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">operator</span><span class="params">()</span><span class="params">(<span class="type">int</span> x)</span> <span class="type">const</span> </span>&#123;</span><br><span class="line">        std::cout &lt;&lt; x &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">Func</span>&gt;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">call_twice</span><span class="params">(Func func)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">func</span>(<span class="number">0</span>);</span><br><span class="line">    <span class="built_in">func</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">call_twice</span>(Printer&#123;&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>Func</code> 可以是：</p>
+<ul>
+<li>普通函数指针</li>
+<li>仿函数对象</li>
+<li>lambda</li>
+</ul>
+<h3 id="6-2-lambda-本质上也是对象"><a href="#6-2-lambda-本质上也是对象" class="headerlink" title="6.2 lambda 本质上也是对象"></a>6.2 lambda 本质上也是对象</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">Func</span>&gt;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">call_twice</span><span class="params">(<span class="type">const</span> Func&amp; func)</span> </span>&#123;</span><br><span class="line">    std::cout &lt;&lt; <span class="built_in">func</span>(<span class="number">1</span>) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    std::cout &lt;&lt; <span class="built_in">func</span>(<span class="number">2</span>) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">auto</span> <span class="title">make_times</span><span class="params">(<span class="type">int</span> factor)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> [=](<span class="type">int</span> n) &#123;</span><br><span class="line">        <span class="keyword">return</span> n * factor;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> twice = <span class="built_in">make_times</span>(<span class="number">2</span>);</span><br><span class="line">    <span class="built_in">call_twice</span>(twice);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-3-捕获方式"><a href="#6-3-捕获方式" class="headerlink" title="6.3 捕获方式"></a>6.3 捕获方式</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[&amp;]  <span class="comment">// 按引用捕获</span></span><br><span class="line">[=]  <span class="comment">// 按值捕获</span></span><br><span class="line">[x]  <span class="comment">// 只捕获 x</span></span><br><span class="line">[&amp;x] <span class="comment">// 按引用捕获 x</span></span><br></pre></td></tr></table></figure>
+
+<p>注意：</p>
+<ul>
+<li>按引用捕获要注意生命周期</li>
+<li>闭包对象会保存按值捕获的副本</li>
+</ul>
+<h3 id="6-4-泛型-lambda"><a href="#6-4-泛型-lambda" class="headerlink" title="6.4 泛型 lambda"></a>6.4 泛型 lambda</h3><p>C++14 起，lambda 参数可以写 <code>auto</code>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> print = [](<span class="type">const</span> <span class="keyword">auto</span>&amp; x) &#123;</span><br><span class="line">    std::cout &lt;&lt; x &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这相当于编译器帮我们生成了一个带模板 <code>operator()</code> 的闭包类型。</p>
+<hr>
+<h2 id="7-if-constexpr：模板时代码分支的关键工具"><a href="#7-if-constexpr：模板时代码分支的关键工具" class="headerlink" title="7. if constexpr：模板时代码分支的关键工具"></a>7. <code>if constexpr</code>：模板时代码分支的关键工具</h2><p>模板中经常需要根据类型走不同逻辑。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;type_traits&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">T</span>&gt;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">print_info</span><span class="params">(<span class="type">const</span> T&amp; x)</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">if</span> <span class="title">constexpr</span> <span class="params">(std::is_integral_v&lt;T&gt;)</span> </span>&#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;integral: &quot;</span> &lt;&lt; x &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> <span class="built_in">constexpr</span> (std::is_floating_point_v&lt;T&gt;) &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;floating: &quot;</span> &lt;&lt; x &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;other type\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>相比普通 <code>if</code>，<code>if constexpr</code> 在模板里更重要，因为它可以彻底丢弃无效分支，避免编译错误。</p>
+<hr>
+<h2 id="8-可变参数模板"><a href="#8-可变参数模板" class="headerlink" title="8. 可变参数模板"></a>8. 可变参数模板</h2><p>可变参数模板可以接收任意个模板参数或函数参数。</p>
+<h3 id="8-1-基本写法"><a href="#8-1-基本写法" class="headerlink" title="8.1 基本写法"></a>8.1 基本写法</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span>... Ts&gt;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">func</span><span class="params">(Ts... args)</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里：</p>
+<ul>
+<li><code>Ts...</code> 是模板参数包</li>
+<li><code>args...</code> 是函数参数包</li>
+</ul>
+<h3 id="8-2-递归展开"><a href="#8-2-递归展开" class="headerlink" title="8.2 递归展开"></a>8.2 递归展开</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">print_all</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">T</span>, <span class="keyword">class</span>... Ts&gt;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">print_all</span><span class="params">(<span class="type">const</span> T&amp; first, <span class="type">const</span> Ts&amp;... rest)</span> </span>&#123;</span><br><span class="line">    std::cout &lt;&lt; first &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    <span class="built_in">print_all</span>(rest...);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="8-3-折叠表达式"><a href="#8-3-折叠表达式" class="headerlink" title="8.3 折叠表达式"></a>8.3 折叠表达式</h3><p>C++17 起，更推荐用 fold expression：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span>... Ts&gt;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">print_all</span><span class="params">(<span class="type">const</span> Ts&amp;... xs)</span> </span>&#123;</span><br><span class="line">    ((std::cout &lt;&lt; xs &lt;&lt; <span class="string">&#x27;\n&#x27;</span>), ...);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span>... Ts&gt;</span><br><span class="line"><span class="function"><span class="keyword">auto</span> <span class="title">sum</span><span class="params">(<span class="type">const</span> Ts&amp;... xs)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (xs + ...);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这比手写递归更直观。</p>
+<hr>
+<h2 id="9-模板特化"><a href="#9-模板特化" class="headerlink" title="9. 模板特化"></a>9. 模板特化</h2><p>当某些类型需要特殊处理时，可以使用特化。</p>
+<h3 id="9-1-全特化"><a href="#9-1-全特化" class="headerlink" title="9.1 全特化"></a>9.1 全特化</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">T</span>&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">TypeName</span> &#123;</span><br><span class="line">    <span class="function"><span class="type">static</span> <span class="keyword">constexpr</span> <span class="type">const</span> <span class="type">char</span>* <span class="title">get</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> <span class="string">&quot;unknown&quot;</span>; &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">TypeName</span>&lt;<span class="type">int</span>&gt; &#123;</span><br><span class="line">    <span class="function"><span class="type">static</span> <span class="keyword">constexpr</span> <span class="type">const</span> <span class="type">char</span>* <span class="title">get</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> <span class="string">&quot;int&quot;</span>; &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::cout &lt;&lt; TypeName&lt;<span class="type">int</span>&gt;::<span class="built_in">get</span>() &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="9-2-偏特化"><a href="#9-2-偏特化" class="headerlink" title="9.2 偏特化"></a>9.2 偏特化</h3><p>类模板支持偏特化，函数模板不支持偏特化。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">T</span>&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">IsPointer</span> &#123;</span><br><span class="line">    <span class="type">static</span> <span class="keyword">constexpr</span> <span class="type">bool</span> value = <span class="literal">false</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">T</span>&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">IsPointer</span>&lt;T*&gt; &#123;</span><br><span class="line">    <span class="type">static</span> <span class="keyword">constexpr</span> <span class="type">bool</span> value = <span class="literal">true</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这里 <code>T*</code> 就是“对一类类型进行特化”。</p>
+<hr>
+<h2 id="10-类型萃取-type-traits"><a href="#10-类型萃取-type-traits" class="headerlink" title="10. 类型萃取 type traits"></a>10. 类型萃取 <code>type traits</code></h2><p><code>type traits</code> 是模板元编程里非常实用的一组工具，用来在编译期判断、转换、组合类型信息。</p>
+<p>最常见的几个：</p>
+<ul>
+<li><code>std::is_same_v&lt;A, B&gt;</code></li>
+<li><code>std::is_integral_v&lt;T&gt;</code></li>
+<li><code>std::is_floating_point_v&lt;T&gt;</code></li>
+<li><code>std::is_pointer_v&lt;T&gt;</code></li>
+<li><code>std::remove_reference_t&lt;T&gt;</code></li>
+<li><code>std::decay_t&lt;T&gt;</code></li>
+</ul>
+<p>例子：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;type_traits&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="built_in">static_assert</span>(std::is_same_v&lt;<span class="type">int</span>, <span class="type">int</span>&gt;);</span><br><span class="line"><span class="built_in">static_assert</span>(std::is_integral_v&lt;<span class="type">int</span>&gt;);</span><br><span class="line"><span class="built_in">static_assert</span>(std::is_pointer_v&lt;<span class="type">int</span>*&gt;);</span><br></pre></td></tr></table></figure>
+
+<h3 id="10-1-一个实用例子"><a href="#10-1-一个实用例子" class="headerlink" title="10.1 一个实用例子"></a>10.1 一个实用例子</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;type_traits&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">Func</span>&gt;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">fetch_data</span><span class="params">(<span class="type">const</span> Func&amp; func)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">4</span>; ++i) &#123;</span><br><span class="line">        <span class="built_in">func</span>(i);</span><br><span class="line">        <span class="built_in">func</span>(i + <span class="number">0.5f</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::vector&lt;<span class="type">int</span>&gt; res_i;</span><br><span class="line">    std::vector&lt;<span class="type">float</span>&gt; res_f;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">fetch_data</span>([&amp;](<span class="type">const</span> <span class="keyword">auto</span>&amp; x) &#123;</span><br><span class="line">        <span class="keyword">using</span> T = std::<span class="type">decay_t</span>&lt;<span class="keyword">decltype</span>(x)&gt;;</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">constexpr</span> (std::is_same_v&lt;T, <span class="type">int</span>&gt;) &#123;</span><br><span class="line">            res_i.<span class="built_in">push_back</span>(x);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> <span class="built_in">constexpr</span> (std::is_same_v&lt;T, <span class="type">float</span>&gt;) &#123;</span><br><span class="line">            res_f.<span class="built_in">push_back</span>(x);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个模式的核心是：</p>
+<ul>
+<li><code>decltype(x)</code> 取表达式类型</li>
+<li><code>std::decay_t</code> 做常见退化</li>
+<li><code>if constexpr</code> 做编译期分支</li>
+</ul>
+<hr>
+<h2 id="11-tuple：把多个异构值打包"><a href="#11-tuple：把多个异构值打包" class="headerlink" title="11. tuple：把多个异构值打包"></a>11. <code>tuple</code>：把多个异构值打包</h2><p><code>tuple</code> 可以装不同类型的数据。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tuple&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"></span><br><span class="line">std::tuple&lt;<span class="type">int</span>, <span class="type">double</span>, std::string&gt; info&#123;<span class="number">1</span>, <span class="number">3.14</span>, <span class="string">&quot;cpp&quot;</span>&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>常见操作：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> x = std::<span class="built_in">get</span>&lt;<span class="number">0</span>&gt;(info);</span><br><span class="line"><span class="keyword">auto</span> y = std::<span class="built_in">get</span>&lt;<span class="number">1</span>&gt;(info);</span><br></pre></td></tr></table></figure>
+
+<p>也可以结构化绑定：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> [id, score, name] = info;</span><br></pre></td></tr></table></figure>
+
+<p><code>tuple</code> 在模板里很重要，因为它经常和参数包、泛型封装、返回多个值一起使用。</p>
+<h3 id="11-1-配合-std-apply"><a href="#11-1-配合-std-apply" class="headerlink" title="11.1 配合 std::apply"></a>11.1 配合 <code>std::apply</code></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;tuple&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;utility&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">add</span><span class="params">(<span class="type">int</span> a, <span class="type">int</span> b, <span class="type">int</span> c)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> a + b + c;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> t = std::<span class="built_in">make_tuple</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);</span><br><span class="line">    std::cout &lt;&lt; std::<span class="built_in">apply</span>(add, t) &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="12-编译期计算与元编程"><a href="#12-编译期计算与元编程" class="headerlink" title="12. 编译期计算与元编程"></a>12. 编译期计算与元编程</h2><p>模板元编程最早常见的写法是“模板递归”。</p>
+<h3 id="12-1-经典例子：编译期阶乘"><a href="#12-1-经典例子：编译期阶乘" class="headerlink" title="12.1 经典例子：编译期阶乘"></a>12.1 经典例子：编译期阶乘</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="type">int</span> N&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Factorial</span> &#123;</span><br><span class="line">    <span class="type">static</span> <span class="keyword">constexpr</span> <span class="type">int</span> value = N * Factorial&lt;N - <span class="number">1</span>&gt;::value;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Factorial</span>&lt;<span class="number">0</span>&gt; &#123;</span><br><span class="line">    <span class="type">static</span> <span class="keyword">constexpr</span> <span class="type">int</span> value = <span class="number">1</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">static_assert</span>(Factorial&lt;<span class="number">5</span>&gt;::value == <span class="number">120</span>);</span><br></pre></td></tr></table></figure>
+
+<p>这就是典型的模板元编程：</p>
+<ul>
+<li>编译期递归展开</li>
+<li>编译期得到结果</li>
+</ul>
+<p>但现代 C++ 中，很多时候更推荐 <code>constexpr</code> 函数，因为更自然、可读性更好。</p>
+<h3 id="12-2-更现代的写法：constexpr"><a href="#12-2-更现代的写法：constexpr" class="headerlink" title="12.2 更现代的写法：constexpr"></a>12.2 更现代的写法：<code>constexpr</code></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">constexpr</span> <span class="type">int</span> <span class="title">factorial</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> n &lt;= <span class="number">1</span> ? <span class="number">1</span> : n * <span class="built_in">factorial</span>(n - <span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">static_assert</span>(<span class="built_in">factorial</span>(<span class="number">5</span>) == <span class="number">120</span>);</span><br></pre></td></tr></table></figure>
+
+<p>经验上可以这么记：</p>
+<ul>
+<li>需要泛型类型操作时，用模板</li>
+<li>需要编译期值计算时，优先考虑 <code>constexpr</code></li>
+</ul>
+<hr>
+<h2 id="13-SFINAE-与-Concepts"><a href="#13-SFINAE-与-Concepts" class="headerlink" title="13. SFINAE 与 Concepts"></a>13. SFINAE 与 Concepts</h2><p>这部分属于模板进阶重点。</p>
+<h3 id="13-1-SFINAE-是什么"><a href="#13-1-SFINAE-是什么" class="headerlink" title="13.1 SFINAE 是什么"></a>13.1 SFINAE 是什么</h3><p>SFINAE 全称：</p>
+<blockquote>
+<p>Substitution Failure Is Not An Error</p>
+</blockquote>
+<p>含义是：</p>
+<ul>
+<li>模板替换失败时，不一定报错</li>
+<li>编译器会把这个候选模板从重载集合里移除</li>
+</ul>
+<p>过去常用 <code>std::enable_if</code> 来写约束：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;type_traits&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">T</span>,</span><br><span class="line">          <span class="keyword">class</span> = std::<span class="type">enable_if_t</span>&lt;std::is_integral_v&lt;T&gt;&gt;&gt;</span><br><span class="line">T <span class="built_in">add_one</span>(T x) &#123;</span><br><span class="line">    <span class="keyword">return</span> x + <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="13-2-现代写法：Concepts"><a href="#13-2-现代写法：Concepts" class="headerlink" title="13.2 现代写法：Concepts"></a>13.2 现代写法：Concepts</h3><p>C++20 更推荐直接写约束：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;concepts&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;std::integral T&gt;</span><br><span class="line"><span class="function">T <span class="title">add_one</span><span class="params">(T x)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> x + <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>或者：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">T</span>&gt;</span><br><span class="line"><span class="function"><span class="keyword">requires</span> std::integral&lt;T&gt;</span></span><br><span class="line"><span class="function">T <span class="title">add_one</span><span class="params">(T x)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> x + <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>优势：</p>
+<ul>
+<li>代码更直观</li>
+<li>编译错误信息更友好</li>
+<li>语义上更接近“声明接口要求”</li>
+</ul>
+<hr>
+<h2 id="14-模板与高性能的关系"><a href="#14-模板与高性能的关系" class="headerlink" title="14. 模板与高性能的关系"></a>14. 模板与高性能的关系</h2><p>模板在高性能 C++ 里不是“语法炫技”，而是重要工具。</p>
+<p>它常被用来实现：</p>
+<ul>
+<li>泛型容器与算法</li>
+<li>编译期分发，避免运行时 <code>if/switch</code></li>
+<li>针对不同类型或策略做静态优化</li>
+<li>内联与零成本抽象</li>
+</ul>
+<p>例如一个“策略模板”：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">Policy</span>&gt;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">process</span><span class="params">(<span class="type">const</span> Policy&amp; policy)</span> </span>&#123;</span><br><span class="line">    policy.<span class="built_in">run</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果策略类型在编译期确定，编译器往往可以做更激进的内联和优化。</p>
+<hr>
+<h2 id="15-常见坑"><a href="#15-常见坑" class="headerlink" title="15. 常见坑"></a>15. 常见坑</h2><h3 id="15-1-模板报错通常很长，先看“第一处真正失败的地方”"><a href="#15-1-模板报错通常很长，先看“第一处真正失败的地方”" class="headerlink" title="15.1 模板报错通常很长，先看“第一处真正失败的地方”"></a>15.1 模板报错通常很长，先看“第一处真正失败的地方”</h3><p>不要一上来被几百行错误吓住。<br>模板错误栈很深时，先找：</p>
+<ul>
+<li>第一个用户代码位置</li>
+<li>哪个类型替换失败</li>
+<li>哪个约束没满足</li>
+</ul>
+<h3 id="15-2-函数模板不能偏特化"><a href="#15-2-函数模板不能偏特化" class="headerlink" title="15.2 函数模板不能偏特化"></a>15.2 函数模板不能偏特化</h3><p>类模板可以偏特化，函数模板不能。<br>函数模板通常靠：</p>
+<ul>
+<li>重载</li>
+<li><code>if constexpr</code></li>
+<li><code>enable_if</code></li>
+<li>concepts</li>
+</ul>
+<p>来做选择。</p>
+<h3 id="15-3-模板定义通常要放头文件"><a href="#15-3-模板定义通常要放头文件" class="headerlink" title="15.3 模板定义通常要放头文件"></a>15.3 模板定义通常要放头文件</h3><p>因为模板需要在使用点可见，编译器才能实例化。<br>这也是很多模板库几乎全写在头文件里的原因。</p>
+<h3 id="15-4-typename-的两个常见位置"><a href="#15-4-typename-的两个常见位置" class="headerlink" title="15.4 typename 的两个常见位置"></a>15.4 <code>typename</code> 的两个常见位置</h3><p>第一种：声明模板类型参数</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br></pre></td></tr></table></figure>
+
+<p>第二种：告诉编译器“这是一个类型”</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">T</span>&gt;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">f</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">typename</span> T::value_type x&#123;&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为 <code>T::value_type</code> 在模板阶段不一定能立刻判断它是“类型”还是“静态成员”。</p>
+<hr>
+<h2 id="16-运行期常量-vs-编译期常量"><a href="#16-运行期常量-vs-编译期常量" class="headerlink" title="16. 运行期常量 vs 编译期常量"></a>16. 运行期常量 vs 编译期常量</h2><p>运行期常量：</p>
+<ul>
+<li>程序运行时才确定</li>
+<li>例如函数参数 <code>int n</code></li>
+</ul>
+<p>编译期常量：</p>
+<ul>
+<li>编译阶段就确定</li>
+<li>例如模板参数、<code>constexpr</code> 结果、<code>static_assert</code> 条件</li>
+</ul>
+<p>区别的意义在于：</p>
+<ul>
+<li>编译期常量能参与模板实例化</li>
+<li>编译器可以据此裁剪分支、展开逻辑、做更多优化</li>
+</ul>
+<hr>
+<h2 id="17-一页总结"><a href="#17-一页总结" class="headerlink" title="17. 一页总结"></a>17. 一页总结</h2><p>模板学习的主线可以概括成：</p>
+<ol>
+<li>用模板把“类型差异”参数化</li>
+<li>用推导、特化、类型萃取处理不同类型</li>
+<li>用参数包和 <code>tuple</code> 处理变长、异构数据</li>
+<li>用 <code>if constexpr</code>、SFINAE、concepts 实现静态约束和分发</li>
+<li>用 <code>constexpr</code> 与模板配合，把部分逻辑提前到编译期</li>
+</ol>
+<p>如果只记几个最高频关键词：</p>
+<ul>
+<li>函数模板 &#x2F; 类模板</li>
+<li>非类型模板参数</li>
+<li><code>auto</code> &#x2F; <code>decltype</code> &#x2F; 引用折叠</li>
+<li><code>if constexpr</code></li>
+<li><code>type traits</code></li>
+<li>参数包与 fold expression</li>
+<li>特化</li>
+<li><code>constexpr</code></li>
+<li>concepts</li>
+</ul>
+<hr>
+<h2 id="18-建议继续补充的相关主题"><a href="#18-建议继续补充的相关主题" class="headerlink" title="18. 建议继续补充的相关主题"></a>18. 建议继续补充的相关主题</h2><p>如果后面继续整理，这几个主题和本文衔接最好：</p>
+<ol>
+<li><code>std::forward</code>、完美转发与引用折叠</li>
+<li><code>std::move</code>、移动语义和模板中的值类别</li>
+<li><code>CRTP</code>、策略类、静态多态</li>
+<li><code>std::invoke</code>、<code>std::apply</code>、通用调用封装</li>
+<li>ranges 与 concepts 在现代泛型编程里的用法</li>
+</ol>
+<hr>
+<h2 id="19-参考资料"><a href="#19-参考资料" class="headerlink" title="19. 参考资料"></a>19. 参考资料</h2><ol>
+<li><p>cppreference: templates<br><a target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/language/templates">https://en.cppreference.com/w/cpp/language/templates</a></p>
+</li>
+<li><p>cppreference: type traits<br><a target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/types">https://en.cppreference.com/w/cpp/types</a></p>
+</li>
+<li><p>cppreference: fold expressions<br><a target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/language/fold">https://en.cppreference.com/w/cpp/language/fold</a></p>
+</li>
+<li><p>cppreference: concepts<br><a target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/concepts">https://en.cppreference.com/w/cpp/concepts</a></p>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>楚天
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/04-%E6%A8%A1%E6%9D%BF%E4%B8%8E%E5%85%83%E7%BC%96%E7%A8%8B/" title="C++ 进阶编程：模板与元编程笔记">https://chutianduan.github.io/notes/高性能c-并行编程/04-模板与元编程/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/05-vector%E5%AE%B9%E5%99%A8%E4%BC%98%E5%8C%96%E7%BC%96%E7%A8%8B/" rel="prev" title="vector 容器优化编程笔记">
+                  <i class="fa fa-angle-left"></i> vector 容器优化编程笔记
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/03-%E5%B7%A6%E5%8F%B3%E5%80%BC-%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91%E4%B8%8E%E5%BC%95%E7%94%A8%E6%8A%98%E5%8F%A0/" rel="next" title="左值、右值、&#96;std::forward&#96; 与完美转发笔记">
+                  左值、右值、`std::forward` 与完美转发笔记 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-code"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">楚天</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chutianduan.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":2,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Ray 学习笔记截至 2026-03-30，这份笔记主要参考：  Ray 官方文档 2.54.x Celery 官方稳定版文档 5.6.x  如果当前目标是做 AI 模型开发，可以先抓住这个区分：  Celery 更像“任务队列和后台调度器”，Ray 更像“分布式计算和 GPU 资源调度层”。   1. Ray 是什么Ray 是一个 Python 分布式计算框架，用来把普通 Python 代码扩展">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ray 学习笔记">
+<meta property="og:url" content="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/ray/index.html">
+<meta property="og:site_name" content="楚天">
+<meta property="og:description" content="Ray 学习笔记截至 2026-03-30，这份笔记主要参考：  Ray 官方文档 2.54.x Celery 官方稳定版文档 5.6.x  如果当前目标是做 AI 模型开发，可以先抓住这个区分：  Celery 更像“任务队列和后台调度器”，Ray 更像“分布式计算和 GPU 资源调度层”。   1. Ray 是什么Ray 是一个 Python 分布式计算框架，用来把普通 Python 代码扩展">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-04-20T01:03:11.000Z">
+<meta property="article:modified_time" content="2026-04-20T01:03:11.000Z">
+<meta property="article:author" content="楚天">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="游戏网络">
+<meta property="article:tag" content="技术博客">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/ray/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/ray/","path":"/notes/ai模型开发/知识点学习/框架/ray/","title":"Ray 学习笔记"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Ray 学习笔记 | 楚天</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">楚天</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">惟楚有材，于斯为盛</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-友情链接"><a href="/link/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Ray-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0"><span class="nav-number">1.</span> <span class="nav-text">Ray 学习笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Ray-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.1.</span> <span class="nav-text">1. Ray 是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Ray-%E9%80%82%E5%90%88%E4%BB%80%E4%B9%88%E5%9C%BA%E6%99%AF"><span class="nav-number">1.2.</span> <span class="nav-text">2. Ray 适合什么场景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Ray-%E7%9A%84%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5"><span class="nav-number">1.3.</span> <span class="nav-text">3. Ray 的核心概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Task"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 Task</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-Actor"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 Actor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-ObjectRef"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 ObjectRef</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-Object-Store"><span class="nav-number">1.3.4.</span> <span class="nav-text">3.4 Object Store</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E6%9C%80%E5%B0%8F%E5%85%A5%E9%97%A8%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.4.</span> <span class="nav-text">4. 最小入门示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E5%AE%89%E8%A3%85"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E5%90%AF%E5%8A%A8%E6%9C%AC%E5%9C%B0-Ray"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 启动本地 Ray</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E7%AC%AC%E4%B8%80%E4%B8%AA-Task"><span class="nav-number">1.4.3.</span> <span class="nav-text">4.3 第一个 Task</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-%E7%AC%AC%E4%B8%80%E4%B8%AA-Actor"><span class="nav-number">1.4.4.</span> <span class="nav-text">4.4 第一个 Actor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5-%E5%85%B1%E4%BA%AB%E5%A4%A7%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.4.5.</span> <span class="nav-text">4.5 共享大对象</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-Ray-%E5%B8%B8%E7%94%A8-API"><span class="nav-number">1.5.</span> <span class="nav-text">5. Ray 常用 API</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-ray-init"><span class="nav-number">1.5.1.</span> <span class="nav-text">5.1 ray.init()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-ray-get"><span class="nav-number">1.5.2.</span> <span class="nav-text">5.2 ray.get()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-ray-wait"><span class="nav-number">1.5.3.</span> <span class="nav-text">5.3 ray.wait()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-ray-put"><span class="nav-number">1.5.4.</span> <span class="nav-text">5.4 ray.put()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-Task-%E5%92%8C-Actor-%E6%80%8E%E4%B9%88%E9%80%89"><span class="nav-number">1.6.</span> <span class="nav-text">6. Task 和 Actor 怎么选</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-%E4%BB%8E%E6%9C%AC%E5%9C%B0%E5%88%B0%E9%9B%86%E7%BE%A4"><span class="nav-number">1.7.</span> <span class="nav-text">7. 从本地到集群</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-%E5%8D%95%E6%9C%BA%E5%BC%80%E5%8F%91"><span class="nav-number">1.7.1.</span> <span class="nav-text">7.1 单机开发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-%E6%89%8B%E5%8A%A8%E5%90%AF%E5%8A%A8%E5%8D%95%E6%9C%BA-%E5%A4%9A%E6%9C%BA%E9%9B%86%E7%BE%A4"><span class="nav-number">1.7.2.</span> <span class="nav-text">7.2 手动启动单机 &#x2F; 多机集群</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-3-GPU-%E6%9C%BA%E5%99%A8%E4%B8%8A%E9%99%90%E5%88%B6%E5%8F%AF%E8%A7%81%E6%98%BE%E5%8D%A1"><span class="nav-number">1.7.3.</span> <span class="nav-text">7.3 GPU 机器上限制可见显卡</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-%E5%A4%9A%E5%BC%A0%E6%98%BE%E5%8D%A1%E6%80%8E%E4%B9%88%E7%94%A8"><span class="nav-number">1.8.</span> <span class="nav-text">8. 多张显卡怎么用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-%E4%B8%80%E5%BC%A0%E5%8D%A1%E5%AF%B9%E5%BA%94%E4%B8%80%E4%B8%AA-Actor"><span class="nav-number">1.8.1.</span> <span class="nav-text">8.1 一张卡对应一个 Actor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-%E5%8D%95%E4%B8%AA%E4%BB%BB%E5%8A%A1%E4%BD%BF%E7%94%A8%E5%A4%9A%E5%BC%A0%E5%8D%A1"><span class="nav-number">1.8.2.</span> <span class="nav-text">8.2 单个任务使用多张卡</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-%E5%88%86%E6%95%B0-GPU"><span class="nav-number">1.8.3.</span> <span class="nav-text">8.3 分数 GPU</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-4-%E5%A4%9A%E5%8D%A1%E8%AE%AD%E7%BB%83%E4%BC%98%E5%85%88%E7%94%A8-Ray-Train"><span class="nav-number">1.8.4.</span> <span class="nav-text">8.4 多卡训练优先用 Ray Train</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-5-%E4%B8%80%E4%B8%AA-worker-%E5%90%83%E5%A4%9A%E5%BC%A0%E5%8D%A1"><span class="nav-number">1.8.5.</span> <span class="nav-text">8.5 一个 worker 吃多张卡</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-6-%E9%9C%80%E8%A6%81%E6%88%90%E7%BB%84%E9%A2%84%E7%95%99%E8%B5%84%E6%BA%90%E6%97%B6%EF%BC%8C%E7%94%A8-Placement-Group"><span class="nav-number">1.8.6.</span> <span class="nav-text">8.6 需要成组预留资源时，用 Placement Group</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-AI-%E5%9C%BA%E6%99%AF%E4%B8%8B%E6%9B%B4%E5%AE%9E%E7%94%A8%E7%9A%84%E5%86%99%E6%B3%95"><span class="nav-number">1.9.</span> <span class="nav-text">9. AI 场景下更实用的写法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#9-1-%E6%A8%A1%E5%9E%8B%E5%B8%B8%E9%A9%BB-GPU-%E7%9A%84-Actor"><span class="nav-number">1.9.1.</span> <span class="nav-text">9.1 模型常驻 GPU 的 Actor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-2-%E6%89%B9%E9%87%8F%E6%8E%A8%E7%90%86%E6%9B%B4%E6%8E%A8%E8%8D%90-Ray-Data"><span class="nav-number">1.9.2.</span> <span class="nav-text">9.2 批量推理更推荐 Ray Data</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-Ray-%E5%92%8C-Celery-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">1.10.</span> <span class="nav-text">10. Ray 和 Celery 的区别</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#10-1-%E4%B8%80%E5%BC%A0%E8%A1%A8%E7%9C%8B%E5%8C%BA%E5%88%AB"><span class="nav-number">1.10.1.</span> <span class="nav-text">10.1 一张表看区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-2-%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E5%8F%AA%E7%94%A8-Celery"><span class="nav-number">1.10.2.</span> <span class="nav-text">10.2 什么时候只用 Celery</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-3-%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E5%8F%AA%E7%94%A8-Ray"><span class="nav-number">1.10.3.</span> <span class="nav-text">10.3 什么时候只用 Ray</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-4-%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99-Ray-Celery-%E8%81%94%E5%90%88"><span class="nav-number">1.10.4.</span> <span class="nav-text">10.4 什么时候 Ray + Celery 联合</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-Ray-Celery-%E6%8E%A8%E8%8D%90%E8%90%BD%E5%9C%B0%E6%96%B9%E5%BC%8F"><span class="nav-number">1.11.</span> <span class="nav-text">11. Ray + Celery 推荐落地方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#11-1-%E6%8E%A8%E8%8D%90%E5%8E%9F%E5%88%99"><span class="nav-number">1.11.1.</span> <span class="nav-text">11.1 推荐原则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-2-%E6%9C%80%E5%AE%9E%E7%94%A8%E7%9A%84%E6%96%B9%E6%A1%88%EF%BC%9ACelery-%E4%BB%BB%E5%8A%A1%E5%86%85%E9%83%A8%E8%B0%83%E7%94%A8-Ray-Actor"><span class="nav-number">1.11.2.</span> <span class="nav-text">11.2 最实用的方案：Celery 任务内部调用 Ray Actor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-3-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E9%87%8C%E8%A6%81%E7%94%A8-Named-Actor"><span class="nav-number">1.11.3.</span> <span class="nav-text">11.3 为什么这里要用 Named Actor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-4-%E5%A6%82%E6%9E%9C%E8%A6%81%E5%81%9A%E5%A4%9A%E5%8D%A1%E6%A8%A1%E5%9E%8B%E6%B1%A0"><span class="nav-number">1.11.4.</span> <span class="nav-text">11.4 如果要做多卡模型池</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-5-Celery-%E9%98%9F%E5%88%97%E6%80%8E%E4%B9%88%E9%85%8D%E5%90%88"><span class="nav-number">1.11.5.</span> <span class="nav-text">11.5 Celery 队列怎么配合</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-%E4%B8%80%E4%B8%AA%E6%9B%B4%E5%90%88%E7%90%86%E7%9A%84%E8%81%8C%E8%B4%A3%E5%88%86%E5%B1%82%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.12.</span> <span class="nav-text">12. 一个更合理的职责分层建议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-%E5%B8%B8%E8%A7%81%E5%9D%91"><span class="nav-number">1.13.</span> <span class="nav-text">13. 常见坑</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#13-1-%E4%B8%8D%E8%A6%81%E5%9C%A8%E5%BE%AA%E7%8E%AF%E9%87%8C%E4%B8%80%E8%BE%B9%E6%8F%90%E4%BA%A4%E4%B8%80%E8%BE%B9-ray-get"><span class="nav-number">1.13.1.</span> <span class="nav-text">13.1 不要在循环里一边提交一边 ray.get()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-2-%E4%BB%BB%E5%8A%A1%E5%88%AB%E5%88%87%E5%BE%97%E5%A4%AA%E7%BB%86"><span class="nav-number">1.13.2.</span> <span class="nav-text">13.2 任务别切得太细</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-3-%E5%A4%A7%E5%AF%B9%E8%B1%A1%E5%88%AB%E9%87%8D%E5%A4%8D%E6%8C%89%E5%80%BC%E4%BC%A0"><span class="nav-number">1.13.3.</span> <span class="nav-text">13.3 大对象别重复按值传</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-4-GPU-task-%E9%BB%98%E8%AE%A4%E5%8F%AF%E8%83%BD%E4%B8%8D%E5%A4%8D%E7%94%A8-worker"><span class="nav-number">1.13.4.</span> <span class="nav-text">13.4 GPU task 默认可能不复用 worker</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-5-Celery-worker-%E4%B8%8D%E8%A6%81%E5%81%B7%E5%81%B7%E8%B5%B7%E6%9C%AC%E5%9C%B0-Ray"><span class="nav-number">1.13.5.</span> <span class="nav-text">13.5 Celery worker 不要偷偷起本地 Ray</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-%E4%B8%80%E4%B8%AA%E7%8E%B0%E5%AE%9E%E4%B8%AD%E7%9A%84%E9%80%89%E5%9E%8B%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.14.</span> <span class="nav-text">14. 一个现实中的选型建议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#14-1-%E6%89%B9%E9%87%8F-embedding-rerank-OCR-ASR"><span class="nav-number">1.14.1.</span> <span class="nav-text">14.1 批量 embedding &#x2F; rerank &#x2F; OCR &#x2F; ASR</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14-2-%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%AD%E7%BB%83"><span class="nav-number">1.14.2.</span> <span class="nav-text">14.2 分布式训练</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14-3-%E5%9C%A8%E7%BA%BF%E6%A8%A1%E5%9E%8B-API"><span class="nav-number">1.14.3.</span> <span class="nav-text">14.3 在线模型 API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14-4-%E5%8F%AA%E6%98%AF%E5%90%8E%E5%8F%B0%E5%BC%82%E6%AD%A5%E4%B8%9A%E5%8A%A1"><span class="nav-number">1.14.4.</span> <span class="nav-text">14.4 只是后台异步业务</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#15-%E6%88%91%E5%BB%BA%E8%AE%AE%E4%BD%A0%E7%9A%84%E5%AD%A6%E4%B9%A0%E9%A1%BA%E5%BA%8F"><span class="nav-number">1.15.</span> <span class="nav-text">15. 我建议你的学习顺序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#16-%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E5%92%8C%E5%AE%98%E6%96%B9%E5%8D%9A%E5%AE%A2"><span class="nav-number">1.16.</span> <span class="nav-text">16. 官方文档和官方博客</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#16-1-Ray-%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3"><span class="nav-number">1.16.1.</span> <span class="nav-text">16.1 Ray 官方文档</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16-2-Celery-%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3"><span class="nav-number">1.16.2.</span> <span class="nav-text">16.2 Celery 官方文档</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16-3-%E5%AE%98%E6%96%B9%E5%8D%9A%E5%AE%A2-%E5%AE%98%E6%96%B9%E6%B4%BB%E5%8A%A8"><span class="nav-number">1.16.3.</span> <span class="nav-text">16.3 官方博客 &#x2F; 官方活动</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#17-%E6%9C%80%E5%90%8E%E6%80%BB%E7%BB%93"><span class="nav-number">1.17.</span> <span class="nav-text">17. 最后总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#18-FastAPI-Celery-Ray-4-%E5%BC%A0-GPU-%E6%9C%80%E5%B0%8F%E5%8F%AF%E8%BF%90%E8%A1%8C%E9%A1%B9%E7%9B%AE"><span class="nav-number">1.18.</span> <span class="nav-text">18. FastAPI + Celery + Ray + 4 张 GPU 最小可运行项目</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#18-1-%E9%80%82%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">1.18.1.</span> <span class="nav-text">18.1 适用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#18-2-%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84"><span class="nav-number">1.18.2.</span> <span class="nav-text">18.2 目录结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#18-3-requirements-txt"><span class="nav-number">1.18.3.</span> <span class="nav-text">18.3 requirements.txt</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#18-4-app-celery-app-py"><span class="nav-number">1.18.4.</span> <span class="nav-text">18.4 app&#x2F;celery_app.py</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#18-5-app-ray-runtime-py"><span class="nav-number">1.18.5.</span> <span class="nav-text">18.5 app&#x2F;ray_runtime.py</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#18-6-app-ray-actors-py"><span class="nav-number">1.18.6.</span> <span class="nav-text">18.6 app&#x2F;ray_actors.py</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#18-7-app-tasks-py"><span class="nav-number">1.18.7.</span> <span class="nav-text">18.7 app&#x2F;tasks.py</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#18-8-app-main-py"><span class="nav-number">1.18.8.</span> <span class="nav-text">18.8 app&#x2F;main.py</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#18-9-%E5%90%AF%E5%8A%A8%E9%A1%BA%E5%BA%8F"><span class="nav-number">1.18.9.</span> <span class="nav-text">18.9 启动顺序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#18-10-%E8%AF%95%E4%B8%80%E4%B8%8B"><span class="nav-number">1.18.10.</span> <span class="nav-text">18.10 试一下</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#19-%E2%80%9C4-%E5%BC%A0%E6%98%BE%E5%8D%A1%E5%81%9A-embedding-%E6%9C%8D%E5%8A%A1%E2%80%9D-%E5%BA%94%E8%AF%A5%E6%80%8E%E4%B9%88%E7%90%86%E8%A7%A3"><span class="nav-number">1.19.</span> <span class="nav-text">19. “4 张显卡做 embedding 服务” 应该怎么理解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#19-1-%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%80%E5%BC%A0%E5%8D%A1%E4%B8%80%E4%B8%AA-Actor"><span class="nav-number">1.19.1.</span> <span class="nav-text">19.1 为什么是一张卡一个 Actor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#19-2-%E5%90%9E%E5%90%90%E9%87%8F%E6%80%8E%E4%B9%88%E6%8F%90%E9%AB%98"><span class="nav-number">1.19.2.</span> <span class="nav-text">19.2 吞吐量怎么提高</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#19-3-%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E6%94%B9%E6%88%90-Ray-Data"><span class="nav-number">1.19.3.</span> <span class="nav-text">19.3 什么时候改成 Ray Data</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#19-4-%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E6%94%B9%E6%88%90-Ray-Serve"><span class="nav-number">1.19.4.</span> <span class="nav-text">19.4 什么时候改成 Ray Serve</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#19-5-%E8%BF%99%E4%B8%AA%E7%A4%BA%E4%BE%8B%E6%9C%89%E5%93%AA%E4%BA%9B%E7%AE%80%E5%8C%96"><span class="nav-number">1.19.5.</span> <span class="nav-text">19.5 这个示例有哪些简化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#19-6-%E7%9C%9F%E4%B8%8A%E7%94%9F%E4%BA%A7%E6%97%B6%E6%88%91%E5%BB%BA%E8%AE%AE%E5%86%8D%E8%A1%A5-5-%E4%B8%AA%E7%82%B9"><span class="nav-number">1.19.6.</span> <span class="nav-text">19.6 真上生产时我建议再补 5 个点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#19-7-%E5%A6%82%E6%9E%9C%E4%BB%8E%E5%8D%95%E6%9C%BA-4-%E5%8D%A1%E6%89%A9%E5%88%B0%E5%A4%9A%E6%9C%BA"><span class="nav-number">1.19.7.</span> <span class="nav-text">19.7 如果从单机 4 卡扩到多机</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#20-%E4%B8%80%E4%BB%BD%E6%9B%B4%E7%8E%B0%E5%AE%9E%E7%9A%84%E8%90%BD%E5%9C%B0%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.20.</span> <span class="nav-text">20. 一份更现实的落地建议</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="楚天"
+      src="/img/me.jpg">
+  <p class="site-author-name" itemprop="name">楚天</p>
+  <div class="site-description" itemprop="description">记录深度学习、C++、游戏网络与生活旅行的学习笔记。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ChutianDuan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ChutianDuan" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:3383006954@qq.com" title="E-Mail → mailto:3383006954@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/ray/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Ray 学习笔记 | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Ray 学习笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-04-20 09:03:11" itemprop="dateCreated datePublished" datetime="2026-04-20T09:03:11+08:00">2026-04-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/AI%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">AI模型开发</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/AI%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">知识点学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/AI%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/" itemprop="url" rel="index"><span itemprop="name">框架</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Ray-学习笔记"><a href="#Ray-学习笔记" class="headerlink" title="Ray 学习笔记"></a>Ray 学习笔记</h1><p>截至 2026-03-30，这份笔记主要参考：</p>
+<ul>
+<li>Ray 官方文档 <code>2.54.x</code></li>
+<li>Celery 官方稳定版文档 <code>5.6.x</code></li>
+</ul>
+<p>如果当前目标是做 AI 模型开发，可以先抓住这个区分：</p>
+<blockquote>
+<p>Celery 更像“任务队列和后台调度器”，Ray 更像“分布式计算和 GPU 资源调度层”。</p>
+</blockquote>
+<hr>
+<h2 id="1-Ray-是什么"><a href="#1-Ray-是什么" class="headerlink" title="1. Ray 是什么"></a>1. Ray 是什么</h2><p>Ray 是一个 Python 分布式计算框架，用来把普通 Python 代码扩展到：</p>
+<ul>
+<li>多进程</li>
+<li>多机</li>
+<li>多 GPU</li>
+<li>分布式训练</li>
+<li>批量推理</li>
+<li>在线推理服务</li>
+</ul>
+<p>它的核心不是“消息队列”，而是“把 Python 函数和类，变成可调度的分布式任务”。</p>
+<p>Ray 真正提供的是一套调度能力：普通的 Python 函数和类，加上 <code>@ray.remote</code> 之后，就能被当成分布式任务或远程 actor 来运行。</p>
+<hr>
+<h2 id="2-Ray-适合什么场景"><a href="#2-Ray-适合什么场景" class="headerlink" title="2. Ray 适合什么场景"></a>2. Ray 适合什么场景</h2><p>Ray 典型适合这些场景：</p>
+<ul>
+<li>批量 embedding 生成</li>
+<li>多卡模型推理</li>
+<li>大规模数据预处理</li>
+<li>分布式训练</li>
+<li>超参搜索</li>
+<li>需要把模型常驻在 GPU 上的服务</li>
+<li>复杂 Python 工作流并行化</li>
+</ul>
+<p>如果只是这些场景，通常不一定要用 Ray：</p>
+<ul>
+<li>发送短信、邮件、通知</li>
+<li>定时任务</li>
+<li>普通后台异步任务</li>
+<li>只需要重试、延迟执行、任务链</li>
+</ul>
+<p>这些更偏 Celery 的强项。</p>
+<hr>
+<h2 id="3-Ray-的核心概念"><a href="#3-Ray-的核心概念" class="headerlink" title="3. Ray 的核心概念"></a>3. Ray 的核心概念</h2><p>Ray 入门先掌握 4 个东西：</p>
+<h3 id="3-1-Task"><a href="#3-1-Task" class="headerlink" title="3.1 Task"></a>3.1 Task</h3><p>Task 就是“远程函数”。</p>
+<p>特点：</p>
+<ul>
+<li>无状态</li>
+<li>适合并行执行独立任务</li>
+<li>用 <code>@ray.remote</code> 标记</li>
+</ul>
+<h3 id="3-2-Actor"><a href="#3-2-Actor" class="headerlink" title="3.2 Actor"></a>3.2 Actor</h3><p>Actor 就是“远程对象”。</p>
+<p>特点：</p>
+<ul>
+<li>有状态</li>
+<li>适合模型常驻内存 &#x2F; GPU</li>
+<li>适合连接池、模型池、缓存、参数服务</li>
+</ul>
+<h3 id="3-3-ObjectRef"><a href="#3-3-ObjectRef" class="headerlink" title="3.3 ObjectRef"></a>3.3 ObjectRef</h3><p>Ray 不会马上把结果返回给你，而是先返回一个“对象引用”。</p>
+<ul>
+<li><code>xxx.remote()</code> 返回的通常是 <code>ObjectRef</code></li>
+<li>用 <code>ray.get()</code> 才真正取回结果</li>
+</ul>
+<p>这点很像 <code>Future</code>。</p>
+<h3 id="3-4-Object-Store"><a href="#3-4-Object-Store" class="headerlink" title="3.4 Object Store"></a>3.4 Object Store</h3><p>Ray 有自己的对象存储。</p>
+<ul>
+<li>task &#x2F; actor 的返回值会放到对象存储里</li>
+<li>大对象可以先 <code>ray.put()</code></li>
+<li>后续多个任务共享这个引用，避免重复拷贝</li>
+</ul>
+<hr>
+<h2 id="4-最小入门示例"><a href="#4-最小入门示例" class="headerlink" title="4. 最小入门示例"></a>4. 最小入门示例</h2><h3 id="4-1-安装"><a href="#4-1-安装" class="headerlink" title="4.1 安装"></a>4.1 安装</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install -U <span class="string">&quot;ray[default]&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>如果你还要用训练或数据处理：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install -U <span class="string">&quot;ray[train]&quot;</span> <span class="string">&quot;ray[data]&quot;</span> torch</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-2-启动本地-Ray"><a href="#4-2-启动本地-Ray" class="headerlink" title="4.2 启动本地 Ray"></a>4.2 启动本地 Ray</h3><p>最简单的方式：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> ray</span><br><span class="line"></span><br><span class="line">ray.init()</span><br></pre></td></tr></table></figure>
+
+<p>说明：</p>
+<ul>
+<li><code>ray.init()</code> 会连接已有本地 Ray，或者启动一个新的本地实例</li>
+<li>如果你是 Celery worker 或生产环境进程，通常更建议显式连接已有集群：<code>ray.init(address=&quot;auto&quot;)</code></li>
+</ul>
+<h3 id="4-3-第一个-Task"><a href="#4-3-第一个-Task" class="headerlink" title="4.3 第一个 Task"></a>4.3 第一个 Task</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> ray</span><br><span class="line"></span><br><span class="line">ray.init()</span><br><span class="line"></span><br><span class="line"><span class="meta">@ray.remote</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">square</span>(<span class="params">x: <span class="built_in">int</span></span>) -&gt; <span class="built_in">int</span>:</span><br><span class="line">    <span class="keyword">return</span> x * x</span><br><span class="line"></span><br><span class="line">refs = [square.remote(i) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">8</span>)]</span><br><span class="line">results = ray.get(refs)</span><br><span class="line"><span class="built_in">print</span>(results)</span><br></pre></td></tr></table></figure>
+
+<p>你要关注的是：</p>
+<ul>
+<li><code>@ray.remote</code>：把普通函数变成远程函数</li>
+<li><code>square.remote(i)</code>：不是本地调用，而是提交任务</li>
+<li><code>ray.get(refs)</code>：拿回结果</li>
+</ul>
+<h3 id="4-4-第一个-Actor"><a href="#4-4-第一个-Actor" class="headerlink" title="4.4 第一个 Actor"></a>4.4 第一个 Actor</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> ray</span><br><span class="line"></span><br><span class="line">ray.init()</span><br><span class="line"></span><br><span class="line"><span class="meta">@ray.remote</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Counter</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="variable language_">self</span>.value = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">incr</span>(<span class="params">self, n: <span class="built_in">int</span> = <span class="number">1</span></span>):</span><br><span class="line">        <span class="variable language_">self</span>.value += n</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.value</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.value</span><br><span class="line"></span><br><span class="line">counter = Counter.remote()</span><br><span class="line"></span><br><span class="line">ray.get(counter.incr.remote())</span><br><span class="line">ray.get(counter.incr.remote(<span class="number">10</span>))</span><br><span class="line"><span class="built_in">print</span>(ray.get(counter.get.remote()))</span><br></pre></td></tr></table></figure>
+
+<p>什么时候该用 Actor：</p>
+<ul>
+<li>模型加载很慢，不想每次任务都重新加载</li>
+<li>需要在内存里保留状态</li>
+<li>要做 GPU 常驻推理</li>
+</ul>
+<h3 id="4-5-共享大对象"><a href="#4-5-共享大对象" class="headerlink" title="4.5 共享大对象"></a>4.5 共享大对象</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> ray</span><br><span class="line"></span><br><span class="line">ray.init()</span><br><span class="line"></span><br><span class="line"><span class="meta">@ray.remote</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">compute_sum</span>(<span class="params">arr</span>):</span><br><span class="line">    <span class="keyword">return</span> arr.<span class="built_in">sum</span>()</span><br><span class="line"></span><br><span class="line">big_array_ref = ray.put(np.ones((<span class="number">10000</span>, <span class="number">1000</span>)))</span><br><span class="line">result = ray.get(compute_sum.remote(big_array_ref))</span><br><span class="line"><span class="built_in">print</span>(result)</span><br></pre></td></tr></table></figure>
+
+<p>经验：</p>
+<ul>
+<li>小参数直接传</li>
+<li>大对象尽量 <code>ray.put()</code></li>
+</ul>
+<hr>
+<h2 id="5-Ray-常用-API"><a href="#5-Ray-常用-API" class="headerlink" title="5. Ray 常用 API"></a>5. Ray 常用 API</h2><h3 id="5-1-ray-init"><a href="#5-1-ray-init" class="headerlink" title="5.1 ray.init()"></a>5.1 <code>ray.init()</code></h3><p>用于启动或连接 Ray。</p>
+<p>常见写法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ray.init()</span><br><span class="line">ray.init(address=<span class="string">&quot;auto&quot;</span>)</span><br><span class="line">ray.init(address=<span class="string">&quot;ray://&lt;head-ip&gt;:10001&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>含义：</p>
+<ul>
+<li><code>ray.init()</code>：本地开发最方便</li>
+<li><code>address=&quot;auto&quot;</code>：只连接已有集群，如果没集群会报错，适合生产环境</li>
+<li><code>ray://...</code>：Ray Client 方式连接远端集群</li>
+</ul>
+<h3 id="5-2-ray-get"><a href="#5-2-ray-get" class="headerlink" title="5.2 ray.get()"></a>5.2 <code>ray.get()</code></h3><p>取结果。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">value = ray.get(ref)</span><br><span class="line">values = ray.get(refs)</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-3-ray-wait"><a href="#5-3-ray-wait" class="headerlink" title="5.3 ray.wait()"></a>5.3 <code>ray.wait()</code></h3><p>适合任务很多时，先消费一部分结果，避免一次性堆太多任务或结果。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ready, pending = ray.wait(refs, num_returns=<span class="number">1</span>)</span><br><span class="line">result = ray.get(ready[<span class="number">0</span>])</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-4-ray-put"><a href="#5-4-ray-put" class="headerlink" title="5.4 ray.put()"></a>5.4 <code>ray.put()</code></h3><p>把大对象放进 Ray 对象存储。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">obj_ref = ray.put(big_object)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="6-Task-和-Actor-怎么选"><a href="#6-Task-和-Actor-怎么选" class="headerlink" title="6. Task 和 Actor 怎么选"></a>6. Task 和 Actor 怎么选</h2><table>
+<thead>
+<tr>
+<th>场景</th>
+<th>更适合</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>每个任务彼此独立、无状态</td>
+<td>Task</td>
+</tr>
+<tr>
+<td>模型要常驻内存 &#x2F; GPU</td>
+<td>Actor</td>
+</tr>
+<tr>
+<td>批量推理 worker 池</td>
+<td>Actor</td>
+</tr>
+<tr>
+<td>简单 map 并行</td>
+<td>Task</td>
+</tr>
+<tr>
+<td>连接池 &#x2F; 缓存 &#x2F; 参数服务</td>
+<td>Actor</td>
+</tr>
+</tbody></table>
+<p>最常见的 AI 场景经验是：</p>
+<ul>
+<li>CPU 并行清洗数据：Task</li>
+<li>模型推理：Actor</li>
+<li>分布式训练：优先用 Ray Train，而不是自己手搓 Ray Core</li>
+</ul>
+<hr>
+<h2 id="7-从本地到集群"><a href="#7-从本地到集群" class="headerlink" title="7. 从本地到集群"></a>7. 从本地到集群</h2><h3 id="7-1-单机开发"><a href="#7-1-单机开发" class="headerlink" title="7.1 单机开发"></a>7.1 单机开发</h3><p>直接：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ray.init()</span><br></pre></td></tr></table></figure>
+
+<h3 id="7-2-手动启动单机-多机集群"><a href="#7-2-手动启动单机-多机集群" class="headerlink" title="7.2 手动启动单机 &#x2F; 多机集群"></a>7.2 手动启动单机 &#x2F; 多机集群</h3><p>头节点：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ray start --<span class="built_in">head</span> --port=6379</span><br></pre></td></tr></table></figure>
+
+<p>工作节点：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ray start --address=&lt;head-node-ip&gt;:6379</span><br></pre></td></tr></table></figure>
+
+<p>Python 里连接：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> ray</span><br><span class="line"></span><br><span class="line">ray.init(address=<span class="string">&quot;auto&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="7-3-GPU-机器上限制可见显卡"><a href="#7-3-GPU-机器上限制可见显卡" class="headerlink" title="7.3 GPU 机器上限制可见显卡"></a>7.3 GPU 机器上限制可见显卡</h3><p>如果你只想让 Ray 看到部分 GPU：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CUDA_VISIBLE_DEVICES=1,3 ray start --<span class="built_in">head</span> --num-gpus=2</span><br></pre></td></tr></table></figure>
+
+<p>这在一台机器上做资源隔离时很有用。</p>
+<hr>
+<h2 id="8-多张显卡怎么用"><a href="#8-多张显卡怎么用" class="headerlink" title="8. 多张显卡怎么用"></a>8. 多张显卡怎么用</h2><p>这部分是 Ray 很强的一块。</p>
+<p>你先记住结论：</p>
+<ul>
+<li>单个任务 &#x2F; Actor 用几张卡，就声明几张</li>
+<li>多个任务并行吃多卡，让 Ray 调度</li>
+<li>训练任务优先用 Ray Train</li>
+<li>批量推理优先用 Actor 池或 Ray Data</li>
+</ul>
+<h3 id="8-1-一张卡对应一个-Actor"><a href="#8-1-一张卡对应一个-Actor" class="headerlink" title="8.1 一张卡对应一个 Actor"></a>8.1 一张卡对应一个 Actor</h3><p>这是最常见的“多卡推理”写法。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> ray</span><br><span class="line"></span><br><span class="line">ray.init(num_gpus=<span class="number">4</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">@ray.remote(<span class="params">num_gpus=<span class="number">1</span></span>)</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">GPUWorker</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">info</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&quot;gpu_ids&quot;</span>: ray.get_runtime_context().get_accelerator_ids()[<span class="string">&quot;GPU&quot;</span>],</span><br><span class="line">            <span class="string">&quot;cuda_visible_devices&quot;</span>: os.environ.get(<span class="string">&quot;CUDA_VISIBLE_DEVICES&quot;</span>),</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">workers = [GPUWorker.remote() <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4</span>)]</span><br><span class="line"><span class="built_in">print</span>(ray.get([worker.info.remote() <span class="keyword">for</span> worker <span class="keyword">in</span> workers]))</span><br></pre></td></tr></table></figure>
+
+<p>效果：</p>
+<ul>
+<li>每个 Actor 占 1 张 GPU</li>
+<li>Ray 会把不同 Actor 调度到不同卡</li>
+<li>大多数深度学习框架会自动遵守 <code>CUDA_VISIBLE_DEVICES</code></li>
+</ul>
+<h3 id="8-2-单个任务使用多张卡"><a href="#8-2-单个任务使用多张卡" class="headerlink" title="8.2 单个任务使用多张卡"></a>8.2 单个任务使用多张卡</h3><p>如果一个任务本身就要吃多卡：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> ray</span><br><span class="line"></span><br><span class="line">ray.init(num_gpus=<span class="number">4</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">@ray.remote(<span class="params">num_gpus=<span class="number">2</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">train_one_job</span>():</span><br><span class="line">    <span class="keyword">import</span> os</span><br><span class="line">    <span class="keyword">return</span> os.environ.get(<span class="string">&quot;CUDA_VISIBLE_DEVICES&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(ray.get(train_one_job.remote()))</span><br></pre></td></tr></table></figure>
+
+<p>这适合：</p>
+<ul>
+<li>单个训练任务需要 2 卡 &#x2F; 4 卡</li>
+<li>单个推理进程要占多卡</li>
+</ul>
+<h3 id="8-3-分数-GPU"><a href="#8-3-分数-GPU" class="headerlink" title="8.3 分数 GPU"></a>8.3 分数 GPU</h3><p>如果模型很小，也可以共享 GPU：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> ray</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">ray.init(num_gpus=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">@ray.remote(<span class="params">num_gpus=<span class="number">0.25</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">small_infer</span>(<span class="params">x</span>):</span><br><span class="line">    time.sleep(<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(ray.get([small_infer.remote(i) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4</span>)]))</span><br></pre></td></tr></table></figure>
+
+<p>注意：</p>
+<ul>
+<li>分数 GPU 只是“调度上的份额”</li>
+<li>显存控制还是你自己负责</li>
+<li>小模型、embedding、小批量推理更适合这样做</li>
+</ul>
+<h3 id="8-4-多卡训练优先用-Ray-Train"><a href="#8-4-多卡训练优先用-Ray-Train" class="headerlink" title="8.4 多卡训练优先用 Ray Train"></a>8.4 多卡训练优先用 Ray Train</h3><p>如果你在做训练，不建议直接自己拼很多 <code>@ray.remote</code>。</p>
+<p>更推荐：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> ray.train <span class="keyword">import</span> ScalingConfig</span><br><span class="line"><span class="keyword">from</span> ray.train.torch <span class="keyword">import</span> TorchTrainer, get_device</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">train_loop</span>(<span class="params">config</span>):</span><br><span class="line">    <span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line">    device = get_device()</span><br><span class="line">    model = torch.nn.Linear(<span class="number">10</span>, <span class="number">1</span>).to(device)</span><br><span class="line">    x = torch.randn(<span class="number">32</span>, <span class="number">10</span>, device=device)</span><br><span class="line">    y = model(x)</span><br><span class="line">    loss = y.mean()</span><br><span class="line">    loss.backward()</span><br><span class="line"></span><br><span class="line">trainer = TorchTrainer(</span><br><span class="line">    train_loop,</span><br><span class="line">    scaling_config=ScalingConfig(</span><br><span class="line">        num_workers=<span class="number">4</span>,</span><br><span class="line">        use_gpu=<span class="literal">True</span>,</span><br><span class="line">    ),</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">trainer.fit()</span><br></pre></td></tr></table></figure>
+
+<p>这表示：</p>
+<ul>
+<li>4 个 worker</li>
+<li>每个 worker 1 张 GPU</li>
+<li>总共 4 张 GPU</li>
+</ul>
+<h3 id="8-5-一个-worker-吃多张卡"><a href="#8-5-一个-worker-吃多张卡" class="headerlink" title="8.5 一个 worker 吃多张卡"></a>8.5 一个 worker 吃多张卡</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> ray.train <span class="keyword">import</span> ScalingConfig</span><br><span class="line"><span class="keyword">from</span> ray.train.torch <span class="keyword">import</span> TorchTrainer, get_devices</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">train_loop</span>(<span class="params">config</span>):</span><br><span class="line">    <span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line">    devices = get_devices()</span><br><span class="line">    <span class="built_in">print</span>(devices)</span><br><span class="line"></span><br><span class="line">trainer = TorchTrainer(</span><br><span class="line">    train_loop,</span><br><span class="line">    scaling_config=ScalingConfig(</span><br><span class="line">        num_workers=<span class="number">2</span>,</span><br><span class="line">        use_gpu=<span class="literal">True</span>,</span><br><span class="line">        resources_per_worker=&#123;<span class="string">&quot;GPU&quot;</span>: <span class="number">2</span>&#125;,</span><br><span class="line">    ),</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">trainer.fit()</span><br></pre></td></tr></table></figure>
+
+<p>这表示：</p>
+<ul>
+<li>2 个 worker</li>
+<li>每个 worker 2 张 GPU</li>
+<li>总共 4 张 GPU</li>
+</ul>
+<p>适合：</p>
+<ul>
+<li>每个 worker 本身要做张量并行</li>
+<li>每个训练进程要 2 卡或更多</li>
+</ul>
+<h3 id="8-6-需要成组预留资源时，用-Placement-Group"><a href="#8-6-需要成组预留资源时，用-Placement-Group" class="headerlink" title="8.6 需要成组预留资源时，用 Placement Group"></a>8.6 需要成组预留资源时，用 Placement Group</h3><p>有些任务需要“成组占住资源”，比如：</p>
+<ul>
+<li>2 个 actor 必须同时启动</li>
+<li>一个训练 job 要一次性拿到 <code>2 CPU + 2 GPU</code></li>
+<li>希望资源尽量在同一台机器</li>
+</ul>
+<p>这时用 Placement Group。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> ray</span><br><span class="line"><span class="keyword">from</span> ray.util.placement_group <span class="keyword">import</span> placement_group</span><br><span class="line"><span class="keyword">from</span> ray.util.scheduling_strategies <span class="keyword">import</span> PlacementGroupSchedulingStrategy</span><br><span class="line"></span><br><span class="line">ray.init(num_gpus=<span class="number">2</span>, num_cpus=<span class="number">8</span>)</span><br><span class="line"></span><br><span class="line">pg = placement_group(</span><br><span class="line">    [&#123;<span class="string">&quot;CPU&quot;</span>: <span class="number">2</span>, <span class="string">&quot;GPU&quot;</span>: <span class="number">1</span>&#125;, &#123;<span class="string">&quot;CPU&quot;</span>: <span class="number">2</span>, <span class="string">&quot;GPU&quot;</span>: <span class="number">1</span>&#125;],</span><br><span class="line">    strategy=<span class="string">&quot;STRICT_PACK&quot;</span>,</span><br><span class="line">)</span><br><span class="line">ray.get(pg.ready())</span><br><span class="line"></span><br><span class="line"><span class="meta">@ray.remote(<span class="params">num_cpus=<span class="number">2</span>, num_gpus=<span class="number">1</span></span>)</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">TrainerWorker</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">ready</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;ok&quot;</span></span><br><span class="line"></span><br><span class="line">workers = [</span><br><span class="line">    TrainerWorker.options(</span><br><span class="line">        scheduling_strategy=PlacementGroupSchedulingStrategy(</span><br><span class="line">            placement_group=pg,</span><br><span class="line">            placement_group_bundle_index=i,</span><br><span class="line">        )</span><br><span class="line">    ).remote()</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>)</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(ray.get([w.ready.remote() <span class="keyword">for</span> w <span class="keyword">in</span> workers]))</span><br></pre></td></tr></table></figure>
+
+<p><code>STRICT_PACK</code> 的意思是：</p>
+<ul>
+<li>所有 bundle 必须放在同一台节点上</li>
+<li>如果放不下，就直接失败</li>
+</ul>
+<p>这对多卡训练很常见。</p>
+<hr>
+<h2 id="9-AI-场景下更实用的写法"><a href="#9-AI-场景下更实用的写法" class="headerlink" title="9. AI 场景下更实用的写法"></a>9. AI 场景下更实用的写法</h2><h3 id="9-1-模型常驻-GPU-的-Actor"><a href="#9-1-模型常驻-GPU-的-Actor" class="headerlink" title="9.1 模型常驻 GPU 的 Actor"></a>9.1 模型常驻 GPU 的 Actor</h3><p>如果你做 embedding、rerank、分类、OCR、ASR，常见需求是：</p>
+<ul>
+<li>模型初始化很慢</li>
+<li>不想每个请求都重新加载模型</li>
+<li>想让不同 worker 常驻不同 GPU</li>
+</ul>
+<p>这时最实用的方案往往是：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> ray</span><br><span class="line"></span><br><span class="line">ray.init(num_gpus=<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">@ray.remote(<span class="params">num_gpus=<span class="number">1</span></span>)</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">EmbeddingWorker</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, model_name: <span class="built_in">str</span></span>):</span><br><span class="line">        <span class="keyword">from</span> sentence_transformers <span class="keyword">import</span> SentenceTransformer</span><br><span class="line"></span><br><span class="line">        <span class="variable language_">self</span>.model = SentenceTransformer(model_name, device=<span class="string">&quot;cuda&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">encode</span>(<span class="params">self, texts: <span class="built_in">list</span>[<span class="built_in">str</span>]</span>):</span><br><span class="line">        vectors = <span class="variable language_">self</span>.model.encode(texts, normalize_embeddings=<span class="literal">True</span>)</span><br><span class="line">        <span class="keyword">return</span> vectors.tolist()</span><br><span class="line"></span><br><span class="line">workers = [</span><br><span class="line">    EmbeddingWorker.remote(<span class="string">&quot;BAAI/bge-small-zh-v1.5&quot;</span>)</span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>)</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<p>优势：</p>
+<ul>
+<li>模型只加载一次</li>
+<li>Ray 自动把 worker 分到不同 GPU</li>
+<li>适合批量任务和服务化场景</li>
+</ul>
+<h3 id="9-2-批量推理更推荐-Ray-Data"><a href="#9-2-批量推理更推荐-Ray-Data" class="headerlink" title="9.2 批量推理更推荐 Ray Data"></a>9.2 批量推理更推荐 Ray Data</h3><p>如果是大批量离线推理，比如：</p>
+<ul>
+<li>给 100 万条文本做 embedding</li>
+<li>大量图片跑分类 &#x2F; OCR</li>
+<li>多卡批量推理</li>
+</ul>
+<p>Ray Data 一般比你自己手写 <code>for + remote()</code> 更省心。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> ray</span><br><span class="line"></span><br><span class="line">ray.init()</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">EmbeddingPredictor</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, model_name: <span class="built_in">str</span></span>):</span><br><span class="line">        <span class="keyword">from</span> sentence_transformers <span class="keyword">import</span> SentenceTransformer</span><br><span class="line"></span><br><span class="line">        <span class="variable language_">self</span>.model = SentenceTransformer(model_name, device=<span class="string">&quot;cuda&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__call__</span>(<span class="params">self, batch: pd.DataFrame</span>) -&gt; pd.DataFrame:</span><br><span class="line">        batch = batch.copy()</span><br><span class="line">        batch[<span class="string">&quot;embedding&quot;</span>] = <span class="variable language_">self</span>.model.encode(batch[<span class="string">&quot;text&quot;</span>].tolist()).tolist()</span><br><span class="line">        <span class="keyword">return</span> batch</span><br><span class="line"></span><br><span class="line">ds = ray.data.from_items(</span><br><span class="line">    [&#123;<span class="string">&quot;text&quot;</span>: <span class="string">f&quot;sample <span class="subst">&#123;i&#125;</span>&quot;</span>&#125; <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1000</span>)]</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">result_ds = ds.map_batches(</span><br><span class="line">    EmbeddingPredictor,</span><br><span class="line">    fn_constructor_args=(<span class="string">&quot;BAAI/bge-small-zh-v1.5&quot;</span>,),</span><br><span class="line">    batch_size=<span class="number">64</span>,</span><br><span class="line">    batch_format=<span class="string">&quot;pandas&quot;</span>,</span><br><span class="line">    compute=ray.data.ActorPoolStrategy(size=<span class="number">4</span>),</span><br><span class="line">    num_gpus=<span class="number">1</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(result_ds.take(<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
+
+<p>什么时候优先考虑 Ray Data：</p>
+<ul>
+<li>数据量大</li>
+<li>希望自动做并行读取和批处理</li>
+<li>想用 actor pool 跑多卡离线推理</li>
+</ul>
+<hr>
+<h2 id="10-Ray-和-Celery-的区别"><a href="#10-Ray-和-Celery-的区别" class="headerlink" title="10. Ray 和 Celery 的区别"></a>10. Ray 和 Celery 的区别</h2><p>很多人第一次会问：</p>
+<blockquote>
+<p>我已经有 Celery 了，还要不要 Ray？</p>
+</blockquote>
+<p>答案通常是：</p>
+<blockquote>
+<p>不是替代关系，而是职责不同。</p>
+</blockquote>
+<h3 id="10-1-一张表看区别"><a href="#10-1-一张表看区别" class="headerlink" title="10.1 一张表看区别"></a>10.1 一张表看区别</h3><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Celery</th>
+<th>Ray</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>核心定位</td>
+<td>分布式任务队列</td>
+<td>分布式计算框架</td>
+</tr>
+<tr>
+<td>擅长</td>
+<td>异步任务、重试、延迟、队列路由</td>
+<td>并行计算、状态 Actor、GPU 调度</td>
+</tr>
+<tr>
+<td>GPU 感知</td>
+<td>很弱</td>
+<td>很强</td>
+</tr>
+<tr>
+<td>模型常驻</td>
+<td>不擅长</td>
+<td>很擅长</td>
+</tr>
+<tr>
+<td>大对象共享</td>
+<td>一般</td>
+<td>很强</td>
+</tr>
+<tr>
+<td>训练 &#x2F; 多卡 &#x2F; 集群算力</td>
+<td>不擅长</td>
+<td>强项</td>
+</tr>
+<tr>
+<td>业务工作流编排</td>
+<td>强</td>
+<td>一般</td>
+</tr>
+</tbody></table>
+<h3 id="10-2-什么时候只用-Celery"><a href="#10-2-什么时候只用-Celery" class="headerlink" title="10.2 什么时候只用 Celery"></a>10.2 什么时候只用 Celery</h3><ul>
+<li>发通知</li>
+<li>发邮件</li>
+<li>定时任务</li>
+<li>任务重试</li>
+<li>后台轻量业务任务</li>
+</ul>
+<h3 id="10-3-什么时候只用-Ray"><a href="#10-3-什么时候只用-Ray" class="headerlink" title="10.3 什么时候只用 Ray"></a>10.3 什么时候只用 Ray</h3><ul>
+<li>分布式训练</li>
+<li>多 GPU 推理</li>
+<li>批量 embedding</li>
+<li>大规模离线数据处理</li>
+<li>需要模型常驻内存 &#x2F; GPU</li>
+</ul>
+<h3 id="10-4-什么时候-Ray-Celery-联合"><a href="#10-4-什么时候-Ray-Celery-联合" class="headerlink" title="10.4 什么时候 Ray + Celery 联合"></a>10.4 什么时候 Ray + Celery 联合</h3><p>这是很常见、也很推荐的工程做法：</p>
+<ul>
+<li>Celery 负责“接住业务异步任务”</li>
+<li>Ray 负责“真正吃 CPU &#x2F; GPU 算力”</li>
+</ul>
+<p>最典型架构：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">FastAPI / Django</span><br><span class="line">    -&gt; 提交 Celery 任务</span><br><span class="line">    -&gt; Celery worker 收到任务</span><br><span class="line">    -&gt; Celery worker 把重计算任务提交给 Ray</span><br><span class="line">    -&gt; Ray task / actor 在 CPU / GPU 上执行</span><br><span class="line">    -&gt; Celery 记录状态、重试、结果</span><br></pre></td></tr></table></figure>
+
+<p>这时职责很清晰：</p>
+<ul>
+<li>Celery：任务排队、重试、路由、延迟调度、业务集成</li>
+<li>Ray：并行计算、多机、多卡、模型常驻</li>
+</ul>
+<hr>
+<h2 id="11-Ray-Celery-推荐落地方式"><a href="#11-Ray-Celery-推荐落地方式" class="headerlink" title="11. Ray + Celery 推荐落地方式"></a>11. Ray + Celery 推荐落地方式</h2><p>这一节不是某个“官方一键集成组件”的说明，而是基于 Ray 官方能力和 Celery 官方能力整理出来的工程实践。</p>
+<h3 id="11-1-推荐原则"><a href="#11-1-推荐原则" class="headerlink" title="11.1 推荐原则"></a>11.1 推荐原则</h3><p>推荐这样设计：</p>
+<ul>
+<li>不要让 Celery 自己直接“管理 GPU”</li>
+<li>不要每个 Celery 任务里都临时启动一个 Ray 集群</li>
+<li>Celery worker 只负责连接已有 Ray 集群并下发任务</li>
+<li>模型尽量放到 Ray Actor 里常驻</li>
+</ul>
+<p>一句话：</p>
+<blockquote>
+<p>Celery 做任务层，Ray 做算力层。</p>
+</blockquote>
+<h3 id="11-2-最实用的方案：Celery-任务内部调用-Ray-Actor"><a href="#11-2-最实用的方案：Celery-任务内部调用-Ray-Actor" class="headerlink" title="11.2 最实用的方案：Celery 任务内部调用 Ray Actor"></a>11.2 最实用的方案：Celery 任务内部调用 Ray Actor</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> Celery</span><br><span class="line"><span class="keyword">import</span> ray</span><br><span class="line"></span><br><span class="line">celery_app = Celery(</span><br><span class="line">    <span class="string">&quot;demo&quot;</span>,</span><br><span class="line">    broker=<span class="string">&quot;redis://127.0.0.1:6379/1&quot;</span>,</span><br><span class="line">    backend=<span class="string">&quot;redis://127.0.0.1:6379/2&quot;</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">ensure_ray</span>():</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> ray.is_initialized():</span><br><span class="line">        ray.init(address=<span class="string">&quot;auto&quot;</span>, namespace=<span class="string">&quot;ml&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">@ray.remote(<span class="params">num_gpus=<span class="number">1</span></span>)</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">EmbeddingWorker</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, model_name: <span class="built_in">str</span></span>):</span><br><span class="line">        <span class="keyword">from</span> sentence_transformers <span class="keyword">import</span> SentenceTransformer</span><br><span class="line"></span><br><span class="line">        <span class="variable language_">self</span>.model = SentenceTransformer(model_name, device=<span class="string">&quot;cuda&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">encode</span>(<span class="params">self, texts: <span class="built_in">list</span>[<span class="built_in">str</span>]</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.model.encode(texts).tolist()</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_embedding_worker</span>():</span><br><span class="line">    ensure_ray()</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> ray.get_actor(<span class="string">&quot;embedding_worker&quot;</span>)</span><br><span class="line">    <span class="keyword">except</span> ValueError:</span><br><span class="line">        <span class="keyword">return</span> EmbeddingWorker.options(</span><br><span class="line">            name=<span class="string">&quot;embedding_worker&quot;</span>,</span><br><span class="line">            lifetime=<span class="string">&quot;detached&quot;</span>,</span><br><span class="line">            get_if_exists=<span class="literal">True</span>,</span><br><span class="line">        ).remote(<span class="string">&quot;BAAI/bge-small-zh-v1.5&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">@celery_app.task(<span class="params"></span></span></span><br><span class="line"><span class="params"><span class="meta">    bind=<span class="literal">True</span>,</span></span></span><br><span class="line"><span class="params"><span class="meta">    autoretry_for=(<span class="params">Exception,</span>),</span></span></span><br><span class="line"><span class="params"><span class="meta">    retry_backoff=<span class="literal">True</span>,</span></span></span><br><span class="line"><span class="params"><span class="meta">    max_retries=<span class="number">3</span>,</span></span></span><br><span class="line"><span class="params"><span class="meta"></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">build_embeddings</span>(<span class="params">self, texts: <span class="built_in">list</span>[<span class="built_in">str</span>]</span>):</span><br><span class="line">    worker = get_embedding_worker()</span><br><span class="line">    ref = worker.encode.remote(texts)</span><br><span class="line">    vectors = ray.get(ref)</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        <span class="string">&quot;count&quot;</span>: <span class="built_in">len</span>(vectors),</span><br><span class="line">        <span class="string">&quot;vectors&quot;</span>: vectors,</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>这套写法的好处：</p>
+<ul>
+<li>Celery 有重试和任务状态</li>
+<li>Ray Actor 让模型只加载一次</li>
+<li>GPU 真正由 Ray 调度</li>
+<li>Celery 不直接碰 <code>CUDA_VISIBLE_DEVICES</code></li>
+</ul>
+<h3 id="11-3-为什么这里要用-Named-Actor"><a href="#11-3-为什么这里要用-Named-Actor" class="headerlink" title="11.3 为什么这里要用 Named Actor"></a>11.3 为什么这里要用 Named Actor</h3><p>Named Actor 很适合下面这种需求：</p>
+<ul>
+<li>多个 Celery 任务都要访问同一个模型 worker</li>
+<li>模型很大，不想重复加载</li>
+<li>希望 worker 独立于单次任务生命周期存在</li>
+</ul>
+<p>这里用到的 3 个点都很重要：</p>
+<ul>
+<li><code>name=&quot;embedding_worker&quot;</code>：给 actor 命名</li>
+<li><code>get_if_exists=True</code>：如果已有就复用</li>
+<li><code>lifetime=&quot;detached&quot;</code>：Celery 任务结束后 actor 依然活着</li>
+</ul>
+<p>补充：</p>
+<ul>
+<li>Detached Actor 不会自动回收</li>
+<li>不再需要时要手动 <code>ray.kill(actor_handle)</code>，否则会一直占资源</li>
+</ul>
+<h3 id="11-4-如果要做多卡模型池"><a href="#11-4-如果要做多卡模型池" class="headerlink" title="11.4 如果要做多卡模型池"></a>11.4 如果要做多卡模型池</h3><p>把一个 Named Actor 扩展成多个即可：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">workers = [</span><br><span class="line">    EmbeddingWorker.options(</span><br><span class="line">        name=<span class="string">f&quot;embedding_worker_<span class="subst">&#123;i&#125;</span>&quot;</span>,</span><br><span class="line">        lifetime=<span class="string">&quot;detached&quot;</span>,</span><br><span class="line">        get_if_exists=<span class="literal">True</span>,</span><br><span class="line">    ).remote(<span class="string">&quot;BAAI/bge-small-zh-v1.5&quot;</span>)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4</span>)</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<p>然后 Celery 里：</p>
+<ul>
+<li>轮询选一个</li>
+<li>按队列分流</li>
+<li>或者再包一个调度 Actor</li>
+</ul>
+<h3 id="11-5-Celery-队列怎么配合"><a href="#11-5-Celery-队列怎么配合" class="headerlink" title="11.5 Celery 队列怎么配合"></a>11.5 Celery 队列怎么配合</h3><p>重任务建议单独队列，比如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">build_embeddings.apply_async(args=[texts], queue=<span class="string">&quot;gpu&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>对应 worker：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">celery -A app worker -l info -Q gpu --concurrency=4</span><br></pre></td></tr></table></figure>
+
+<p>这样做的意义：</p>
+<ul>
+<li>把 GPU 相关任务跟普通业务任务隔离</li>
+<li>Celery 侧也能做业务级限流</li>
+</ul>
+<p>注意：</p>
+<ul>
+<li>Celery 的 <code>--concurrency</code> 不等于 GPU 数</li>
+<li>真正的 GPU 分配还是 Ray 决定</li>
+</ul>
+<hr>
+<h2 id="12-一个更合理的职责分层建议"><a href="#12-一个更合理的职责分层建议" class="headerlink" title="12. 一个更合理的职责分层建议"></a>12. 一个更合理的职责分层建议</h2><p>如果你的项目同时有 Web、异步任务、模型推理，我更建议这样分：</p>
+<table>
+<thead>
+<tr>
+<th>层</th>
+<th>推荐工具</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Web 接口层</td>
+<td>FastAPI &#x2F; Django</td>
+</tr>
+<tr>
+<td>任务编排层</td>
+<td>Celery</td>
+</tr>
+<tr>
+<td>分布式算力层</td>
+<td>Ray</td>
+</tr>
+<tr>
+<td>在线模型服务层</td>
+<td>Ray Serve</td>
+</tr>
+</tbody></table>
+<p>这意味着：</p>
+<ul>
+<li>后台异步批处理：<code>Celery + Ray</code></li>
+<li>在线低延迟模型服务：优先 <code>Ray Serve</code></li>
+</ul>
+<p>如果你把“在线推理 API”也硬塞进 Celery，一般不是最优解。</p>
+<hr>
+<h2 id="13-常见坑"><a href="#13-常见坑" class="headerlink" title="13. 常见坑"></a>13. 常见坑</h2><h3 id="13-1-不要在循环里一边提交一边-ray-get"><a href="#13-1-不要在循环里一边提交一边-ray-get" class="headerlink" title="13.1 不要在循环里一边提交一边 ray.get()"></a>13.1 不要在循环里一边提交一边 <code>ray.get()</code></h3><p>错误思路：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> x <span class="keyword">in</span> items:</span><br><span class="line">    result = ray.get(task.remote(x))</span><br></pre></td></tr></table></figure>
+
+<p>这样会把并行写成串行。</p>
+<p>更合理：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">refs = [task.remote(x) <span class="keyword">for</span> x <span class="keyword">in</span> items]</span><br><span class="line">results = ray.get(refs)</span><br></pre></td></tr></table></figure>
+
+<h3 id="13-2-任务别切得太细"><a href="#13-2-任务别切得太细" class="headerlink" title="13.2 任务别切得太细"></a>13.2 任务别切得太细</h3><p>如果单个任务非常轻，Ray 的调度开销会吃掉收益。</p>
+<p>经验：</p>
+<ul>
+<li>小任务尽量 batch 化</li>
+<li>推理尽量做批处理</li>
+</ul>
+<h3 id="13-3-大对象别重复按值传"><a href="#13-3-大对象别重复按值传" class="headerlink" title="13.3 大对象别重复按值传"></a>13.3 大对象别重复按值传</h3><p>错误思路：</p>
+<ul>
+<li>每个 task 都传一份很大的模型参数</li>
+</ul>
+<p>更合理：</p>
+<ul>
+<li><code>ray.put()</code></li>
+<li>或者放进 Actor</li>
+</ul>
+<h3 id="13-4-GPU-task-默认可能不复用-worker"><a href="#13-4-GPU-task-默认可能不复用-worker" class="headerlink" title="13.4 GPU task 默认可能不复用 worker"></a>13.4 GPU task 默认可能不复用 worker</h3><p>Ray 文档提到：</p>
+<ul>
+<li>某些 GPU 任务可能会残留显存占用</li>
+<li>为避免资源泄漏，Ray 默认不会复用执行过 GPU task 的 worker 进程</li>
+</ul>
+<p>如果你遇到 GPU 调度开销偏大，需要再回头看 worker 复用策略。</p>
+<p>如果你确认自己的任务不会泄漏 GPU 资源，可以显式开启复用：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ray.remote(<span class="params">num_gpus=<span class="number">1</span>, max_calls=<span class="number">0</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gpu_task</span>():</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+
+<h3 id="13-5-Celery-worker-不要偷偷起本地-Ray"><a href="#13-5-Celery-worker-不要偷偷起本地-Ray" class="headerlink" title="13.5 Celery worker 不要偷偷起本地 Ray"></a>13.5 Celery worker 不要偷偷起本地 Ray</h3><p>在生产环境里，Celery 进程里更推荐：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ray.init(address=<span class="string">&quot;auto&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>而不是：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ray.init()</span><br></pre></td></tr></table></figure>
+
+<p>原因：</p>
+<ul>
+<li><code>ray.init()</code> 可能在没有集群时直接起一个本地 Ray</li>
+<li>这样每台 Celery 机器都可能误起自己的小集群</li>
+<li>排查起来很麻烦</li>
+</ul>
+<hr>
+<h2 id="14-一个现实中的选型建议"><a href="#14-一个现实中的选型建议" class="headerlink" title="14. 一个现实中的选型建议"></a>14. 一个现实中的选型建议</h2><p>如果你的任务是下面这些，我建议这样选：</p>
+<h3 id="14-1-批量-embedding-rerank-OCR-ASR"><a href="#14-1-批量-embedding-rerank-OCR-ASR" class="headerlink" title="14.1 批量 embedding &#x2F; rerank &#x2F; OCR &#x2F; ASR"></a>14.1 批量 embedding &#x2F; rerank &#x2F; OCR &#x2F; ASR</h3><p>优先：</p>
+<ul>
+<li><code>Celery + Ray Actor</code></li>
+<li>数据量特别大时用 <code>Ray Data</code></li>
+</ul>
+<h3 id="14-2-分布式训练"><a href="#14-2-分布式训练" class="headerlink" title="14.2 分布式训练"></a>14.2 分布式训练</h3><p>优先：</p>
+<ul>
+<li><code>Ray Train</code></li>
+</ul>
+<h3 id="14-3-在线模型-API"><a href="#14-3-在线模型-API" class="headerlink" title="14.3 在线模型 API"></a>14.3 在线模型 API</h3><p>优先：</p>
+<ul>
+<li><code>Ray Serve</code></li>
+</ul>
+<h3 id="14-4-只是后台异步业务"><a href="#14-4-只是后台异步业务" class="headerlink" title="14.4 只是后台异步业务"></a>14.4 只是后台异步业务</h3><p>优先：</p>
+<ul>
+<li><code>Celery</code></li>
+</ul>
+<hr>
+<h2 id="15-我建议你的学习顺序"><a href="#15-我建议你的学习顺序" class="headerlink" title="15. 我建议你的学习顺序"></a>15. 我建议你的学习顺序</h2><p>如果你现在刚入门 Ray，可以按这个顺序学：</p>
+<ol>
+<li><code>ray.init()</code>、<code>@ray.remote</code>、<code>ray.get()</code></li>
+<li>Task 和 Actor 的区别</li>
+<li><code>ray.put()</code>、<code>ray.wait()</code></li>
+<li>GPU 调度：<code>num_gpus</code></li>
+<li>Named Actor &#x2F; Detached Actor</li>
+<li>Placement Group</li>
+<li>Ray Data 批量推理</li>
+<li>Ray Train 多卡训练</li>
+<li>再考虑和 Celery 联合</li>
+</ol>
+<hr>
+<h2 id="16-官方文档和官方博客"><a href="#16-官方文档和官方博客" class="headerlink" title="16. 官方文档和官方博客"></a>16. 官方文档和官方博客</h2><p>下面这些我认为最值得先看。</p>
+<h3 id="16-1-Ray-官方文档"><a href="#16-1-Ray-官方文档" class="headerlink" title="16.1 Ray 官方文档"></a>16.1 Ray 官方文档</h3><ul>
+<li>Ray Core Walkthrough: <a target="_blank" rel="noopener" href="https://docs.ray.io/en/latest/ray-core/walkthrough.html">https://docs.ray.io/en/latest/ray-core/walkthrough.html</a></li>
+<li>Starting Ray: <a target="_blank" rel="noopener" href="https://docs.ray.io/en/latest/ray-core/starting-ray.html">https://docs.ray.io/en/latest/ray-core/starting-ray.html</a></li>
+<li><code>ray.init</code> API: <a target="_blank" rel="noopener" href="https://docs.ray.io/en/latest/ray-core/api/doc/ray.init.html">https://docs.ray.io/en/latest/ray-core/api/doc/ray.init.html</a></li>
+<li>Accelerator Support: <a target="_blank" rel="noopener" href="https://docs.ray.io/en/latest/ray-core/scheduling/accelerators.html">https://docs.ray.io/en/latest/ray-core/scheduling/accelerators.html</a></li>
+<li>Placement Groups: <a target="_blank" rel="noopener" href="https://docs.ray.io/en/latest/ray-core/scheduling/placement-group.html">https://docs.ray.io/en/latest/ray-core/scheduling/placement-group.html</a></li>
+<li>Named Actors: <a target="_blank" rel="noopener" href="https://docs.ray.io/en/latest/ray-core/actors/named-actors.html">https://docs.ray.io/en/latest/ray-core/actors/named-actors.html</a></li>
+<li>Ray Train GPU Guide: <a target="_blank" rel="noopener" href="https://docs.ray.io/en/latest/train/user-guides/using-gpus.html">https://docs.ray.io/en/latest/train/user-guides/using-gpus.html</a></li>
+<li>Ray Data <code>map_batches</code>: <a target="_blank" rel="noopener" href="https://docs.ray.io/en/latest/data/api/doc/ray.data.Dataset.map_batches.html">https://docs.ray.io/en/latest/data/api/doc/ray.data.Dataset.map_batches.html</a></li>
+<li>Offline Batch Inference: <a target="_blank" rel="noopener" href="https://docs.ray.io/en/latest/data/batch_inference.html">https://docs.ray.io/en/latest/data/batch_inference.html</a></li>
+</ul>
+<h3 id="16-2-Celery-官方文档"><a href="#16-2-Celery-官方文档" class="headerlink" title="16.2 Celery 官方文档"></a>16.2 Celery 官方文档</h3><ul>
+<li>Calling Tasks: <a target="_blank" rel="noopener" href="https://docs.celeryq.dev/en/stable/userguide/calling.html">https://docs.celeryq.dev/en/stable/userguide/calling.html</a></li>
+<li>Tasks: <a target="_blank" rel="noopener" href="https://docs.celeryq.dev/en/stable/userguide/tasks.html">https://docs.celeryq.dev/en/stable/userguide/tasks.html</a></li>
+<li>Workers Guide: <a target="_blank" rel="noopener" href="https://docs.celeryq.dev/en/stable/userguide/workers.html">https://docs.celeryq.dev/en/stable/userguide/workers.html</a></li>
+</ul>
+<h3 id="16-3-官方博客-官方活动"><a href="#16-3-官方博客-官方活动" class="headerlink" title="16.3 官方博客 &#x2F; 官方活动"></a>16.3 官方博客 &#x2F; 官方活动</h3><ul>
+<li>Scaling Model Batch Inference in Ray: <a target="_blank" rel="noopener" href="https://www.anyscale.com/blog/scaling-model-batch-inference-in-ray-using-actors-actorpool-and-ray-data">https://www.anyscale.com/blog/scaling-model-batch-inference-in-ray-using-actors-actorpool-and-ray-data</a></li>
+<li>Ray Data: Scalable Data Processing for AI Workloads: <a target="_blank" rel="noopener" href="https://www.anyscale.com/blog/ray-data-scalable-data-processing-for-ai-workloads">https://www.anyscale.com/blog/ray-data-scalable-data-processing-for-ai-workloads</a></li>
+<li>Introduction to Ray Core and its Ecosystem: <a target="_blank" rel="noopener" href="https://www.anyscale.com/events/2022/02/03/introduction-to-ray-core-and-its-ecosystem">https://www.anyscale.com/events/2022/02/03/introduction-to-ray-core-and-its-ecosystem</a></li>
+<li>Ray Core Tutorial: <a target="_blank" rel="noopener" href="https://www.anyscale.com/events/2021/06/24/ray-core-tutorial">https://www.anyscale.com/events/2021/06/24/ray-core-tutorial</a></li>
+</ul>
+<hr>
+<h2 id="17-最后总结"><a href="#17-最后总结" class="headerlink" title="17. 最后总结"></a>17. 最后总结</h2><p>你可以先把 Ray 理解成：</p>
+<blockquote>
+<p>一个能把 Python 函数、对象、GPU、集群资源统一调度起来的分布式计算框架。</p>
+</blockquote>
+<p>如果放到工程里：</p>
+<ul>
+<li>Celery 解决“任务怎么排队、重试、延迟、编排”</li>
+<li>Ray 解决“任务怎么真正并行地吃 CPU &#x2F; GPU”</li>
+</ul>
+<p>如果你后面是做 AI 系统，尤其是：</p>
+<ul>
+<li>多卡推理</li>
+<li>批量 embedding</li>
+<li>大模型训练 &#x2F; 推理</li>
+</ul>
+<p>那 Ray 很值得认真学。</p>
+<hr>
+<h2 id="18-FastAPI-Celery-Ray-4-张-GPU-最小可运行项目"><a href="#18-FastAPI-Celery-Ray-4-张-GPU-最小可运行项目" class="headerlink" title="18. FastAPI + Celery + Ray + 4 张 GPU 最小可运行项目"></a>18. <code>FastAPI + Celery + Ray + 4 张 GPU</code> 最小可运行项目</h2><p>下面给你一份“单机 4 张 GPU”的最小结构。</p>
+<p>目标：</p>
+<ul>
+<li>FastAPI 负责接请求</li>
+<li>Celery 负责异步任务和状态查询</li>
+<li>Ray 负责 4 张 GPU 的模型调度</li>
+<li>每张 GPU 常驻 1 个 embedding worker</li>
+</ul>
+<h3 id="18-1-适用场景"><a href="#18-1-适用场景" class="headerlink" title="18.1 适用场景"></a>18.1 适用场景</h3><p>这个结构很适合：</p>
+<ul>
+<li>批量生成 embedding</li>
+<li>OCR &#x2F; ASR &#x2F; rerank 这类 GPU 推理任务</li>
+<li>Web 请求不想阻塞</li>
+<li>想把“业务异步”和“GPU 算力”分层</li>
+</ul>
+<p>不太适合：</p>
+<ul>
+<li>极低延迟在线推理</li>
+</ul>
+<p>如果你追求在线低延迟，优先考虑 <code>Ray Serve</code>。</p>
+<h3 id="18-2-目录结构"><a href="#18-2-目录结构" class="headerlink" title="18.2 目录结构"></a>18.2 目录结构</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ray_embedding_demo/</span><br><span class="line">├── app/</span><br><span class="line">│   ├── __init__.py</span><br><span class="line">│   ├── celery_app.py</span><br><span class="line">│   ├── main.py</span><br><span class="line">│   ├── ray_actors.py</span><br><span class="line">│   ├── ray_runtime.py</span><br><span class="line">│   └── tasks.py</span><br><span class="line">└── requirements.txt</span><br></pre></td></tr></table></figure>
+
+<h3 id="18-3-requirements-txt"><a href="#18-3-requirements-txt" class="headerlink" title="18.3 requirements.txt"></a>18.3 <code>requirements.txt</code></h3><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">fastapi</span><br><span class="line">uvicorn[standard]</span><br><span class="line">celery</span><br><span class="line">redis</span><br><span class="line">ray[default]</span><br><span class="line">sentence-transformers</span><br><span class="line">torch</span><br><span class="line">numpy</span><br></pre></td></tr></table></figure>
+
+<h3 id="18-4-app-celery-app-py"><a href="#18-4-app-celery-app-py" class="headerlink" title="18.4 app/celery_app.py"></a>18.4 <code>app/celery_app.py</code></h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> Celery</span><br><span class="line"></span><br><span class="line">celery_app = Celery(</span><br><span class="line">    <span class="string">&quot;ray_embedding_demo&quot;</span>,</span><br><span class="line">    broker=<span class="string">&quot;redis://127.0.0.1:6379/1&quot;</span>,</span><br><span class="line">    backend=<span class="string">&quot;redis://127.0.0.1:6379/2&quot;</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">celery_app.conf.update(</span><br><span class="line">    imports=(<span class="string">&quot;app.tasks&quot;</span>,),</span><br><span class="line">    task_track_started=<span class="literal">True</span>,</span><br><span class="line">    task_default_queue=<span class="string">&quot;gpu&quot;</span>,</span><br><span class="line">    timezone=<span class="string">&quot;Asia/Shanghai&quot;</span>,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="18-5-app-ray-runtime-py"><a href="#18-5-app-ray-runtime-py" class="headerlink" title="18.5 app/ray_runtime.py"></a>18.5 <code>app/ray_runtime.py</code></h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> ray</span><br><span class="line"></span><br><span class="line">RAY_NAMESPACE = <span class="string">&quot;embedding-demo&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">ensure_ray</span>():</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> ray.is_initialized():</span><br><span class="line">        ray.init(address=<span class="string">&quot;auto&quot;</span>, namespace=RAY_NAMESPACE)</span><br></pre></td></tr></table></figure>
+
+<h3 id="18-6-app-ray-actors-py"><a href="#18-6-app-ray-actors-py" class="headerlink" title="18.6 app/ray_actors.py"></a>18.6 <code>app/ray_actors.py</code></h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> __future__ <span class="keyword">import</span> annotations</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> ray</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> app.ray_runtime <span class="keyword">import</span> ensure_ray</span><br><span class="line"></span><br><span class="line">MODEL_NAME = <span class="string">&quot;BAAI/bge-small-zh-v1.5&quot;</span></span><br><span class="line">WORKER_COUNT = <span class="number">4</span></span><br><span class="line">WORKER_PREFIX = <span class="string">&quot;embedding_worker&quot;</span></span><br><span class="line">ROUTER_NAME = <span class="string">&quot;embedding_router&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">worker_name</span>(<span class="params">worker_id: <span class="built_in">int</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="keyword">return</span> <span class="string">f&quot;<span class="subst">&#123;WORKER_PREFIX&#125;</span>_<span class="subst">&#123;worker_id&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@ray.remote(<span class="params">num_gpus=<span class="number">1</span></span>)</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">EmbeddingWorker</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, model_name: <span class="built_in">str</span>, worker_id: <span class="built_in">int</span></span>):</span><br><span class="line">        <span class="keyword">from</span> sentence_transformers <span class="keyword">import</span> SentenceTransformer</span><br><span class="line"></span><br><span class="line">        <span class="variable language_">self</span>.worker_id = worker_id</span><br><span class="line">        <span class="variable language_">self</span>.model = SentenceTransformer(model_name, device=<span class="string">&quot;cuda&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">encode</span>(<span class="params">self, texts: <span class="built_in">list</span>[<span class="built_in">str</span>]</span>) -&gt; <span class="built_in">list</span>[<span class="built_in">list</span>[<span class="built_in">float</span>]]:</span><br><span class="line">        vectors = <span class="variable language_">self</span>.model.encode(</span><br><span class="line">            texts,</span><br><span class="line">            batch_size=<span class="number">32</span>,</span><br><span class="line">            normalize_embeddings=<span class="literal">True</span>,</span><br><span class="line">        )</span><br><span class="line">        <span class="keyword">return</span> vectors.tolist()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">info</span>(<span class="params">self</span>) -&gt; <span class="built_in">dict</span>:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&quot;worker_id&quot;</span>: <span class="variable language_">self</span>.worker_id,</span><br><span class="line">            <span class="string">&quot;gpu_ids&quot;</span>: ray.get_runtime_context().get_accelerator_ids()[<span class="string">&quot;GPU&quot;</span>],</span><br><span class="line">            <span class="string">&quot;cuda_visible_devices&quot;</span>: os.environ.get(<span class="string">&quot;CUDA_VISIBLE_DEVICES&quot;</span>),</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@ray.remote</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">EmbeddingRouter</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, worker_names: <span class="built_in">list</span>[<span class="built_in">str</span>]</span>):</span><br><span class="line">        <span class="variable language_">self</span>.worker_names = worker_names</span><br><span class="line">        <span class="variable language_">self</span>.index = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">encode</span>(<span class="params">self, texts: <span class="built_in">list</span>[<span class="built_in">str</span>]</span>) -&gt; <span class="built_in">list</span>[<span class="built_in">list</span>[<span class="built_in">float</span>]]:</span><br><span class="line">        current_name = <span class="variable language_">self</span>.worker_names[<span class="variable language_">self</span>.index]</span><br><span class="line">        <span class="variable language_">self</span>.index = (<span class="variable language_">self</span>.index + <span class="number">1</span>) % <span class="built_in">len</span>(<span class="variable language_">self</span>.worker_names)</span><br><span class="line">        worker = ray.get_actor(current_name)</span><br><span class="line">        <span class="keyword">return</span> ray.get(worker.encode.remote(texts))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">state</span>(<span class="params">self</span>) -&gt; <span class="built_in">dict</span>:</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&quot;worker_names&quot;</span>: <span class="variable language_">self</span>.worker_names,</span><br><span class="line">            <span class="string">&quot;next_index&quot;</span>: <span class="variable language_">self</span>.index,</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">ensure_embedding_cluster</span>():</span><br><span class="line">    ensure_ray()</span><br><span class="line"></span><br><span class="line">    worker_names = []</span><br><span class="line">    <span class="keyword">for</span> worker_id <span class="keyword">in</span> <span class="built_in">range</span>(WORKER_COUNT):</span><br><span class="line">        name = worker_name(worker_id)</span><br><span class="line">        EmbeddingWorker.options(</span><br><span class="line">            name=name,</span><br><span class="line">            lifetime=<span class="string">&quot;detached&quot;</span>,</span><br><span class="line">            get_if_exists=<span class="literal">True</span>,</span><br><span class="line">        ).remote(MODEL_NAME, worker_id)</span><br><span class="line">        worker_names.append(name)</span><br><span class="line"></span><br><span class="line">    EmbeddingRouter.options(</span><br><span class="line">        name=ROUTER_NAME,</span><br><span class="line">        lifetime=<span class="string">&quot;detached&quot;</span>,</span><br><span class="line">        get_if_exists=<span class="literal">True</span>,</span><br><span class="line">    ).remote(worker_names)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_router</span>():</span><br><span class="line">    ensure_embedding_cluster()</span><br><span class="line">    <span class="keyword">return</span> ray.get_actor(ROUTER_NAME)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">list_workers</span>() -&gt; <span class="built_in">list</span>[<span class="built_in">dict</span>]:</span><br><span class="line">    ensure_embedding_cluster()</span><br><span class="line">    handles = [ray.get_actor(worker_name(i)) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(WORKER_COUNT)]</span><br><span class="line">    <span class="keyword">return</span> ray.get([handle.info.remote() <span class="keyword">for</span> handle <span class="keyword">in</span> handles])</span><br></pre></td></tr></table></figure>
+
+<p>说明：</p>
+<ul>
+<li><code>EmbeddingWorker</code>：每个 actor 绑定 1 张 GPU</li>
+<li><code>EmbeddingRouter</code>：做一个最简单的轮询分发</li>
+<li><code>lifetime=&quot;detached&quot;</code>：worker 不跟着单个任务退出</li>
+<li><code>get_if_exists=True</code>：多进程启动时避免重复创建</li>
+</ul>
+<h3 id="18-7-app-tasks-py"><a href="#18-7-app-tasks-py" class="headerlink" title="18.7 app/tasks.py"></a>18.7 <code>app/tasks.py</code></h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> ray</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> app.celery_app <span class="keyword">import</span> celery_app</span><br><span class="line"><span class="keyword">from</span> app.ray_actors <span class="keyword">import</span> get_router</span><br><span class="line"></span><br><span class="line"><span class="meta">@celery_app.task(<span class="params"></span></span></span><br><span class="line"><span class="params"><span class="meta">    bind=<span class="literal">True</span>,</span></span></span><br><span class="line"><span class="params"><span class="meta">    autoretry_for=(<span class="params">Exception,</span>),</span></span></span><br><span class="line"><span class="params"><span class="meta">    retry_backoff=<span class="literal">True</span>,</span></span></span><br><span class="line"><span class="params"><span class="meta">    retry_jitter=<span class="literal">True</span>,</span></span></span><br><span class="line"><span class="params"><span class="meta">    max_retries=<span class="number">3</span>,</span></span></span><br><span class="line"><span class="params"><span class="meta"></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">build_embeddings</span>(<span class="params">self, texts: <span class="built_in">list</span>[<span class="built_in">str</span>]</span>) -&gt; <span class="built_in">dict</span>:</span><br><span class="line">    router = get_router()</span><br><span class="line">    vectors = ray.get(router.encode.remote(texts))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        <span class="string">&quot;count&quot;</span>: <span class="built_in">len</span>(vectors),</span><br><span class="line">        <span class="string">&quot;dim&quot;</span>: <span class="built_in">len</span>(vectors[<span class="number">0</span>]) <span class="keyword">if</span> vectors <span class="keyword">else</span> <span class="number">0</span>,</span><br><span class="line">        <span class="string">&quot;vectors&quot;</span>: vectors,</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="18-8-app-main-py"><a href="#18-8-app-main-py" class="headerlink" title="18.8 app/main.py"></a>18.8 <code>app/main.py</code></h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> contextlib <span class="keyword">import</span> asynccontextmanager</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> celery.result <span class="keyword">import</span> AsyncResult</span><br><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI</span><br><span class="line"><span class="keyword">from</span> pydantic <span class="keyword">import</span> BaseModel, Field</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> app.celery_app <span class="keyword">import</span> celery_app</span><br><span class="line"><span class="keyword">from</span> app.ray_actors <span class="keyword">import</span> ensure_embedding_cluster, list_workers</span><br><span class="line"><span class="keyword">from</span> app.tasks <span class="keyword">import</span> build_embeddings</span><br><span class="line"></span><br><span class="line"><span class="meta">@asynccontextmanager</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">lifespan</span>(<span class="params">app: FastAPI</span>):</span><br><span class="line">    ensure_embedding_cluster()</span><br><span class="line">    <span class="keyword">yield</span></span><br><span class="line"></span><br><span class="line">app = FastAPI(lifespan=lifespan)</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">EmbeddingRequest</span>(<span class="title class_ inherited__">BaseModel</span>):</span><br><span class="line">    texts: <span class="built_in">list</span>[<span class="built_in">str</span>] = Field(min_length=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.post(<span class="params"><span class="string">&quot;/embeddings/submit&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">submit_embeddings</span>(<span class="params">payload: EmbeddingRequest</span>):</span><br><span class="line">    task = build_embeddings.apply_async(args=[payload.texts], queue=<span class="string">&quot;gpu&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        <span class="string">&quot;task_id&quot;</span>: task.<span class="built_in">id</span>,</span><br><span class="line">        <span class="string">&quot;count&quot;</span>: <span class="built_in">len</span>(payload.texts),</span><br><span class="line">        <span class="string">&quot;status&quot;</span>: <span class="string">&quot;submitted&quot;</span>,</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.get(<span class="params"><span class="string">&quot;/tasks/&#123;task_id&#125;&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_task_status</span>(<span class="params">task_id: <span class="built_in">str</span></span>):</span><br><span class="line">    result = AsyncResult(task_id, app=celery_app)</span><br><span class="line">    data = &#123;</span><br><span class="line">        <span class="string">&quot;task_id&quot;</span>: task_id,</span><br><span class="line">        <span class="string">&quot;status&quot;</span>: result.status,</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> result.successful():</span><br><span class="line">        data[<span class="string">&quot;result&quot;</span>] = result.result</span><br><span class="line">    <span class="keyword">elif</span> result.failed():</span><br><span class="line">        data[<span class="string">&quot;error&quot;</span>] = <span class="built_in">str</span>(result.result)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> data</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.get(<span class="params"><span class="string">&quot;/ray/workers&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_ray_workers</span>():</span><br><span class="line">    <span class="keyword">return</span> list_workers()</span><br></pre></td></tr></table></figure>
+
+<h3 id="18-9-启动顺序"><a href="#18-9-启动顺序" class="headerlink" title="18.9 启动顺序"></a>18.9 启动顺序</h3><p>先安装依赖：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install -r requirements.txt</span><br></pre></td></tr></table></figure>
+
+<p>启动 Redis：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-server</span><br></pre></td></tr></table></figure>
+
+<p>启动 Ray 集群。</p>
+<p>注意：</p>
+<ul>
+<li>Redis 默认也用 <code>6379</code></li>
+<li>Ray head 默认端口也常见写成 <code>6379</code></li>
+<li>同机演示时最好显式给 Ray 换一个端口，避免冲突</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ray stop</span><br><span class="line">ray start --<span class="built_in">head</span> --port=9339 --dashboard-port=8265 --num-gpus=4</span><br></pre></td></tr></table></figure>
+
+<p>启动 Celery worker：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">celery -A app.celery_app:celery_app worker -l info -Q gpu --concurrency=4</span><br></pre></td></tr></table></figure>
+
+<p>启动 FastAPI：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload</span><br></pre></td></tr></table></figure>
+
+<h3 id="18-10-试一下"><a href="#18-10-试一下" class="headerlink" title="18.10 试一下"></a>18.10 试一下</h3><p>提交任务：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST <span class="string">&quot;http://127.0.0.1:8000/embeddings/submit&quot;</span> \</span><br><span class="line">  -H <span class="string">&quot;Content-Type: application/json&quot;</span> \</span><br><span class="line">  -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;texts&quot;: [&quot;你好&quot;, &quot;Ray 和 Celery 可以联合使用&quot;, &quot;多卡 embedding 服务&quot;]</span></span><br><span class="line"><span class="string">  &#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>返回类似：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;task_id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;c9e2b7c1-xxxx-xxxx-xxxx-xxxxxxxxxxxx&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;count&quot;</span><span class="punctuation">:</span> <span class="number">3</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;status&quot;</span><span class="punctuation">:</span> <span class="string">&quot;submitted&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>查状态：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl <span class="string">&quot;http://127.0.0.1:8000/tasks/c9e2b7c1-xxxx-xxxx-xxxx-xxxxxxxxxxxx&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>查看 4 个 GPU worker：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl <span class="string">&quot;http://127.0.0.1:8000/ray/workers&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>你应该能看到类似结果：</p>
+<ul>
+<li><code>worker_id=0</code> 对应 1 张卡</li>
+<li><code>worker_id=1</code> 对应 1 张卡</li>
+<li><code>worker_id=2</code> 对应 1 张卡</li>
+<li><code>worker_id=3</code> 对应 1 张卡</li>
+</ul>
+<hr>
+<h2 id="19-“4-张显卡做-embedding-服务”-应该怎么理解"><a href="#19-“4-张显卡做-embedding-服务”-应该怎么理解" class="headerlink" title="19. “4 张显卡做 embedding 服务” 应该怎么理解"></a>19. “4 张显卡做 embedding 服务” 应该怎么理解</h2><p>上面的示例，实际做的是这件事：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">客户端请求</span><br><span class="line">    -&gt; FastAPI</span><br><span class="line">    -&gt; Celery 异步提交</span><br><span class="line">    -&gt; Celery 调用 Ray Router</span><br><span class="line">    -&gt; Router 把请求轮询发给 4 个 GPU Actor</span><br><span class="line">    -&gt; 对应 Actor 在各自 GPU 上推理</span><br><span class="line">    -&gt; Celery 返回任务结果</span><br></pre></td></tr></table></figure>
+
+<p>这意味着：</p>
+<ul>
+<li>4 张卡不是给 Celery 的</li>
+<li>4 张卡是给 Ray Actor 池的</li>
+<li>Celery 只是任务入口，不负责 GPU 资源分配</li>
+</ul>
+<h3 id="19-1-为什么是一张卡一个-Actor"><a href="#19-1-为什么是一张卡一个-Actor" class="headerlink" title="19.1 为什么是一张卡一个 Actor"></a>19.1 为什么是一张卡一个 Actor</h3><p>这是最容易稳定运行的方式。</p>
+<p>优点：</p>
+<ul>
+<li>模型只加载一次</li>
+<li>每张卡有自己的常驻进程</li>
+<li>不容易互相抢显存</li>
+<li>问题定位更清晰</li>
+</ul>
+<p>适合：</p>
+<ul>
+<li>embedding</li>
+<li>rerank</li>
+<li>OCR</li>
+<li>语音识别</li>
+<li>图像分类</li>
+</ul>
+<h3 id="19-2-吞吐量怎么提高"><a href="#19-2-吞吐量怎么提高" class="headerlink" title="19.2 吞吐量怎么提高"></a>19.2 吞吐量怎么提高</h3><p>如果你觉得吞吐还不够，优先调这几个地方：</p>
+<ol>
+<li>增大 <code>self.model.encode(..., batch_size=32)</code> 的 <code>batch_size</code></li>
+<li>一次提交多条文本，而不是每次只送 1 条</li>
+<li>把路由器改成按“负载”调度，而不是简单轮询</li>
+<li>小模型场景下尝试分数 GPU，比如 <code>num_gpus=0.5</code></li>
+</ol>
+<p>最有效的通常不是“开更多 Celery 进程”，而是：</p>
+<ul>
+<li>增大单次批量</li>
+<li>让 GPU 更满</li>
+</ul>
+<h3 id="19-3-什么时候改成-Ray-Data"><a href="#19-3-什么时候改成-Ray-Data" class="headerlink" title="19.3 什么时候改成 Ray Data"></a>19.3 什么时候改成 <code>Ray Data</code></h3><p>如果你的场景从“在线异步任务”变成：</p>
+<ul>
+<li>一次处理几十万条</li>
+<li>离线批量跑 embedding</li>
+<li>数据已经在文件、表、对象存储里</li>
+</ul>
+<p>那通常不该继续走 <code>FastAPI -&gt; Celery</code> 这条链路，而应该直接上：</p>
+<ul>
+<li><code>Ray Data</code></li>
+<li><code>map_batches</code></li>
+<li>actor pool</li>
+</ul>
+<h3 id="19-4-什么时候改成-Ray-Serve"><a href="#19-4-什么时候改成-Ray-Serve" class="headerlink" title="19.4 什么时候改成 Ray Serve"></a>19.4 什么时候改成 <code>Ray Serve</code></h3><p>如果你的目标是：</p>
+<ul>
+<li>每个请求都想低延迟返回</li>
+<li>希望直接暴露模型 API</li>
+<li>想做副本扩缩容</li>
+<li>想配合在线服务治理</li>
+</ul>
+<p>那比起 <code>FastAPI + Celery + Ray</code>，更适合直接用：</p>
+<ul>
+<li><code>Ray Serve</code></li>
+</ul>
+<p>一句话：</p>
+<ul>
+<li>批处理 &#x2F; 后台任务：<code>Celery + Ray</code></li>
+<li>在线模型服务：<code>Ray Serve</code></li>
+</ul>
+<h3 id="19-5-这个示例有哪些简化"><a href="#19-5-这个示例有哪些简化" class="headerlink" title="19.5 这个示例有哪些简化"></a>19.5 这个示例有哪些简化</h3><p>为了易懂，这里故意省略了一些生产细节：</p>
+<ul>
+<li>没有把结果写数据库</li>
+<li>没有做请求级限流</li>
+<li>没有做任务取消</li>
+<li>没有做 GPU worker 健康检查和自动重建</li>
+<li>没有做模型热更新</li>
+</ul>
+<p>但核心链路已经是对的：</p>
+<ul>
+<li>Celery 编排任务</li>
+<li>Ray 管 GPU</li>
+<li>模型常驻 Actor</li>
+</ul>
+<h3 id="19-6-真上生产时我建议再补-5-个点"><a href="#19-6-真上生产时我建议再补-5-个点" class="headerlink" title="19.6 真上生产时我建议再补 5 个点"></a>19.6 真上生产时我建议再补 5 个点</h3><ol>
+<li>结果不要直接塞进 Celery backend，尤其是 embedding 向量很大时</li>
+<li>结果存数据库、对象存储或向量库，Celery 只回传元信息</li>
+<li>给不同模型建不同的 Ray Actor 池，不要混在一个池里</li>
+<li>给 GPU 任务单独 Celery 队列，避免和普通业务任务互相影响</li>
+<li>增加一个“模型路由层”，按模型名、batch 大小、GPU 余量去分配</li>
+</ol>
+<h3 id="19-7-如果从单机-4-卡扩到多机"><a href="#19-7-如果从单机-4-卡扩到多机" class="headerlink" title="19.7 如果从单机 4 卡扩到多机"></a>19.7 如果从单机 4 卡扩到多机</h3><p>这套代码基本不用大改。</p>
+<p>你主要改的是部署：</p>
+<p>头节点：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ray start --<span class="built_in">head</span> --port=9339 --dashboard-port=8265</span><br></pre></td></tr></table></figure>
+
+<p>工作节点：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ray start --address=&lt;head-ip&gt;:9339 --num-gpus=4</span><br></pre></td></tr></table></figure>
+
+<p>Python 代码仍然可以继续用：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ray.init(address=<span class="string">&quot;auto&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>这也是 Ray 很实用的一点：</p>
+<ul>
+<li>先单机写通</li>
+<li>再平移到多机</li>
+</ul>
+<hr>
+<h2 id="20-一份更现实的落地建议"><a href="#20-一份更现实的落地建议" class="headerlink" title="20. 一份更现实的落地建议"></a>20. 一份更现实的落地建议</h2><p>如果你当前项目是 RAG 或 AI 应用后台，我建议优先这么落：</p>
+<ol>
+<li>Web 请求进入 FastAPI</li>
+<li>文件解析、embedding、rerank 任务交给 Celery</li>
+<li>Celery 只做任务编排和状态更新</li>
+<li>具体模型推理交给 Ray Actor 池</li>
+<li>大批量离线任务再单独引入 <code>Ray Data</code></li>
+</ol>
+<p>这个拆法的优点是：</p>
+<ul>
+<li>业务代码和算力代码边界清晰</li>
+<li>GPU 不会被 Celery 乱占</li>
+<li>后续扩展到多机、多模型也更稳</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>楚天
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/ray/" title="Ray 学习笔记">https://chutianduan.github.io/notes/ai模型开发/知识点学习/框架/ray/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/embedding/" rel="prev" title="Embedding 入门笔记">
+                  <i class="fa fa-angle-left"></i> Embedding 入门笔记
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/celery/" rel="next" title="Celery 学习笔记">
+                  Celery 学习笔记 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-code"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">楚天</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

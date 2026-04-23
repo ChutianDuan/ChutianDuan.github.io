@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chutianduan.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":2,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Chunk 学习笔记1. 什么是 Chunk在 embedding、检索和 RAG 场景里，chunk 指的是把原始文档切成一段一段可独立编码、可独立检索的小文本单元。 对应的过程通常叫：  chunking 文本切块 文档切分  可以先把 chunk 看成检索流程里的最小工作单元。它不是随便切一刀，而是既要保留语义完整性，也要方便后续编码和检索。  2. 为什么要做 Chunk原始文档通常不适合">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Chunk 学习笔记">
+<meta property="og:url" content="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E5%8F%A5%E5%AD%90%E5%B5%8C%E5%85%A5%E6%A8%A1%E5%9E%8B/chunk%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="楚天">
+<meta property="og:description" content="Chunk 学习笔记1. 什么是 Chunk在 embedding、检索和 RAG 场景里，chunk 指的是把原始文档切成一段一段可独立编码、可独立检索的小文本单元。 对应的过程通常叫：  chunking 文本切块 文档切分  可以先把 chunk 看成检索流程里的最小工作单元。它不是随便切一刀，而是既要保留语义完整性，也要方便后续编码和检索。  2. 为什么要做 Chunk原始文档通常不适合">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-04-20T01:03:11.000Z">
+<meta property="article:modified_time" content="2026-04-20T01:03:11.000Z">
+<meta property="article:author" content="楚天">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="游戏网络">
+<meta property="article:tag" content="技术博客">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E5%8F%A5%E5%AD%90%E5%B5%8C%E5%85%A5%E6%A8%A1%E5%9E%8B/chunk%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E5%8F%A5%E5%AD%90%E5%B5%8C%E5%85%A5%E6%A8%A1%E5%9E%8B/chunk%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/","path":"/notes/ai模型开发/知识点学习/句子嵌入模型/chunk学习笔记/","title":"Chunk 学习笔记"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Chunk 学习笔记 | 楚天</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">楚天</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">惟楚有材，于斯为盛</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-友情链接"><a href="/link/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Chunk-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0"><span class="nav-number">1.</span> <span class="nav-text">Chunk 学习笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E4%BB%80%E4%B9%88%E6%98%AF-Chunk"><span class="nav-number">1.1.</span> <span class="nav-text">1. 什么是 Chunk</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%81%9A-Chunk"><span class="nav-number">1.2.</span> <span class="nav-text">2. 为什么要做 Chunk</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Chunk-%E5%AF%B9%E6%A3%80%E7%B4%A2%E6%95%88%E6%9E%9C%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E4%B9%88%E5%85%B3%E9%94%AE"><span class="nav-number">1.3.</span> <span class="nav-text">3. Chunk 对检索效果为什么这么关键</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E4%B8%80%E4%B8%AA%E5%A5%BD-Chunk-%E7%9A%84%E7%9B%AE%E6%A0%87"><span class="nav-number">1.4.</span> <span class="nav-text">4. 一个好 Chunk 的目标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E5%B8%B8%E8%A7%81%E7%9A%84-Chunk-%E7%AD%96%E7%95%A5"><span class="nav-number">1.5.</span> <span class="nav-text">5. 常见的 Chunk 策略</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-%E5%9B%BA%E5%AE%9A%E9%95%BF%E5%BA%A6%E5%88%87%E5%9D%97"><span class="nav-number">1.5.1.</span> <span class="nav-text">5.1 固定长度切块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-%E6%8C%89%E6%AE%B5%E8%90%BD%E5%88%87%E5%9D%97"><span class="nav-number">1.5.2.</span> <span class="nav-text">5.2 按段落切块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-%E6%8C%89%E6%A0%87%E9%A2%98%E5%92%8C%E5%B0%8F%E8%8A%82%E5%88%87%E5%9D%97"><span class="nav-number">1.5.3.</span> <span class="nav-text">5.3 按标题和小节切块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-%E6%B7%B7%E5%90%88%E5%88%87%E5%9D%97"><span class="nav-number">1.5.4.</span> <span class="nav-text">5.4 混合切块</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E4%BB%80%E4%B9%88%E6%98%AF-Overlap"><span class="nav-number">1.6.</span> <span class="nav-text">6. 什么是 Overlap</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-Chunk-Size-%E6%80%8E%E4%B9%88%E5%AE%9A"><span class="nav-number">1.7.</span> <span class="nav-text">7. Chunk Size 怎么定</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-%E4%B8%AD%E6%96%87%E5%9C%BA%E6%99%AF%E4%B8%80%E4%B8%AA%E5%B8%B8%E8%A7%81%E8%B5%B7%E7%82%B9"><span class="nav-number">1.7.1.</span> <span class="nav-text">7.1 中文场景一个常见起点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-%E7%94%A8-token-%E8%BF%98%E6%98%AF%E5%AD%97%E6%95%B0"><span class="nav-number">1.7.2.</span> <span class="nav-text">7.2 用 token 还是字数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-%E4%B8%8D%E5%90%8C%E6%96%87%E6%A1%A3%E7%B1%BB%E5%9E%8B%E6%80%8E%E4%B9%88%E5%88%87"><span class="nav-number">1.8.</span> <span class="nav-text">8. 不同文档类型怎么切</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-FAQ"><span class="nav-number">1.8.1.</span> <span class="nav-text">8.1 FAQ</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-API-%E6%96%87%E6%A1%A3"><span class="nav-number">1.8.2.</span> <span class="nav-text">8.2 API 文档</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-%E6%95%99%E7%A8%8B%E5%92%8C%E5%8D%9A%E5%AE%A2"><span class="nav-number">1.8.3.</span> <span class="nav-text">8.3 教程和博客</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-4-%E6%B3%95%E8%A7%84%E3%80%81%E5%90%88%E5%90%8C%E3%80%81%E5%88%B6%E5%BA%A6%E6%96%87%E6%A1%A3"><span class="nav-number">1.8.4.</span> <span class="nav-text">8.4 法规、合同、制度文档</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-Chunk-%E4%B8%8D%E5%8F%AA%E6%98%AF%E6%96%87%E6%9C%AC%EF%BC%8C%E8%BF%98%E8%A6%81%E5%B8%A6%E5%85%83%E6%95%B0%E6%8D%AE"><span class="nav-number">1.9.</span> <span class="nav-text">9. Chunk 不只是文本，还要带元数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-Chunk-%E6%80%8E%E4%B9%88%E8%AF%84%E4%BC%B0%E5%A5%BD%E4%B8%8D%E5%A5%BD"><span class="nav-number">1.10.</span> <span class="nav-text">10. Chunk 怎么评估好不好</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-%E5%B8%B8%E8%A7%81%E5%9D%91"><span class="nav-number">1.11.</span> <span class="nav-text">11. 常见坑</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#11-1-%E5%8F%AA%E6%8C%89%E5%9B%BA%E5%AE%9A%E9%95%BF%E5%BA%A6%E5%88%87%EF%BC%8C%E4%B8%8D%E7%9C%8B%E8%AF%AD%E4%B9%89%E8%BE%B9%E7%95%8C"><span class="nav-number">1.11.1.</span> <span class="nav-text">11.1 只按固定长度切，不看语义边界</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-2-%E6%A0%87%E9%A2%98%E5%92%8C%E6%AD%A3%E6%96%87%E5%88%86%E7%A6%BB"><span class="nav-number">1.11.2.</span> <span class="nav-text">11.2 标题和正文分离</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-3-chunk-%E5%A4%AA%E7%A2%8E"><span class="nav-number">1.11.3.</span> <span class="nav-text">11.3 chunk 太碎</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-4-chunk-%E5%A4%AA%E5%A4%A7"><span class="nav-number">1.11.4.</span> <span class="nav-text">11.4 chunk 太大</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-5-overlap-%E5%A4%AA%E5%A4%A7"><span class="nav-number">1.11.5.</span> <span class="nav-text">11.5 overlap 太大</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-6-%E6%B2%A1%E5%81%9A%E6%B8%85%E6%B4%97%E5%B0%B1%E7%9B%B4%E6%8E%A5%E5%88%87"><span class="nav-number">1.11.6.</span> <span class="nav-text">11.6 没做清洗就直接切</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-%E4%B8%80%E4%B8%AA%E5%AE%9E%E7%94%A8%E7%9A%84%E9%BB%98%E8%AE%A4%E6%96%B9%E6%A1%88"><span class="nav-number">1.12.</span> <span class="nav-text">12. 一个实用的默认方案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-Chunk%E3%80%81Embedding%E3%80%81RAG-%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">1.13.</span> <span class="nav-text">13. Chunk、Embedding、RAG 的关系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%80%BB%E7%BB%93"><span class="nav-number">1.14.</span> <span class="nav-text">14. 一句话总结</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="楚天"
+      src="/img/me.jpg">
+  <p class="site-author-name" itemprop="name">楚天</p>
+  <div class="site-description" itemprop="description">记录深度学习、C++、游戏网络与生活旅行的学习笔记。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ChutianDuan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ChutianDuan" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:3383006954@qq.com" title="E-Mail → mailto:3383006954@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E5%8F%A5%E5%AD%90%E5%B5%8C%E5%85%A5%E6%A8%A1%E5%9E%8B/chunk%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Chunk 学习笔记 | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Chunk 学习笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-04-20 09:03:11" itemprop="dateCreated datePublished" datetime="2026-04-20T09:03:11+08:00">2026-04-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/AI%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">AI模型开发</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/AI%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">知识点学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/AI%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E5%8F%A5%E5%AD%90%E5%B5%8C%E5%85%A5%E6%A8%A1%E5%9E%8B/" itemprop="url" rel="index"><span itemprop="name">句子嵌入模型</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Chunk-学习笔记"><a href="#Chunk-学习笔记" class="headerlink" title="Chunk 学习笔记"></a>Chunk 学习笔记</h1><h2 id="1-什么是-Chunk"><a href="#1-什么是-Chunk" class="headerlink" title="1. 什么是 Chunk"></a>1. 什么是 Chunk</h2><p>在 embedding、检索和 RAG 场景里，<code>chunk</code> 指的是把原始文档切成一段一段可独立编码、可独立检索的小文本单元。</p>
+<p>对应的过程通常叫：</p>
+<ul>
+<li>chunking</li>
+<li>文本切块</li>
+<li>文档切分</li>
+</ul>
+<p>可以先把 chunk 看成检索流程里的最小工作单元。它不是随便切一刀，而是既要保留语义完整性，也要方便后续编码和检索。</p>
+<hr>
+<h2 id="2-为什么要做-Chunk"><a href="#2-为什么要做-Chunk" class="headerlink" title="2. 为什么要做 Chunk"></a>2. 为什么要做 Chunk</h2><p>原始文档通常不适合整篇直接送去做 embedding 或检索，原因一般有三个：</p>
+<ul>
+<li>太长，超过模型输入限制</li>
+<li>粒度太粗，检索结果不精准</li>
+<li>一篇文档往往包含多个主题，整篇编码会让语义混在一起</li>
+</ul>
+<p>切块的目的，是让每一块：</p>
+<ul>
+<li>尽量只表达一个相对完整的意思</li>
+<li>长度不要太长，避免语义被稀释</li>
+<li>长度也不要太短，避免上下文不足</li>
+</ul>
+<hr>
+<h2 id="3-Chunk-对检索效果为什么这么关键"><a href="#3-Chunk-对检索效果为什么这么关键" class="headerlink" title="3. Chunk 对检索效果为什么这么关键"></a>3. Chunk 对检索效果为什么这么关键</h2><p>检索效果不好时，很多人的第一反应是换 embedding 模型，但工程里更常见的问题其实出在 chunk 策略。</p>
+<p>实际项目里，chunk 策略会直接影响：</p>
+<ul>
+<li>向量质量</li>
+<li>召回命中率</li>
+<li>rerank 效果</li>
+<li>最终 LLM 回答质量</li>
+</ul>
+<p>常见问题包括：</p>
+<ul>
+<li>chunk 太大，相关信息被埋在长文本里，召回不准</li>
+<li>chunk 太碎，单块语义不完整，召回上来后也不好用</li>
+<li>切断了标题和正文的关系，导致上下文丢失</li>
+<li>overlap 设置不合理，重复太多或连续性不够</li>
+</ul>
+<p>所以可以把它理解成：</p>
+<blockquote>
+<p>embedding 决定“怎么表示”，chunking 决定“切得对不对”。</p>
+</blockquote>
+<hr>
+<h2 id="4-一个好-Chunk-的目标"><a href="#4-一个好-Chunk-的目标" class="headerlink" title="4. 一个好 Chunk 的目标"></a>4. 一个好 Chunk 的目标</h2><p>好的 chunk 通常要满足这几个条件：</p>
+<ul>
+<li>语义尽量完整</li>
+<li>长度尽量稳定</li>
+<li>有明确边界</li>
+<li>便于加标题、来源、页码等元数据</li>
+<li>便于后续召回、去重、引用和展示</li>
+</ul>
+<p>如果一个 chunk 满足下面任意一种情况，通常都说明切得不够好：</p>
+<ul>
+<li>只有一句残缺的话</li>
+<li>标题和正文被拆开</li>
+<li>一个 chunk 同时塞了多个不相关主题</li>
+<li>文本大部分是模板、导航、页脚、噪声内容</li>
+</ul>
+<hr>
+<h2 id="5-常见的-Chunk-策略"><a href="#5-常见的-Chunk-策略" class="headerlink" title="5. 常见的 Chunk 策略"></a>5. 常见的 Chunk 策略</h2><h3 id="5-1-固定长度切块"><a href="#5-1-固定长度切块" class="headerlink" title="5.1 固定长度切块"></a>5.1 固定长度切块</h3><p>例如每 <code>300</code> 字、每 <code>500</code> tokens 切一块。</p>
+<p>优点：</p>
+<ul>
+<li>简单</li>
+<li>稳定</li>
+<li>容易批量处理</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>可能把完整段落或完整论点切断</li>
+</ul>
+<p>适合：</p>
+<ul>
+<li>初版 baseline</li>
+<li>结构不稳定的原始文本</li>
+</ul>
+<h3 id="5-2-按段落切块"><a href="#5-2-按段落切块" class="headerlink" title="5.2 按段落切块"></a>5.2 按段落切块</h3><p>按照自然段来切。</p>
+<p>优点：</p>
+<ul>
+<li>语义边界自然</li>
+<li>可读性通常更好</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>长度不稳定</li>
+<li>某些段落可能过长或过短</li>
+</ul>
+<p>适合：</p>
+<ul>
+<li>普通说明文档</li>
+<li>笔记</li>
+<li>博客文章</li>
+</ul>
+<h3 id="5-3-按标题和小节切块"><a href="#5-3-按标题和小节切块" class="headerlink" title="5.3 按标题和小节切块"></a>5.3 按标题和小节切块</h3><p>按照文档层级来切，例如：</p>
+<ul>
+<li>一级标题</li>
+<li>二级标题</li>
+<li>小节内容</li>
+</ul>
+<p>优点：</p>
+<ul>
+<li>结构清晰</li>
+<li>更适合知识库和技术文档</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>某些小节可能太长，还需要二次细分</li>
+</ul>
+<p>适合：</p>
+<ul>
+<li>API 文档</li>
+<li>产品文档</li>
+<li>教程型内容</li>
+</ul>
+<h3 id="5-4-混合切块"><a href="#5-4-混合切块" class="headerlink" title="5.4 混合切块"></a>5.4 混合切块</h3><p>先按标题或段落切，再对过长部分按固定长度继续细分。</p>
+<p>这是实际项目里很常见的一种方案，因为它兼顾了：</p>
+<ul>
+<li>语义完整性</li>
+<li>长度可控</li>
+<li>工程实现难度</li>
+</ul>
+<hr>
+<h2 id="6-什么是-Overlap"><a href="#6-什么是-Overlap" class="headerlink" title="6. 什么是 Overlap"></a>6. 什么是 Overlap</h2><p><code>overlap</code> 是相邻 chunk 之间保留的一部分重复内容。</p>
+<p>作用：</p>
+<ul>
+<li>避免关键信息刚好被切断</li>
+<li>提高上下文连续性</li>
+<li>减少边界句子丢信息的问题</li>
+</ul>
+<p>例如：</p>
+<ul>
+<li>chunk1: 第 <code>1~300</code> 字</li>
+<li>chunk2: 第 <code>260~560</code> 字</li>
+</ul>
+<p>这里就有 <code>40</code> 字重叠。</p>
+<p>但 overlap 也不是越大越好。</p>
+<p>如果 overlap 太大，会带来：</p>
+<ul>
+<li>存储冗余</li>
+<li>检索结果重复</li>
+<li>top-k 被相似 chunk 挤占</li>
+</ul>
+<p>因此，overlap 要处理的是下面这组平衡：</p>
+<ul>
+<li>上下文连续性</li>
+<li>检索去重成本</li>
+</ul>
+<hr>
+<h2 id="7-Chunk-Size-怎么定"><a href="#7-Chunk-Size-怎么定" class="headerlink" title="7. Chunk Size 怎么定"></a>7. Chunk Size 怎么定</h2><p>chunk 大小没有全场景通用的固定答案，应该结合下面几件事一起看：</p>
+<ul>
+<li>文档类型</li>
+<li>模型最大输入长度</li>
+<li>用户 query 的粒度</li>
+<li>是否有 rerank</li>
+<li>LLM 最终要吃多少上下文</li>
+</ul>
+<h3 id="7-1-中文场景一个常见起点"><a href="#7-1-中文场景一个常见起点" class="headerlink" title="7.1 中文场景一个常见起点"></a>7.1 中文场景一个常见起点</h3><p>如果是中文知识库、普通笔记或教程类文本，可以先从下面这个 baseline 开始：</p>
+<ul>
+<li>每块 <code>300~500</code> 字</li>
+<li>overlap 取 <code>10%~20%</code></li>
+<li>优先按标题和段落切，超长再二次切分</li>
+</ul>
+<p>这不是固定标准，但很适合作为第一版默认策略。</p>
+<h3 id="7-2-用-token-还是字数"><a href="#7-2-用-token-还是字数" class="headerlink" title="7.2 用 token 还是字数"></a>7.2 用 token 还是字数</h3><p>更严格的工程实现通常按 token 控制，因为模型真正受限的是 token 数。</p>
+<p>但在中文笔记场景里：</p>
+<ul>
+<li>用字数做初版规则更直观</li>
+<li>用 token 做最终线上控制更稳妥</li>
+</ul>
+<hr>
+<h2 id="8-不同文档类型怎么切"><a href="#8-不同文档类型怎么切" class="headerlink" title="8. 不同文档类型怎么切"></a>8. 不同文档类型怎么切</h2><h3 id="8-1-FAQ"><a href="#8-1-FAQ" class="headerlink" title="8.1 FAQ"></a>8.1 FAQ</h3><p>优先按一问一答切。</p>
+<p>原因：</p>
+<ul>
+<li>每条 FAQ 本身就是天然语义单元</li>
+<li>非常适合检索</li>
+</ul>
+<h3 id="8-2-API-文档"><a href="#8-2-API-文档" class="headerlink" title="8.2 API 文档"></a>8.2 API 文档</h3><p>优先按接口、参数、返回值、错误码分块。</p>
+<p>原因：</p>
+<ul>
+<li>用户检索时往往是精确问题</li>
+<li>结构化切分更利于命中</li>
+</ul>
+<h3 id="8-3-教程和博客"><a href="#8-3-教程和博客" class="headerlink" title="8.3 教程和博客"></a>8.3 教程和博客</h3><p>优先按标题和段落切，再对过长部分二次细分。</p>
+<p>原因：</p>
+<ul>
+<li>这类文档有明显章节结构</li>
+<li>语义常围绕小节展开</li>
+</ul>
+<h3 id="8-4-法规、合同、制度文档"><a href="#8-4-法规、合同、制度文档" class="headerlink" title="8.4 法规、合同、制度文档"></a>8.4 法规、合同、制度文档</h3><p>优先按条款、章节切，再保留章节编号。</p>
+<p>原因：</p>
+<ul>
+<li>编号本身很重要</li>
+<li>后续引用和回溯都依赖这些元数据</li>
+</ul>
+<hr>
+<h2 id="9-Chunk-不只是文本，还要带元数据"><a href="#9-Chunk-不只是文本，还要带元数据" class="headerlink" title="9. Chunk 不只是文本，还要带元数据"></a>9. Chunk 不只是文本，还要带元数据</h2><p>实际工程里，向量库里存的往往不只是 chunk 文本本身，还包括一组元数据。</p>
+<p>常见字段：</p>
+<ul>
+<li><code>chunk_id</code></li>
+<li><code>doc_id</code></li>
+<li><code>title</code></li>
+<li><code>section</code></li>
+<li><code>source</code></li>
+<li><code>page</code></li>
+<li><code>url</code></li>
+<li><code>create_time</code></li>
+</ul>
+<p>这些元数据很重要，因为它们会影响：</p>
+<ul>
+<li>过滤</li>
+<li>去重</li>
+<li>排序</li>
+<li>页面展示</li>
+<li>来源追踪</li>
+</ul>
+<p>一句话说：</p>
+<blockquote>
+<p>没有元数据的 chunk，很难在真实系统里长期维护。</p>
+</blockquote>
+<hr>
+<h2 id="10-Chunk-怎么评估好不好"><a href="#10-Chunk-怎么评估好不好" class="headerlink" title="10. Chunk 怎么评估好不好"></a>10. Chunk 怎么评估好不好</h2><p>chunk 没有一个单独的万能评分，通常要放到检索链路里一起评估。</p>
+<p>最常见的评估方式有：</p>
+<ul>
+<li>看 Recall@K 是否提升</li>
+<li>看 badcase 是否减少</li>
+<li>看召回结果是否更少重复</li>
+<li>看 LLM 最终回答是否更稳定</li>
+</ul>
+<p>排查时，通常先看这几个问题：</p>
+<ol>
+<li>召回不到，是不是 chunk 太大</li>
+<li>召回到了但答不好，是不是 chunk 太碎</li>
+<li>top-k 很重复，是不是 overlap 太大</li>
+<li>标题命中了但正文没进来，是不是标题和内容被拆开了</li>
+</ol>
+<hr>
+<h2 id="11-常见坑"><a href="#11-常见坑" class="headerlink" title="11. 常见坑"></a>11. 常见坑</h2><h3 id="11-1-只按固定长度切，不看语义边界"><a href="#11-1-只按固定长度切，不看语义边界" class="headerlink" title="11.1 只按固定长度切，不看语义边界"></a>11.1 只按固定长度切，不看语义边界</h3><p>这样最容易把一句完整的话切断。</p>
+<h3 id="11-2-标题和正文分离"><a href="#11-2-标题和正文分离" class="headerlink" title="11.2 标题和正文分离"></a>11.2 标题和正文分离</h3><p>很多技术文档里，标题本身就是关键检索信号，和正文拆开后效果通常会明显变差。</p>
+<h3 id="11-3-chunk-太碎"><a href="#11-3-chunk-太碎" class="headerlink" title="11.3 chunk 太碎"></a>11.3 chunk 太碎</h3><p>如果一个 chunk 只剩一句短句，虽然向量容易算，但语义往往不完整。</p>
+<h3 id="11-4-chunk-太大"><a href="#11-4-chunk-太大" class="headerlink" title="11.4 chunk 太大"></a>11.4 chunk 太大</h3><p>如果一块里塞进多个主题，检索时很容易语义发散。</p>
+<h3 id="11-5-overlap-太大"><a href="#11-5-overlap-太大" class="headerlink" title="11.5 overlap 太大"></a>11.5 overlap 太大</h3><p>会导致召回结果里出现很多几乎一样的片段，影响 top-k 质量。</p>
+<h3 id="11-6-没做清洗就直接切"><a href="#11-6-没做清洗就直接切" class="headerlink" title="11.6 没做清洗就直接切"></a>11.6 没做清洗就直接切</h3><p>页眉、页脚、导航栏、版权信息、空白符噪声，都会污染 chunk 质量。</p>
+<hr>
+<h2 id="12-一个实用的默认方案"><a href="#12-一个实用的默认方案" class="headerlink" title="12. 一个实用的默认方案"></a>12. 一个实用的默认方案</h2><p>如果你是第一次给中文知识库做 chunk，可以先这样做：</p>
+<ol>
+<li>先清洗无关噪声</li>
+<li>按标题和段落切</li>
+<li>过长段落按 <code>300~500</code> 字继续切</li>
+<li>overlap 先取 <code>10%~15%</code></li>
+<li>保留 <code>doc_id</code>、<code>title</code>、<code>section</code>、<code>source</code></li>
+<li>离线抽样检查 top-k 检索效果</li>
+<li>根据 badcase 再回调 chunk size 和 overlap</li>
+</ol>
+<p>这套方案不是最优，但通常足够当第一版生产 baseline。</p>
+<hr>
+<h2 id="13-Chunk、Embedding、RAG-的关系"><a href="#13-Chunk、Embedding、RAG-的关系" class="headerlink" title="13. Chunk、Embedding、RAG 的关系"></a>13. Chunk、Embedding、RAG 的关系</h2><p>可以把三者简单理解成：</p>
+<ul>
+<li>chunking 决定“怎么切”</li>
+<li>embedding 决定“怎么表示”</li>
+<li>retrieval &#x2F; rerank 决定“怎么找”</li>
+<li>LLM 决定“怎么答”</li>
+</ul>
+<p>如果 chunk 切得不对，后面的 embedding、rerank、LLM 往往都只能被动补救。</p>
+<hr>
+<h2 id="14-一句话总结"><a href="#14-一句话总结" class="headerlink" title="14. 一句话总结"></a>14. 一句话总结</h2><p>Chunk 的核心不是“把文档切小”，而是：</p>
+<blockquote>
+<p>把文档切成既适合向量表示、又适合检索召回、还能支撑最终回答的语义单元。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>楚天
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E5%8F%A5%E5%AD%90%E5%B5%8C%E5%85%A5%E6%A8%A1%E5%9E%8B/chunk%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" title="Chunk 学习笔记">https://chutianduan.github.io/notes/ai模型开发/知识点学习/句子嵌入模型/chunk学习笔记/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E5%8F%A5%E5%AD%90%E5%B5%8C%E5%85%A5%E6%A8%A1%E5%9E%8B/lora%E5%BE%AE%E8%B0%83%E8%AE%AD%E7%BB%83/" rel="prev" title="LoRA 微调训练笔记">
+                  <i class="fa fa-angle-left"></i> LoRA 微调训练笔记
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E5%BC%80%E5%8F%91%E8%BF%9B%E5%BA%A6%E8%AE%B0%E5%BD%95/" rel="next" title="AI 模型开发进度记录">
+                  AI 模型开发进度记录 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-code"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">楚天</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

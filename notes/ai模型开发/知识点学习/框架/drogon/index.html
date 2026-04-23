@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chutianduan.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":2,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Drogon 学习笔记1. Drogon 是什么Drogon 是一个基于 C++ 的现代 Web 应用框架，适合用来开发：  高性能 HTTP API 服务 C++ 网关服务 需要低延迟的业务接口 WebSocket 服务 需要接 MySQL &#x2F; PostgreSQL &#x2F; Redis 的后端系统  它的几个核心特点：  性能高，底层是非阻塞 IO 支持异步编程 支持路由、控制器">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Drogon 学习笔记">
+<meta property="og:url" content="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/drogon/index.html">
+<meta property="og:site_name" content="楚天">
+<meta property="og:description" content="Drogon 学习笔记1. Drogon 是什么Drogon 是一个基于 C++ 的现代 Web 应用框架，适合用来开发：  高性能 HTTP API 服务 C++ 网关服务 需要低延迟的业务接口 WebSocket 服务 需要接 MySQL &#x2F; PostgreSQL &#x2F; Redis 的后端系统  它的几个核心特点：  性能高，底层是非阻塞 IO 支持异步编程 支持路由、控制器">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-04-20T01:03:11.000Z">
+<meta property="article:modified_time" content="2026-04-20T01:03:11.000Z">
+<meta property="article:author" content="楚天">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="游戏网络">
+<meta property="article:tag" content="技术博客">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/drogon/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/drogon/","path":"/notes/ai模型开发/知识点学习/框架/drogon/","title":"Drogon 学习笔记"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Drogon 学习笔记 | 楚天</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">楚天</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">惟楚有材，于斯为盛</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-友情链接"><a href="/link/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Drogon-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0"><span class="nav-number">1.</span> <span class="nav-text">Drogon 学习笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Drogon-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.1.</span> <span class="nav-text">1. Drogon 是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%BE%88%E5%A4%9A%E5%90%8E%E7%AB%AF%E9%A1%B9%E7%9B%AE%E4%BC%9A%E7%94%A8-Drogon"><span class="nav-number">1.2.</span> <span class="nav-text">2. 为什么很多后端项目会用 Drogon</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%AE%89%E8%A3%85%E5%92%8C%E5%B7%A5%E7%A8%8B%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">1.3.</span> <span class="nav-text">3. 安装和工程初始化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E6%9C%80%E5%B0%8F%E5%8F%AF%E8%BF%90%E8%A1%8C%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.4.</span> <span class="nav-text">4. 最小可运行示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-CMakeLists-txt"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 CMakeLists.txt</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-main-cc"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 main.cc</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-Drogon-%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%B7%A5%E4%BD%9C%E6%96%B9%E5%BC%8F"><span class="nav-number">1.5.</span> <span class="nav-text">5. Drogon 的基本工作方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E7%9B%B4%E6%8E%A5%E6%B3%A8%E5%86%8C-Handler"><span class="nav-number">1.6.</span> <span class="nav-text">6. 直接注册 Handler</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-%E4%B8%89%E7%A7%8D%E5%B8%B8%E8%A7%81-Controller"><span class="nav-number">1.7.</span> <span class="nav-text">7. 三种常见 Controller</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-HttpSimpleController"><span class="nav-number">1.7.1.</span> <span class="nav-text">7.1 HttpSimpleController</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-HttpController"><span class="nav-number">1.7.2.</span> <span class="nav-text">7.2 HttpController</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-3-WebSocketController"><span class="nav-number">1.7.3.</span> <span class="nav-text">7.3 WebSocketController</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-%E8%B7%AF%E5%BE%84%E5%8F%82%E6%95%B0%E3%80%81%E6%9F%A5%E8%AF%A2%E5%8F%82%E6%95%B0%E3%80%81JSON-%E8%AF%B7%E6%B1%82%E4%BD%93"><span class="nav-number">1.8.</span> <span class="nav-text">8. 路径参数、查询参数、JSON 请求体</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-%E8%B7%AF%E5%BE%84%E5%8F%82%E6%95%B0"><span class="nav-number">1.8.1.</span> <span class="nav-text">8.1 路径参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-%E6%9F%A5%E8%AF%A2%E5%8F%82%E6%95%B0"><span class="nav-number">1.8.2.</span> <span class="nav-text">8.2 查询参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-JSON-%E8%AF%B7%E6%B1%82%E4%BD%93"><span class="nav-number">1.8.3.</span> <span class="nav-text">8.3 JSON 请求体</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-JSON-%E5%93%8D%E5%BA%94%E5%92%8C%E7%8A%B6%E6%80%81%E7%A0%81"><span class="nav-number">1.9.</span> <span class="nav-text">9. JSON 响应和状态码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6-config-json"><span class="nav-number">1.10.</span> <span class="nav-text">10. 配置文件 config.json</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-%E8%BF%87%E6%BB%A4%E5%99%A8%E5%92%8C%E4%B8%AD%E9%97%B4%E4%BB%B6"><span class="nav-number">1.11.</span> <span class="nav-text">11. 过滤器和中间件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-Session"><span class="nav-number">1.12.</span> <span class="nav-text">12. Session</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0"><span class="nav-number">1.13.</span> <span class="nav-text">13. 文件上传</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BF%E9%97%AE%EF%BC%9ADbClient-%E5%92%8C-ORM"><span class="nav-number">1.14.</span> <span class="nav-text">14. 数据库访问：DbClient 和 ORM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#15-Redis-%E6%94%AF%E6%8C%81"><span class="nav-number">1.15.</span> <span class="nav-text">15. Redis 支持</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#16-C-20-%E5%8D%8F%E7%A8%8B-Task"><span class="nav-number">1.16.</span> <span class="nav-text">16. C++20 协程 Task&lt;&gt;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#17-Drogon-%E5%92%8C-FastAPI-%E6%80%8E%E4%B9%88%E9%80%89"><span class="nav-number">1.17.</span> <span class="nav-text">17. Drogon 和 FastAPI 怎么选</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#18-Drogon-FastAPI-Celery-%E7%9A%84%E5%85%B8%E5%9E%8B%E9%85%8D%E5%90%88%E6%96%B9%E5%BC%8F"><span class="nav-number">1.18.</span> <span class="nav-text">18. Drogon + FastAPI + Celery 的典型配合方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#19-%E4%B8%80%E4%B8%AA%E6%AF%94%E8%BE%83%E5%B8%B8%E8%A7%81%E7%9A%84%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.19.</span> <span class="nav-text">19. 一个比较常见的项目结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#20-%E5%B8%B8%E8%A7%81%E5%9D%91"><span class="nav-number">1.20.</span> <span class="nav-text">20. 常见坑</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#20-1-%E5%9C%A8-Handler-%E9%87%8C%E5%81%9A%E9%98%BB%E5%A1%9E%E9%87%8D%E6%B4%BB"><span class="nav-number">1.20.1.</span> <span class="nav-text">20.1 在 Handler 里做阻塞重活</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#20-2-%E8%AF%AF%E4%BB%A5%E4%B8%BA%E6%80%A7%E8%83%BD%E9%AB%98%E5%B0%B1%E5%BA%94%E8%AF%A5%E6%8A%8A%E6%89%80%E6%9C%89%E4%B8%9C%E8%A5%BF%E9%83%BD%E5%86%99%E8%BF%9B-C"><span class="nav-number">1.20.2.</span> <span class="nav-text">20.2 误以为性能高就应该把所有东西都写进 C++</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#20-3-%E5%BF%BD%E8%A7%86%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%AE%89%E5%85%A8"><span class="nav-number">1.20.3.</span> <span class="nav-text">20.3 忽视文件上传安全</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#20-4-Session-%E5%BC%80%E4%BA%86%E4%BD%86%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8D%E5%B8%A6-Cookie"><span class="nav-number">1.20.4.</span> <span class="nav-text">20.4 Session 开了但客户端不带 Cookie</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#20-5-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9B%9E%E8%B0%83%E9%87%8C%E7%BB%A7%E7%BB%AD%E5%81%9A%E9%98%BB%E5%A1%9E%E6%93%8D%E4%BD%9C"><span class="nav-number">1.20.5.</span> <span class="nav-text">20.5 数据库回调里继续做阻塞操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#20-6-Controller-%E8%BF%87%E8%83%96"><span class="nav-number">1.20.6.</span> <span class="nav-text">20.6 Controller 过胖</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#21-%E4%B8%80%E5%A5%97%E6%AF%94%E8%BE%83%E5%AE%9E%E7%94%A8%E7%9A%84%E5%AD%A6%E4%B9%A0%E9%A1%BA%E5%BA%8F"><span class="nav-number">1.21.</span> <span class="nav-text">21. 一套比较实用的学习顺序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#22-%E6%80%BB%E7%BB%93"><span class="nav-number">1.22.</span> <span class="nav-text">22. 总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#23-%E5%8F%82%E8%80%83"><span class="nav-number">1.23.</span> <span class="nav-text">23. 参考</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="楚天"
+      src="/img/me.jpg">
+  <p class="site-author-name" itemprop="name">楚天</p>
+  <div class="site-description" itemprop="description">记录深度学习、C++、游戏网络与生活旅行的学习笔记。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ChutianDuan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ChutianDuan" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:3383006954@qq.com" title="E-Mail → mailto:3383006954@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/drogon/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Drogon 学习笔记 | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Drogon 学习笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-04-20 09:03:11" itemprop="dateCreated datePublished" datetime="2026-04-20T09:03:11+08:00">2026-04-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/AI%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">AI模型开发</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/AI%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">知识点学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/AI%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/" itemprop="url" rel="index"><span itemprop="name">框架</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Drogon-学习笔记"><a href="#Drogon-学习笔记" class="headerlink" title="Drogon 学习笔记"></a>Drogon 学习笔记</h1><h2 id="1-Drogon-是什么"><a href="#1-Drogon-是什么" class="headerlink" title="1. Drogon 是什么"></a>1. Drogon 是什么</h2><p>Drogon 是一个基于 C++ 的现代 Web 应用框架，适合用来开发：</p>
+<ul>
+<li>高性能 HTTP API 服务</li>
+<li>C++ 网关服务</li>
+<li>需要低延迟的业务接口</li>
+<li>WebSocket 服务</li>
+<li>需要接 MySQL &#x2F; PostgreSQL &#x2F; Redis 的后端系统</li>
+</ul>
+<p>它的几个核心特点：</p>
+<ul>
+<li>性能高，底层是非阻塞 IO</li>
+<li>支持异步编程</li>
+<li>支持路由、控制器、过滤器、中间件</li>
+<li>支持数据库、Redis、Session、文件上传</li>
+<li>支持 HTTP Client，也能调用其他内部服务</li>
+<li>支持 C++20 协程</li>
+</ul>
+<p>如果先抓核心区别，可以这样记：FastAPI 更偏 Python 生态里的高效 API 框架，Drogon 则更像适合高性能 C++ 服务的全功能 Web 框架。</p>
+<h2 id="2-为什么很多后端项目会用-Drogon"><a href="#2-为什么很多后端项目会用-Drogon" class="headerlink" title="2. 为什么很多后端项目会用 Drogon"></a>2. 为什么很多后端项目会用 Drogon</h2><p>如果你的系统有这些特点：</p>
+<ul>
+<li>接口并发高</li>
+<li>对延迟敏感</li>
+<li>业务层想用 C++ 实现</li>
+<li>需要把网络、数据库、缓存、会话统一放在一个服务里</li>
+</ul>
+<p>那 Drogon 会很合适。</p>
+<p>尤其是在你现在这类 AI 项目架构里，Drogon 很适合承担：</p>
+<ul>
+<li>对外 API 网关</li>
+<li>会话和鉴权层</li>
+<li>请求转发层</li>
+<li>MySQL 持久化层</li>
+<li>Redis 状态层</li>
+</ul>
+<p>而 Python 生态仍然更适合承担：</p>
+<ul>
+<li>模型推理</li>
+<li>文档解析</li>
+<li>RAG 流程</li>
+<li>Celery 异步任务</li>
+</ul>
+<p>因此，很多混合架构会拆成：</p>
+<ul>
+<li>Drogon：对外服务、状态治理、性能敏感层</li>
+<li>FastAPI：内部模型服务、任务接口</li>
+<li>Celery：后台异步执行</li>
+</ul>
+<h2 id="3-安装和工程初始化"><a href="#3-安装和工程初始化" class="headerlink" title="3. 安装和工程初始化"></a>3. 安装和工程初始化</h2><p>Drogon 的安装方式比 FastAPI 重一些，因为它是 C++ 框架，需要编译环境和依赖。</p>
+<p>常见方式有：</p>
+<ul>
+<li><code>vcpkg</code></li>
+<li>源码编译</li>
+<li>Docker</li>
+</ul>
+<p>如果你想先快速上手，最常见的是源码安装：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/drogonframework/drogon.git</span><br><span class="line"><span class="built_in">cd</span> drogon</span><br><span class="line">git submodule update --init</span><br><span class="line"><span class="built_in">mkdir</span> build</span><br><span class="line"><span class="built_in">cd</span> build</span><br><span class="line">cmake ..</span><br><span class="line">make -j4</span><br><span class="line"><span class="built_in">sudo</span> make install</span><br></pre></td></tr></table></figure>
+
+<p>安装完成后，通常还会有一个命令行工具：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">drogon_ctl</span><br></pre></td></tr></table></figure>
+
+<p>它常用来：</p>
+<ul>
+<li>创建项目骨架</li>
+<li>创建 Controller</li>
+<li>创建 Filter</li>
+<li>生成 ORM Model</li>
+</ul>
+<p>例如创建一个项目：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">drogon_ctl create project demo</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-最小可运行示例"><a href="#4-最小可运行示例" class="headerlink" title="4. 最小可运行示例"></a>4. 最小可运行示例</h2><p>和 FastAPI 的 <code>main.py</code> 一样，Drogon 也可以先从一个最小服务开始。</p>
+<h3 id="4-1-CMakeLists-txt"><a href="#4-1-CMakeLists-txt" class="headerlink" title="4.1 CMakeLists.txt"></a>4.1 <code>CMakeLists.txt</code></h3><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.16</span>)</span><br><span class="line"><span class="keyword">project</span>(drogon_demo)</span><br><span class="line"></span><br><span class="line"><span class="keyword">set</span>(CMAKE_CXX_STANDARD <span class="number">17</span>)</span><br><span class="line"><span class="keyword">set</span>(CMAKE_CXX_STANDARD_REQUIRED <span class="keyword">ON</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">find_package</span>(Drogon CONFIG REQUIRED)</span><br><span class="line"></span><br><span class="line"><span class="keyword">add_executable</span>(<span class="variable">$&#123;PROJECT_NAME&#125;</span> main.cc)</span><br><span class="line"><span class="keyword">target_link_libraries</span>(<span class="variable">$&#123;PROJECT_NAME&#125;</span> PRIVATE Drogon::Drogon)</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-2-main-cc"><a href="#4-2-main-cc" class="headerlink" title="4.2 main.cc"></a>4.2 <code>main.cc</code></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;drogon/drogon.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> drogon;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">app</span>().<span class="built_in">registerHandler</span>(</span><br><span class="line">        <span class="string">&quot;/&quot;</span>,</span><br><span class="line">        [](<span class="type">const</span> HttpRequestPtr &amp;req,</span><br><span class="line">           std::function&lt;<span class="built_in">void</span>(<span class="type">const</span> HttpResponsePtr &amp;)&gt; &amp;&amp;callback) &#123;</span><br><span class="line">            Json::Value json;</span><br><span class="line">            json[<span class="string">&quot;message&quot;</span>] = <span class="string">&quot;hello drogon&quot;</span>;</span><br><span class="line">            <span class="built_in">callback</span>(HttpResponse::<span class="built_in">newHttpJsonResponse</span>(json));</span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;Get&#125;);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">app</span>().<span class="built_in">addListener</span>(<span class="string">&quot;0.0.0.0&quot;</span>, <span class="number">8080</span>);</span><br><span class="line">    <span class="built_in">app</span>().<span class="built_in">setThreadNum</span>(<span class="number">1</span>);</span><br><span class="line">    <span class="built_in">app</span>().<span class="built_in">run</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>编译和运行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cmake -S . -B build</span><br><span class="line">cmake --build build</span><br><span class="line">./build/drogon_demo</span><br></pre></td></tr></table></figure>
+
+<p>访问：</p>
+<ul>
+<li><code>http://127.0.0.1:8080/</code></li>
+</ul>
+<p>如果对照 FastAPI，可以这样看：</p>
+<ul>
+<li><code>app = FastAPI()</code> 对应 <code>app()</code></li>
+<li><code>@app.get(&quot;/&quot;)</code> 对应 <code>registerHandler(&quot;/&quot;, ...)</code></li>
+<li><code>return &#123;...&#125;</code> 对应 <code>callback(HttpResponse::newHttpJsonResponse(...))</code></li>
+</ul>
+<h2 id="5-Drogon-的基本工作方式"><a href="#5-Drogon-的基本工作方式" class="headerlink" title="5. Drogon 的基本工作方式"></a>5. Drogon 的基本工作方式</h2><p>可以把一次请求理解成下面这条链路：</p>
+<ol>
+<li>客户端发来 HTTP 请求</li>
+<li>Drogon 根据路径和方法匹配路由</li>
+<li>先经过中间件和过滤器</li>
+<li>进入 Handler 或 Controller 方法</li>
+<li>业务代码处理请求</li>
+<li>构造 <code>HttpResponse</code></li>
+<li>通过 <code>callback</code> 返回给客户端</li>
+</ol>
+<p>和 FastAPI 很像，但有一个非常重要的区别：</p>
+<blockquote>
+<p>Drogon 不会像 FastAPI 那样自动把 Python 函数返回值转成 JSON，你需要更显式地构造响应对象。</p>
+</blockquote>
+<h2 id="6-直接注册-Handler"><a href="#6-直接注册-Handler" class="headerlink" title="6. 直接注册 Handler"></a>6. 直接注册 Handler</h2><p>最简单的方式就是直接在 <code>main()</code> 里注册路由。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">app</span>().<span class="built_in">registerHandler</span>(</span><br><span class="line">    <span class="string">&quot;/health&quot;</span>,</span><br><span class="line">    [](<span class="type">const</span> HttpRequestPtr &amp;req,</span><br><span class="line">       std::function&lt;<span class="built_in">void</span>(<span class="type">const</span> HttpResponsePtr &amp;)&gt; &amp;&amp;callback) &#123;</span><br><span class="line">        Json::Value json;</span><br><span class="line">        json[<span class="string">&quot;status&quot;</span>] = <span class="string">&quot;ok&quot;</span>;</span><br><span class="line">        <span class="built_in">callback</span>(HttpResponse::<span class="built_in">newHttpJsonResponse</span>(json));</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;Get&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>适合：</p>
+<ul>
+<li>学习阶段</li>
+<li>很小的 demo</li>
+<li>临时测试接口</li>
+</ul>
+<p>但项目一大，通常更推荐 Controller。</p>
+<h2 id="7-三种常见-Controller"><a href="#7-三种常见-Controller" class="headerlink" title="7. 三种常见 Controller"></a>7. 三种常见 Controller</h2><p>Drogon 常见的控制器主要有三类：</p>
+<ul>
+<li><code>HttpSimpleController</code></li>
+<li><code>HttpController</code></li>
+<li><code>WebSocketController</code></li>
+</ul>
+<h3 id="7-1-HttpSimpleController"><a href="#7-1-HttpSimpleController" class="headerlink" title="7.1 HttpSimpleController"></a>7.1 <code>HttpSimpleController</code></h3><p>适合单个简单接口。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;drogon/HttpSimpleController.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Ping</span> : <span class="keyword">public</span> drogon::HttpSimpleController&lt;Ping&gt;</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">public</span>:</span><br><span class="line">    <span class="function">PATH_LIST_BEGIN</span></span><br><span class="line"><span class="function">    <span class="title">PATH_ADD</span><span class="params">(<span class="string">&quot;/ping&quot;</span>, drogon::Get)</span></span>;</span><br><span class="line">    <span class="function">PATH_LIST_END</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">    <span class="type">void</span> <span class="title">asyncHandleHttpRequest</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="type">const</span> drogon::HttpRequestPtr &amp;req,</span></span></span><br><span class="line"><span class="params"><span class="function">        std::function&lt;<span class="type">void</span>(<span class="type">const</span> drogon::HttpResponsePtr &amp;)&gt; &amp;&amp;callback)</span> <span class="keyword">override</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        Json::Value json;</span><br><span class="line">        json[<span class="string">&quot;message&quot;</span>] = <span class="string">&quot;pong&quot;</span>;</span><br><span class="line">        <span class="built_in">callback</span>(drogon::HttpResponse::<span class="built_in">newHttpJsonResponse</span>(json));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="7-2-HttpController"><a href="#7-2-HttpController" class="headerlink" title="7.2 HttpController"></a>7.2 <code>HttpController</code></h3><p>适合一组 REST 风格接口，功能更完整。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;drogon/HttpController.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> api::v1</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">User</span> : <span class="keyword">public</span> drogon::HttpController&lt;User&gt;</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">public</span>:</span><br><span class="line">    <span class="function">METHOD_LIST_BEGIN</span></span><br><span class="line"><span class="function">    <span class="title">ADD_METHOD_TO</span><span class="params">(User::getUser, <span class="string">&quot;/api/v1/users/&#123;id&#125;&quot;</span>, drogon::Get)</span></span>;</span><br><span class="line">    <span class="built_in">ADD_METHOD_TO</span>(User::createUser, <span class="string">&quot;/api/v1/users&quot;</span>, drogon::Post);</span><br><span class="line">    <span class="function">METHOD_LIST_END</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">    <span class="type">void</span> <span class="title">getUser</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="type">const</span> drogon::HttpRequestPtr &amp;req,</span></span></span><br><span class="line"><span class="params"><span class="function">        std::function&lt;<span class="type">void</span>(<span class="type">const</span> drogon::HttpResponsePtr &amp;)&gt; &amp;&amp;callback,</span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="type">int</span> id)</span> <span class="type">const</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        Json::Value json;</span><br><span class="line">        json[<span class="string">&quot;id&quot;</span>] = id;</span><br><span class="line">        <span class="built_in">callback</span>(drogon::HttpResponse::<span class="built_in">newHttpJsonResponse</span>(json));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">createUser</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="type">const</span> drogon::HttpRequestPtr &amp;req,</span></span></span><br><span class="line"><span class="params"><span class="function">        std::function&lt;<span class="type">void</span>(<span class="type">const</span> drogon::HttpResponsePtr &amp;)&gt; &amp;&amp;callback)</span> <span class="type">const</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">auto</span> jsonPtr = req-&gt;<span class="built_in">getJsonObject</span>();</span><br><span class="line"></span><br><span class="line">        Json::Value json;</span><br><span class="line">        json[<span class="string">&quot;name&quot;</span>] = jsonPtr ? (*jsonPtr)[<span class="string">&quot;name&quot;</span>].<span class="built_in">asString</span>() : <span class="string">&quot;&quot;</span>;</span><br><span class="line">        <span class="built_in">callback</span>(drogon::HttpResponse::<span class="built_in">newHttpJsonResponse</span>(json));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line">&#125;  <span class="comment">// namespace api::v1</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="7-3-WebSocketController"><a href="#7-3-WebSocketController" class="headerlink" title="7.3 WebSocketController"></a>7.3 <code>WebSocketController</code></h3><p>适合：</p>
+<ul>
+<li>实时聊天</li>
+<li>实时协作</li>
+<li>推送类业务</li>
+</ul>
+<p>如果你后面要做双向实时通信，可以重点看这一类；如果只是 AI 输出流式结果，很多时候 SSE 就够了，不一定非要 WebSocket。</p>
+<h2 id="8-路径参数、查询参数、JSON-请求体"><a href="#8-路径参数、查询参数、JSON-请求体" class="headerlink" title="8. 路径参数、查询参数、JSON 请求体"></a>8. 路径参数、查询参数、JSON 请求体</h2><p>这部分可以类比 FastAPI 的：</p>
+<ul>
+<li>路径参数</li>
+<li>查询参数</li>
+<li>请求体</li>
+</ul>
+<h3 id="8-1-路径参数"><a href="#8-1-路径参数" class="headerlink" title="8.1 路径参数"></a>8.1 路径参数</h3><p>在 Drogon 里，路径参数可以直接映射到函数参数。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ADD_METHOD_TO</span>(BookController::getBook, <span class="string">&quot;/api/v1/books/&#123;book_id&#125;&quot;</span>, drogon::Get);</span><br></pre></td></tr></table></figure>
+
+<p>对应的处理函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">getBook</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="type">const</span> drogon::HttpRequestPtr &amp;req,</span></span></span><br><span class="line"><span class="params"><span class="function">    std::function&lt;<span class="type">void</span>(<span class="type">const</span> drogon::HttpResponsePtr &amp;)&gt; &amp;&amp;callback,</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="type">int</span> bookId)</span> <span class="type">const</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>放到 FastAPI 的语境里，大致对应：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.get(<span class="params"><span class="string">&quot;/books/&#123;book_id&#125;&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_book</span>(<span class="params">book_id: <span class="built_in">int</span></span>):</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+
+<h3 id="8-2-查询参数"><a href="#8-2-查询参数" class="headerlink" title="8.2 查询参数"></a>8.2 查询参数</h3><p>查询参数通常从 <code>req</code> 里读取：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> keyword = req-&gt;<span class="built_in">getParameter</span>(<span class="string">&quot;keyword&quot;</span>);</span><br><span class="line"><span class="keyword">auto</span> page = req-&gt;<span class="built_in">getParameter</span>(<span class="string">&quot;page&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>例如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/api/v1/search?keyword=llm&amp;page=1</span><br></pre></td></tr></table></figure>
+
+<h3 id="8-3-JSON-请求体"><a href="#8-3-JSON-请求体" class="headerlink" title="8.3 JSON 请求体"></a>8.3 JSON 请求体</h3><p>如果客户端发的是 JSON，请求体常见写法是：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> jsonPtr = req-&gt;<span class="built_in">getJsonObject</span>();</span><br><span class="line"><span class="keyword">if</span> (!jsonPtr)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">auto</span> resp = drogon::HttpResponse::<span class="built_in">newHttpResponse</span>();</span><br><span class="line">    resp-&gt;<span class="built_in">setStatusCode</span>(drogon::k400BadRequest);</span><br><span class="line">    <span class="built_in">callback</span>(resp);</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">std::string name = (*jsonPtr)[<span class="string">&quot;name&quot;</span>].<span class="built_in">asString</span>();</span><br></pre></td></tr></table></figure>
+
+<p>结论：</p>
+<ul>
+<li>路径参数：函数参数映射</li>
+<li>查询参数：<code>req-&gt;getParameter()</code></li>
+<li>JSON 请求体：<code>req-&gt;getJsonObject()</code></li>
+</ul>
+<h2 id="9-JSON-响应和状态码"><a href="#9-JSON-响应和状态码" class="headerlink" title="9. JSON 响应和状态码"></a>9. JSON 响应和状态码</h2><p>Drogon 里最常见的响应方式是手动构造 JSON。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Json::Value json;</span><br><span class="line">json[<span class="string">&quot;message&quot;</span>] = <span class="string">&quot;created&quot;</span>;</span><br><span class="line">json[<span class="string">&quot;id&quot;</span>] = <span class="number">1001</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">auto</span> resp = drogon::HttpResponse::<span class="built_in">newHttpJsonResponse</span>(json);</span><br><span class="line">resp-&gt;<span class="built_in">setStatusCode</span>(drogon::k201Created);</span><br><span class="line"><span class="built_in">callback</span>(resp);</span><br></pre></td></tr></table></figure>
+
+<p>这和 FastAPI 的差异在于：</p>
+<ul>
+<li>FastAPI 更自动</li>
+<li>Drogon 更显式</li>
+</ul>
+<p>显式的好处是：</p>
+<ul>
+<li>更清楚知道返回了什么</li>
+<li>更方便做细粒度控制</li>
+<li>更符合 C++ 项目风格</li>
+</ul>
+<h2 id="10-配置文件-config-json"><a href="#10-配置文件-config-json" class="headerlink" title="10. 配置文件 config.json"></a>10. 配置文件 <code>config.json</code></h2><p>很多 Drogon 项目不会把所有配置都写死在 <code>main()</code> 里，而是放到配置文件。</p>
+<p>最常见的主程序写法是：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;drogon/drogon.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    drogon::<span class="built_in">app</span>().<span class="built_in">loadConfigFile</span>(<span class="string">&quot;config.json&quot;</span>);</span><br><span class="line">    drogon::<span class="built_in">app</span>().<span class="built_in">run</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>一个简化版配置示意：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;listeners&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;address&quot;</span><span class="punctuation">:</span> <span class="string">&quot;0.0.0.0&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;port&quot;</span><span class="punctuation">:</span> <span class="number">8080</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;db_clients&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;default&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;rdbms&quot;</span><span class="punctuation">:</span> <span class="string">&quot;mysql&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;host&quot;</span><span class="punctuation">:</span> <span class="string">&quot;127.0.0.1&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;port&quot;</span><span class="punctuation">:</span> <span class="number">3306</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;dbname&quot;</span><span class="punctuation">:</span> <span class="string">&quot;demo&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;user&quot;</span><span class="punctuation">:</span> <span class="string">&quot;root&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;passwd&quot;</span><span class="punctuation">:</span> <span class="string">&quot;123456&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;is_fast&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;number_of_connections&quot;</span><span class="punctuation">:</span> <span class="number">4</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;redis_clients&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;default&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;host&quot;</span><span class="punctuation">:</span> <span class="string">&quot;127.0.0.1&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;port&quot;</span><span class="punctuation">:</span> <span class="number">6379</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;number_of_connections&quot;</span><span class="punctuation">:</span> <span class="number">2</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;app&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;number_of_threads&quot;</span><span class="punctuation">:</span> <span class="number">4</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;enable_session&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;upload_path&quot;</span><span class="punctuation">:</span> <span class="string">&quot;uploads&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;client_max_body_size&quot;</span><span class="punctuation">:</span> <span class="string">&quot;50M&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>这里最重要的点是：</p>
+<ul>
+<li><code>listeners</code>：监听地址和端口</li>
+<li><code>db_clients</code>：数据库连接</li>
+<li><code>redis_clients</code>：Redis 连接</li>
+<li><code>app</code>：线程数、Session、上传路径等全局设置</li>
+</ul>
+<h2 id="11-过滤器和中间件"><a href="#11-过滤器和中间件" class="headerlink" title="11. 过滤器和中间件"></a>11. 过滤器和中间件</h2><p>这部分很像 FastAPI 的依赖、鉴权逻辑、中间件，但 Drogon 拆得更明确。</p>
+<p>简单理解：</p>
+<ul>
+<li>Filter：更像“接口前置校验”</li>
+<li>Middleware：更像“围绕请求处理链做前后处理”</li>
+</ul>
+<p>例如做一个简单鉴权 Filter：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;drogon/HttpFilter.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">AuthFilter</span> : <span class="keyword">public</span> drogon::HttpFilter&lt;AuthFilter&gt;</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">doFilter</span><span class="params">(<span class="type">const</span> drogon::HttpRequestPtr &amp;req,</span></span></span><br><span class="line"><span class="params"><span class="function">                  FilterCallback &amp;&amp;fcb,</span></span></span><br><span class="line"><span class="params"><span class="function">                  FilterChainCallback &amp;&amp;fccb)</span> <span class="keyword">override</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">auto</span> token = req-&gt;<span class="built_in">getHeader</span>(<span class="string">&quot;x-api-key&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span> (token != <span class="string">&quot;secret&quot;</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            Json::Value json;</span><br><span class="line">            json[<span class="string">&quot;error&quot;</span>] = <span class="string">&quot;unauthorized&quot;</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">auto</span> resp = drogon::HttpResponse::<span class="built_in">newHttpJsonResponse</span>(json);</span><br><span class="line">            resp-&gt;<span class="built_in">setStatusCode</span>(drogon::k401Unauthorized);</span><br><span class="line">            <span class="built_in">fcb</span>(resp);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">fccb</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>挂到某个接口上：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ADD_METHOD_TO</span>(User::getUser, <span class="string">&quot;/api/v1/users/&#123;id&#125;&quot;</span>, drogon::Get, <span class="string">&quot;AuthFilter&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>适合抽出来做的逻辑通常有：</p>
+<ul>
+<li>登录校验</li>
+<li>API Key 校验</li>
+<li>频率限制</li>
+<li>内网访问限制</li>
+<li>统一日志</li>
+</ul>
+<h2 id="12-Session"><a href="#12-Session" class="headerlink" title="12. Session"></a>12. Session</h2><p>Drogon 内置了 Session 支持，但默认不是强制开启的。</p>
+<p>它适合做：</p>
+<ul>
+<li>登录态</li>
+<li>短期会话数据</li>
+<li>访问频率控制</li>
+<li>一些轻量服务端状态</li>
+</ul>
+<p>开启方式可以在配置文件里写：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;app&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;enable_session&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>或者代码里显式开启：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">drogon::<span class="built_in">app</span>().<span class="built_in">enableSession</span>(<span class="number">1200</span>);</span><br></pre></td></tr></table></figure>
+
+<p>使用示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">req-&gt;<span class="built_in">session</span>()-&gt;<span class="built_in">insert</span>(<span class="string">&quot;user_id&quot;</span>, <span class="number">1001</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (req-&gt;<span class="built_in">session</span>()-&gt;<span class="built_in">find</span>(<span class="string">&quot;user_id&quot;</span>))</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">auto</span> userId = req-&gt;<span class="built_in">session</span>()-&gt;<span class="built_in">get</span>&lt;<span class="type">int</span>&gt;(<span class="string">&quot;user_id&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意：</p>
+<blockquote>
+<p>Session 依赖 Cookie。如果客户端不保存 Cookie，每次请求都可能被当成新会话。</p>
+</blockquote>
+<h2 id="13-文件上传"><a href="#13-文件上传" class="headerlink" title="13. 文件上传"></a>13. 文件上传</h2><p>在 AI 项目里，文件上传非常常见，比如：</p>
+<ul>
+<li>上传 PDF</li>
+<li>上传图片</li>
+<li>上传音频</li>
+<li>上传数据文件</li>
+</ul>
+<p>Drogon 常用 <code>MultiPartParser</code> 来处理 multipart 上传。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;drogon/drogon.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">upload</span><span class="params">(<span class="type">const</span> drogon::HttpRequestPtr &amp;req,</span></span></span><br><span class="line"><span class="params"><span class="function">            std::function&lt;<span class="type">void</span>(<span class="type">const</span> drogon::HttpResponsePtr &amp;)&gt; &amp;&amp;callback)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    drogon::MultiPartParser parser;</span><br><span class="line">    <span class="keyword">if</span> (parser.<span class="built_in">parse</span>(req) != <span class="number">0</span> || parser.<span class="built_in">getFiles</span>().<span class="built_in">empty</span>())</span><br><span class="line">    &#123;</span><br><span class="line">        Json::Value json;</span><br><span class="line">        json[<span class="string">&quot;error&quot;</span>] = <span class="string">&quot;no file&quot;</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">auto</span> resp = drogon::HttpResponse::<span class="built_in">newHttpJsonResponse</span>(json);</span><br><span class="line">        resp-&gt;<span class="built_in">setStatusCode</span>(drogon::k400BadRequest);</span><br><span class="line">        <span class="built_in">callback</span>(resp);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">auto</span> file = parser.<span class="built_in">getFiles</span>()[<span class="number">0</span>];</span><br><span class="line">    file.<span class="built_in">save</span>(<span class="string">&quot;./uploads&quot;</span>);</span><br><span class="line"></span><br><span class="line">    Json::Value json;</span><br><span class="line">    json[<span class="string">&quot;filename&quot;</span>] = file.<span class="built_in">getFileName</span>();</span><br><span class="line">    <span class="keyword">auto</span> resp = drogon::HttpResponse::<span class="built_in">newHttpJsonResponse</span>(json);</span><br><span class="line">    <span class="built_in">callback</span>(resp);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>实际项目里要特别注意：</p>
+<ul>
+<li>不要直接信任原始文件名</li>
+<li>要限制文件大小</li>
+<li>要校验扩展名和 MIME 类型</li>
+<li>最好自己生成保存文件名</li>
+</ul>
+<p>对于 AI 系统，更推荐的流程通常是：</p>
+<ol>
+<li>Drogon 接收上传</li>
+<li>保存到磁盘或对象存储</li>
+<li>写一条数据库记录</li>
+<li>调内部 FastAPI &#x2F; Celery 提交处理任务</li>
+</ol>
+<h2 id="14-数据库访问：DbClient-和-ORM"><a href="#14-数据库访问：DbClient-和-ORM" class="headerlink" title="14. 数据库访问：DbClient 和 ORM"></a>14. 数据库访问：<code>DbClient</code> 和 ORM</h2><p>Drogon 自带数据库支持，常见关系型数据库包括：</p>
+<ul>
+<li>MySQL</li>
+<li>PostgreSQL</li>
+<li>SQLite3</li>
+</ul>
+<p>最常见的是通过 <code>DbClient</code> 执行 SQL。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> client = drogon::<span class="built_in">app</span>().<span class="built_in">getDbClient</span>();</span><br><span class="line"></span><br><span class="line">client-&gt;<span class="built_in">execSqlAsync</span>(</span><br><span class="line">    <span class="string">&quot;select id, name from users where id = ?&quot;</span>,</span><br><span class="line">    [callback](<span class="type">const</span> drogon::orm::Result &amp;result) &#123;</span><br><span class="line">        Json::Value json;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (result.<span class="built_in">empty</span>())</span><br><span class="line">        &#123;</span><br><span class="line">            json[<span class="string">&quot;error&quot;</span>] = <span class="string">&quot;not found&quot;</span>;</span><br><span class="line">            <span class="keyword">auto</span> resp = drogon::HttpResponse::<span class="built_in">newHttpJsonResponse</span>(json);</span><br><span class="line">            resp-&gt;<span class="built_in">setStatusCode</span>(drogon::k404NotFound);</span><br><span class="line">            <span class="built_in">callback</span>(resp);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        json[<span class="string">&quot;id&quot;</span>] = result[<span class="number">0</span>][<span class="string">&quot;id&quot;</span>].<span class="built_in">as</span>&lt;<span class="type">int</span>&gt;();</span><br><span class="line">        json[<span class="string">&quot;name&quot;</span>] = result[<span class="number">0</span>][<span class="string">&quot;name&quot;</span>].<span class="built_in">as</span>&lt;std::string&gt;();</span><br><span class="line">        <span class="built_in">callback</span>(drogon::HttpResponse::<span class="built_in">newHttpJsonResponse</span>(json));</span><br><span class="line">    &#125;,</span><br><span class="line">    [callback](<span class="type">const</span> drogon::orm::DrogonDbException &amp;e) &#123;</span><br><span class="line">        Json::Value json;</span><br><span class="line">        json[<span class="string">&quot;error&quot;</span>] = e.<span class="built_in">base</span>().<span class="built_in">what</span>();</span><br><span class="line">        <span class="keyword">auto</span> resp = drogon::HttpResponse::<span class="built_in">newHttpJsonResponse</span>(json);</span><br><span class="line">        resp-&gt;<span class="built_in">setStatusCode</span>(drogon::k500InternalServerError);</span><br><span class="line">        <span class="built_in">callback</span>(resp);</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="number">1001</span>);</span><br></pre></td></tr></table></figure>
+
+<p>要点：</p>
+<ul>
+<li>MySQL 占位符通常用 <code>?</code></li>
+<li>PostgreSQL 占位符通常用 <code>$1</code>、<code>$2</code></li>
+<li>异步接口更符合 Drogon 的整体风格</li>
+<li>不要在回调里做很重的阻塞操作</li>
+</ul>
+<p>如果你不想手写太多 SQL，还可以用 <code>drogon_ctl</code> 根据表结构生成 ORM Model。</p>
+<p>适合：</p>
+<ul>
+<li>表结构比较稳定</li>
+<li>想减少手写样板代码</li>
+<li>想把数据库访问写得更结构化</li>
+</ul>
+<h2 id="15-Redis-支持"><a href="#15-Redis-支持" class="headerlink" title="15. Redis 支持"></a>15. Redis 支持</h2><p>Drogon 也支持 Redis，而且同样是异步风格。</p>
+<p>如果已经在 <code>config.json</code> 里配置了 <code>redis_clients</code>，运行后就可以获取客户端：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> redisClient = drogon::<span class="built_in">app</span>().<span class="built_in">getRedisClient</span>();</span><br></pre></td></tr></table></figure>
+
+<p>执行命令示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">redisClient-&gt;<span class="built_in">execCommandAsync</span>(</span><br><span class="line">    [](<span class="type">const</span> drogon::nosql::RedisResult &amp;r) &#123;</span><br><span class="line">        LOG_INFO &lt;&lt; <span class="string">&quot;redis ok: &quot;</span> &lt;&lt; r.<span class="built_in">asString</span>();</span><br><span class="line">    &#125;,</span><br><span class="line">    [](<span class="type">const</span> std::exception &amp;err) &#123;</span><br><span class="line">        LOG_ERROR &lt;&lt; <span class="string">&quot;redis error: &quot;</span> &lt;&lt; err.<span class="built_in">what</span>();</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">&quot;get session:%s&quot;</span>,</span><br><span class="line">    <span class="string">&quot;1001&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>它适合做：</p>
+<ul>
+<li>缓存</li>
+<li>任务状态存储</li>
+<li>限流计数器</li>
+<li>会话辅助状态</li>
+<li>流式输出中间层</li>
+</ul>
+<p>如果把你现在的整条链路连起来理解，就是：</p>
+<ul>
+<li>Drogon：对外接口</li>
+<li>Redis：缓存 &#x2F; 状态 &#x2F; 消息中间层</li>
+<li>FastAPI &#x2F; Celery：后台处理</li>
+</ul>
+<h2 id="16-C-20-协程-Task"><a href="#16-C-20-协程-Task" class="headerlink" title="16. C++20 协程 Task&lt;&gt;"></a>16. C++20 协程 <code>Task&lt;&gt;</code></h2><p>如果你用的是较新的编译器，Drogon 支持协程，这可以让异步代码更接近同步写法。</p>
+<p>例如数据库查询可以写成：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;drogon/drogon.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function">drogon::Task&lt;drogon::HttpResponsePtr&gt; <span class="title">getUserCoro</span><span class="params">(<span class="type">int</span> userId)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> db = drogon::<span class="built_in">app</span>().<span class="built_in">getDbClient</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">auto</span> result = <span class="keyword">co_await</span> db-&gt;<span class="built_in">execSqlCoro</span>(</span><br><span class="line">            <span class="string">&quot;select id, name from users where id = ?&quot;</span>,</span><br><span class="line">            userId);</span><br><span class="line"></span><br><span class="line">        Json::Value json;</span><br><span class="line">        json[<span class="string">&quot;id&quot;</span>] = result[<span class="number">0</span>][<span class="string">&quot;id&quot;</span>].<span class="built_in">as</span>&lt;<span class="type">int</span>&gt;();</span><br><span class="line">        json[<span class="string">&quot;name&quot;</span>] = result[<span class="number">0</span>][<span class="string">&quot;name&quot;</span>].<span class="built_in">as</span>&lt;std::string&gt;();</span><br><span class="line">        <span class="keyword">co_return</span> drogon::HttpResponse::<span class="built_in">newHttpJsonResponse</span>(json);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">catch</span> (<span class="type">const</span> drogon::orm::DrogonDbException &amp;e)</span><br><span class="line">    &#123;</span><br><span class="line">        Json::Value json;</span><br><span class="line">        json[<span class="string">&quot;error&quot;</span>] = e.<span class="built_in">base</span>().<span class="built_in">what</span>();</span><br><span class="line">        <span class="keyword">auto</span> resp = drogon::HttpResponse::<span class="built_in">newHttpJsonResponse</span>(json);</span><br><span class="line">        resp-&gt;<span class="built_in">setStatusCode</span>(drogon::k500InternalServerError);</span><br><span class="line">        <span class="keyword">co_return</span> resp;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>它的好处是：</p>
+<ul>
+<li>少写回调嵌套</li>
+<li>控制流更清晰</li>
+<li>复杂异步逻辑更好维护</li>
+</ul>
+<p>但你要注意：</p>
+<ul>
+<li>需要合适的编译器和 C++20 支持</li>
+<li>协程让代码更好写，不代表可以随便阻塞线程</li>
+</ul>
+<h2 id="17-Drogon-和-FastAPI-怎么选"><a href="#17-Drogon-和-FastAPI-怎么选" class="headerlink" title="17. Drogon 和 FastAPI 怎么选"></a>17. Drogon 和 FastAPI 怎么选</h2><p>这两个框架不是简单的“谁替代谁”，而是各自适合不同层。</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Drogon</th>
+<th>FastAPI</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>语言</td>
+<td>C++</td>
+<td>Python</td>
+</tr>
+<tr>
+<td>性能</td>
+<td>更高，适合性能敏感层</td>
+<td>足够高，开发更快</td>
+</tr>
+<tr>
+<td>开发效率</td>
+<td>相对慢一些</td>
+<td>很高</td>
+</tr>
+<tr>
+<td>参数校验</td>
+<td>需要自己控制更多细节</td>
+<td>自动化更强</td>
+</tr>
+<tr>
+<td>生态</td>
+<td>系统层、服务层强</td>
+<td>AI、数据、模型生态强</td>
+</tr>
+<tr>
+<td>适合位置</td>
+<td>网关、核心服务、低延迟接口</td>
+<td>模型服务、管理后台、内部 API</td>
+</tr>
+</tbody></table>
+<p>如果只抓结论，可以这样选：</p>
+<ul>
+<li>想更快把模型接口和内部服务跑起来，用 FastAPI</li>
+<li>想把网关、状态治理和性能敏感层放在 C++ 里，用 Drogon</li>
+</ul>
+<h2 id="18-Drogon-FastAPI-Celery-的典型配合方式"><a href="#18-Drogon-FastAPI-Celery-的典型配合方式" class="headerlink" title="18. Drogon + FastAPI + Celery 的典型配合方式"></a>18. Drogon + FastAPI + Celery 的典型配合方式</h2><p>这是你当前项目最值得掌握的一块。</p>
+<p>一个典型流程可以这样拆：</p>
+<ol>
+<li>客户端请求先到 Drogon</li>
+<li>Drogon 做鉴权、Session、参数检查、落库</li>
+<li>Drogon 调用内部 FastAPI 接口提交任务</li>
+<li>FastAPI 再把重任务交给 Celery</li>
+<li>Celery Worker 真正处理文档、推理、索引构建</li>
+<li>结果写回 MySQL &#x2F; Redis</li>
+<li>Drogon 再把状态或结果返回给前端</li>
+</ol>
+<p>你可以把它们理解成固定分工：</p>
+<ul>
+<li>Drogon：网关和业务编排层</li>
+<li>FastAPI：Python 服务入口</li>
+<li>Celery：后台任务执行层</li>
+<li>Redis：状态、缓存、队列中间层</li>
+<li>MySQL：长期持久化</li>
+</ul>
+<p>这套架构特别适合：</p>
+<ul>
+<li>文档上传处理</li>
+<li>RAG 建库</li>
+<li>长耗时模型推理</li>
+<li>流式输出聊天系统</li>
+</ul>
+<h2 id="19-一个比较常见的项目结构"><a href="#19-一个比较常见的项目结构" class="headerlink" title="19. 一个比较常见的项目结构"></a>19. 一个比较常见的项目结构</h2><p>如果用 Drogon 做 C++ 网关，一个比较实用的结构可以是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">cpp_gateway/</span><br><span class="line">├── CMakeLists.txt</span><br><span class="line">├── config.json</span><br><span class="line">├── main.cc</span><br><span class="line">├── controllers/</span><br><span class="line">│   ├── HealthController.h</span><br><span class="line">│   ├── HealthController.cc</span><br><span class="line">│   ├── DocumentsController.h</span><br><span class="line">│   └── DocumentsController.cc</span><br><span class="line">├── filters/</span><br><span class="line">│   ├── AuthFilter.h</span><br><span class="line">│   └── AuthFilter.cc</span><br><span class="line">├── services/</span><br><span class="line">│   ├── TaskService.h</span><br><span class="line">│   ├── TaskService.cc</span><br><span class="line">│   ├── PythonClient.h</span><br><span class="line">│   └── PythonClient.cc</span><br><span class="line">├── repositories/</span><br><span class="line">│   ├── DocumentRepo.h</span><br><span class="line">│   └── DocumentRepo.cc</span><br><span class="line">└── models/</span><br></pre></td></tr></table></figure>
+
+<p>建议职责划分：</p>
+<ul>
+<li><code>controllers/</code>：只处理 HTTP 层</li>
+<li><code>filters/</code>：鉴权、限流、前置校验</li>
+<li><code>services/</code>：业务编排、调内部服务</li>
+<li><code>repositories/</code>：数据库读写</li>
+<li><code>models/</code>：ORM 生成模型或业务数据结构</li>
+</ul>
+<p>也就是说：</p>
+<blockquote>
+<p>不要把所有逻辑都堆在 Controller 里。</p>
+</blockquote>
+<h2 id="20-常见坑"><a href="#20-常见坑" class="headerlink" title="20. 常见坑"></a>20. 常见坑</h2><h3 id="20-1-在-Handler-里做阻塞重活"><a href="#20-1-在-Handler-里做阻塞重活" class="headerlink" title="20.1 在 Handler 里做阻塞重活"></a>20.1 在 Handler 里做阻塞重活</h3><p>例如：</p>
+<ul>
+<li>大文件解析</li>
+<li>模型推理</li>
+<li>长时间等待第三方服务</li>
+</ul>
+<p>这些都不应该直接堵在 Drogon 的请求处理线程里。</p>
+<p>更合理的做法是：</p>
+<ul>
+<li>Drogon 负责接请求</li>
+<li>重活交给 FastAPI &#x2F; Celery</li>
+</ul>
+<h3 id="20-2-误以为性能高就应该把所有东西都写进-C"><a href="#20-2-误以为性能高就应该把所有东西都写进-C" class="headerlink" title="20.2 误以为性能高就应该把所有东西都写进 C++"></a>20.2 误以为性能高就应该把所有东西都写进 C++</h3><p>不是。</p>
+<p>对于 AI 项目：</p>
+<ul>
+<li>模型生态、向量库、文档处理库，大部分都在 Python 侧更成熟</li>
+<li>Drogon 更适合做高性能 API 和状态治理</li>
+</ul>
+<h3 id="20-3-忽视文件上传安全"><a href="#20-3-忽视文件上传安全" class="headerlink" title="20.3 忽视文件上传安全"></a>20.3 忽视文件上传安全</h3><p>例如：</p>
+<ul>
+<li>直接使用原始文件名保存</li>
+<li>不限制 body 大小</li>
+<li>不校验扩展名</li>
+</ul>
+<p>这在上传接口里很危险。</p>
+<h3 id="20-4-Session-开了但客户端不带-Cookie"><a href="#20-4-Session-开了但客户端不带-Cookie" class="headerlink" title="20.4 Session 开了但客户端不带 Cookie"></a>20.4 Session 开了但客户端不带 Cookie</h3><p>这样会导致服务端不断创建新 Session，白白浪费资源。</p>
+<h3 id="20-5-数据库回调里继续做阻塞操作"><a href="#20-5-数据库回调里继续做阻塞操作" class="headerlink" title="20.5 数据库回调里继续做阻塞操作"></a>20.5 数据库回调里继续做阻塞操作</h3><p>这会拖慢整个异步链路。</p>
+<h3 id="20-6-Controller-过胖"><a href="#20-6-Controller-过胖" class="headerlink" title="20.6 Controller 过胖"></a>20.6 Controller 过胖</h3><p>如果 Controller 里同时写：</p>
+<ul>
+<li>参数解析</li>
+<li>SQL</li>
+<li>Redis</li>
+<li>调内部 HTTP</li>
+<li>业务编排</li>
+</ul>
+<p>后面会非常难维护。</p>
+<h2 id="21-一套比较实用的学习顺序"><a href="#21-一套比较实用的学习顺序" class="headerlink" title="21. 一套比较实用的学习顺序"></a>21. 一套比较实用的学习顺序</h2><p>如果你是为了做 AI 项目里的 C++ 网关，推荐这样学：</p>
+<ol>
+<li>先跑通最小 Drogon 服务</li>
+<li>学会 <code>registerHandler()</code> 和 <code>HttpController</code></li>
+<li>学会 JSON 请求和响应</li>
+<li>学会 <code>config.json</code></li>
+<li>学会 Filter 和 Session</li>
+<li>学会文件上传</li>
+<li>学会 <code>DbClient</code> 和 Redis</li>
+<li>最后再接 FastAPI 和 Celery</li>
+</ol>
+<h2 id="22-总结"><a href="#22-总结" class="headerlink" title="22. 总结"></a>22. 总结</h2><p>Drogon 的核心价值在于：</p>
+<ul>
+<li>用 C++ 写高性能 Web 服务</li>
+<li>把 HTTP、数据库、Redis、Session、文件上传放到一套框架里</li>
+<li>适合做网关层、业务层、低延迟接口层</li>
+</ul>
+<p>对于 AI 项目，可以把它理解成：</p>
+<ul>
+<li>对外 API 入口</li>
+<li>会话治理层</li>
+<li>状态协调层</li>
+<li>数据持久化入口</li>
+<li>调用 Python 服务的编排层</li>
+</ul>
+<p>如果你把前面几份笔记连起来看，可以把它们理解成一条链：</p>
+<ul>
+<li>Drogon：对外网关 &#x2F; C++ 服务层</li>
+<li>FastAPI：Python API 层</li>
+<li>Redis：缓存 &#x2F; 状态 &#x2F; 中间层</li>
+<li>Celery：后台异步任务层</li>
+<li>MySQL：持久化数据层</li>
+</ul>
+<h2 id="23-参考"><a href="#23-参考" class="headerlink" title="23. 参考"></a>23. 参考</h2><ul>
+<li>Drogon GitHub: <a target="_blank" rel="noopener" href="https://github.com/drogonframework/drogon">https://github.com/drogonframework/drogon</a></li>
+<li>Drogon Wiki: <a target="_blank" rel="noopener" href="https://github.com/drogonframework/drogon/wiki">https://github.com/drogonframework/drogon/wiki</a></li>
+<li>Drogon Overview: <a target="_blank" rel="noopener" href="https://github.com/drogonframework/drogon/wiki/ENG-01-Overview">https://github.com/drogonframework/drogon/wiki/ENG-01-Overview</a></li>
+<li>Drogon Installation: <a target="_blank" rel="noopener" href="https://github.com/drogonframework/drogon/wiki/ENG-02-Installation">https://github.com/drogonframework/drogon/wiki/ENG-02-Installation</a></li>
+<li>Drogon HttpController: <a target="_blank" rel="noopener" href="https://github.com/drogonframework/drogon/wiki/ENG-04-2-Controller-HttpController">https://github.com/drogonframework/drogon/wiki/ENG-04-2-Controller-HttpController</a></li>
+<li>Drogon Middleware and Filter: <a target="_blank" rel="noopener" href="https://github.com/drogonframework/drogon/wiki/ENG-05-Middleware-and-Filter">https://github.com/drogonframework/drogon/wiki/ENG-05-Middleware-and-Filter</a></li>
+<li>Drogon Session: <a target="_blank" rel="noopener" href="https://github.com/drogonframework/drogon/wiki/ENG-07-Session">https://github.com/drogonframework/drogon/wiki/ENG-07-Session</a></li>
+<li>Drogon DbClient: <a target="_blank" rel="noopener" href="https://github.com/drogonframework/drogon/wiki/ENG-08-1-Database-DbClient">https://github.com/drogonframework/drogon/wiki/ENG-08-1-Database-DbClient</a></li>
+<li>Drogon ORM: <a target="_blank" rel="noopener" href="https://github.com/drogonframework/drogon/wiki/ENG-08-3-Database-ORM">https://github.com/drogonframework/drogon/wiki/ENG-08-3-Database-ORM</a></li>
+<li>Drogon File Handler: <a target="_blank" rel="noopener" href="https://github.com/drogonframework/drogon/wiki/ENG-09-1-File-Handler">https://github.com/drogonframework/drogon/wiki/ENG-09-1-File-Handler</a></li>
+<li>Drogon Configuration File: <a target="_blank" rel="noopener" href="https://github.com/drogonframework/drogon/wiki/ENG-11-Configuration-File">https://github.com/drogonframework/drogon/wiki/ENG-11-Configuration-File</a></li>
+<li>Drogon drogon_ctl: <a target="_blank" rel="noopener" href="https://github.com/drogonframework/drogon/wiki/ENG-12-drogon_ctl-Command">https://github.com/drogonframework/drogon/wiki/ENG-12-drogon_ctl-Command</a></li>
+<li>Drogon Coroutines: <a target="_blank" rel="noopener" href="https://github.com/drogonframework/drogon/wiki/ENG-17-Coroutines">https://github.com/drogonframework/drogon/wiki/ENG-17-Coroutines</a></li>
+<li>Drogon Redis: <a target="_blank" rel="noopener" href="https://github.com/drogonframework/drogon/wiki/ENG-18-Redis">https://github.com/drogonframework/drogon/wiki/ENG-18-Redis</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>楚天
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/drogon/" title="Drogon 学习笔记">https://chutianduan.github.io/notes/ai模型开发/知识点学习/框架/drogon/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/celery/" rel="prev" title="Celery 学习笔记">
+                  <i class="fa fa-angle-left"></i> Celery 学习笔记
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E5%8F%A5%E5%AD%90%E5%B5%8C%E5%85%A5%E6%A8%A1%E5%9E%8B/%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E4%B8%8E%E6%95%B0%E6%8D%AE%E9%9B%86%E8%AF%84%E4%BC%B0/" rel="next" title="数据处理与数据集评估笔记">
+                  数据处理与数据集评估笔记 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-code"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">楚天</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

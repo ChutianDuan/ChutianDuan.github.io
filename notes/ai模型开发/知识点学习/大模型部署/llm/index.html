@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chutianduan.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":2,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="LLM 部署学习笔记1. 先抓住部署的核心矛盾部署大模型，本质上一直在解决 3 个问题：  模型权重怎么加载进来 有限的 GPU &#x2F; CPU &#x2F; 磁盘内存怎么分配 多张卡之间怎么协调，才能兼顾“能跑、跑得稳、跑得快”  如果把它再压缩成一句话：  大模型部署，本质就是“权重放哪、缓存放哪、计算在哪做、卡和卡之间怎么通信”。   2. 模型加载：模型到底是怎么被搬进来的2.1 传">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LLM 部署学习笔记">
+<meta property="og:url" content="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/llm/index.html">
+<meta property="og:site_name" content="楚天">
+<meta property="og:description" content="LLM 部署学习笔记1. 先抓住部署的核心矛盾部署大模型，本质上一直在解决 3 个问题：  模型权重怎么加载进来 有限的 GPU &#x2F; CPU &#x2F; 磁盘内存怎么分配 多张卡之间怎么协调，才能兼顾“能跑、跑得稳、跑得快”  如果把它再压缩成一句话：  大模型部署，本质就是“权重放哪、缓存放哪、计算在哪做、卡和卡之间怎么通信”。   2. 模型加载：模型到底是怎么被搬进来的2.1 传">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-04-20T12:07:56.000Z">
+<meta property="article:modified_time" content="2026-04-20T12:07:56.000Z">
+<meta property="article:author" content="楚天">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="游戏网络">
+<meta property="article:tag" content="技术博客">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/llm/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/llm/","path":"/notes/ai模型开发/知识点学习/大模型部署/llm/","title":"LLM 部署学习笔记"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>LLM 部署学习笔记 | 楚天</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">楚天</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">惟楚有材，于斯为盛</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-友情链接"><a href="/link/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#LLM-%E9%83%A8%E7%BD%B2%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0"><span class="nav-number">1.</span> <span class="nav-text">LLM 部署学习笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%85%88%E6%8A%93%E4%BD%8F%E9%83%A8%E7%BD%B2%E7%9A%84%E6%A0%B8%E5%BF%83%E7%9F%9B%E7%9B%BE"><span class="nav-number">1.1.</span> <span class="nav-text">1. 先抓住部署的核心矛盾</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%A8%A1%E5%9E%8B%E5%8A%A0%E8%BD%BD%EF%BC%9A%E6%A8%A1%E5%9E%8B%E5%88%B0%E5%BA%95%E6%98%AF%E6%80%8E%E4%B9%88%E8%A2%AB%E6%90%AC%E8%BF%9B%E6%9D%A5%E7%9A%84"><span class="nav-number">1.2.</span> <span class="nav-text">2. 模型加载：模型到底是怎么被搬进来的</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E4%BC%A0%E7%BB%9F%E5%8A%A0%E8%BD%BD%E6%B5%81%E7%A8%8B"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 传统加载流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%8A%A0%E8%BD%BD%E9%9A%BE"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 为什么大模型加载难</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E6%9B%B4%E5%90%88%E7%90%86%E7%9A%84%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%8A%A0%E8%BD%BD%E6%B5%81%E7%A8%8B"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 更合理的大模型加载流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-%E5%85%B8%E5%9E%8B%E5%8A%A0%E8%BD%BD%E6%89%8B%E6%AE%B5"><span class="nav-number">1.2.4.</span> <span class="nav-text">2.4 典型加载手段</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1%EF%BC%89%E5%88%86%E7%89%87%E6%9D%83%E9%87%8D"><span class="nav-number">1.2.4.1.</span> <span class="nav-text">1）分片权重</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2%EF%BC%89%E7%A9%BA%E5%A3%B3%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">1.2.4.2.</span> <span class="nav-text">2）空壳初始化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3%EF%BC%89%E8%87%AA%E5%8A%A8%E6%88%96%E6%89%8B%E5%8A%A8-device-map"><span class="nav-number">1.2.4.3.</span> <span class="nav-text">3）自动或手动 device_map</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4%EF%BC%89CPU-NVMe-Offload"><span class="nav-number">1.2.4.4.</span> <span class="nav-text">4）CPU &#x2F; NVMe Offload</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-%E4%B8%80%E4%B8%AA%E5%B8%B8%E8%A7%81%E5%8A%A0%E8%BD%BD%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.2.5.</span> <span class="nav-text">2.5 一个常见加载示例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-6-%E6%9C%8D%E5%8A%A1%E7%9C%9F%E6%AD%A3%E5%90%AF%E5%8A%A8%E6%97%B6%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88"><span class="nav-number">1.2.6.</span> <span class="nav-text">2.6 服务真正启动时发生了什么</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%EF%BC%9A%E6%98%BE%E5%AD%98%E5%88%B0%E5%BA%95%E9%83%BD%E8%8A%B1%E5%88%B0%E5%93%AA%E9%87%8C%E4%BA%86"><span class="nav-number">1.3.</span> <span class="nav-text">3. 内存分配：显存到底都花到哪里了</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E6%8E%A8%E7%90%86%E6%97%B6%E5%86%85%E5%AD%98%E7%9A%84%E4%B8%BB%E8%A6%81%E7%BB%84%E6%88%90"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 推理时内存的主要组成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E6%9D%83%E9%87%8D%E5%8D%A0%E7%94%A8%E6%80%8E%E4%B9%88%E4%BC%B0%E7%AE%97"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 权重占用怎么估算</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-KV-Cache-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E4%B9%88%E9%87%8D%E8%A6%81"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 KV Cache 为什么这么重要</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-Prefill-%E5%92%8C-Decode-%E7%9A%84%E5%86%85%E5%AD%98%E7%89%B9%E5%BE%81%E4%B8%8D%E5%90%8C"><span class="nav-number">1.3.4.</span> <span class="nav-text">3.4 Prefill 和 Decode 的内存特征不同</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Prefill"><span class="nav-number">1.3.4.1.</span> <span class="nav-text">Prefill</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Decode"><span class="nav-number">1.3.4.2.</span> <span class="nav-text">Decode</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E6%9C%89%E6%98%BE%E5%AD%98%E7%A2%8E%E7%89%87"><span class="nav-number">1.3.5.</span> <span class="nav-text">3.5 为什么会有显存碎片</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-6-%E5%B8%B8%E8%A7%81%E7%9A%84%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96%E6%89%8B%E6%AE%B5"><span class="nav-number">1.3.6.</span> <span class="nav-text">3.6 常见的内存优化手段</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1%EF%BC%89%E9%99%8D%E4%BD%8E%E6%9D%83%E9%87%8D%E7%B2%BE%E5%BA%A6"><span class="nav-number">1.3.6.1.</span> <span class="nav-text">1）降低权重精度</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2%EF%BC%89KV-Cache-%E5%88%86%E5%9D%97%E7%AE%A1%E7%90%86"><span class="nav-number">1.3.6.2.</span> <span class="nav-text">2）KV Cache 分块管理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3%EF%BC%89Continuous-Batching-In-flight-Batching"><span class="nav-number">1.3.6.3.</span> <span class="nav-text">3）Continuous Batching &#x2F; In-flight Batching</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4%EF%BC%89Offload"><span class="nav-number">1.3.6.4.</span> <span class="nav-text">4）Offload</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5%EF%BC%89%E6%8E%A7%E5%88%B6%E4%B8%8A%E4%B8%8B%E6%96%87%E5%92%8C%E5%B9%B6%E5%8F%91"><span class="nav-number">1.3.6.5.</span> <span class="nav-text">5）控制上下文和并发</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%A4%9A%E5%8D%A1%E5%8D%8F%E8%B0%83%EF%BC%9A%E5%A4%9A%E5%BC%A0-GPU-%E6%98%AF%E6%80%8E%E4%B9%88%E9%85%8D%E5%90%88%E7%9A%84"><span class="nav-number">1.4.</span> <span class="nav-text">4. 多卡协调：多张 GPU 是怎么配合的</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E5%A4%9A%E5%8D%A1"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 为什么需要多卡</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E6%95%B0%E6%8D%AE%E5%B9%B6%E8%A1%8C-Data-Parallel"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 数据并行 Data Parallel</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E5%BC%A0%E9%87%8F%E5%B9%B6%E8%A1%8C-Tensor-Parallel"><span class="nav-number">1.4.3.</span> <span class="nav-text">4.3 张量并行 Tensor Parallel</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-%E6%B5%81%E6%B0%B4%E7%BA%BF%E5%B9%B6%E8%A1%8C-Pipeline-Parallel"><span class="nav-number">1.4.4.</span> <span class="nav-text">4.4 流水线并行 Pipeline Parallel</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5-FSDP-ZeRO"><span class="nav-number">1.4.5.</span> <span class="nav-text">4.5 FSDP &#x2F; ZeRO</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-6-%E5%A4%9A%E5%8D%A1%E9%80%9A%E4%BF%A1%E6%97%B6%E5%88%B0%E5%BA%95%E5%9C%A8%E4%BC%A0%E4%BB%80%E4%B9%88"><span class="nav-number">1.4.6.</span> <span class="nav-text">4.6 多卡通信时到底在传什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-7-%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E9%80%89%E5%93%AA%E7%A7%8D%E5%A4%9A%E5%8D%A1%E6%96%B9%E6%A1%88"><span class="nav-number">1.4.7.</span> <span class="nav-text">4.7 什么时候选哪种多卡方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-8-%E5%A4%9A%E5%8D%A1%E9%83%A8%E7%BD%B2%E9%87%8C%E6%9C%80%E7%9C%9F%E5%AE%9E%E7%9A%84%E7%93%B6%E9%A2%88"><span class="nav-number">1.4.8.</span> <span class="nav-text">4.8 多卡部署里最真实的瓶颈</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E6%8A%8A%E4%B8%89%E4%BB%B6%E4%BA%8B%E4%B8%B2%E8%B5%B7%E6%9D%A5%EF%BC%9A%E4%B8%80%E6%9D%A1%E5%AE%8C%E6%95%B4%E7%9A%84%E9%83%A8%E7%BD%B2%E9%93%BE%E8%B7%AF"><span class="nav-number">1.5.</span> <span class="nav-text">5. 把三件事串起来：一条完整的部署链路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E9%AB%98%E9%A2%91%E7%BB%93%E8%AE%BA"><span class="nav-number">1.6.</span> <span class="nav-text">6. 高频结论</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-%E5%BB%B6%E4%BC%B8%E9%98%85%E8%AF%BB%EF%BC%9A%E6%8E%A8%E8%8D%90%E5%87%A0%E7%AF%87%E5%8D%9A%E5%AE%A2"><span class="nav-number">1.7.</span> <span class="nav-text">7. 延伸阅读：推荐几篇博客</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%EF%BC%89%E6%A8%A1%E5%9E%8B%E5%8A%A0%E8%BD%BD"><span class="nav-number">1.7.1.</span> <span class="nav-text">1）模型加载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%EF%BC%89%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D-KV-Cache"><span class="nav-number">1.7.2.</span> <span class="nav-text">2）内存分配 &#x2F; KV Cache</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%EF%BC%89FSDP-%E5%92%8C%E5%88%86%E7%89%87%E6%80%9D%E6%83%B3"><span class="nav-number">1.7.3.</span> <span class="nav-text">3）FSDP 和分片思想</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4%EF%BC%89Offload-%E5%92%8C%E5%BC%82%E6%9E%84%E5%86%85%E5%AD%98"><span class="nav-number">1.7.4.</span> <span class="nav-text">4）Offload 和异构内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5%EF%BC%89%E5%A4%9A%E5%8D%A1%E9%80%9A%E4%BF%A1"><span class="nav-number">1.7.5.</span> <span class="nav-text">5）多卡通信</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-%E5%BB%BA%E8%AE%AE%E7%9A%84%E9%98%85%E8%AF%BB%E9%A1%BA%E5%BA%8F"><span class="nav-number">1.8.</span> <span class="nav-text">8. 建议的阅读顺序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%80%BB%E7%BB%93"><span class="nav-number">1.9.</span> <span class="nav-text">9. 一句话总结</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="楚天"
+      src="/img/me.jpg">
+  <p class="site-author-name" itemprop="name">楚天</p>
+  <div class="site-description" itemprop="description">记录深度学习、C++、游戏网络与生活旅行的学习笔记。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ChutianDuan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ChutianDuan" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:3383006954@qq.com" title="E-Mail → mailto:3383006954@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/llm/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="LLM 部署学习笔记 | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          LLM 部署学习笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-04-20 20:07:56" itemprop="dateCreated datePublished" datetime="2026-04-20T20:07:56+08:00">2026-04-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/AI%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">AI模型开发</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/AI%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">知识点学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/AI%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/" itemprop="url" rel="index"><span itemprop="name">大模型部署</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="LLM-部署学习笔记"><a href="#LLM-部署学习笔记" class="headerlink" title="LLM 部署学习笔记"></a>LLM 部署学习笔记</h1><h2 id="1-先抓住部署的核心矛盾"><a href="#1-先抓住部署的核心矛盾" class="headerlink" title="1. 先抓住部署的核心矛盾"></a>1. 先抓住部署的核心矛盾</h2><p>部署大模型，本质上一直在解决 3 个问题：</p>
+<ul>
+<li>模型权重怎么加载进来</li>
+<li>有限的 GPU &#x2F; CPU &#x2F; 磁盘内存怎么分配</li>
+<li>多张卡之间怎么协调，才能兼顾“能跑、跑得稳、跑得快”</li>
+</ul>
+<p>如果把它再压缩成一句话：</p>
+<blockquote>
+<p>大模型部署，本质就是“权重放哪、缓存放哪、计算在哪做、卡和卡之间怎么通信”。</p>
+</blockquote>
+<hr>
+<h2 id="2-模型加载：模型到底是怎么被搬进来的"><a href="#2-模型加载：模型到底是怎么被搬进来的" class="headerlink" title="2. 模型加载：模型到底是怎么被搬进来的"></a>2. 模型加载：模型到底是怎么被搬进来的</h2><h3 id="2-1-传统加载流程"><a href="#2-1-传统加载流程" class="headerlink" title="2.1 传统加载流程"></a>2.1 传统加载流程</h3><p>普通 PyTorch 模型通常这样加载：</p>
+<ol>
+<li>先创建模型结构</li>
+<li>再把权重文件读进内存</li>
+<li>再把权重拷贝进模型</li>
+<li>再把模型搬到 GPU</li>
+</ol>
+<p>小模型这样没问题，但大模型会有明显问题：</p>
+<ul>
+<li>创建模型时，会先生成一份“空模型参数”</li>
+<li>读取 <code>state_dict</code> 时，又会在 CPU 内存里出现第二份权重</li>
+<li>最后再拷到 GPU，还会产生一次设备搬运</li>
+</ul>
+<p>所以大模型加载时，最容易遇到的第一个问题不是算不动，而是：</p>
+<blockquote>
+<p>还没开始推理，CPU 内存或显存就先爆了。</p>
+</blockquote>
+<hr>
+<h3 id="2-2-为什么大模型加载难"><a href="#2-2-为什么大模型加载难" class="headerlink" title="2.2 为什么大模型加载难"></a>2.2 为什么大模型加载难</h3><p>大模型加载难，主要难在下面几件事：</p>
+<ul>
+<li>参数量太大，权重本身就已经很占内存</li>
+<li>传统加载流程会出现“双份内存峰值”</li>
+<li>单卡显存不一定放得下完整模型</li>
+<li>就算 GPU 放不下，CPU 内存也不一定足够</li>
+<li>真正上线时还要给 KV Cache、临时 buffer、CUDA runtime 留空间</li>
+</ul>
+<p>例如只看权重本体：</p>
+<ul>
+<li><code>7B</code> 参数，<code>FP16/BF16</code> 大约需要 <code>14GB</code></li>
+<li><code>70B</code> 参数，<code>FP16/BF16</code> 大约需要 <code>140GB</code></li>
+</ul>
+<p>这还只是权重，不包含：</p>
+<ul>
+<li>KV Cache</li>
+<li>中间激活</li>
+<li>CUDA allocator 预留空间</li>
+<li>框架工作区和临时 buffer</li>
+</ul>
+<hr>
+<h3 id="2-3-更合理的大模型加载流程"><a href="#2-3-更合理的大模型加载流程" class="headerlink" title="2.3 更合理的大模型加载流程"></a>2.3 更合理的大模型加载流程</h3><p>大模型部署里，更常见的是这种思路：</p>
+<ol>
+<li>先只读取配置，不真实分配完整参数</li>
+<li>先构建一个“空壳模型”</li>
+<li>提前规划每一层该放到哪块设备</li>
+<li>按分片逐步加载权重</li>
+<li>加载完后再做 warmup 和运行时缓存初始化</li>
+</ol>
+<p>这就是很多框架里常见的：</p>
+<ul>
+<li><code>meta device</code></li>
+<li><code>init_empty_weights</code></li>
+<li><code>device_map</code></li>
+<li><code>load_checkpoint_and_dispatch</code></li>
+<li><code>low_cpu_mem_usage=True</code></li>
+</ul>
+<p>一句话理解：</p>
+<blockquote>
+<p>先规划，再搬运；先知道每层去哪，再真正把权重加载进去。</p>
+</blockquote>
+<hr>
+<h3 id="2-4-典型加载手段"><a href="#2-4-典型加载手段" class="headerlink" title="2.4 典型加载手段"></a>2.4 典型加载手段</h3><h4 id="1）分片权重"><a href="#1）分片权重" class="headerlink" title="1）分片权重"></a>1）分片权重</h4><p>大模型通常不会保存成一个超大的单文件，而是拆成多个 shard。</p>
+<p>这样做的好处：</p>
+<ul>
+<li>单次读入的文件更小</li>
+<li>CPU 峰值内存更容易控制</li>
+<li>可以边读边放到目标设备</li>
+</ul>
+<p>常见格式有：</p>
+<ul>
+<li><code>pytorch_model.bin</code></li>
+<li><code>model-00001-of-000xx.safetensors</code></li>
+</ul>
+<p>现在更推荐 <code>safetensors</code>，因为它更适合做安全加载和高效读取。</p>
+<h4 id="2）空壳初始化"><a href="#2）空壳初始化" class="headerlink" title="2）空壳初始化"></a>2）空壳初始化</h4><p>先在 <code>meta</code> 设备上把模型结构搭出来，只保留：</p>
+<ul>
+<li>shape</li>
+<li>dtype</li>
+<li>层结构信息</li>
+</ul>
+<p>此时不真正占用完整参数内存。</p>
+<p>这一步的意义很大，因为只有先得到“模型骨架”，后面才能：</p>
+<ul>
+<li>估算每层参数量</li>
+<li>计算 device map</li>
+<li>决定哪些层放 GPU、哪些层放 CPU、哪些层甚至落盘</li>
+</ul>
+<h4 id="3）自动或手动-device-map"><a href="#3）自动或手动-device-map" class="headerlink" title="3）自动或手动 device_map"></a>3）自动或手动 <code>device_map</code></h4><p>加载前先决定每一层该去哪。</p>
+<p>典型策略：</p>
+<ul>
+<li><code>device_map=&quot;auto&quot;</code>：框架自动做层到设备的映射</li>
+<li>手动指定：自己定义哪些层放 <code>cuda:0</code>、<code>cuda:1</code>、<code>cpu</code></li>
+</ul>
+<p>这一步解决的是：</p>
+<blockquote>
+<p>不是把整个模型整体搬到一个设备上，而是按层切开后分别放。</p>
+</blockquote>
+<h4 id="4）CPU-NVMe-Offload"><a href="#4）CPU-NVMe-Offload" class="headerlink" title="4）CPU &#x2F; NVMe Offload"></a>4）CPU &#x2F; NVMe Offload</h4><p>如果 GPU 还是装不下，就把一部分权重放到：</p>
+<ul>
+<li>CPU 内存</li>
+<li>NVMe 磁盘</li>
+</ul>
+<p>推理时再按层搬到 GPU。</p>
+<p>这类方案的本质是：</p>
+<blockquote>
+<p>用更便宜、更大的存储层，换取“能跑起来”的可能性。</p>
+</blockquote>
+<p>代价也很明显：</p>
+<ul>
+<li>延迟会上升</li>
+<li>PCIe 传输会成为瓶颈</li>
+<li>更适合吞吐优先，不一定适合极低延迟</li>
+</ul>
+<hr>
+<h3 id="2-5-一个常见加载示例"><a href="#2-5-一个常见加载示例" class="headerlink" title="2.5 一个常见加载示例"></a>2.5 一个常见加载示例</h3><p>如果是 Hugging Face Transformers，最常见的写法会是：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoModelForCausalLM, AutoTokenizer</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line">model_id = <span class="string">&quot;meta-llama/Meta-Llama-3-8B-Instruct&quot;</span></span><br><span class="line"></span><br><span class="line">tokenizer = AutoTokenizer.from_pretrained(model_id)</span><br><span class="line">model = AutoModelForCausalLM.from_pretrained(</span><br><span class="line">    model_id,</span><br><span class="line">    torch_dtype=torch.bfloat16,</span><br><span class="line">    device_map=<span class="string">&quot;auto&quot;</span>,</span><br><span class="line">    low_cpu_mem_usage=<span class="literal">True</span>,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>这里几项的意义分别是：</p>
+<ul>
+<li><code>torch_dtype=torch.bfloat16</code>：减小权重占用</li>
+<li><code>device_map=&quot;auto&quot;</code>：自动把层分配到多个设备</li>
+<li><code>low_cpu_mem_usage=True</code>：尽量降低 CPU 加载峰值</li>
+</ul>
+<p>如果模型更大，还可能配合：</p>
+<ul>
+<li><code>load_checkpoint_and_dispatch</code></li>
+<li><code>max_memory</code></li>
+<li><code>offload_folder</code></li>
+</ul>
+<hr>
+<h3 id="2-6-服务真正启动时发生了什么"><a href="#2-6-服务真正启动时发生了什么" class="headerlink" title="2.6 服务真正启动时发生了什么"></a>2.6 服务真正启动时发生了什么</h3><p>部署系统真正启动时，通常不只是“把模型读进来”，还会顺手做这些事：</p>
+<ul>
+<li>初始化 CUDA context</li>
+<li>创建 tokenizer</li>
+<li>加载权重并分配设备</li>
+<li>预留 runtime workspace</li>
+<li>预分配或按需分配 KV Cache</li>
+<li>执行一次 warmup，让 kernel、graph、memory pool 进入稳定状态</li>
+</ul>
+<p>所以线上冷启动慢，往往不只是“模型文件大”，而是整套运行时都在初始化。</p>
+<hr>
+<h2 id="3-内存分配：显存到底都花到哪里了"><a href="#3-内存分配：显存到底都花到哪里了" class="headerlink" title="3. 内存分配：显存到底都花到哪里了"></a>3. 内存分配：显存到底都花到哪里了</h2><h3 id="3-1-推理时内存的主要组成"><a href="#3-1-推理时内存的主要组成" class="headerlink" title="3.1 推理时内存的主要组成"></a>3.1 推理时内存的主要组成</h3><p>推理阶段最重要的几部分内存通常是：</p>
+<table>
+<thead>
+<tr>
+<th>内存项</th>
+<th>作用</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>权重 <code>weights</code></td>
+<td>存模型参数</td>
+<td>静态为主，启动时确定</td>
+</tr>
+<tr>
+<td>激活 <code>activations</code></td>
+<td>当前 forward 的中间结果</td>
+<td>瞬时占用，prefill 更明显</td>
+</tr>
+<tr>
+<td>KV Cache</td>
+<td>保存历史 token 的 key&#x2F;value</td>
+<td>会随上下文和并发增长</td>
+</tr>
+<tr>
+<td>Workspace &#x2F; 临时 buffer</td>
+<td>kernel、attention、通信缓冲</td>
+<td>容易被忽略</td>
+</tr>
+<tr>
+<td>CUDA allocator 保留区</td>
+<td>运行时内存池</td>
+<td>看起来“没用完”，实际已被预留</td>
+</tr>
+</tbody></table>
+<p>部署里最常见的误区之一：</p>
+<blockquote>
+<p>以为显存主要都花在权重上，但很多时候真正把服务顶爆的是 KV Cache。</p>
+</blockquote>
+<hr>
+<h3 id="3-2-权重占用怎么估算"><a href="#3-2-权重占用怎么估算" class="headerlink" title="3.2 权重占用怎么估算"></a>3.2 权重占用怎么估算</h3><p>最基础的估算公式：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">权重内存 ≈ 参数量 × 每个参数字节数</span><br></pre></td></tr></table></figure>
+
+<p>常见精度：</p>
+<table>
+<thead>
+<tr>
+<th>精度</th>
+<th>每参数字节数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>FP32</td>
+<td>4 Bytes</td>
+</tr>
+<tr>
+<td>FP16</td>
+<td>2 Bytes</td>
+</tr>
+<tr>
+<td>BF16</td>
+<td>2 Bytes</td>
+</tr>
+<tr>
+<td>INT8</td>
+<td>1 Byte</td>
+</tr>
+<tr>
+<td>4-bit</td>
+<td>约 0.5 Byte，外加量化元数据</td>
+</tr>
+</tbody></table>
+<p>所以只看权重大致可以这么记：</p>
+<ul>
+<li><code>7B @ FP16/BF16</code> 约 <code>14GB</code></li>
+<li><code>13B @ FP16/BF16</code> 约 <code>26GB</code></li>
+<li><code>70B @ FP16/BF16</code> 约 <code>140GB</code></li>
+</ul>
+<p>注意这只是“裸权重体积”，实际部署还要留余量。</p>
+<hr>
+<h3 id="3-3-KV-Cache-为什么这么重要"><a href="#3-3-KV-Cache-为什么这么重要" class="headerlink" title="3.3 KV Cache 为什么这么重要"></a>3.3 KV Cache 为什么这么重要</h3><p>自回归推理不是每次都从头算完整上下文，而是把历史 token 的注意力结果缓存起来。</p>
+<p>这个缓存就是 KV Cache。</p>
+<p>它的近似规模可以理解为：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">KV Cache ≈ batch × seq_len × layers × num_kv_heads × head_dim × 2 × bytes</span><br></pre></td></tr></table></figure>
+
+<p>这里的 <code>2</code> 是因为要存：</p>
+<ul>
+<li>Key</li>
+<li>Value</li>
+</ul>
+<p>几个关键结论：</p>
+<ul>
+<li>上下文越长，KV Cache 越大</li>
+<li>并发请求越多，KV Cache 越大</li>
+<li>层数越多，KV Cache 越大</li>
+<li><code>GQA / MQA</code> 会减少 <code>num_kv_heads</code>，因此能降低 KV Cache 压力</li>
+</ul>
+<p>所以部署时经常会出现这种现象：</p>
+<ul>
+<li>模型能加载成功</li>
+<li>一跑高并发或长上下文就 OOM</li>
+</ul>
+<p>这通常不是权重问题，而是 KV Cache 膨胀了。</p>
+<hr>
+<h3 id="3-4-Prefill-和-Decode-的内存特征不同"><a href="#3-4-Prefill-和-Decode-的内存特征不同" class="headerlink" title="3.4 Prefill 和 Decode 的内存特征不同"></a>3.4 Prefill 和 Decode 的内存特征不同</h3><p>大模型推理通常可以分成两个阶段：</p>
+<h4 id="Prefill"><a href="#Prefill" class="headerlink" title="Prefill"></a>Prefill</h4><p>也就是先把整段输入 prompt 跑一遍。</p>
+<p>特点：</p>
+<ul>
+<li>计算量大</li>
+<li>激活更明显</li>
+<li>更偏“算力瓶颈”</li>
+</ul>
+<h4 id="Decode"><a href="#Decode" class="headerlink" title="Decode"></a>Decode</h4><p>也就是一 token 一 token 地生成。</p>
+<p>特点：</p>
+<ul>
+<li>每步计算量没那么大</li>
+<li>但 KV Cache 要一直留着</li>
+<li>更容易受显存和内存带宽影响</li>
+</ul>
+<p>一句话记忆：</p>
+<blockquote>
+<p>Prefill 更像“重算一遍输入”，Decode 更像“带着缓存持续往前推”。</p>
+</blockquote>
+<hr>
+<h3 id="3-5-为什么会有显存碎片"><a href="#3-5-为什么会有显存碎片" class="headerlink" title="3.5 为什么会有显存碎片"></a>3.5 为什么会有显存碎片</h3><p>在真实服务里，请求长度通常不一样：</p>
+<ul>
+<li>有的 prompt 很短</li>
+<li>有的输出很长</li>
+<li>有的请求很快结束</li>
+<li>有的请求会长期占着上下文</li>
+</ul>
+<p>如果 KV Cache 按大块连续内存预留，就容易出现：</p>
+<ul>
+<li>过度预分配</li>
+<li>空洞</li>
+<li>碎片</li>
+<li>大量“看起来空着，但其实不好再利用”的显存</li>
+</ul>
+<p>这也是为什么 vLLM 的 <code>PagedAttention</code> 很重要：</p>
+<blockquote>
+<p>它把 KV Cache 按 block 管理，像操作系统分页一样按需分配，而不是死板地整段连续申请。</p>
+</blockquote>
+<hr>
+<h3 id="3-6-常见的内存优化手段"><a href="#3-6-常见的内存优化手段" class="headerlink" title="3.6 常见的内存优化手段"></a>3.6 常见的内存优化手段</h3><h4 id="1）降低权重精度"><a href="#1）降低权重精度" class="headerlink" title="1）降低权重精度"></a>1）降低权重精度</h4><p>常见选择：</p>
+<ul>
+<li><code>BF16 / FP16</code></li>
+<li><code>INT8</code></li>
+<li><code>4-bit</code></li>
+</ul>
+<p>作用：</p>
+<ul>
+<li>直接压缩权重内存</li>
+<li>往往也能降低带宽压力</li>
+</ul>
+<p>但要注意：</p>
+<blockquote>
+<p>权重量化通常主要解决“模型本体太大”，不一定直接解决 KV Cache 过大。</p>
+</blockquote>
+<h4 id="2）KV-Cache-分块管理"><a href="#2）KV-Cache-分块管理" class="headerlink" title="2）KV Cache 分块管理"></a>2）KV Cache 分块管理</h4><p>这类思路常见于：</p>
+<ul>
+<li><code>PagedAttention</code></li>
+<li>paged KV cache</li>
+<li>block-based cache allocator</li>
+</ul>
+<p>作用：</p>
+<ul>
+<li>降低碎片</li>
+<li>提高 cache 复用率</li>
+<li>提升 batch 能力</li>
+</ul>
+<h4 id="3）Continuous-Batching-In-flight-Batching"><a href="#3）Continuous-Batching-In-flight-Batching" class="headerlink" title="3）Continuous Batching &#x2F; In-flight Batching"></a>3）Continuous Batching &#x2F; In-flight Batching</h4><p>不是等整个 batch 全结束才接新请求，而是：</p>
+<ul>
+<li>谁先结束就先释放</li>
+<li>空出来的位置立即塞新请求</li>
+</ul>
+<p>这样可以让 GPU 持续保持高利用率。</p>
+<h4 id="4）Offload"><a href="#4）Offload" class="headerlink" title="4）Offload"></a>4）Offload</h4><p>把一部分数据放到：</p>
+<ul>
+<li>CPU</li>
+<li>NVMe</li>
+</ul>
+<p>适合：</p>
+<ul>
+<li>显存不够</li>
+<li>可以接受额外延迟</li>
+</ul>
+<h4 id="5）控制上下文和并发"><a href="#5）控制上下文和并发" class="headerlink" title="5）控制上下文和并发"></a>5）控制上下文和并发</h4><p>线上很多时候最有效的办法非常朴素：</p>
+<ul>
+<li>限制 <code>max_model_len</code></li>
+<li>限制 <code>max_num_seqs</code></li>
+<li>限制 <code>max_new_tokens</code></li>
+</ul>
+<p>因为这些参数直接决定了 KV Cache 的上限。</p>
+<hr>
+<h2 id="4-多卡协调：多张-GPU-是怎么配合的"><a href="#4-多卡协调：多张-GPU-是怎么配合的" class="headerlink" title="4. 多卡协调：多张 GPU 是怎么配合的"></a>4. 多卡协调：多张 GPU 是怎么配合的</h2><h3 id="4-1-为什么需要多卡"><a href="#4-1-为什么需要多卡" class="headerlink" title="4.1 为什么需要多卡"></a>4.1 为什么需要多卡</h3><p>需要多卡，通常有 3 个原因：</p>
+<ul>
+<li>单卡放不下模型</li>
+<li>单卡吞吐不够</li>
+<li>希望用更多卡降低单请求延迟或提升整体并发</li>
+</ul>
+<p>但“多卡”不是一个方案，而是一组不同的并行方式。</p>
+<hr>
+<h3 id="4-2-数据并行-Data-Parallel"><a href="#4-2-数据并行-Data-Parallel" class="headerlink" title="4.2 数据并行 Data Parallel"></a>4.2 数据并行 Data Parallel</h3><p>最容易理解的一种方式：</p>
+<ul>
+<li>每张 GPU 放一整份完整模型</li>
+<li>不同请求分发到不同 GPU</li>
+</ul>
+<p>优点：</p>
+<ul>
+<li>最简单</li>
+<li>卡间通信最少</li>
+<li>很适合模型能完整放入单卡时做水平扩展</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>每张卡都要复制完整权重</li>
+<li>模型太大时根本放不下</li>
+</ul>
+<p>适合场景：</p>
+<ul>
+<li>单卡能装下模型</li>
+<li>主要目标是提高 QPS</li>
+</ul>
+<hr>
+<h3 id="4-3-张量并行-Tensor-Parallel"><a href="#4-3-张量并行-Tensor-Parallel" class="headerlink" title="4.3 张量并行 Tensor Parallel"></a>4.3 张量并行 Tensor Parallel</h3><p>张量并行的思路是：</p>
+<ul>
+<li>不复制整层</li>
+<li>而是把一层里的大矩阵切到多张卡上</li>
+</ul>
+<p>例如一个大的线性层，可以按列切、按行切，让多张 GPU 同时算一层。</p>
+<p>优点：</p>
+<ul>
+<li>单卡装不下时还能跑</li>
+<li>对超大模型很常见</li>
+</ul>
+<p>代价：</p>
+<ul>
+<li>几乎每一层都会发生通信</li>
+<li>对 GPU 间互联非常敏感</li>
+</ul>
+<p>典型通信包括：</p>
+<ul>
+<li><code>AllReduce</code></li>
+<li><code>AllGather</code></li>
+<li><code>ReduceScatter</code></li>
+</ul>
+<p>一句话理解：</p>
+<blockquote>
+<p>Tensor Parallel 是“同一层一起算”，所以卡和卡之间必须频繁交换部分结果。</p>
+</blockquote>
+<hr>
+<h3 id="4-4-流水线并行-Pipeline-Parallel"><a href="#4-4-流水线并行-Pipeline-Parallel" class="headerlink" title="4.4 流水线并行 Pipeline Parallel"></a>4.4 流水线并行 Pipeline Parallel</h3><p>流水线并行是把模型按层切成几段：</p>
+<ul>
+<li>前几层在 GPU0</li>
+<li>中间层在 GPU1</li>
+<li>后几层在 GPU2</li>
+</ul>
+<p>数据像流水线一样一段段往后传。</p>
+<p>优点：</p>
+<ul>
+<li>每张卡只放一部分层</li>
+<li>适合层数很多、模型特别深的情况</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>会有 pipeline bubble</li>
+<li>微批次设计更复杂</li>
+<li>延迟不一定最优</li>
+</ul>
+<p>一句话理解：</p>
+<blockquote>
+<p>Pipeline Parallel 是“不同卡负责不同楼层”，输入像坐电梯一样逐层往上走。</p>
+</blockquote>
+<hr>
+<h3 id="4-5-FSDP-ZeRO"><a href="#4-5-FSDP-ZeRO" class="headerlink" title="4.5 FSDP &#x2F; ZeRO"></a>4.5 FSDP &#x2F; ZeRO</h3><p>这类方案的核心不是“把一层切开一起算”，而是：</p>
+<blockquote>
+<p>把参数、梯度、优化器状态分片，谁需要时再临时聚合。</p>
+</blockquote>
+<p>最典型的是训练或微调场景。</p>
+<p>FSDP 背后的核心动作可以这样理解：</p>
+<ul>
+<li>平时每张卡只保留自己那一份 shard</li>
+<li>前向计算到某层时，先 <code>all-gather</code> 出完整参数</li>
+<li>算完后，把不需要的部分释放</li>
+<li>反向时再做 <code>reduce-scatter</code></li>
+</ul>
+<p>它解决的是：</p>
+<ul>
+<li>大模型训练时显存冗余过高</li>
+<li>DDP 每卡都存一整份参数太浪费</li>
+</ul>
+<p>在部署里要注意：</p>
+<ul>
+<li>纯在线低延迟推理，主流更常见的是 <code>Tensor Parallel</code></li>
+<li>FSDP &#x2F; ZeRO 更常用于训练、SFT、继续预训练</li>
+<li>但 ZeRO-Inference 这类方案会把“分片和 offload”思路带到推理场景</li>
+</ul>
+<hr>
+<h3 id="4-6-多卡通信时到底在传什么"><a href="#4-6-多卡通信时到底在传什么" class="headerlink" title="4.6 多卡通信时到底在传什么"></a>4.6 多卡通信时到底在传什么</h3><p>多卡协同时，常见通信原语如下：</p>
+<table>
+<thead>
+<tr>
+<th>通信原语</th>
+<th>常见用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Broadcast</code></td>
+<td>把参数或控制信息同步给所有卡</td>
+</tr>
+<tr>
+<td><code>AllReduce</code></td>
+<td>汇总每张卡的部分结果并让所有卡都拿到</td>
+</tr>
+<tr>
+<td><code>AllGather</code></td>
+<td>把各卡持有的分片拼回完整结果</td>
+</tr>
+<tr>
+<td><code>ReduceScatter</code></td>
+<td>先归约再分片返回</td>
+</tr>
+<tr>
+<td><code>Send / Recv</code></td>
+<td>流水线并行中前后 stage 传递激活</td>
+</tr>
+</tbody></table>
+<p>底层常见通信库：</p>
+<ul>
+<li><code>NCCL</code></li>
+<li><code>RCCL</code></li>
+</ul>
+<p>如果是部署视角，需要记住一个关键点：</p>
+<blockquote>
+<p>多卡不只是“卡多了”，而是“通信也多了”。如果通信成本压不住，卡越多不一定越快。</p>
+</blockquote>
+<hr>
+<h3 id="4-7-什么时候选哪种多卡方案"><a href="#4-7-什么时候选哪种多卡方案" class="headerlink" title="4.7 什么时候选哪种多卡方案"></a>4.7 什么时候选哪种多卡方案</h3><table>
+<thead>
+<tr>
+<th>场景</th>
+<th>更常见的选择</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>模型能放进单卡，只想提 QPS</td>
+<td>Data Parallel</td>
+</tr>
+<tr>
+<td>模型单卡放不下，但在同机多卡内运行</td>
+<td>Tensor Parallel</td>
+</tr>
+<tr>
+<td>模型很深，想把层按 stage 切开</td>
+<td>Pipeline Parallel</td>
+</tr>
+<tr>
+<td>训练 &#x2F; SFT &#x2F; 继续预训练，显存压力极大</td>
+<td>FSDP &#x2F; ZeRO</td>
+</tr>
+<tr>
+<td>显存不够，但可以接受更高延迟</td>
+<td>CPU &#x2F; NVMe Offload</td>
+</tr>
+</tbody></table>
+<p>很多真实系统是混合方案，例如：</p>
+<ul>
+<li><code>TP + PP</code></li>
+<li><code>TP + Data Parallel</code></li>
+<li><code>ZeRO + Offload</code></li>
+</ul>
+<hr>
+<h3 id="4-8-多卡部署里最真实的瓶颈"><a href="#4-8-多卡部署里最真实的瓶颈" class="headerlink" title="4.8 多卡部署里最真实的瓶颈"></a>4.8 多卡部署里最真实的瓶颈</h3><p>线上真正会卡住的地方，通常不是论文里那一句“支持多卡”，而是这些细节：</p>
+<ul>
+<li>GPU 之间是 <code>NVLink</code> 还是只有 <code>PCIe</code></li>
+<li>通信拓扑是否对称</li>
+<li>小 batch 下通信时间会不会盖过计算时间</li>
+<li>scheduler 是否能把动态长度请求组织好</li>
+<li>KV Cache 是否会在高并发下失控</li>
+<li>某一张卡是否变成热点卡</li>
+</ul>
+<p>所以多卡性能调优，本质是在看：</p>
+<ul>
+<li>算得快不快</li>
+<li>传得快不快</li>
+<li>分得均不均</li>
+</ul>
+<hr>
+<h2 id="5-把三件事串起来：一条完整的部署链路"><a href="#5-把三件事串起来：一条完整的部署链路" class="headerlink" title="5. 把三件事串起来：一条完整的部署链路"></a>5. 把三件事串起来：一条完整的部署链路</h2><p>从服务启动到返回 token，大致会经历这条路径：</p>
+<ol>
+<li>读取模型配置和 tokenizer</li>
+<li>创建空壳模型，估算权重规模</li>
+<li>计算 <code>device_map</code> 或并行策略</li>
+<li>分片加载权重到 GPU &#x2F; CPU &#x2F; NVMe</li>
+<li>初始化 runtime buffer 和 KV Cache 管理器</li>
+<li>收到请求后，scheduler 做 batch 编排</li>
+<li>先做 prefill</li>
+<li>再进入 decode，持续使用 KV Cache</li>
+<li>如果是多卡，则在层间或 stage 间做通信</li>
+<li>请求结束后释放对应 KV block</li>
+</ol>
+<p>这条链路里：</p>
+<ul>
+<li>模型加载决定“能不能启动”</li>
+<li>内存分配决定“能不能稳定跑”</li>
+<li>多卡协调决定“吞吐和延迟能不能达标”</li>
+</ul>
+<hr>
+<h2 id="6-高频结论"><a href="#6-高频结论" class="headerlink" title="6. 高频结论"></a>6. 高频结论</h2><ul>
+<li>大模型加载难，首先难在内存峰值，而不是算力。</li>
+<li>推理阶段最核心的两块内存通常是“权重 + KV Cache”。</li>
+<li>权重决定你能否把模型装进系统，KV Cache 决定你能支撑多少上下文和并发。</li>
+<li><code>4-bit / 8-bit</code> 量化主要缓解权重压力，不自动等于 KV Cache 压力消失。</li>
+<li>模型能跑起来，不代表服务能稳定支撑高并发。</li>
+<li>多卡不总是更快；如果互联差、通信重，延迟可能更差。</li>
+<li>部署里最常见的几类手段是：分片加载、精度压缩、KV Cache 优化、动态 batching、多卡并行。</li>
+</ul>
+<hr>
+<h2 id="7-延伸阅读：推荐几篇博客"><a href="#7-延伸阅读：推荐几篇博客" class="headerlink" title="7. 延伸阅读：推荐几篇博客"></a>7. 延伸阅读：推荐几篇博客</h2><p>下面这几篇我按“加载 -&gt; 内存 -&gt; 多卡”这条线推荐，基本都是官方博客或官方文档，适合继续往下读。</p>
+<h3 id="1）模型加载"><a href="#1）模型加载" class="headerlink" title="1）模型加载"></a>1）模型加载</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://huggingface.co/blog/accelerate-large-models">How Accelerate runs very large models thanks to PyTorch</a><br>2022-09-27，Hugging Face。<br>这篇很适合用来理解 <code>meta device</code>、空壳初始化、<code>device_map</code>、分片加载到底解决了什么问题。</li>
+</ul>
+<h3 id="2）内存分配-KV-Cache"><a href="#2）内存分配-KV-Cache" class="headerlink" title="2）内存分配 &#x2F; KV Cache"></a>2）内存分配 &#x2F; KV Cache</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://vllm.ai/blog/vllm">vLLM: Easy, Fast, and Cheap LLM Serving with PagedAttention</a><br>2023-06-20，vLLM 官方博客。<br>这篇非常值得看，重点就是为什么 LLM 服务的瓶颈经常在内存，尤其是 KV Cache 的碎片和过度预留问题。</li>
+</ul>
+<h3 id="3）FSDP-和分片思想"><a href="#3）FSDP-和分片思想" class="headerlink" title="3）FSDP 和分片思想"></a>3）FSDP 和分片思想</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://huggingface.co/blog/pytorch-fsdp">Accelerate Large Model Training using PyTorch Fully Sharded Data Parallel</a><br>2022-05-02，Hugging Face。<br>适合理解 FSDP 的核心动作：为什么要分片、什么时候 <code>all-gather</code>、什么时候 <code>reduce-scatter</code>。</li>
+</ul>
+<h3 id="4）Offload-和异构内存"><a href="#4）Offload-和异构内存" class="headerlink" title="4）Offload 和异构内存"></a>4）Offload 和异构内存</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://www.deepspeed.ai/2022/09/09/zero-inference.html">ZeRO-Inference: Democratizing massive model inference</a><br>2022-09-09，DeepSpeed。<br>如果你想理解“GPU 装不下怎么办”，这篇很有代表性，重点讲 CPU &#x2F; NVMe offload、层预取、多 GPU 拉取权重。</li>
+</ul>
+<h3 id="5）多卡通信"><a href="#5）多卡通信" class="headerlink" title="5）多卡通信"></a>5）多卡通信</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://developer.nvidia.com/blog/3x-faster-allreduce-with-nvswitch-and-tensorrt-llm-multishot/">3x Faster AllReduce with NVSwitch and TensorRT-LLM MultiShot</a><br>2024-11-01，NVIDIA Technical Blog。<br>这篇适合在你已经理解 Tensor Parallel 之后继续看，能更具体地理解多卡通信为什么会成为低延迟推理瓶颈。</li>
+</ul>
+<hr>
+<h2 id="8-建议的阅读顺序"><a href="#8-建议的阅读顺序" class="headerlink" title="8. 建议的阅读顺序"></a>8. 建议的阅读顺序</h2><p>如果你想按一条比较顺的路径学习，我建议：</p>
+<ol>
+<li>先看 Hugging Face 的大模型加载文章</li>
+<li>再看 vLLM 的 PagedAttention</li>
+<li>再看 DeepSpeed 的 ZeRO-Inference</li>
+<li>再看 NVIDIA 那篇多卡通信博客</li>
+<li>最后补 FSDP，把“分片和通信”的训练视角补齐</li>
+</ol>
+<hr>
+<h2 id="9-一句话总结"><a href="#9-一句话总结" class="headerlink" title="9. 一句话总结"></a>9. 一句话总结</h2><p>大模型部署的核心，不是“把模型跑起来”这么简单，而是：</p>
+<blockquote>
+<p>用尽量少的显存和通信开销，把权重、缓存和计算稳定地组织起来。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>楚天
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/llm/" title="LLM 部署学习笔记">https://chutianduan.github.io/notes/ai模型开发/知识点学习/大模型部署/llm/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/notes/%E8%AE%A1%E5%88%92/" rel="prev" title="计划">
+                  <i class="fa fa-angle-left"></i> 计划
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/qwen%E6%A8%A1%E5%9E%8B%E6%BC%94%E8%BF%9B/" rel="next" title="Qwen 模型演进笔记">
+                  Qwen 模型演进笔记 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-code"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">楚天</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

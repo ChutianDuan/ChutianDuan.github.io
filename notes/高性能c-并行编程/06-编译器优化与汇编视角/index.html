@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chutianduan.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":2,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="从汇编角度看编译器优化时间：2026&#x2F;04&#x2F;09  关键词：-O0&#x2F;-O2&#x2F;-O3、内联、常量传播、循环优化、自动向量化、别名分析、未定义行为、反汇编核心目标：理解“编译器为什么会把同一段 C++ 变成完全不同的机器代码”，以及哪些写法更利于优化。   1. 为什么要从汇编角度看优化高性能 C++ 里，很多性能差异并不是算法层面，而是来自：  编译器有没有内联 有没有消除无用分">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从汇编角度看编译器优化">
+<meta property="og:url" content="https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/06-%E7%BC%96%E8%AF%91%E5%99%A8%E4%BC%98%E5%8C%96%E4%B8%8E%E6%B1%87%E7%BC%96%E8%A7%86%E8%A7%92/index.html">
+<meta property="og:site_name" content="楚天">
+<meta property="og:description" content="从汇编角度看编译器优化时间：2026&#x2F;04&#x2F;09  关键词：-O0&#x2F;-O2&#x2F;-O3、内联、常量传播、循环优化、自动向量化、别名分析、未定义行为、反汇编核心目标：理解“编译器为什么会把同一段 C++ 变成完全不同的机器代码”，以及哪些写法更利于优化。   1. 为什么要从汇编角度看优化高性能 C++ 里，很多性能差异并不是算法层面，而是来自：  编译器有没有内联 有没有消除无用分">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-04-09T02:25:27.000Z">
+<meta property="article:modified_time" content="2026-04-09T02:25:27.000Z">
+<meta property="article:author" content="楚天">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="游戏网络">
+<meta property="article:tag" content="技术博客">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/06-%E7%BC%96%E8%AF%91%E5%99%A8%E4%BC%98%E5%8C%96%E4%B8%8E%E6%B1%87%E7%BC%96%E8%A7%86%E8%A7%92/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/06-%E7%BC%96%E8%AF%91%E5%99%A8%E4%BC%98%E5%8C%96%E4%B8%8E%E6%B1%87%E7%BC%96%E8%A7%86%E8%A7%92/","path":"/notes/高性能c-并行编程/06-编译器优化与汇编视角/","title":"从汇编角度看编译器优化"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>从汇编角度看编译器优化 | 楚天</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">楚天</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">惟楚有材，于斯为盛</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-友情链接"><a href="/link/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%8E%E6%B1%87%E7%BC%96%E8%A7%92%E5%BA%A6%E7%9C%8B%E7%BC%96%E8%AF%91%E5%99%A8%E4%BC%98%E5%8C%96"><span class="nav-number">1.</span> <span class="nav-text">从汇编角度看编译器优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E4%BB%8E%E6%B1%87%E7%BC%96%E8%A7%92%E5%BA%A6%E7%9C%8B%E4%BC%98%E5%8C%96"><span class="nav-number">1.1.</span> <span class="nav-text">1. 为什么要从汇编角度看优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E7%BC%96%E8%AF%91%E5%99%A8%E4%BC%98%E5%8C%96%E5%88%B0%E5%BA%95%E5%9C%A8%E5%81%9A%E4%BB%80%E4%B9%88"><span class="nav-number">1.2.</span> <span class="nav-text">2. 编译器优化到底在做什么</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%89%8D%E7%AB%AF-%E4%B8%AD%E9%97%B4%E5%B1%82%E4%BC%98%E5%8C%96"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 前端 &#x2F; 中间层优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E5%90%8E%E7%AB%AF-%E6%8C%87%E4%BB%A4%E5%B1%82%E4%BC%98%E5%8C%96"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 后端 &#x2F; 指令层优化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%B8%B8%E8%A7%81%E4%BC%98%E5%8C%96%E7%AD%89%E7%BA%A7"><span class="nav-number">1.3.</span> <span class="nav-text">3. 常见优化等级</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E4%B8%80%E4%B8%AA%E5%85%B3%E9%94%AE%E8%AE%A4%E7%9F%A5"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 一个关键认知</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E7%9C%8B%E6%B1%87%E7%BC%96%E6%97%B6%E9%87%8D%E7%82%B9%E7%9C%8B%E4%BB%80%E4%B9%88"><span class="nav-number">1.4.</span> <span class="nav-text">4. 看汇编时重点看什么</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E5%87%BD%E6%95%B0%E6%9C%89%E6%B2%A1%E6%9C%89%E8%A2%AB%E5%86%85%E8%81%94"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 函数有没有被内联</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E5%BE%AA%E7%8E%AF%E9%87%8C%E6%9C%89%E6%B2%A1%E6%9C%89%E5%A4%9A%E4%BD%99%E5%8A%A0%E8%BD%BD-%E5%AD%98%E5%82%A8"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 循环里有没有多余加载 &#x2F; 存储</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E6%9C%89%E6%B2%A1%E6%9C%89%E7%9C%9F%E6%AD%A3%E4%BA%A7%E7%94%9F-SIMD-%E6%8C%87%E4%BB%A4"><span class="nav-number">1.4.3.</span> <span class="nav-text">4.3 有没有真正产生 SIMD 指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-%E5%88%86%E6%94%AF%E5%A4%9A%E4%B8%8D%E5%A4%9A%EF%BC%8C%E6%98%AF%E5%90%A6%E5%AE%B9%E6%98%93%E9%A2%84%E6%B5%8B"><span class="nav-number">1.4.4.</span> <span class="nav-text">4.4 分支多不多，是否容易预测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5-%E6%98%AF%E5%90%A6%E6%9C%89%E4%B8%8D%E5%BF%85%E8%A6%81%E7%9A%84%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E5%92%8C%E6%A0%88%E6%93%8D%E4%BD%9C"><span class="nav-number">1.4.5.</span> <span class="nav-text">4.5 是否有不必要的函数调用和栈操作</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E5%87%A0%E7%A7%8D%E6%9C%80%E5%B8%B8%E8%A7%81%E7%9A%84%E7%BC%96%E8%AF%91%E5%99%A8%E4%BC%98%E5%8C%96"><span class="nav-number">1.5.</span> <span class="nav-text">5. 几种最常见的编译器优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-%E5%B8%B8%E9%87%8F%E4%BC%A0%E6%92%AD%E4%B8%8E%E5%B8%B8%E9%87%8F%E6%8A%98%E5%8F%A0"><span class="nav-number">1.5.1.</span> <span class="nav-text">5.1 常量传播与常量折叠</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-%E6%AD%BB%E4%BB%A3%E7%A0%81%E6%B6%88%E9%99%A4"><span class="nav-number">1.5.2.</span> <span class="nav-text">5.2 死代码消除</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-%E5%BE%AA%E7%8E%AF%E4%B8%8D%E5%8F%98%E9%87%8F%E5%A4%96%E6%8F%90"><span class="nav-number">1.5.3.</span> <span class="nav-text">5.3 循环不变量外提</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-%E5%86%85%E8%81%94"><span class="nav-number">1.5.4.</span> <span class="nav-text">5.4 内联</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-5-%E5%BC%BA%E5%BA%A6%E5%89%8A%E5%BC%B1%EF%BC%88strength-reduction%EF%BC%89"><span class="nav-number">1.5.5.</span> <span class="nav-text">5.5 强度削弱（strength reduction）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-6-%E8%87%AA%E5%8A%A8%E5%90%91%E9%87%8F%E5%8C%96"><span class="nav-number">1.5.6.</span> <span class="nav-text">5.6 自动向量化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E4%B8%80%E4%B8%AA%E6%9C%80%E5%B8%B8%E8%A7%81%E7%9A%84%E8%AF%AF%E5%8C%BA%EF%BC%9A%E6%BA%90%E4%BB%A3%E7%A0%81%E2%80%9C%E7%9C%8B%E8%B5%B7%E6%9D%A5%E7%AE%80%E6%B4%81%E2%80%9D%E4%B8%8D%E7%AD%89%E4%BA%8E%E6%9B%B4%E5%BF%AB"><span class="nav-number">1.6.</span> <span class="nav-text">6. 一个最常见的误区：源代码“看起来简洁”不等于更快</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-%E4%B8%BA%E4%BB%80%E4%B9%88%E7%BC%96%E8%AF%91%E5%99%A8%E6%9C%89%E6%97%B6%E4%B8%8D%E6%95%A2%E4%BC%98%E5%8C%96"><span class="nav-number">1.7.</span> <span class="nav-text">7. 为什么编译器有时不敢优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-%E5%88%AB%E5%90%8D%E5%88%86%E6%9E%90%E4%B8%8D%E6%98%8E%E7%A1%AE"><span class="nav-number">1.7.1.</span> <span class="nav-text">7.1 别名分析不明确</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E8%BE%B9%E7%95%8C%E5%A4%AA%E5%A4%9A"><span class="nav-number">1.7.2.</span> <span class="nav-text">7.2 函数调用边界太多</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-3-%E5%88%86%E6%94%AF%E8%BF%87%E4%BA%8E%E5%A4%8D%E6%9D%82"><span class="nav-number">1.7.3.</span> <span class="nav-text">7.3 分支过于复杂</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-4-%E8%AE%BF%E9%97%AE%E6%A8%A1%E5%BC%8F%E4%B8%8D%E8%A7%84%E5%88%99"><span class="nav-number">1.7.4.</span> <span class="nav-text">7.4 访问模式不规则</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-%E8%87%AA%E5%8A%A8%E5%90%91%E9%87%8F%E5%8C%96%E4%B8%BA%E4%BB%80%E4%B9%88%E6%9C%89%E6%97%B6%E5%A4%B1%E8%B4%A5"><span class="nav-number">1.8.</span> <span class="nav-text">8. 自动向量化为什么有时失败</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-constexpr%E3%80%81const-%E4%B8%8E%E7%BC%96%E8%AF%91%E6%9C%9F%E4%BC%98%E5%8C%96"><span class="nav-number">1.9.</span> <span class="nav-text">9. constexpr、const 与编译期优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#9-1-const-%E4%B8%8D%E7%AD%89%E4%BA%8E%E7%BC%96%E8%AF%91%E6%9C%9F%E5%B8%B8%E9%87%8F"><span class="nav-number">1.9.1.</span> <span class="nav-text">9.1 const 不等于编译期常量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-2-constexpr-%E6%9B%B4%E6%98%8E%E7%A1%AE"><span class="nav-number">1.9.2.</span> <span class="nav-text">9.2 constexpr 更明确</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-%E6%9C%AA%E5%AE%9A%E4%B9%89%E8%A1%8C%E4%B8%BA%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E5%BD%B1%E5%93%8D%E4%BC%98%E5%8C%96"><span class="nav-number">1.10.</span> <span class="nav-text">10. 未定义行为为什么会影响优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#10-1-%E6%9C%89%E7%AC%A6%E5%8F%B7%E6%95%B4%E6%95%B0%E6%BA%A2%E5%87%BA"><span class="nav-number">1.10.1.</span> <span class="nav-text">10.1 有符号整数溢出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-2-%E8%B6%8A%E7%95%8C%E8%AE%BF%E9%97%AE"><span class="nav-number">1.10.2.</span> <span class="nav-text">10.2 越界访问</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-3-%E7%A9%BA%E6%8C%87%E9%92%88%E8%A7%A3%E5%BC%95%E7%94%A8"><span class="nav-number">1.10.3.</span> <span class="nav-text">10.3 空指针解引用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-size-t%E3%80%81%E7%AC%A6%E5%8F%B7%E4%BD%8D%E4%B8%8E%E7%B4%A2%E5%BC%95"><span class="nav-number">1.11.</span> <span class="nav-text">11. size_t、符号位与索引</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-%E5%86%85%E8%81%94%E3%80%81%E6%A8%A1%E6%9D%BF%E4%B8%8E%E9%9B%B6%E6%88%90%E6%9C%AC%E6%8A%BD%E8%B1%A1"><span class="nav-number">1.12.</span> <span class="nav-text">12. 内联、模板与零成本抽象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-%E4%B8%BA%E4%BB%80%E4%B9%88%E2%80%9C%E7%9C%8B%E6%B1%87%E7%BC%96%E2%80%9D%E6%97%B6%E8%A6%81%E7%BB%93%E5%90%88%E4%B8%8A%E4%B8%8B%E6%96%87"><span class="nav-number">1.13.</span> <span class="nav-text">13. 为什么“看汇编”时要结合上下文</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-%E5%AE%9E%E6%88%98%E9%87%8C%E5%A6%82%E4%BD%95%E6%AD%A3%E7%A1%AE%E4%BD%BF%E7%94%A8%E2%80%9C%E6%B1%87%E7%BC%96%E8%A7%86%E8%A7%92%E2%80%9D"><span class="nav-number">1.14.</span> <span class="nav-text">14. 实战里如何正确使用“汇编视角”</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#14-1-%E5%85%88%E7%A1%AE%E8%AE%A4%E7%AE%97%E6%B3%95%E5%92%8C%E6%95%B0%E6%8D%AE%E5%B8%83%E5%B1%80"><span class="nav-number">1.14.1.</span> <span class="nav-text">14.1 先确认算法和数据布局</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14-2-%E5%86%8D%E7%A1%AE%E8%AE%A4%E7%BC%96%E8%AF%91%E5%99%A8%E6%9C%89%E6%B2%A1%E6%9C%89%E5%B8%AE%E4%BD%A0%E5%81%9A%E8%AF%A5%E5%81%9A%E7%9A%84%E4%BA%8B"><span class="nav-number">1.14.2.</span> <span class="nav-text">14.2 再确认编译器有没有帮你做该做的事</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14-3-%E6%9C%80%E5%90%8E%E6%89%8D%E8%80%83%E8%99%91%E6%89%8B%E5%86%99%E5%BE%AE%E4%BC%98%E5%8C%96"><span class="nav-number">1.14.3.</span> <span class="nav-text">14.3 最后才考虑手写微优化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#15-%E5%B8%B8%E8%A7%81%E5%B7%A5%E5%85%B7"><span class="nav-number">1.15.</span> <span class="nav-text">15. 常见工具</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#15-1-Compiler-Explorer"><span class="nav-number">1.15.1.</span> <span class="nav-text">15.1 Compiler Explorer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-2-%E6%9C%AC%E5%9C%B0%E6%9F%A5%E7%9C%8B%E6%B1%87%E7%BC%96"><span class="nav-number">1.15.2.</span> <span class="nav-text">15.2 本地查看汇编</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-3-%E9%85%8D%E5%90%88%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E5%B7%A5%E5%85%B7"><span class="nav-number">1.15.3.</span> <span class="nav-text">15.3 配合性能分析工具</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#16-%E9%AB%98%E9%A2%91%E8%AF%AF%E5%8C%BA"><span class="nav-number">1.16.</span> <span class="nav-text">16. 高频误区</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#16-1-inline-%E4%B8%8D%E6%98%AF%E5%BC%BA%E5%88%B6%E5%86%85%E8%81%94"><span class="nav-number">1.16.1.</span> <span class="nav-text">16.1 inline 不是强制内联</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16-2-volatile-%E4%B8%8D%E6%98%AF%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E5%B7%A5%E5%85%B7"><span class="nav-number">1.16.2.</span> <span class="nav-text">16.2 volatile 不是性能优化工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16-3-O3-%E4%B8%8D%E4%B8%80%E5%AE%9A%E6%80%BB%E6%AF%94-O2-%E5%BF%AB"><span class="nav-number">1.16.3.</span> <span class="nav-text">16.3 -O3 不一定总比 -O2 快</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16-4-%E6%89%8B%E5%86%99%E6%B1%87%E7%BC%96%E5%BC%8F%E4%BB%A3%E7%A0%81%E4%B8%8D%E4%B8%80%E5%AE%9A%E6%9B%B4%E5%BF%AB"><span class="nav-number">1.16.4.</span> <span class="nav-text">16.4 手写汇编式代码不一定更快</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#17-%E4%B8%80%E9%A1%B5%E6%80%BB%E7%BB%93"><span class="nav-number">1.17.</span> <span class="nav-text">17. 一页总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#18-%E5%BB%BA%E8%AE%AE%E7%BB%A7%E7%BB%AD%E8%A1%A5%E5%85%85%E7%9A%84%E7%9B%B8%E5%85%B3%E4%B8%BB%E9%A2%98"><span class="nav-number">1.18.</span> <span class="nav-text">18. 建议继续补充的相关主题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#19-%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.19.</span> <span class="nav-text">19. 参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="楚天"
+      src="/img/me.jpg">
+  <p class="site-author-name" itemprop="name">楚天</p>
+  <div class="site-description" itemprop="description">记录深度学习、C++、游戏网络与生活旅行的学习笔记。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ChutianDuan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ChutianDuan" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:3383006954@qq.com" title="E-Mail → mailto:3383006954@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/06-%E7%BC%96%E8%AF%91%E5%99%A8%E4%BC%98%E5%8C%96%E4%B8%8E%E6%B1%87%E7%BC%96%E8%A7%86%E8%A7%92/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="从汇编角度看编译器优化 | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          从汇编角度看编译器优化
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-04-09 10:25:27" itemprop="dateCreated datePublished" datetime="2026-04-09T10:25:27+08:00">2026-04-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/%E9%AB%98%E6%80%A7%E8%83%BDC-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">高性能C++并行编程</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="从汇编角度看编译器优化"><a href="#从汇编角度看编译器优化" class="headerlink" title="从汇编角度看编译器优化"></a>从汇编角度看编译器优化</h1><p>时间：2026&#x2F;04&#x2F;09</p>
+<blockquote>
+<p>关键词：<code>-O0/-O2/-O3</code>、内联、常量传播、循环优化、自动向量化、别名分析、未定义行为、反汇编<br>核心目标：理解“编译器为什么会把同一段 C++ 变成完全不同的机器代码”，以及哪些写法更利于优化。</p>
+</blockquote>
+<hr>
+<h2 id="1-为什么要从汇编角度看优化"><a href="#1-为什么要从汇编角度看优化" class="headerlink" title="1. 为什么要从汇编角度看优化"></a>1. 为什么要从汇编角度看优化</h2><p>高性能 C++ 里，很多性能差异并不是算法层面，而是来自：</p>
+<ul>
+<li>编译器有没有内联</li>
+<li>有没有消除无用分支</li>
+<li>有没有做向量化</li>
+<li>有没有把循环搬成更高效的机器指令</li>
+</ul>
+<p>如果只停留在源代码表面，就很容易误判：</p>
+<ul>
+<li>“写法 A 更短，所以一定更快”</li>
+<li>“手写展开一定比编译器强”</li>
+<li>“我明明只改了一点语法，为什么性能差了很多”</li>
+</ul>
+<p>看汇编的意义不是要手写汇编，而是为了：</p>
+<ul>
+<li>验证编译器到底做没做优化</li>
+<li>理解某种写法为什么更快</li>
+<li>避免用错误假设指导优化</li>
+</ul>
+<hr>
+<h2 id="2-编译器优化到底在做什么"><a href="#2-编译器优化到底在做什么" class="headerlink" title="2. 编译器优化到底在做什么"></a>2. 编译器优化到底在做什么</h2><p>可以把优化粗略理解成两类：</p>
+<h3 id="2-1-前端-中间层优化"><a href="#2-1-前端-中间层优化" class="headerlink" title="2.1 前端 &#x2F; 中间层优化"></a>2.1 前端 &#x2F; 中间层优化</h3><p>偏“语义层”的变换，例如：</p>
+<ul>
+<li>常量传播</li>
+<li>死代码消除</li>
+<li>公共子表达式消除</li>
+<li>循环不变量外提</li>
+<li>内联</li>
+<li>自动向量化</li>
+</ul>
+<h3 id="2-2-后端-指令层优化"><a href="#2-2-后端-指令层优化" class="headerlink" title="2.2 后端 &#x2F; 指令层优化"></a>2.2 后端 &#x2F; 指令层优化</h3><p>偏“机器码层”的变换，例如：</p>
+<ul>
+<li>指令选择</li>
+<li>寄存器分配</li>
+<li>指令调度</li>
+<li>分支布局</li>
+<li>调用约定处理</li>
+</ul>
+<p>所以“优化”不是一招，而是一整条流水线。</p>
+<hr>
+<h2 id="3-常见优化等级"><a href="#3-常见优化等级" class="headerlink" title="3. 常见优化等级"></a>3. 常见优化等级</h2><p>最常见的是：</p>
+<ul>
+<li><code>-O0</code>：几乎不优化，便于调试</li>
+<li><code>-O1</code></li>
+<li><code>-O2</code>：多数项目的主力发布选项</li>
+<li><code>-O3</code>：更激进，常包含更多循环和向量化优化</li>
+<li><code>-Ofast</code>：更激进，但可能放宽标准语义约束</li>
+</ul>
+<h3 id="3-1-一个关键认知"><a href="#3-1-一个关键认知" class="headerlink" title="3.1 一个关键认知"></a>3.1 一个关键认知</h3><p><code>Debug</code> 和 <code>Release</code> 的性能差异，很多时候不是代码逻辑差异，而是：</p>
+<ul>
+<li>编译器有没有替你把高层写法压成高效机器码</li>
+</ul>
+<p>所以性能分析时一定要先确认：</p>
+<ul>
+<li>是不是在 <code>Release</code></li>
+<li>是否真的开启了预期优化选项</li>
+</ul>
+<hr>
+<h2 id="4-看汇编时重点看什么"><a href="#4-看汇编时重点看什么" class="headerlink" title="4. 看汇编时重点看什么"></a>4. 看汇编时重点看什么</h2><p>不要一上来盯每条指令。<br>高性能视角下，更该看这些问题：</p>
+<h3 id="4-1-函数有没有被内联"><a href="#4-1-函数有没有被内联" class="headerlink" title="4.1 函数有没有被内联"></a>4.1 函数有没有被内联</h3><p>如果内联成功，调用边界消失，后续优化空间会更大。</p>
+<h3 id="4-2-循环里有没有多余加载-存储"><a href="#4-2-循环里有没有多余加载-存储" class="headerlink" title="4.2 循环里有没有多余加载 &#x2F; 存储"></a>4.2 循环里有没有多余加载 &#x2F; 存储</h3><p>比如一个值本来可以放寄存器里，却被反复回写内存。</p>
+<h3 id="4-3-有没有真正产生-SIMD-指令"><a href="#4-3-有没有真正产生-SIMD-指令" class="headerlink" title="4.3 有没有真正产生 SIMD 指令"></a>4.3 有没有真正产生 SIMD 指令</h3><p>例如：</p>
+<ul>
+<li><code>xmm/ymm/zmm</code></li>
+<li><code>addps/mulps</code></li>
+<li><code>vmovups/vfmadd...</code></li>
+</ul>
+<p>如果你以为代码被向量化了，但汇编里只有标量指令，那优化可能并没有发生。</p>
+<h3 id="4-4-分支多不多，是否容易预测"><a href="#4-4-分支多不多，是否容易预测" class="headerlink" title="4.4 分支多不多，是否容易预测"></a>4.4 分支多不多，是否容易预测</h3><p>高度不可预测的分支会影响流水线和吞吐。</p>
+<h3 id="4-5-是否有不必要的函数调用和栈操作"><a href="#4-5-是否有不必要的函数调用和栈操作" class="headerlink" title="4.5 是否有不必要的函数调用和栈操作"></a>4.5 是否有不必要的函数调用和栈操作</h3><p>热路径里频繁 <code>call</code> &#x2F; <code>ret</code>、大量栈搬运，通常意味着优化空间还大。</p>
+<hr>
+<h2 id="5-几种最常见的编译器优化"><a href="#5-几种最常见的编译器优化" class="headerlink" title="5. 几种最常见的编译器优化"></a>5. 几种最常见的编译器优化</h2><h3 id="5-1-常量传播与常量折叠"><a href="#5-1-常量传播与常量折叠" class="headerlink" title="5.1 常量传播与常量折叠"></a>5.1 常量传播与常量折叠</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">f</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">3</span> * <span class="number">7</span> + <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>优化后编译器通常直接返回常量结果，而不会真的乘法加法都执行一遍。</p>
+<h3 id="5-2-死代码消除"><a href="#5-2-死代码消除" class="headerlink" title="5.2 死代码消除"></a>5.2 死代码消除</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">f</span><span class="params">(<span class="type">int</span> x)</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> y = x * <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">return</span> x + <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果 <code>y</code> 从未被使用，它就会被删掉。</p>
+<h3 id="5-3-循环不变量外提"><a href="#5-3-循环不变量外提" class="headerlink" title="5.3 循环不变量外提"></a>5.3 循环不变量外提</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; ++i) &#123;</span><br><span class="line">    sum += a[i] * scale;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果 <code>scale</code> 在循环里不变，编译器会尽量避免重复计算。</p>
+<h3 id="5-4-内联"><a href="#5-4-内联" class="headerlink" title="5.4 内联"></a>5.4 内联</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">inline</span> <span class="type">int</span> <span class="title">add1</span><span class="params">(<span class="type">int</span> x)</span> </span>&#123; <span class="keyword">return</span> x + <span class="number">1</span>; &#125;</span><br></pre></td></tr></table></figure>
+
+<p>内联后，调用点可能直接展开为 <code>x + 1</code>。<br>不过要注意：</p>
+<ul>
+<li><code>inline</code> 只是建议，不是强制命令</li>
+<li>真正决定是否内联的，还是编译器</li>
+</ul>
+<h3 id="5-5-强度削弱（strength-reduction）"><a href="#5-5-强度削弱（strength-reduction）" class="headerlink" title="5.5 强度削弱（strength reduction）"></a>5.5 强度削弱（strength reduction）</h3><p>例如：</p>
+<ul>
+<li>乘法变移位</li>
+<li>某些复杂索引计算被简化</li>
+</ul>
+<h3 id="5-6-自动向量化"><a href="#5-6-自动向量化" class="headerlink" title="5.6 自动向量化"></a>5.6 自动向量化</h3><p>对于连续数组、无数据相关、无复杂分支的循环，编译器可能把标量循环变成 SIMD 指令批量处理。</p>
+<hr>
+<h2 id="6-一个最常见的误区：源代码“看起来简洁”不等于更快"><a href="#6-一个最常见的误区：源代码“看起来简洁”不等于更快" class="headerlink" title="6. 一个最常见的误区：源代码“看起来简洁”不等于更快"></a>6. 一个最常见的误区：源代码“看起来简洁”不等于更快</h2><p>例如这两种写法：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sum += a[i] * b[i];</span><br></pre></td></tr></table></figure>
+
+<p>和：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> x = a[i];</span><br><span class="line"><span class="keyword">auto</span> y = b[i];</span><br><span class="line">sum += x * y;</span><br></pre></td></tr></table></figure>
+
+<p>在优化级别足够高时，编译器可能生成几乎一样的机器码。</p>
+<p>所以高性能优化的基本纪律是：</p>
+<blockquote>
+<p>不凭感觉下结论，要么看汇编，要么做基准测试。</p>
+</blockquote>
+<hr>
+<h2 id="7-为什么编译器有时不敢优化"><a href="#7-为什么编译器有时不敢优化" class="headerlink" title="7. 为什么编译器有时不敢优化"></a>7. 为什么编译器有时不敢优化</h2><h3 id="7-1-别名分析不明确"><a href="#7-1-别名分析不明确" class="headerlink" title="7.1 别名分析不明确"></a>7.1 别名分析不明确</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">saxpy</span><span class="params">(<span class="type">float</span>* x, <span class="type">float</span>* y, <span class="type">float</span> a, <span class="type">size_t</span> n)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; n; ++i) &#123;</span><br><span class="line">        y[i] = a * x[i] + y[i];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果编译器不确定 <code>x</code> 和 <code>y</code> 是否重叠，它可能更保守。</p>
+<h3 id="7-2-函数调用边界太多"><a href="#7-2-函数调用边界太多" class="headerlink" title="7.2 函数调用边界太多"></a>7.2 函数调用边界太多</h3><p>尤其是：</p>
+<ul>
+<li>小函数没有内联</li>
+<li>虚函数调用</li>
+<li>间接调用</li>
+</ul>
+<p>都可能阻碍进一步优化。</p>
+<h3 id="7-3-分支过于复杂"><a href="#7-3-分支过于复杂" class="headerlink" title="7.3 分支过于复杂"></a>7.3 分支过于复杂</h3><p>循环体里复杂控制流会影响：</p>
+<ul>
+<li>向量化</li>
+<li>指令调度</li>
+<li>分支预测</li>
+</ul>
+<h3 id="7-4-访问模式不规则"><a href="#7-4-访问模式不规则" class="headerlink" title="7.4 访问模式不规则"></a>7.4 访问模式不规则</h3><p>例如链表遍历、随机跳表、指针追逐，很难像连续数组那样优化得漂亮。</p>
+<hr>
+<h2 id="8-自动向量化为什么有时失败"><a href="#8-自动向量化为什么有时失败" class="headerlink" title="8. 自动向量化为什么有时失败"></a>8. 自动向量化为什么有时失败</h2><p>向量化通常喜欢这种代码：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; n; ++i) &#123;</span><br><span class="line">    c[i] = a[i] + b[i];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为它具备：</p>
+<ul>
+<li>连续内存</li>
+<li>简单循环</li>
+<li>没有复杂依赖</li>
+<li>没有难以证明的别名问题</li>
+</ul>
+<p>而下面这些情况容易阻碍向量化：</p>
+<ul>
+<li>循环体里有函数调用</li>
+<li>分支复杂</li>
+<li>访问模式不连续</li>
+<li>编译器怀疑存在数据依赖</li>
+<li>对齐信息不明确</li>
+</ul>
+<p>所以写高性能代码时，经常要主动让循环“更像机器喜欢的样子”。</p>
+<hr>
+<h2 id="9-constexpr、const-与编译期优化"><a href="#9-constexpr、const-与编译期优化" class="headerlink" title="9. constexpr、const 与编译期优化"></a>9. <code>constexpr</code>、<code>const</code> 与编译期优化</h2><h3 id="9-1-const-不等于编译期常量"><a href="#9-1-const-不等于编译期常量" class="headerlink" title="9.1 const 不等于编译期常量"></a>9.1 <code>const</code> 不等于编译期常量</h3><p><code>const</code> 主要表达“值不可改”，但它不一定保证编译期求值。</p>
+<h3 id="9-2-constexpr-更明确"><a href="#9-2-constexpr-更明确" class="headerlink" title="9.2 constexpr 更明确"></a>9.2 <code>constexpr</code> 更明确</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">constexpr</span> <span class="type">int</span> <span class="title">square</span><span class="params">(<span class="type">int</span> x)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> x * x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果上下文允许，编译器可以在编译期直接求值。</p>
+<p>这对优化的意义是：</p>
+<ul>
+<li>更多常量传播机会</li>
+<li>更少运行期开销</li>
+<li>更强的静态约束</li>
+</ul>
+<hr>
+<h2 id="10-未定义行为为什么会影响优化"><a href="#10-未定义行为为什么会影响优化" class="headerlink" title="10. 未定义行为为什么会影响优化"></a>10. 未定义行为为什么会影响优化</h2><p>很多人以为 UB 只是“程序可能崩”，其实它还会直接改变优化结果。</p>
+<p>例如：</p>
+<h3 id="10-1-有符号整数溢出"><a href="#10-1-有符号整数溢出" class="headerlink" title="10.1 有符号整数溢出"></a>10.1 有符号整数溢出</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> x = ...;</span><br><span class="line"><span class="type">int</span> y = x + <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+<p>在标准语义里，有符号溢出是未定义行为。<br>这意味着编译器可以据此做非常激进的推理。</p>
+<h3 id="10-2-越界访问"><a href="#10-2-越界访问" class="headerlink" title="10.2 越界访问"></a>10.2 越界访问</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> a[<span class="number">4</span>];</span><br><span class="line"><span class="keyword">return</span> a[<span class="number">10</span>];</span><br></pre></td></tr></table></figure>
+
+<p>这不是“读到一个垃圾值”这么简单，而是整个程序行为都不再受标准保障。</p>
+<h3 id="10-3-空指针解引用"><a href="#10-3-空指针解引用" class="headerlink" title="10.3 空指针解引用"></a>10.3 空指针解引用</h3><p>一旦代码包含这类 UB，编译器的很多重排与删改都会变得“看起来很反直觉”。</p>
+<p>所以要记住：</p>
+<blockquote>
+<p>UB 不只是 bug，它还会让你对性能和代码路径的直觉失效。</p>
+</blockquote>
+<hr>
+<h2 id="11-size-t、符号位与索引"><a href="#11-size-t、符号位与索引" class="headerlink" title="11. size_t、符号位与索引"></a>11. <code>size_t</code>、符号位与索引</h2><p>数组和容器索引通常更适合用：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">size_t</span></span><br></pre></td></tr></table></figure>
+
+<p>原因包括：</p>
+<ul>
+<li>表达“非负大小&#x2F;索引”更自然</li>
+<li>与很多标准库接口匹配</li>
+</ul>
+<p>但也别机械套用：</p>
+<ul>
+<li>如果逻辑上需要表示 <code>-1</code> 这类哨兵，盲目用 <code>size_t</code> 反而会引入隐式转换坑</li>
+</ul>
+<p>更准确的原则是：</p>
+<ul>
+<li>让类型表达真实语义</li>
+<li>避免无意识的 signed&#x2F;unsigned 混算</li>
+</ul>
+<hr>
+<h2 id="12-内联、模板与零成本抽象"><a href="#12-内联、模板与零成本抽象" class="headerlink" title="12. 内联、模板与零成本抽象"></a>12. 内联、模板与零成本抽象</h2><p>现代 C++ 很多高性能抽象之所以能成立，靠的是：</p>
+<ul>
+<li>模板实例化</li>
+<li>静态分发</li>
+<li>内联</li>
+</ul>
+<p>例如一个模板函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">T</span>&gt;</span><br><span class="line"><span class="function">T <span class="title">add</span><span class="params">(T a, T b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> a + b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在优化后，往往不会留下“模板层”的运行时开销。<br>这就是所谓零成本抽象的核心基础之一。</p>
+<hr>
+<h2 id="13-为什么“看汇编”时要结合上下文"><a href="#13-为什么“看汇编”时要结合上下文" class="headerlink" title="13. 为什么“看汇编”时要结合上下文"></a>13. 为什么“看汇编”时要结合上下文</h2><p>只看一小段反汇编，很容易误判。<br>真正要结合这些条件：</p>
+<ul>
+<li>编译器版本</li>
+<li>编译选项</li>
+<li>目标架构</li>
+<li>是否开启 LTO</li>
+<li>是否开启异常 &#x2F; RTTI</li>
+<li>热点输入数据形态</li>
+</ul>
+<p>同一份 C++ 源码，在不同平台上生成的机器码可能差异很大。</p>
+<p>所以讨论优化时最好带上：</p>
+<ul>
+<li>编译器</li>
+<li>版本</li>
+<li><code>-O</code> 等级</li>
+<li>CPU 架构</li>
+</ul>
+<hr>
+<h2 id="14-实战里如何正确使用“汇编视角”"><a href="#14-实战里如何正确使用“汇编视角”" class="headerlink" title="14. 实战里如何正确使用“汇编视角”"></a>14. 实战里如何正确使用“汇编视角”</h2><h3 id="14-1-先确认算法和数据布局"><a href="#14-1-先确认算法和数据布局" class="headerlink" title="14.1 先确认算法和数据布局"></a>14.1 先确认算法和数据布局</h3><p>大头问题通常不在一条指令，而在：</p>
+<ul>
+<li>算法复杂度</li>
+<li>访存模式</li>
+<li>是否频繁分配</li>
+<li>是否有锁争用</li>
+</ul>
+<h3 id="14-2-再确认编译器有没有帮你做该做的事"><a href="#14-2-再确认编译器有没有帮你做该做的事" class="headerlink" title="14.2 再确认编译器有没有帮你做该做的事"></a>14.2 再确认编译器有没有帮你做该做的事</h3><p>例如：</p>
+<ul>
+<li>是否内联</li>
+<li>是否向量化</li>
+<li>是否消掉多余拷贝</li>
+</ul>
+<h3 id="14-3-最后才考虑手写微优化"><a href="#14-3-最后才考虑手写微优化" class="headerlink" title="14.3 最后才考虑手写微优化"></a>14.3 最后才考虑手写微优化</h3><p>很多手写“聪明写法”在现代编译器前未必更好，还可能降低可读性和可维护性。</p>
+<hr>
+<h2 id="15-常见工具"><a href="#15-常见工具" class="headerlink" title="15. 常见工具"></a>15. 常见工具</h2><h3 id="15-1-Compiler-Explorer"><a href="#15-1-Compiler-Explorer" class="headerlink" title="15.1 Compiler Explorer"></a>15.1 Compiler Explorer</h3><p>最适合快速看：</p>
+<ul>
+<li>同一段代码在不同编译器下的汇编</li>
+<li><code>-O0/-O2/-O3</code> 差异</li>
+<li>向量化与内联效果</li>
+</ul>
+<h3 id="15-2-本地查看汇编"><a href="#15-2-本地查看汇编" class="headerlink" title="15.2 本地查看汇编"></a>15.2 本地查看汇编</h3><p>常见方式：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">g++ -O3 -S main.cpp</span><br><span class="line">clang++ -O3 -S main.cpp</span><br><span class="line">objdump -d a.out</span><br></pre></td></tr></table></figure>
+
+<h3 id="15-3-配合性能分析工具"><a href="#15-3-配合性能分析工具" class="headerlink" title="15.3 配合性能分析工具"></a>15.3 配合性能分析工具</h3><p>只看汇编还不够，最好配合：</p>
+<ul>
+<li><code>perf</code></li>
+<li>Instruments</li>
+<li>VTune</li>
+<li>Nsight</li>
+</ul>
+<p>一起确认瓶颈在哪里。</p>
+<hr>
+<h2 id="16-高频误区"><a href="#16-高频误区" class="headerlink" title="16. 高频误区"></a>16. 高频误区</h2><h3 id="16-1-inline-不是强制内联"><a href="#16-1-inline-不是强制内联" class="headerlink" title="16.1 inline 不是强制内联"></a>16.1 <code>inline</code> 不是强制内联</h3><p>它更多还是语言层和 ODR 相关语义，真正是否内联由编译器决定。</p>
+<h3 id="16-2-volatile-不是性能优化工具"><a href="#16-2-volatile-不是性能优化工具" class="headerlink" title="16.2 volatile 不是性能优化工具"></a>16.2 <code>volatile</code> 不是性能优化工具</h3><p><code>volatile</code> 主要用于表达“这个对象可能被外部环境改变”，并不是线程同步手段，也不该拿来替代 <code>std::atomic</code>。</p>
+<h3 id="16-3-O3-不一定总比-O2-快"><a href="#16-3-O3-不一定总比-O2-快" class="headerlink" title="16.3 -O3 不一定总比 -O2 快"></a>16.3 <code>-O3</code> 不一定总比 <code>-O2</code> 快</h3><p>更激进优化可能：</p>
+<ul>
+<li>增加代码体积</li>
+<li>降低指令缓存命中</li>
+<li>引入其他副作用</li>
+</ul>
+<h3 id="16-4-手写汇编式代码不一定更快"><a href="#16-4-手写汇编式代码不一定更快" class="headerlink" title="16.4 手写汇编式代码不一定更快"></a>16.4 手写汇编式代码不一定更快</h3><p>现代编译器很强，很多“看起来更底层”的写法可能反而破坏优化空间。</p>
+<hr>
+<h2 id="17-一页总结"><a href="#17-一页总结" class="headerlink" title="17. 一页总结"></a>17. 一页总结</h2><p>从汇编角度看编译器优化，真正要建立的是这套思维：</p>
+<ol>
+<li>高层 C++ 写法最后都要落成机器码</li>
+<li>编译器会在语义允许范围内做大量重写</li>
+<li>能否优化好，取决于代码是否给了编译器足够清晰的信息</li>
+<li>别名、分支、访存模式、未定义行为都会显著影响优化结果</li>
+<li>优化结论应靠汇编和基准测试验证，而不是靠直觉</li>
+</ol>
+<hr>
+<h2 id="18-建议继续补充的相关主题"><a href="#18-建议继续补充的相关主题" class="headerlink" title="18. 建议继续补充的相关主题"></a>18. 建议继续补充的相关主题</h2><p>和本篇衔接最紧密的内容：</p>
+<ol>
+<li>自动向量化与 SIMD</li>
+<li>严格别名规则（strict aliasing）</li>
+<li><code>restrict</code> &#x2F; noalias 风格约束</li>
+<li>LTO &#x2F; PGO</li>
+<li>基准测试与性能分析方法论</li>
+</ol>
+<hr>
+<h2 id="19-参考资料"><a href="#19-参考资料" class="headerlink" title="19. 参考资料"></a>19. 参考资料</h2><ol>
+<li><p>Compiler Explorer<br><a target="_blank" rel="noopener" href="https://godbolt.org/">https://godbolt.org/</a></p>
+</li>
+<li><p>GCC Optimize Options<br><a target="_blank" rel="noopener" href="https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html">https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html</a></p>
+</li>
+<li><p>Clang Optimization Remarks<br><a target="_blank" rel="noopener" href="https://clang.llvm.org/docs/UsersManual.html">https://clang.llvm.org/docs/UsersManual.html</a></p>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>楚天
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/06-%E7%BC%96%E8%AF%91%E5%99%A8%E4%BC%98%E5%8C%96%E4%B8%8E%E6%B1%87%E7%BC%96%E8%A7%86%E8%A7%92/" title="从汇编角度看编译器优化">https://chutianduan.github.io/notes/高性能c-并行编程/06-编译器优化与汇编视角/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/02-raii%E4%B8%8E%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/" rel="prev" title="RAII 与智能指针笔记">
+                  <i class="fa fa-angle-left"></i> RAII 与智能指针笔记
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/07-%E8%AE%BF%E5%AD%98%E4%BC%98%E5%8C%96/" rel="next" title="深入浅出访存优化">
+                  深入浅出访存优化 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-code"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">楚天</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

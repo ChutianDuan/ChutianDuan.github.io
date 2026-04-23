@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chutianduan.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":2,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="LoRA 微调训练笔记1. 什么是 LoRALoRA（Low-Rank Adaptation）是一种参数高效微调方法。 它的核心思路不是更新整个基座模型，而是：  冻结原始预训练权重 只在部分线性层旁边插入可训练的低秩矩阵 训练时只更新这部分新增参数  对句子嵌入模型来说，LoRA 特别适合下面几类场景：  显存有限，无法稳定做全量微调 想快速做领域适配，例如法律、医疗、电商、代码检索 希望保留同">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LoRA 微调训练笔记">
+<meta property="og:url" content="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E5%8F%A5%E5%AD%90%E5%B5%8C%E5%85%A5%E6%A8%A1%E5%9E%8B/lora%E5%BE%AE%E8%B0%83%E8%AE%AD%E7%BB%83/index.html">
+<meta property="og:site_name" content="楚天">
+<meta property="og:description" content="LoRA 微调训练笔记1. 什么是 LoRALoRA（Low-Rank Adaptation）是一种参数高效微调方法。 它的核心思路不是更新整个基座模型，而是：  冻结原始预训练权重 只在部分线性层旁边插入可训练的低秩矩阵 训练时只更新这部分新增参数  对句子嵌入模型来说，LoRA 特别适合下面几类场景：  显存有限，无法稳定做全量微调 想快速做领域适配，例如法律、医疗、电商、代码检索 希望保留同">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-04-20T01:03:11.000Z">
+<meta property="article:modified_time" content="2026-04-20T01:03:11.000Z">
+<meta property="article:author" content="楚天">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="游戏网络">
+<meta property="article:tag" content="技术博客">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E5%8F%A5%E5%AD%90%E5%B5%8C%E5%85%A5%E6%A8%A1%E5%9E%8B/lora%E5%BE%AE%E8%B0%83%E8%AE%AD%E7%BB%83/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E5%8F%A5%E5%AD%90%E5%B5%8C%E5%85%A5%E6%A8%A1%E5%9E%8B/lora%E5%BE%AE%E8%B0%83%E8%AE%AD%E7%BB%83/","path":"/notes/ai模型开发/知识点学习/句子嵌入模型/lora微调训练/","title":"LoRA 微调训练笔记"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>LoRA 微调训练笔记 | 楚天</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">楚天</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">惟楚有材，于斯为盛</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-友情链接"><a href="/link/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#LoRA-%E5%BE%AE%E8%B0%83%E8%AE%AD%E7%BB%83%E7%AC%94%E8%AE%B0"><span class="nav-number">1.</span> <span class="nav-text">LoRA 微调训练笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E4%BB%80%E4%B9%88%E6%98%AF-LoRA"><span class="nav-number">1.1.</span> <span class="nav-text">1. 什么是 LoRA</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-LoRA-%E7%9A%84%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86"><span class="nav-number">1.2.</span> <span class="nav-text">2. LoRA 的算法原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-LoRA-%E5%9C%A8%E5%8F%A5%E5%AD%90%E5%B5%8C%E5%85%A5%E8%AE%AD%E7%BB%83%E4%B8%AD%E7%9A%84%E4%BD%8D%E7%BD%AE"><span class="nav-number">1.3.</span> <span class="nav-text">3. LoRA 在句子嵌入训练中的位置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E4%B8%80%E4%B8%AA%E9%80%82%E5%90%88-embedding-%E7%9A%84-LoRA-%E8%AE%AD%E7%BB%83%E6%B5%81%E7%A8%8B"><span class="nav-number">1.4.</span> <span class="nav-text">4. 一个适合 embedding 的 LoRA 训练流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-LoRA-%E8%AE%AD%E7%BB%83%E6%97%B6%E9%87%8D%E7%82%B9%E5%85%B3%E6%B3%A8%E5%93%AA%E4%BA%9B%E8%B6%85%E5%8F%82%E6%95%B0"><span class="nav-number">1.5.</span> <span class="nav-text">5. LoRA 训练时重点关注哪些超参数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-r%EF%BC%88rank%EF%BC%89"><span class="nav-number">1.5.1.</span> <span class="nav-text">5.1 r（rank）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-lora-alpha"><span class="nav-number">1.5.2.</span> <span class="nav-text">5.2 lora_alpha</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-lora-dropout"><span class="nav-number">1.5.3.</span> <span class="nav-text">5.3 lora_dropout</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-target-modules"><span class="nav-number">1.5.4.</span> <span class="nav-text">5.4 target_modules</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-5-learning-rate"><span class="nav-number">1.5.5.</span> <span class="nav-text">5.5 learning rate</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E4%B8%80%E4%B8%AA%E5%B8%B8%E8%A7%81%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F%EF%BC%9ASentence-Transformers-PEFT"><span class="nav-number">1.6.</span> <span class="nav-text">6. 一个常见实现方式：Sentence Transformers + PEFT</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-LoRA-%E5%B1%82%E5%88%B0%E5%BA%95%E5%81%9A%E4%BA%86%E4%BB%80%E4%B9%88"><span class="nav-number">1.7.</span> <span class="nav-text">7. LoRA 层到底做了什么</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-%E4%BF%9D%E7%95%99-adapter"><span class="nav-number">1.7.1.</span> <span class="nav-text">7.1 保留 adapter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-merge-%E5%9B%9E%E5%9F%BA%E5%BA%A7%E6%9D%83%E9%87%8D"><span class="nav-number">1.7.2.</span> <span class="nav-text">7.2 merge 回基座权重</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-LoRA-%E9%80%82%E5%90%88%E4%BB%80%E4%B9%88%EF%BC%8C%E4%B8%8D%E9%80%82%E5%90%88%E4%BB%80%E4%B9%88"><span class="nav-number">1.8.</span> <span class="nav-text">8. LoRA 适合什么，不适合什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-%E4%B8%80%E4%BB%BD%E5%8F%AF%E7%9B%B4%E6%8E%A5%E6%8A%84%E7%9A%84-LoRA-%E6%A3%80%E6%9F%A5%E6%B8%85%E5%8D%95"><span class="nav-number">1.9.</span> <span class="nav-text">9. 一份可直接抄的 LoRA 检查清单</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-%E8%AE%BA%E6%96%87%E3%80%81%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E4%B8%8E%E5%8D%9A%E5%AE%A2%E5%8F%82%E8%80%83"><span class="nav-number">1.10.</span> <span class="nav-text">10. 论文、官方文档与博客参考</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%80%BB%E7%BB%93"><span class="nav-number">1.11.</span> <span class="nav-text">11. 一句话总结</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="楚天"
+      src="/img/me.jpg">
+  <p class="site-author-name" itemprop="name">楚天</p>
+  <div class="site-description" itemprop="description">记录深度学习、C++、游戏网络与生活旅行的学习笔记。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ChutianDuan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ChutianDuan" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:3383006954@qq.com" title="E-Mail → mailto:3383006954@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E5%8F%A5%E5%AD%90%E5%B5%8C%E5%85%A5%E6%A8%A1%E5%9E%8B/lora%E5%BE%AE%E8%B0%83%E8%AE%AD%E7%BB%83/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="LoRA 微调训练笔记 | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          LoRA 微调训练笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-04-20 09:03:11" itemprop="dateCreated datePublished" datetime="2026-04-20T09:03:11+08:00">2026-04-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/AI%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">AI模型开发</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/AI%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">知识点学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/AI%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E5%8F%A5%E5%AD%90%E5%B5%8C%E5%85%A5%E6%A8%A1%E5%9E%8B/" itemprop="url" rel="index"><span itemprop="name">句子嵌入模型</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="LoRA-微调训练笔记"><a href="#LoRA-微调训练笔记" class="headerlink" title="LoRA 微调训练笔记"></a>LoRA 微调训练笔记</h1><h2 id="1-什么是-LoRA"><a href="#1-什么是-LoRA" class="headerlink" title="1. 什么是 LoRA"></a>1. 什么是 LoRA</h2><p>LoRA（Low-Rank Adaptation）是一种参数高效微调方法。</p>
+<p>它的核心思路不是更新整个基座模型，而是：</p>
+<ul>
+<li>冻结原始预训练权重</li>
+<li>只在部分线性层旁边插入可训练的低秩矩阵</li>
+<li>训练时只更新这部分新增参数</li>
+</ul>
+<p>对句子嵌入模型来说，LoRA 特别适合下面几类场景：</p>
+<ul>
+<li>显存有限，无法稳定做全量微调</li>
+<li>想快速做领域适配，例如法律、医疗、电商、代码检索</li>
+<li>希望保留同一个基座模型，同时维护多个领域 adapter</li>
+<li>想减少模型发布体积，只保存 adapter 权重</li>
+</ul>
+<p>可以先把 LoRA 看成一种轻量改造：不大动原来的基座模型，只额外训练一小部分增量参数。和全量微调相比，它更省显存，也更适合快速做领域适配。</p>
+<hr>
+<h2 id="2-LoRA-的算法原理"><a href="#2-LoRA-的算法原理" class="headerlink" title="2. LoRA 的算法原理"></a>2. LoRA 的算法原理</h2><p>假设原始线性层权重是 <code>W</code>，全量微调要学的是一个完整的权重更新量 <code>ΔW</code>：</p>
+<p><code>W&#39; = W + ΔW</code></p>
+<p>LoRA 认为这个更新量通常可以被一个低秩分解近似表示：</p>
+<p><code>ΔW ≈ sBA</code></p>
+<p>其中：</p>
+<ul>
+<li><code>A</code> 的形状通常可写作 <code>r x d_in</code></li>
+<li><code>B</code> 的形状通常可写作 <code>d_out x r</code></li>
+<li><code>r</code> 是秩，远小于 <code>d_in</code> 和 <code>d_out</code></li>
+<li><code>s</code> 是缩放因子，常见写法是 <code>alpha / r</code></li>
+</ul>
+<p>因此 LoRA 后的线性层可写成：</p>
+<p><code>W&#39; = W + sBA</code></p>
+<p>训练时：</p>
+<ul>
+<li><code>W</code> 冻结不动</li>
+<li>只训练 <code>A</code> 和 <code>B</code></li>
+</ul>
+<p>这样做的直接收益是：</p>
+<ul>
+<li>可训练参数从 <code>d_out x d_in</code> 降到 <code>r x (d_in + d_out)</code></li>
+<li>反向传播只覆盖 LoRA 参数，显存占用更低</li>
+<li>一个基座模型可以挂多个 adapter，便于多任务和多领域切换</li>
+</ul>
+<p>常见初始化方式还会让 <code>B</code> 初始为 0，这样刚插入 LoRA 时输出和原模型基本一致，训练过程就相当于逐步学出一个增量更新。</p>
+<hr>
+<h2 id="3-LoRA-在句子嵌入训练中的位置"><a href="#3-LoRA-在句子嵌入训练中的位置" class="headerlink" title="3. LoRA 在句子嵌入训练中的位置"></a>3. LoRA 在句子嵌入训练中的位置</h2><p>LoRA 只改变“哪些参数参与训练”，但不会改变 embedding 任务本身。</p>
+<p>通常不变的东西有：</p>
+<ul>
+<li>训练数据格式</li>
+<li>loss 设计</li>
+<li>pooling 方式</li>
+<li>向量归一化策略</li>
+<li>评估指标</li>
+</ul>
+<p>真正变化的是：</p>
+<ul>
+<li>原来训练全部 encoder 参数</li>
+<li>现在只训练插入到 attention 或线性层里的 LoRA 参数</li>
+</ul>
+<p>所以如果你原本是这样训练 embedding：</p>
+<ul>
+<li><code>query-positive</code> 对配合对比学习</li>
+<li><code>query-positive-negative</code> 三元组配合 triplet loss</li>
+<li>STS 打分数据配合回归 loss</li>
+</ul>
+<p>换成 LoRA 后，训练主流程通常不用重写，主要改的是参数更新范围。</p>
+<hr>
+<h2 id="4-一个适合-embedding-的-LoRA-训练流程"><a href="#4-一个适合-embedding-的-LoRA-训练流程" class="headerlink" title="4. 一个适合 embedding 的 LoRA 训练流程"></a>4. 一个适合 embedding 的 LoRA 训练流程</h2><p>检索类句子嵌入任务里，比较实用的一条路线通常是：</p>
+<ol>
+<li>选一个已有 embedding 基座，例如 BGE、E5、GTE、MiniLM、MPNet</li>
+<li>保持原有文本预处理、prompt 前缀、pooling 逻辑不变</li>
+<li>给编码器的部分线性层插入 LoRA</li>
+<li>用 <code>query-positive</code> 或 <code>query-positive-negative</code> 数据做对比学习</li>
+<li>优先使用 batch 内负样本，再配合 hard negative</li>
+<li>用 Recall@K、MRR、NDCG 做离线评估</li>
+<li>只保存 adapter，部署时加载到相同基座模型上</li>
+<li>如有需要再把 LoRA 权重 merge 回基座权重</li>
+</ol>
+<p>关键点要记住：</p>
+<ul>
+<li>LoRA 解决的是“训练成本”问题</li>
+<li>数据质量、难例挖掘、线上预处理一致性，依然决定最终效果</li>
+</ul>
+<hr>
+<h2 id="5-LoRA-训练时重点关注哪些超参数"><a href="#5-LoRA-训练时重点关注哪些超参数" class="headerlink" title="5. LoRA 训练时重点关注哪些超参数"></a>5. LoRA 训练时重点关注哪些超参数</h2><h3 id="5-1-r（rank）"><a href="#5-1-r（rank）" class="headerlink" title="5.1 r（rank）"></a>5.1 <code>r</code>（rank）</h3><ul>
+<li>决定低秩矩阵容量</li>
+<li>常见起点：<code>8 / 16 / 32 / 64</code></li>
+<li><code>r</code> 越大，表达能力越强，但参数量和显存也会上升</li>
+</ul>
+<h3 id="5-2-lora-alpha"><a href="#5-2-lora-alpha" class="headerlink" title="5.2 lora_alpha"></a>5.2 <code>lora_alpha</code></h3><ul>
+<li>决定 LoRA 更新量的缩放强度</li>
+<li>常见会设置成 <code>r</code> 的 2 倍或 4 倍</li>
+</ul>
+<h3 id="5-3-lora-dropout"><a href="#5-3-lora-dropout" class="headerlink" title="5.3 lora_dropout"></a>5.3 <code>lora_dropout</code></h3><ul>
+<li>常见取值：<code>0.0 ~ 0.1</code></li>
+<li>数据量较小或容易过拟合时，可以适当加一点</li>
+</ul>
+<h3 id="5-4-target-modules"><a href="#5-4-target-modules" class="headerlink" title="5.4 target_modules"></a>5.4 <code>target_modules</code></h3><ul>
+<li>BERT &#x2F; MiniLM 一类 encoder，常见目标层是 <code>query</code>、<code>value</code></li>
+<li>Llama &#x2F; Qwen 一类 Transformer，常见目标层是 <code>q_proj</code>、<code>v_proj</code></li>
+<li>如果不想按架构手写模块名，也可以考虑 <code>all-linear</code></li>
+</ul>
+<h3 id="5-5-learning-rate"><a href="#5-5-learning-rate" class="headerlink" title="5.5 learning rate"></a>5.5 learning rate</h3><ul>
+<li>LoRA 通常可以比全量微调用更大的学习率</li>
+<li>工程上常从 <code>1e-4</code> 或 <code>2e-4</code> 开始试，再根据验证集回调</li>
+</ul>
+<p>此外，embedding 任务原本重要的参数依旧重要：</p>
+<ul>
+<li>batch size</li>
+<li>max length</li>
+<li>hard negative 数量</li>
+<li>warmup ratio</li>
+<li>训练轮数</li>
+</ul>
+<hr>
+<h2 id="6-一个常见实现方式：Sentence-Transformers-PEFT"><a href="#6-一个常见实现方式：Sentence-Transformers-PEFT" class="headerlink" title="6. 一个常见实现方式：Sentence Transformers + PEFT"></a>6. 一个常见实现方式：Sentence Transformers + PEFT</h2><p>如果本来就在做句子嵌入，最直接的工程组合通常是：</p>
+<ul>
+<li><code>Sentence Transformers</code> 负责 embedding 训练流程</li>
+<li><code>PEFT</code> 负责 LoRA adapter 注入与保存</li>
+</ul>
+<p>一个常见写法如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> datasets <span class="keyword">import</span> load_dataset</span><br><span class="line"><span class="keyword">from</span> peft <span class="keyword">import</span> LoraConfig, TaskType</span><br><span class="line"><span class="keyword">from</span> sentence_transformers <span class="keyword">import</span> (</span><br><span class="line">    SentenceTransformer,</span><br><span class="line">    SentenceTransformerTrainer,</span><br><span class="line">    SentenceTransformerTrainingArguments,</span><br><span class="line">)</span><br><span class="line"><span class="keyword">from</span> sentence_transformers.losses <span class="keyword">import</span> MultipleNegativesRankingLoss</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1. 选择基座模型</span></span><br><span class="line">model = SentenceTransformer(<span class="string">&quot;BAAI/bge-small-zh-v1.5&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 配置 LoRA</span></span><br><span class="line">peft_config = LoraConfig(</span><br><span class="line">    task_type=TaskType.FEATURE_EXTRACTION,</span><br><span class="line">    inference_mode=<span class="literal">False</span>,</span><br><span class="line">    r=<span class="number">32</span>,</span><br><span class="line">    lora_alpha=<span class="number">64</span>,</span><br><span class="line">    lora_dropout=<span class="number">0.05</span>,</span><br><span class="line">    target_modules=[<span class="string">&quot;query&quot;</span>, <span class="string">&quot;value&quot;</span>],</span><br><span class="line">)</span><br><span class="line">model.add_adapter(peft_config)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 准备数据</span></span><br><span class="line">train_dataset = load_dataset(<span class="string">&quot;json&quot;</span>, data_files=<span class="string">&quot;train.jsonl&quot;</span>, split=<span class="string">&quot;train&quot;</span>)</span><br><span class="line">eval_dataset = load_dataset(<span class="string">&quot;json&quot;</span>, data_files=<span class="string">&quot;dev.jsonl&quot;</span>, split=<span class="string">&quot;train&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4. 定义 loss</span></span><br><span class="line">loss = MultipleNegativesRankingLoss(model)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5. 训练参数</span></span><br><span class="line">args = SentenceTransformerTrainingArguments(</span><br><span class="line">    output_dir=<span class="string">&quot;outputs/bge-small-zh-lora&quot;</span>,</span><br><span class="line">    num_train_epochs=<span class="number">1</span>,</span><br><span class="line">    per_device_train_batch_size=<span class="number">128</span>,</span><br><span class="line">    per_device_eval_batch_size=<span class="number">128</span>,</span><br><span class="line">    learning_rate=<span class="number">1e-4</span>,</span><br><span class="line">    warmup_ratio=<span class="number">0.1</span>,</span><br><span class="line">    fp16=<span class="literal">True</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 6. 启动训练</span></span><br><span class="line">trainer = SentenceTransformerTrainer(</span><br><span class="line">    model=model,</span><br><span class="line">    args=args,</span><br><span class="line">    train_dataset=train_dataset,</span><br><span class="line">    eval_dataset=eval_dataset,</span><br><span class="line">    loss=loss,</span><br><span class="line">)</span><br><span class="line">trainer.train()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 7. 保存 adapter</span></span><br><span class="line">model.save_pretrained(<span class="string">&quot;outputs/bge-small-zh-lora/final&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>如果你的数据是检索三元组，也可以把 loss 换成：</p>
+<ul>
+<li><code>TripletLoss</code></li>
+<li><code>CachedMultipleNegativesRankingLoss</code></li>
+<li><code>MultipleNegativesRankingLoss</code></li>
+</ul>
+<p>经验上：</p>
+<ul>
+<li>检索召回优先，通常先试 <code>MultipleNegativesRankingLoss</code></li>
+<li>batch 很大时，可优先考虑 <code>CachedMultipleNegativesRankingLoss</code></li>
+<li>有明确三元组时，可尝试 <code>TripletLoss</code></li>
+</ul>
+<hr>
+<h2 id="7-LoRA-层到底做了什么"><a href="#7-LoRA-层到底做了什么" class="headerlink" title="7. LoRA 层到底做了什么"></a>7. LoRA 层到底做了什么</h2><p>如果原来的线性层输出写成：</p>
+<p><code>y = Wx</code></p>
+<p>那么加上 LoRA 后，输出就变成：</p>
+<p><code>y = Wx + sBAx</code></p>
+<p>也就是说：</p>
+<ul>
+<li>主干路径还是原始的 <code>Wx</code></li>
+<li>LoRA 只是在旁边额外加了一条低秩增量路径</li>
+</ul>
+<p>训练完成后，通常有两种部署方式。</p>
+<h3 id="7-1-保留-adapter"><a href="#7-1-保留-adapter" class="headerlink" title="7.1 保留 adapter"></a>7.1 保留 adapter</h3><p>优点：</p>
+<ul>
+<li>体积小</li>
+<li>方便多领域切换</li>
+<li>基座模型只保留一份</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>部署时需要同时管理 base model 和 adapter</li>
+</ul>
+<h3 id="7-2-merge-回基座权重"><a href="#7-2-merge-回基座权重" class="headerlink" title="7.2 merge 回基座权重"></a>7.2 merge 回基座权重</h3><p>优点：</p>
+<ul>
+<li>部署形态更像普通模型</li>
+<li>推理链路更简单</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>不方便在同一个基座上频繁切换多个 adapter</li>
+</ul>
+<hr>
+<h2 id="8-LoRA-适合什么，不适合什么"><a href="#8-LoRA-适合什么，不适合什么" class="headerlink" title="8. LoRA 适合什么，不适合什么"></a>8. LoRA 适合什么，不适合什么</h2><p>LoRA 更适合：</p>
+<ul>
+<li>中小规模领域适配</li>
+<li>训练资源紧张</li>
+<li>想快速验证方向</li>
+<li>同一个基座服务多个垂类任务</li>
+</ul>
+<p>LoRA 不一定最优的情况：</p>
+<ul>
+<li>域迁移特别大，任务和原始预训练差异非常明显</li>
+<li>你追求极限指标，并且训练资源足够</li>
+<li>需要同时修改很多非线性模块或特殊组件</li>
+</ul>
+<p>这时更适合的思路可能是：</p>
+<ul>
+<li>全量微调</li>
+<li>LoRA + 更强数据构造</li>
+<li>LoRA 的变体，例如 DoRA、rsLoRA、QLoRA</li>
+</ul>
+<hr>
+<h2 id="9-一份可直接抄的-LoRA-检查清单"><a href="#9-一份可直接抄的-LoRA-检查清单" class="headerlink" title="9. 一份可直接抄的 LoRA 检查清单"></a>9. 一份可直接抄的 LoRA 检查清单</h2><ol>
+<li>基座模型是否适合你的语种和场景</li>
+<li>训练和推理的文本预处理是否完全一致</li>
+<li>pooling 方式是否与原模型保持一致</li>
+<li><code>target_modules</code> 是否匹配当前模型架构</li>
+<li>loss 是否与任务目标一致</li>
+<li>是否准备了足够强的 hard negative</li>
+<li>是否有稳定的验证集和 badcase 集</li>
+<li>保存的是 adapter，还是 merge 后模型</li>
+<li>部署时是否保证 base model 版本完全一致</li>
+<li>线上是否监控向量分布、召回率和 badcase</li>
+</ol>
+<hr>
+<h2 id="10-论文、官方文档与博客参考"><a href="#10-论文、官方文档与博客参考" class="headerlink" title="10. 论文、官方文档与博客参考"></a>10. 论文、官方文档与博客参考</h2><p>论文与官方资料：</p>
+<ul>
+<li>LoRA 原始论文：<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2106.09685">https://arxiv.org/abs/2106.09685</a></li>
+<li>Hugging Face PEFT LoRA 文档：<a target="_blank" rel="noopener" href="https://huggingface.co/docs/peft/en/package_reference/lora">https://huggingface.co/docs/peft/en/package_reference/lora</a></li>
+<li>Hugging Face PEFT LoRA 使用指南：<a target="_blank" rel="noopener" href="https://huggingface.co/docs/peft/en/developer_guides/lora">https://huggingface.co/docs/peft/en/developer_guides/lora</a></li>
+<li>Sentence Transformers PEFT &#x2F; LoRA 文档：<a target="_blank" rel="noopener" href="https://www.sbert.net/examples/sentence_transformer/training/peft/README.html">https://www.sbert.net/examples/sentence_transformer/training/peft/README.html</a></li>
+<li>Sentence Transformers 官方 LoRA 训练脚本：<a target="_blank" rel="noopener" href="https://github.com/huggingface/sentence-transformers/blob/main/examples/sentence_transformer/training/peft/training_gooaq_lora.py">https://github.com/huggingface/sentence-transformers/blob/main/examples/sentence_transformer/training/peft/training_gooaq_lora.py</a></li>
+</ul>
+<p>博客参考：</p>
+<ul>
+<li>Hugging Face: Parameter-Efficient Fine-Tuning using PEFT<br><a target="_blank" rel="noopener" href="https://huggingface.co/blog/peft">https://huggingface.co/blog/peft</a></li>
+<li>Hugging Face: 用 Sentence Transformers v3 训练和微调嵌入模型<br><a target="_blank" rel="noopener" href="https://huggingface.co/blog/zh/train-sentence-transformers">https://huggingface.co/blog/zh/train-sentence-transformers</a></li>
+<li>Sebastian Raschka: Improving LoRA - Implementing Weight-Decomposed Low-Rank Adaptation (DoRA) from Scratch<br><a target="_blank" rel="noopener" href="https://magazine.sebastianraschka.com/p/lora-and-dora-from-scratch">https://magazine.sebastianraschka.com/p/lora-and-dora-from-scratch</a></li>
+</ul>
+<hr>
+<h2 id="11-一句话总结"><a href="#11-一句话总结" class="headerlink" title="11. 一句话总结"></a>11. 一句话总结</h2><p>LoRA 用在句子嵌入模型上，归根到底做的是：</p>
+<blockquote>
+<p>保留原来的 embedding 训练目标，只把全量参数更新改成低秩增量更新。</p>
+</blockquote>
+<p>重点依然是数据质量、难例构造和线上一致性。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>楚天
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E5%8F%A5%E5%AD%90%E5%B5%8C%E5%85%A5%E6%A8%A1%E5%9E%8B/lora%E5%BE%AE%E8%B0%83%E8%AE%AD%E7%BB%83/" title="LoRA 微调训练笔记">https://chutianduan.github.io/notes/ai模型开发/知识点学习/句子嵌入模型/lora微调训练/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E5%8F%A5%E5%AD%90%E5%B5%8C%E5%85%A5%E6%A8%A1%E5%9E%8B/%E5%8F%A5%E5%AD%90%E5%B5%8C%E5%85%A5%E6%A8%A1%E5%9E%8B/" rel="prev" title="句子嵌入模型开发与部署全流程">
+                  <i class="fa fa-angle-left"></i> 句子嵌入模型开发与部署全流程
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E5%8F%A5%E5%AD%90%E5%B5%8C%E5%85%A5%E6%A8%A1%E5%9E%8B/chunk%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="next" title="Chunk 学习笔记">
+                  Chunk 学习笔记 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-code"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">楚天</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

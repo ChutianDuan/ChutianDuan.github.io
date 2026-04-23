@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chutianduan.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":2,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Fighting Netcode 项目知识笔记1. 这个项目是什么Fighting 是一个用 C++ 写的联机动作游戏同步 Demo。 项目地址： &#x2F;Users&#x2F;chutian&#x2F;Desktop&#x2F;Fighting 它不是 AI 模型训练项目，而是一个很适合学习“实时系统工程”的项目。它实现的是：  固定帧推进 UDP 通信 服务端权威状态 客户端本地预测 输入冗余 回滚重放 状态快照 状态哈希对账">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Fighting Netcode 项目知识笔记">
+<meta property="og:url" content="https://chutianduan.github.io/notes/%E9%A1%B9%E7%9B%AE%E5%88%86%E6%9E%90/fighting-netcode-%E9%A1%B9%E7%9B%AE%E7%9F%A5%E8%AF%86%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="楚天">
+<meta property="og:description" content="Fighting Netcode 项目知识笔记1. 这个项目是什么Fighting 是一个用 C++ 写的联机动作游戏同步 Demo。 项目地址： &#x2F;Users&#x2F;chutian&#x2F;Desktop&#x2F;Fighting 它不是 AI 模型训练项目，而是一个很适合学习“实时系统工程”的项目。它实现的是：  固定帧推进 UDP 通信 服务端权威状态 客户端本地预测 输入冗余 回滚重放 状态快照 状态哈希对账">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-04-21T02:53:40.000Z">
+<meta property="article:modified_time" content="2026-04-21T02:53:40.000Z">
+<meta property="article:author" content="楚天">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="游戏网络">
+<meta property="article:tag" content="技术博客">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://chutianduan.github.io/notes/%E9%A1%B9%E7%9B%AE%E5%88%86%E6%9E%90/fighting-netcode-%E9%A1%B9%E7%9B%AE%E7%9F%A5%E8%AF%86%E7%AC%94%E8%AE%B0/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://chutianduan.github.io/notes/%E9%A1%B9%E7%9B%AE%E5%88%86%E6%9E%90/fighting-netcode-%E9%A1%B9%E7%9B%AE%E7%9F%A5%E8%AF%86%E7%AC%94%E8%AE%B0/","path":"/notes/项目分析/fighting-netcode-项目知识笔记/","title":"Fighting Netcode 项目知识笔记"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Fighting Netcode 项目知识笔记 | 楚天</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">楚天</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">惟楚有材，于斯为盛</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-友情链接"><a href="/link/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Fighting-Netcode-%E9%A1%B9%E7%9B%AE%E7%9F%A5%E8%AF%86%E7%AC%94%E8%AE%B0"><span class="nav-number">1.</span> <span class="nav-text">Fighting Netcode 项目知识笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E8%BF%99%E4%B8%AA%E9%A1%B9%E7%9B%AE%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.1.</span> <span class="nav-text">1. 这个项目是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E9%A1%B9%E7%9B%AE%E6%95%B4%E4%BD%93%E7%9B%AE%E6%A0%87"><span class="nav-number">1.2.</span> <span class="nav-text">2. 项目整体目标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E9%A1%B9%E7%9B%AE%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84"><span class="nav-number">1.3.</span> <span class="nav-text">3. 项目目录结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%BF%AB%E9%80%9F%E8%BF%90%E8%A1%8C%E6%96%B9%E5%BC%8F"><span class="nav-number">1.4.</span> <span class="nav-text">4. 快速运行方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5%E6%80%BB%E8%A7%88"><span class="nav-number">1.5.</span> <span class="nav-text">5. 核心概念总览</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-Tick"><span class="nav-number">1.5.1.</span> <span class="nav-text">5.1 Tick</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-InputCmd"><span class="nav-number">1.5.2.</span> <span class="nav-text">5.2 InputCmd</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-WorldSnapshot"><span class="nav-number">1.5.3.</span> <span class="nav-text">5.3 WorldSnapshot</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-World-Step"><span class="nav-number">1.5.4.</span> <span class="nav-text">5.4 World::Step</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-5-InputBuffer"><span class="nav-number">1.5.5.</span> <span class="nav-text">5.5 InputBuffer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-6-StateHistory"><span class="nav-number">1.5.6.</span> <span class="nav-text">5.6 StateHistory</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-7-State-Hash"><span class="nav-number">1.5.7.</span> <span class="nav-text">5.7 State Hash</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-8-Rollback-Replay"><span class="nav-number">1.5.8.</span> <span class="nav-text">5.8 Rollback Replay</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B5%81%E7%A8%8B"><span class="nav-number">1.6.</span> <span class="nav-text">6. 服务端流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-%E7%8E%A9%E5%AE%B6%E5%88%86%E9%85%8D"><span class="nav-number">1.6.1.</span> <span class="nav-text">6.1 玩家分配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-%E5%BC%80%E5%B1%80%E5%90%8C%E6%AD%A5"><span class="nav-number">1.6.2.</span> <span class="nav-text">6.2 开局同步</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-%E7%BC%BA%E8%BE%93%E5%85%A5%E5%A4%84%E7%90%86"><span class="nav-number">1.6.3.</span> <span class="nav-text">6.3 缺输入处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-4-%E6%9D%83%E5%A8%81%E6%8E%A8%E8%BF%9B"><span class="nav-number">1.6.4.</span> <span class="nav-text">6.4 权威推进</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-5-%E7%8A%B6%E6%80%81%E4%B8%8B%E5%8F%91"><span class="nav-number">1.6.5.</span> <span class="nav-text">6.5 状态下发</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%B5%81%E7%A8%8B"><span class="nav-number">1.7.</span> <span class="nav-text">7. 客户端流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-%E6%9C%AC%E5%9C%B0%E9%A2%84%E6%B5%8B"><span class="nav-number">1.7.1.</span> <span class="nav-text">7.1 本地预测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-%E8%BE%93%E5%85%A5%E5%86%97%E4%BD%99%E5%8F%91%E9%80%81"><span class="nav-number">1.7.2.</span> <span class="nav-text">7.2 输入冗余发送</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-3-%E6%9D%83%E5%A8%81%E7%8A%B6%E6%80%81%E5%BA%94%E7%94%A8"><span class="nav-number">1.7.3.</span> <span class="nav-text">7.3 权威状态应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-4-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8D%B3%E4%BD%BF%E6%B2%A1%E6%9C%89%E8%AE%A1%E5%85%A5-rollback-%E4%B9%9F%E8%A6%81-rebase"><span class="nav-number">1.7.4.</span> <span class="nav-text">7.4 为什么即使没有计入 rollback 也要 rebase</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE%E8%AE%BE%E8%AE%A1"><span class="nav-number">1.8.</span> <span class="nav-text">8. 网络协议设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-%E4%BA%8C%E8%BF%9B%E5%88%B6%E7%BC%96%E8%A7%A3%E7%A0%81"><span class="nav-number">1.8.1.</span> <span class="nav-text">8.1 二进制编解码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E6%9C%89-magic-%E5%92%8C-version"><span class="nav-number">1.8.2.</span> <span class="nav-text">8.2 为什么要有 magic 和 version</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-Input-%E5%8C%85%E4%B8%BA%E4%BB%80%E4%B9%88%E5%B8%A6%E5%86%97%E4%BD%99"><span class="nav-number">1.8.3.</span> <span class="nav-text">8.3 Input 包为什么带冗余</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-%E4%B8%96%E7%95%8C%E6%A8%A1%E6%8B%9F%E9%80%BB%E8%BE%91"><span class="nav-number">1.9.</span> <span class="nav-text">9. 世界模拟逻辑</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#9-1-%E8%BF%B7%E5%AE%AB%E7%94%9F%E6%88%90"><span class="nav-number">1.9.1.</span> <span class="nav-text">9.1 迷宫生成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-2-%E7%8E%A9%E5%AE%B6%E7%A7%BB%E5%8A%A8"><span class="nav-number">1.9.2.</span> <span class="nav-text">9.2 玩家移动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-3-%E5%AD%90%E5%BC%B9%E7%8A%B6%E6%80%81"><span class="nav-number">1.9.3.</span> <span class="nav-text">9.3 子弹状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-4-aimX-aimY-%E7%9A%84%E6%84%8F%E4%B9%89"><span class="nav-number">1.9.4.</span> <span class="nav-text">9.4 aimX &#x2F; aimY 的意义</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-%E5%9B%BA%E5%AE%9A%E5%B8%A7%E6%8E%A8%E8%BF%9B"><span class="nav-number">1.10.</span> <span class="nav-text">10. 固定帧推进</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-%E5%9B%9E%E6%BB%9A%E5%90%8C%E6%AD%A5%E5%AE%8C%E6%95%B4%E9%93%BE%E8%B7%AF"><span class="nav-number">1.11.</span> <span class="nav-text">11. 回滚同步完整链路</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#11-1-%E6%AD%A3%E5%B8%B8%E9%A2%84%E6%B5%8B%E9%98%B6%E6%AE%B5"><span class="nav-number">1.11.1.</span> <span class="nav-text">11.1 正常预测阶段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-2-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%9D%83%E5%A8%81%E9%98%B6%E6%AE%B5"><span class="nav-number">1.11.2.</span> <span class="nav-text">11.2 服务端权威阶段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-3-%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%A0%A1%E6%AD%A3%E9%98%B6%E6%AE%B5"><span class="nav-number">1.11.3.</span> <span class="nav-text">11.3 客户端校正阶段</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-%E6%B5%8B%E8%AF%95%E8%AE%BE%E8%AE%A1"><span class="nav-number">1.12.</span> <span class="nav-text">12. 测试设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#12-1-core-tests"><span class="nav-number">1.12.1.</span> <span class="nav-text">12.1 core_tests</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-2-stress-tests"><span class="nav-number">1.12.2.</span> <span class="nav-text">12.2 stress_tests</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-%E8%BF%99%E4%B8%AA%E9%A1%B9%E7%9B%AE%E5%80%BC%E5%BE%97%E5%AD%A6%E4%B9%A0%E7%9A%84%E9%87%8D%E7%82%B9%E7%9F%A5%E8%AF%86%E7%82%B9"><span class="nav-number">1.13.</span> <span class="nav-text">13. 这个项目值得学习的重点知识点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#13-1-%E5%88%86%E5%B1%82%E8%AE%BE%E8%AE%A1"><span class="nav-number">1.13.1.</span> <span class="nav-text">13.1 分层设计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-2-%E7%8A%B6%E6%80%81%E5%BF%AB%E7%85%A7"><span class="nav-number">1.13.2.</span> <span class="nav-text">13.2 状态快照</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-3-%E8%BE%93%E5%85%A5%E6%97%A5%E5%BF%97"><span class="nav-number">1.13.3.</span> <span class="nav-text">13.3 输入日志</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-4-%E7%A1%AE%E5%AE%9A%E6%80%A7%E6%8E%A8%E8%BF%9B"><span class="nav-number">1.13.4.</span> <span class="nav-text">13.4 确定性推进</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-5-%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE%E7%89%88%E6%9C%AC%E5%8C%96"><span class="nav-number">1.13.5.</span> <span class="nav-text">13.5 网络协议版本化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-6-%E5%86%97%E4%BD%99%E5%92%8C%E5%B9%82%E7%AD%89"><span class="nav-number">1.13.6.</span> <span class="nav-text">13.6 冗余和幂等</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-7-Hash-%E5%AF%B9%E8%B4%A6"><span class="nav-number">1.13.7.</span> <span class="nav-text">13.7 Hash 对账</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-8-%E5%8E%8B%E5%8A%9B%E6%B5%8B%E8%AF%95"><span class="nav-number">1.13.8.</span> <span class="nav-text">13.8 压力测试</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-%E5%92%8C-AI-%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91%E7%9A%84%E5%85%B3%E8%81%94"><span class="nav-number">1.14.</span> <span class="nav-text">14. 和 AI 模型开发的关联</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#14-1-%E5%92%8C%E6%8E%A8%E7%90%86%E6%9C%8D%E5%8A%A1%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">1.14.1.</span> <span class="nav-text">14.1 和推理服务的关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14-2-%E5%92%8C-Agent-%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">1.14.2.</span> <span class="nav-text">14.2 和 Agent 系统的关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14-3-%E5%92%8C-RAG-%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">1.14.3.</span> <span class="nav-text">14.3 和 RAG 系统的关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14-4-%E5%92%8C%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%AD%E7%BB%83%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">1.14.4.</span> <span class="nav-text">14.4 和分布式训练的关系</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#15-%E5%A6%82%E6%9E%9C%E7%BB%A7%E7%BB%AD%E5%AE%8C%E5%96%84%E8%BF%99%E4%B8%AA%E9%A1%B9%E7%9B%AE"><span class="nav-number">1.15.</span> <span class="nav-text">15. 如果继续完善这个项目</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#15-1-%E7%BD%91%E7%BB%9C%E5%B1%82%E5%A2%9E%E5%BC%BA"><span class="nav-number">1.15.1.</span> <span class="nav-text">15.1 网络层增强</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-2-%E5%8D%8F%E8%AE%AE%E5%B1%82%E5%A2%9E%E5%BC%BA"><span class="nav-number">1.15.2.</span> <span class="nav-text">15.2 协议层增强</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-3-%E5%9B%9E%E6%BB%9A%E4%BD%93%E9%AA%8C%E5%A2%9E%E5%BC%BA"><span class="nav-number">1.15.3.</span> <span class="nav-text">15.3 回滚体验增强</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-4-%E6%B5%8B%E8%AF%95%E5%A2%9E%E5%BC%BA"><span class="nav-number">1.15.4.</span> <span class="nav-text">15.4 测试增强</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-5-%E5%B7%A5%E7%A8%8B%E7%BB%93%E6%9E%84%E5%A2%9E%E5%BC%BA"><span class="nav-number">1.15.5.</span> <span class="nav-text">15.5 工程结构增强</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#16-%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.16.</span> <span class="nav-text">16. 学习路线建议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#16-1-%E7%AC%AC%E4%B8%80%E9%81%8D%EF%BC%9A%E5%85%88%E7%9C%8B%E6%95%B4%E4%BD%93"><span class="nav-number">1.16.1.</span> <span class="nav-text">16.1 第一遍：先看整体</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16-2-%E7%AC%AC%E4%BA%8C%E9%81%8D%EF%BC%9A%E7%9C%8B%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.16.2.</span> <span class="nav-text">16.2 第二遍：看数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16-3-%E7%AC%AC%E4%B8%89%E9%81%8D%EF%BC%9A%E7%9C%8B%E6%A0%B8%E5%BF%83%E6%A8%A1%E6%8B%9F"><span class="nav-number">1.16.3.</span> <span class="nav-text">16.3 第三遍：看核心模拟</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16-4-%E7%AC%AC%E5%9B%9B%E9%81%8D%EF%BC%9A%E7%9C%8B%E6%9C%8D%E5%8A%A1%E7%AB%AF"><span class="nav-number">1.16.4.</span> <span class="nav-text">16.4 第四遍：看服务端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16-5-%E7%AC%AC%E4%BA%94%E9%81%8D%EF%BC%9A%E7%9C%8B%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-number">1.16.5.</span> <span class="nav-text">16.5 第五遍：看客户端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16-6-%E7%AC%AC%E5%85%AD%E9%81%8D%EF%BC%9A%E7%9C%8B%E6%B5%8B%E8%AF%95"><span class="nav-number">1.16.6.</span> <span class="nav-text">16.6 第六遍：看测试</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#17-%E9%87%8D%E7%82%B9%E4%BB%A3%E7%A0%81%E9%98%85%E8%AF%BB%E6%B8%85%E5%8D%95"><span class="nav-number">1.17.</span> <span class="nav-text">17. 重点代码阅读清单</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#18-%E5%B8%B8%E8%A7%81%E6%98%93%E9%94%99%E7%82%B9"><span class="nav-number">1.18.</span> <span class="nav-text">18. 常见易错点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#18-1-%E6%96%B0%E5%A2%9E%E5%AD%97%E6%AE%B5%E5%8F%AA%E6%94%B9%E4%BA%86-World%EF%BC%8C%E6%B2%A1%E6%9C%89%E6%94%B9-Snapshot"><span class="nav-number">1.18.1.</span> <span class="nav-text">18.1 新增字段只改了 World，没有改 Snapshot</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#18-2-%E6%96%B0%E5%A2%9E%E5%AD%97%E6%AE%B5%E5%8F%AA%E6%94%B9%E4%BA%86-Snapshot%EF%BC%8C%E6%B2%A1%E6%9C%89%E6%94%B9%E7%BD%91%E7%BB%9C%E5%8C%85"><span class="nav-number">1.18.2.</span> <span class="nav-text">18.2 新增字段只改了 Snapshot，没有改网络包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#18-3-%E6%96%B0%E5%A2%9E%E5%AD%97%E6%AE%B5%E6%B2%A1%E6%9C%89%E8%BF%9B%E5%85%A5-hash"><span class="nav-number">1.18.3.</span> <span class="nav-text">18.3 新增字段没有进入 hash</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#18-4-%E7%9B%B4%E6%8E%A5-hash-float-%E5%86%85%E5%AD%98"><span class="nav-number">1.18.4.</span> <span class="nav-text">18.4 直接 hash float 内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#18-5-%E7%8E%AF%E5%BD%A2%E7%BC%93%E5%86%B2%E8%AF%BB%E5%8F%96%E6%97%B6%E4%B8%8D%E6%A0%A1%E9%AA%8C-tick"><span class="nav-number">1.18.5.</span> <span class="nav-text">18.5 环形缓冲读取时不校验 tick</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#18-6-%E6%8A%8A%E8%BF%9C%E7%AB%AF%E9%A2%84%E6%B5%8B%E8%AF%AF%E5%B7%AE%E4%B9%9F%E7%AE%97%E4%BD%9C-rollback-%E6%9D%A1%E4%BB%B6"><span class="nav-number">1.18.6.</span> <span class="nav-text">18.6 把远端预测误差也算作 rollback 条件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#19-%E5%8F%AF%E4%BB%A5%E5%86%99%E6%88%90%E5%8D%9A%E5%AE%A2%E7%9A%84%E7%89%88%E6%9C%AC"><span class="nav-number">1.19.</span> <span class="nav-text">19. 可以写成博客的版本</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%87%E9%A2%98"><span class="nav-number">1.19.1.</span> <span class="nav-text">标题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%A4%B4"><span class="nav-number">1.19.2.</span> <span class="nav-text">开头</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E5%9B%BA%E5%AE%9A%E5%B8%A7"><span class="nav-number">1.19.3.</span> <span class="nav-text">第一部分：为什么需要固定帧</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86%EF%BC%9A%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E9%A2%84%E6%B5%8B"><span class="nav-number">1.19.4.</span> <span class="nav-text">第二部分：客户端为什么要预测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E9%83%A8%E5%88%86%EF%BC%9A%E5%9B%9E%E6%BB%9A%E7%9A%84%E6%9C%AC%E8%B4%A8"><span class="nav-number">1.19.5.</span> <span class="nav-text">第三部分：回滚的本质</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E5%9B%9B%E9%83%A8%E5%88%86%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88-hash-%E5%BE%88%E9%87%8D%E8%A6%81"><span class="nav-number">1.19.6.</span> <span class="nav-text">第四部分：为什么 hash 很重要</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%BA%94%E9%83%A8%E5%88%86%EF%BC%9A%E8%BF%99%E4%B8%AA%E9%A1%B9%E7%9B%AE%E5%AF%B9-AI-%E5%B7%A5%E7%A8%8B%E7%9A%84%E5%90%AF%E5%8F%91"><span class="nav-number">1.19.7.</span> <span class="nav-text">第五部分：这个项目对 AI 工程的启发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E5%B0%BE"><span class="nav-number">1.19.8.</span> <span class="nav-text">结尾</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#20-%E5%8F%AF%E6%89%A9%E5%B1%95%E5%8D%9A%E5%AE%A2%E9%80%89%E9%A2%98"><span class="nav-number">1.20.</span> <span class="nav-text">20. 可扩展博客选题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#20-1-%E9%80%89%E9%A2%98%E4%B8%80%EF%BC%9ARollback-Netcode-%E5%85%A5%E9%97%A8"><span class="nav-number">1.20.1.</span> <span class="nav-text">20.1 选题一：Rollback Netcode 入门</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#20-2-%E9%80%89%E9%A2%98%E4%BA%8C%EF%BC%9A%E7%94%A8-C-%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E7%A1%AE%E5%AE%9A%E6%80%A7%E6%A8%A1%E6%8B%9F%E6%A0%B8%E5%BF%83"><span class="nav-number">1.20.2.</span> <span class="nav-text">20.2 选题二：用 C++ 实现一个确定性模拟核心</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#20-3-%E9%80%89%E9%A2%98%E4%B8%89%EF%BC%9AUDP-%E5%8D%8F%E8%AE%AE%E5%A6%82%E4%BD%95%E5%AF%B9%E6%8A%97%E4%B8%A2%E5%8C%85"><span class="nav-number">1.20.3.</span> <span class="nav-text">20.3 选题三：UDP 协议如何对抗丢包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#20-4-%E9%80%89%E9%A2%98%E5%9B%9B%EF%BC%9A%E7%8A%B6%E6%80%81-hash-%E5%A6%82%E4%BD%95%E5%AE%9A%E4%BD%8D%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%E5%88%86%E5%8F%89"><span class="nav-number">1.20.4.</span> <span class="nav-text">20.4 选题四：状态 hash 如何定位分布式系统分叉</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#20-5-%E9%80%89%E9%A2%98%E4%BA%94%EF%BC%9A%E4%BB%8E%E6%B8%B8%E6%88%8F%E5%90%8C%E6%AD%A5%E7%9C%8B-AI-Agent-%E7%8A%B6%E6%80%81%E6%81%A2%E5%A4%8D"><span class="nav-number">1.20.5.</span> <span class="nav-text">20.5 选题五：从游戏同步看 AI Agent 状态恢复</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#21-%E6%80%BB%E7%BB%93"><span class="nav-number">1.21.</span> <span class="nav-text">21. 总结</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="楚天"
+      src="/img/me.jpg">
+  <p class="site-author-name" itemprop="name">楚天</p>
+  <div class="site-description" itemprop="description">记录深度学习、C++、游戏网络与生活旅行的学习笔记。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ChutianDuan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ChutianDuan" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:3383006954@qq.com" title="E-Mail → mailto:3383006954@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/%E9%A1%B9%E7%9B%AE%E5%88%86%E6%9E%90/fighting-netcode-%E9%A1%B9%E7%9B%AE%E7%9F%A5%E8%AF%86%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Fighting Netcode 项目知识笔记 | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Fighting Netcode 项目知识笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-04-21 10:53:40" itemprop="dateCreated datePublished" datetime="2026-04-21T10:53:40+08:00">2026-04-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/%E9%A1%B9%E7%9B%AE%E5%88%86%E6%9E%90/" itemprop="url" rel="index"><span itemprop="name">项目分析</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Fighting-Netcode-项目知识笔记"><a href="#Fighting-Netcode-项目知识笔记" class="headerlink" title="Fighting Netcode 项目知识笔记"></a>Fighting Netcode 项目知识笔记</h1><h2 id="1-这个项目是什么"><a href="#1-这个项目是什么" class="headerlink" title="1. 这个项目是什么"></a>1. 这个项目是什么</h2><p><code>Fighting</code> 是一个用 C++ 写的联机动作游戏同步 Demo。</p>
+<p>项目地址：</p>
+<p><code>/Users/chutian/Desktop/Fighting</code></p>
+<p>它不是 AI 模型训练项目，而是一个很适合学习“实时系统工程”的项目。它实现的是：</p>
+<ul>
+<li>固定帧推进</li>
+<li>UDP 通信</li>
+<li>服务端权威状态</li>
+<li>客户端本地预测</li>
+<li>输入冗余</li>
+<li>回滚重放</li>
+<li>状态快照</li>
+<li>状态哈希对账</li>
+<li>压力测试</li>
+</ul>
+<p>可以把它理解成一个“小型实时分布式系统”。</p>
+<p>如果放到 AI 模型开发学习体系里，它最值得参考的不是模型算法，而是工程能力：</p>
+<ul>
+<li>如何让多个端的状态保持一致</li>
+<li>如何处理延迟、丢包和乱序</li>
+<li>如何用快照、日志和 hash 定位状态分叉</li>
+<li>如何用固定 tick 管理实时流程</li>
+<li>如何把核心逻辑拆成可测试的模块</li>
+</ul>
+<p>一句话概括：</p>
+<blockquote>
+<p>这个项目是一个 60Hz 回滚同步网络游戏 Demo，但它背后的工程思想可以迁移到 AI 推理服务、Agent 执行系统、实时任务调度和分布式状态一致性设计里。</p>
+</blockquote>
+<hr>
+<h2 id="2-项目整体目标"><a href="#2-项目整体目标" class="headerlink" title="2. 项目整体目标"></a>2. 项目整体目标</h2><p>这个项目不是为了做一个完整游戏，而是为了跑通联机动作游戏最难的几件事。</p>
+<p>核心目标是：</p>
+<ul>
+<li>玩家输入能快速反馈</li>
+<li>服务端保持最终权威</li>
+<li>网络延迟不会让本地操作卡顿</li>
+<li>客户端预测错了以后可以回滚修正</li>
+<li>服务端和客户端可以通过 hash 判断状态是否分叉</li>
+</ul>
+<p>联机动作游戏里，一个常见问题是：</p>
+<blockquote>
+<p>如果每次按键都等服务端确认，游戏会非常卡；如果完全相信客户端，又容易作弊和状态不一致。</p>
+</blockquote>
+<p>这个项目采用的方案是：</p>
+<ul>
+<li>客户端先预测，保证操作手感</li>
+<li>服务端做权威推进，保证最终正确</li>
+<li>客户端收到权威状态后回滚重放，修正预测误差</li>
+</ul>
+<p>这就是 Rollback Netcode 的核心思想。</p>
+<hr>
+<h2 id="3-项目目录结构"><a href="#3-项目目录结构" class="headerlink" title="3. 项目目录结构"></a>3. 项目目录结构</h2><p>项目主要目录如下：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">apps/</span><br><span class="line">  client_main.cpp</span><br><span class="line">  server_main.cpp</span><br><span class="line"></span><br><span class="line">include/lab/</span><br><span class="line">  app/</span><br><span class="line">  core/</span><br><span class="line">  io/</span><br><span class="line">  net/</span><br><span class="line">  sim/</span><br><span class="line">  time/</span><br><span class="line">  util/</span><br><span class="line"></span><br><span class="line">src/</span><br><span class="line">  app/</span><br><span class="line">  core/</span><br><span class="line">  io/</span><br><span class="line">  net/</span><br><span class="line">  sim/</span><br><span class="line">  time/</span><br><span class="line"></span><br><span class="line">tests/</span><br><span class="line">  core_tests.cpp</span><br><span class="line">  stress_tests.cpp</span><br><span class="line"></span><br><span class="line">docs/</span><br><span class="line">  ARCHITECTURE.md</span><br><span class="line"></span><br><span class="line">README.md</span><br><span class="line">日志.md</span><br><span class="line">CMakeLists.txt</span><br></pre></td></tr></table></figure>
+
+<p>可以按三层理解：</p>
+<table>
+<thead>
+<tr>
+<th>层级</th>
+<th>目录</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>模拟层</td>
+<td><code>include/lab/sim</code>、<code>src/sim</code></td>
+<td>世界状态、输入、快照、回滚、hash</td>
+</tr>
+<tr>
+<td>网络层</td>
+<td><code>include/lab/net</code>、<code>src/net</code></td>
+<td>UDP、协议包、二进制编解码</td>
+</tr>
+<tr>
+<td>应用层</td>
+<td><code>apps</code>、<code>include/lab/app</code>、<code>src/app</code></td>
+<td>服务端循环、客户端预测、渲染、输入采样</td>
+</tr>
+</tbody></table>
+<p>这个分层比较清晰：</p>
+<ul>
+<li>模拟层不关心网络和窗口</li>
+<li>网络层不关心游戏规则</li>
+<li>应用层负责把模拟、网络、渲染拼起来</li>
+</ul>
+<p>这也是很多 AI 工程项目应该学习的拆法：</p>
+<ul>
+<li>模型推理核心逻辑</li>
+<li>API &#x2F; 网络协议层</li>
+<li>应用编排层</li>
+<li>测试和压测层</li>
+</ul>
+<hr>
+<h2 id="4-快速运行方式"><a href="#4-快速运行方式" class="headerlink" title="4. 快速运行方式"></a>4. 快速运行方式</h2><p>项目依赖：</p>
+<ul>
+<li>CMake 3.20+</li>
+<li>C++20</li>
+<li>libevent</li>
+<li>SDL2</li>
+<li>SDL2_ttf</li>
+<li>nlohmann_json</li>
+</ul>
+<p>构建：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cmake -S . -B build</span><br><span class="line">cmake --build build</span><br></pre></td></tr></table></figure>
+
+<p>启动服务端：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./build/lab_server</span><br></pre></td></tr></table></figure>
+
+<p>启动两个客户端：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">./build/lab_client</span><br><span class="line">./build/lab_client</span><br></pre></td></tr></table></figure>
+
+<p>运行测试：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ctest --test-dir build --output-on-failure</span><br></pre></td></tr></table></figure>
+
+<p>运行压力测试：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./build/lab_stress</span><br></pre></td></tr></table></figure>
+
+<p>更长时间压力测试：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./build/lab_stress --ticks 200000 --<span class="built_in">history</span> 8192 --state-delay 12</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="5-核心概念总览"><a href="#5-核心概念总览" class="headerlink" title="5. 核心概念总览"></a>5. 核心概念总览</h2><p>这个项目最重要的概念有 8 个。</p>
+<h3 id="5-1-Tick"><a href="#5-1-Tick" class="headerlink" title="5.1 Tick"></a>5.1 Tick</h3><p><code>Tick</code> 是逻辑帧编号。</p>
+<p>代码里定义：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> Tick = <span class="type">uint32_t</span>;</span><br></pre></td></tr></table></figure>
+
+<p>游戏不是直接按真实时间推进，而是按离散帧推进。</p>
+<p>例如 60Hz 表示：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 秒 = 60 个 tick</span><br><span class="line">1 tick = 1 / 60 秒</span><br></pre></td></tr></table></figure>
+
+<p>这样做的好处是：</p>
+<ul>
+<li>逻辑顺序明确</li>
+<li>输入可以绑定到某个 tick</li>
+<li>状态可以按 tick 保存</li>
+<li>回滚时可以从某个 tick 重新模拟</li>
+<li>网络包可以明确说明自己属于哪一帧</li>
+</ul>
+<p>AI 工程迁移理解：</p>
+<blockquote>
+<p>Tick 类似任务系统里的 step id、事件序号、offset、version。只要系统存在异步、重试、回放，就需要这种明确的逻辑编号。</p>
+</blockquote>
+<h3 id="5-2-InputCmd"><a href="#5-2-InputCmd" class="headerlink" title="5.2 InputCmd"></a>5.2 InputCmd</h3><p><code>InputCmd</code> 是每一帧的最小输入单位。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">InputCmd</span> &#123;</span><br><span class="line">    Tick tick = <span class="number">0</span>;</span><br><span class="line">    <span class="type">uint16_t</span> buttons = <span class="number">0</span>;</span><br><span class="line">    <span class="type">int8_t</span> moveX = <span class="number">0</span>;</span><br><span class="line">    <span class="type">int8_t</span> moveY = <span class="number">0</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>它包含：</p>
+<ul>
+<li>属于哪个 tick</li>
+<li>按键位图</li>
+<li>水平方向</li>
+<li>垂直方向</li>
+</ul>
+<p>这个结构很小，适合频繁发送。</p>
+<p>设计重点：</p>
+<ul>
+<li>输入要带 tick</li>
+<li>输入结构要尽量小</li>
+<li>输入可以重复发送，服务端按 tick 去重覆盖</li>
+</ul>
+<h3 id="5-3-WorldSnapshot"><a href="#5-3-WorldSnapshot" class="headerlink" title="5.3 WorldSnapshot"></a>5.3 WorldSnapshot</h3><p><code>WorldSnapshot</code> 是世界状态快照。</p>
+<p>它包含：</p>
+<ul>
+<li>当前 tick</li>
+<li>玩家状态</li>
+<li>子弹状态</li>
+<li>迷宫 seed</li>
+<li>迷宫网格</li>
+</ul>
+<p>它的作用是：</p>
+<ul>
+<li>网络状态同步</li>
+<li>回滚恢复</li>
+<li>hash 对账</li>
+<li>测试验证</li>
+</ul>
+<p>这说明项目把“状态数据”和“推进逻辑”分开了。</p>
+<p>这种设计很重要：</p>
+<blockquote>
+<p>只要系统支持回滚、回放、审计、调试，就应该有明确的 Snapshot 结构。</p>
+</blockquote>
+<h3 id="5-4-World-Step"><a href="#5-4-World-Step" class="headerlink" title="5.4 World::Step"></a>5.4 World::Step</h3><p><code>World::Step(cmds, dt)</code> 是世界推进入口。</p>
+<p>它接收所有玩家在同一个 tick 的输入，然后推进一帧。</p>
+<p>关键要求：</p>
+<ul>
+<li><code>cmds.size()</code> 必须等于玩家数量</li>
+<li>所有 <code>cmd.tick</code> 必须一致</li>
+<li>同样输入和同样初始状态，应该得到同样输出</li>
+</ul>
+<p>这就是确定性模拟的基础。</p>
+<h3 id="5-5-InputBuffer"><a href="#5-5-InputBuffer" class="headerlink" title="5.5 InputBuffer"></a>5.5 InputBuffer</h3><p><code>InputBuffer</code> 是按 tick 存输入的环形缓冲。</p>
+<p>核心逻辑：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">idx = tick % capacity</span><br></pre></td></tr></table></figure>
+
+<p>读取时不只看槽位，还要校验 tick：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (ring_[idx].cmd.tick != tick) <span class="keyword">return</span> std::<span class="literal">nullopt</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这个校验非常关键。</p>
+<p>因为环形缓冲会覆盖旧数据，如果只看下标，不看 tick，就可能把旧帧误当成当前帧。</p>
+<h3 id="5-6-StateHistory"><a href="#5-6-StateHistory" class="headerlink" title="5.6 StateHistory"></a>5.6 StateHistory</h3><p><code>StateHistory</code> 是按 tick 存世界快照的环形缓冲。</p>
+<p>它和 <code>InputBuffer</code> 思路一样：</p>
+<ul>
+<li>写入时按 <code>tick % cap</code></li>
+<li>读取时校验真实 tick</li>
+</ul>
+<p>它用于：</p>
+<ul>
+<li>客户端保存预测状态</li>
+<li>收到权威状态后比较误差</li>
+<li>从某个权威 tick 恢复并重放</li>
+<li>hash 对账</li>
+</ul>
+<h3 id="5-7-State-Hash"><a href="#5-7-State-Hash" class="headerlink" title="5.7 State Hash"></a>5.7 State Hash</h3><p><code>Hasher</code> 对 <code>WorldSnapshot</code> 做 hash。</p>
+<p>它不是直接 hash float 的内存，而是先做毫米级量化：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int32_t</span> <span class="title">QuantizeMm</span><span class="params">(<span class="type">float</span> v)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> std::<span class="built_in">lround</span>(v * <span class="number">1000.0f</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样做是为了避免浮点误差造成假 mismatch。</p>
+<p>hash 覆盖内容包括：</p>
+<ul>
+<li>tick</li>
+<li>玩家位置和速度</li>
+<li>玩家 HP</li>
+<li>action</li>
+<li>cooldown</li>
+<li>aim 方向</li>
+<li>子弹状态</li>
+<li>迷宫 seed 和网格</li>
+</ul>
+<p>如果新增一个会影响模拟结果的字段，但忘了加入快照、网络包或 hash，就容易出现服务端和客户端状态分叉。</p>
+<h3 id="5-8-Rollback-Replay"><a href="#5-8-Rollback-Replay" class="headerlink" title="5.8 Rollback Replay"></a>5.8 Rollback Replay</h3><p>回滚重放是客户端收到权威状态后的修正流程。</p>
+<p>基本公式：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Restore(authoritativeSnapshot)</span><br><span class="line">for t in authoritativeTick + 1 .. localTick - 1:</span><br><span class="line">  取本地输入</span><br><span class="line">  取远端预测输入</span><br><span class="line">  World::Step(cmds, dt)</span><br><span class="line">  保存快照</span><br></pre></td></tr></table></figure>
+
+<p>它解决的问题是：</p>
+<ul>
+<li>客户端先预测，保证响应快</li>
+<li>权威状态来了以后，以权威状态为准</li>
+<li>重新模拟未来帧，让当前画面追上本地时间</li>
+</ul>
+<hr>
+<h2 id="6-服务端流程"><a href="#6-服务端流程" class="headerlink" title="6. 服务端流程"></a>6. 服务端流程</h2><p>服务端是权威端。</p>
+<p>核心文件：</p>
+<p><code>apps/server_main.cpp</code></p>
+<p>服务端主要做 6 件事：</p>
+<ol>
+<li>启动 UDP socket</li>
+<li>接收客户端 hello &#x2F; input</li>
+<li>按地址分配玩家 slot</li>
+<li>收齐玩家后发送 <code>Start</code></li>
+<li>每个 tick 收集输入并推进权威世界</li>
+<li>下发 <code>Ack</code> 和 <code>State</code></li>
+</ol>
+<h3 id="6-1-玩家分配"><a href="#6-1-玩家分配" class="headerlink" title="6.1 玩家分配"></a>6.1 玩家分配</h3><p>服务端用客户端地址作为 key。</p>
+<p>每个客户端连接后分配：</p>
+<ul>
+<li>player1</li>
+<li>player2</li>
+</ul>
+<p>如果人数满了，后续客户端会被拒绝。</p>
+<h3 id="6-2-开局同步"><a href="#6-2-开局同步" class="headerlink" title="6.2 开局同步"></a>6.2 开局同步</h3><p>服务端收齐 <code>kRequiredPlayers = 2</code> 后，不是立刻从当前 tick 开始，而是设置：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">startTick = tick + kStartDelayTicks;</span><br></pre></td></tr></table></figure>
+
+<p>这个设计用于给客户端一点时间接收开局包，减少起步不同步。</p>
+<h3 id="6-3-缺输入处理"><a href="#6-3-缺输入处理" class="headerlink" title="6.3 缺输入处理"></a>6.3 缺输入处理</h3><p>服务端每个 tick 都要给每个玩家拿到输入。</p>
+<p>如果该 tick 有输入：</p>
+<ul>
+<li>直接使用</li>
+</ul>
+<p>如果没有输入，但上次输入还在 hold 窗口内：</p>
+<ul>
+<li>复用上一帧输入</li>
+<li>把 tick 改成当前 tick</li>
+</ul>
+<p>如果超出 hold 窗口：</p>
+<ul>
+<li>使用默认空输入</li>
+</ul>
+<p>这段逻辑本质上是在处理 UDP 丢包和延迟。</p>
+<h3 id="6-4-权威推进"><a href="#6-4-权威推进" class="headerlink" title="6.4 权威推进"></a>6.4 权威推进</h3><p>服务端每帧执行：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cmds = 每个玩家当前 tick 的输入</span><br><span class="line">world.Step(cmds, dt)</span><br><span class="line">snapshot = world.Snapshot()</span><br><span class="line">hash = Hasher::Hash(snapshot)</span><br></pre></td></tr></table></figure>
+
+<p>服务端的状态是最终可信状态。</p>
+<p>客户端的预测状态只是为了体验。</p>
+<h3 id="6-5-状态下发"><a href="#6-5-状态下发" class="headerlink" title="6.5 状态下发"></a>6.5 状态下发</h3><p>服务端每帧发 <code>Ack</code>，每隔若干帧发完整 <code>State</code>。</p>
+<p>当前配置：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kStateEvery = <span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+<p>也就是每 2 tick 下发一次完整状态。</p>
+<p>这种设计平衡了：</p>
+<ul>
+<li>状态同步频率</li>
+<li>带宽消耗</li>
+<li>回滚修正速度</li>
+</ul>
+<hr>
+<h2 id="7-客户端流程"><a href="#7-客户端流程" class="headerlink" title="7. 客户端流程"></a>7. 客户端流程</h2><p>客户端负责“先动起来，然后等权威校正”。</p>
+<p>核心文件：</p>
+<p><code>apps/client_main.cpp</code></p>
+<p>客户端主要做 8 件事：</p>
+<ol>
+<li>未开局时定期发送 hello</li>
+<li>收到 <code>Start</code> 后对齐 <code>startTick</code></li>
+<li>每 tick 采样键盘输入</li>
+<li>本地保存输入历史</li>
+<li>预测远端玩家输入</li>
+<li>本地推进预测世界</li>
+<li>发送带冗余的输入包</li>
+<li>收到权威 <code>State</code> 后恢复并重放</li>
+</ol>
+<h3 id="7-1-本地预测"><a href="#7-1-本地预测" class="headerlink" title="7.1 本地预测"></a>7.1 本地预测</h3><p>本地玩家的输入来自键盘。</p>
+<p>远端玩家的输入无法立即知道，只能预测。</p>
+<p>当前预测逻辑比较简单：</p>
+<ul>
+<li>根据远端玩家速度推测移动方向</li>
+<li>如果远端处于 Hitstun，则预测不动</li>
+<li>如果速度接近 0，则预测停止</li>
+</ul>
+<p>相关文件：</p>
+<p><code>src/app/InputPrediction.cpp</code></p>
+<p>这不是高级 AI，而是一个经验规则。</p>
+<h3 id="7-2-输入冗余发送"><a href="#7-2-输入冗余发送" class="headerlink" title="7.2 输入冗余发送"></a>7.2 输入冗余发送</h3><p>客户端每个 tick 不只发送当前输入，而是发送最近 K 帧输入。</p>
+<p>配置：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kInputRedundancy = <span class="number">4</span></span><br></pre></td></tr></table></figure>
+
+<p>这样即使 UDP 丢了某个包，后续包也可能补上之前几帧输入。</p>
+<p>输入包里包含：</p>
+<ul>
+<li>playerId</li>
+<li>seq</li>
+<li>newestTick</li>
+<li>clientAckServerTick</li>
+<li>最近 K 个 <code>InputCmd</code></li>
+</ul>
+<h3 id="7-3-权威状态应用"><a href="#7-3-权威状态应用" class="headerlink" title="7.3 权威状态应用"></a>7.3 权威状态应用</h3><p>客户端收到 <code>State</code> 后，会把网络包还原成 <code>WorldSnapshot</code>。</p>
+<p>然后做几件事：</p>
+<ul>
+<li>校验 <code>stateHash</code></li>
+<li>判断本地玩家是否偏离权威状态</li>
+<li>把权威快照写入 <code>StateHistory</code></li>
+<li>从权威快照恢复</li>
+<li>重放后续输入到当前 tick</li>
+</ul>
+<p>注意：</p>
+<p>项目只用本地玩家差异来判断是否计入 rollback。</p>
+<p>原因是：</p>
+<blockquote>
+<p>远端玩家本来就是预测的，如果把远端误差也算进回滚触发条件，客户端会频繁回滚。</p>
+</blockquote>
+<h3 id="7-4-为什么即使没有计入-rollback-也要-rebase"><a href="#7-4-为什么即使没有计入-rollback-也要-rebase" class="headerlink" title="7.4 为什么即使没有计入 rollback 也要 rebase"></a>7.4 为什么即使没有计入 rollback 也要 rebase</h3><p>代码里有一个重要设计：</p>
+<p>即使本地玩家误差没有超过阈值，客户端仍然会从权威快照 rebase，然后 replay。</p>
+<p>这样做的原因是：</p>
+<ul>
+<li>远端玩家状态应该尽快采用权威值</li>
+<li>子弹状态也应该采用权威值</li>
+<li>不然画面可能长期偏离真实世界</li>
+</ul>
+<p>也就是说：</p>
+<ul>
+<li>rollbackCount 只是统计“本地玩家明显错误”的次数</li>
+<li>rebase + replay 是状态校正流程本身</li>
+</ul>
+<hr>
+<h2 id="8-网络协议设计"><a href="#8-网络协议设计" class="headerlink" title="8. 网络协议设计"></a>8. 网络协议设计</h2><p>核心文件：</p>
+<ul>
+<li><code>include/lab/net/Packets.h</code></li>
+<li><code>src/net/NetCode.cpp</code></li>
+</ul>
+<p>当前协议版本：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kVersion = <span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<p>协议包类型：</p>
+<table>
+<thead>
+<tr>
+<th>包</th>
+<th>方向</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Input</code></td>
+<td>Client -&gt; Server</td>
+<td>上传玩家输入</td>
+</tr>
+<tr>
+<td><code>Start</code></td>
+<td>Server -&gt; Client</td>
+<td>分配 playerId，告知 startTick</td>
+</tr>
+<tr>
+<td><code>Ack</code></td>
+<td>Server -&gt; Client</td>
+<td>告知服务端处理进度和 hash</td>
+</tr>
+<tr>
+<td><code>State</code></td>
+<td>Server -&gt; Client</td>
+<td>下发权威状态</td>
+</tr>
+</tbody></table>
+<h3 id="8-1-二进制编解码"><a href="#8-1-二进制编解码" class="headerlink" title="8.1 二进制编解码"></a>8.1 二进制编解码</h3><p>项目手写了二进制协议。</p>
+<p>特点：</p>
+<ul>
+<li>使用固定 magic</li>
+<li>使用协议 version</li>
+<li>使用 packet type</li>
+<li>整数统一转网络字节序</li>
+<li>64 位整数拆成两个 32 位写入</li>
+<li>float 不直接传，而是转毫米整数</li>
+</ul>
+<p>例如状态里的位置：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps.x_mm = std::<span class="built_in">lround</span>(wp.x * <span class="number">1000.0f</span>);</span><br></pre></td></tr></table></figure>
+
+<p>接收端还原：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> x = x_mm / <span class="number">1000.0f</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这比直接传 float 更稳定，也更容易做 hash 对账。</p>
+<h3 id="8-2-为什么要有-magic-和-version"><a href="#8-2-为什么要有-magic-和-version" class="headerlink" title="8.2 为什么要有 magic 和 version"></a>8.2 为什么要有 magic 和 version</h3><p><code>magic</code> 用来识别是不是本协议的数据包。</p>
+<p><code>version</code> 用来防止不同协议版本之间误解码。</p>
+<p>这在 AI 服务协议里也很重要。</p>
+<p>例如模型推理请求如果格式变了，最好也有：</p>
+<ul>
+<li>api version</li>
+<li>schema version</li>
+<li>feature version</li>
+<li>model version</li>
+</ul>
+<p>否则新旧客户端混用时很难排查问题。</p>
+<h3 id="8-3-Input-包为什么带冗余"><a href="#8-3-Input-包为什么带冗余" class="headerlink" title="8.3 Input 包为什么带冗余"></a>8.3 Input 包为什么带冗余</h3><p>UDP 不保证可靠。</p>
+<p>如果每个输入只发一次：</p>
+<ul>
+<li>丢包就会丢输入</li>
+<li>服务端只能默认空输入</li>
+<li>玩家表现会突然停顿</li>
+</ul>
+<p>所以 Input 包会带最近 K 帧输入。</p>
+<p>这是一种简单可靠的抗丢包策略。</p>
+<p>AI 工程里类似的思想是：</p>
+<ul>
+<li>请求重试带幂等 id</li>
+<li>消息队列消费保留 offset</li>
+<li>事件流消费允许重复事件</li>
+<li>服务端按版本号或序号去重</li>
+</ul>
+<hr>
+<h2 id="9-世界模拟逻辑"><a href="#9-世界模拟逻辑" class="headerlink" title="9. 世界模拟逻辑"></a>9. 世界模拟逻辑</h2><p>核心文件：</p>
+<p><code>src/sim/World.cpp</code></p>
+<p>当前世界是一个顶视角小型“迷宫坦克”。</p>
+<p>包含：</p>
+<ul>
+<li>迷宫地图</li>
+<li>玩家移动</li>
+<li>墙体碰撞</li>
+<li>玩家之间 pushbox 分离</li>
+<li>子弹发射</li>
+<li>子弹碰撞</li>
+<li>HP 扣减</li>
+<li>hitstun</li>
+<li>cooldown</li>
+</ul>
+<h3 id="9-1-迷宫生成"><a href="#9-1-迷宫生成" class="headerlink" title="9.1 迷宫生成"></a>9.1 迷宫生成</h3><p>迷宫由固定 seed 生成。</p>
+<p>服务端通过 <code>mazeSeed</code> 下发给客户端。</p>
+<p>这样客户端不需要每次接收完整地图，只要用同样 seed 就可以生成同样迷宫。</p>
+<p>但项目的 <code>WorldSnapshot</code> 里也保留了迷宫网格。</p>
+<p>这样更稳：</p>
+<ul>
+<li>seed 用于重建</li>
+<li>maze 数据用于快照、hash 和回滚</li>
+</ul>
+<h3 id="9-2-玩家移动"><a href="#9-2-玩家移动" class="headerlink" title="9.2 玩家移动"></a>9.2 玩家移动</h3><p>玩家速度不是瞬间切换，而是用摩擦插值靠近目标速度：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">v += (targetV - v) * alpha</span><br></pre></td></tr></table></figure>
+
+<p>这样移动更平滑。</p>
+<p>但它依然是确定性的，因为每一帧都只由：</p>
+<ul>
+<li>当前状态</li>
+<li>当前输入</li>
+<li>固定 dt</li>
+</ul>
+<p>共同决定。</p>
+<h3 id="9-3-子弹状态"><a href="#9-3-子弹状态" class="headerlink" title="9.3 子弹状态"></a>9.3 子弹状态</h3><p>子弹包含：</p>
+<ul>
+<li>位置</li>
+<li>速度</li>
+<li>owner</li>
+<li>life</li>
+</ul>
+<p>子弹撞墙或命中玩家后消失。</p>
+<p>命中后：</p>
+<ul>
+<li>被击中玩家 HP 减少</li>
+<li>进入 Hitstun</li>
+<li>产生轻微击退</li>
+</ul>
+<p>子弹也进入快照、网络包和 hash。</p>
+<p>这是必须的。</p>
+<p>因为子弹会影响未来游戏状态。</p>
+<h3 id="9-4-aimX-aimY-的意义"><a href="#9-4-aimX-aimY-的意义" class="headerlink" title="9.4 aimX &#x2F; aimY 的意义"></a>9.4 aimX &#x2F; aimY 的意义</h3><p>玩家状态里有：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int8_t</span> aimX;</span><br><span class="line"><span class="type">int8_t</span> aimY;</span><br></pre></td></tr></table></figure>
+
+<p>它保存最近的瞄准方向。</p>
+<p>这个字段很关键。</p>
+<p>如果玩家停下来以后再开火，当前 moveX &#x2F; moveY 可能是 0。</p>
+<p>这时开火方向就要依赖上一次方向。</p>
+<p>如果回滚恢复时没有保存 aim 方向，重放结果就可能和服务端不同。</p>
+<p>这个例子说明：</p>
+<blockquote>
+<p>只要某个字段会影响未来模拟结果，它就必须进入 Snapshot、网络包和 hash。</p>
+</blockquote>
+<hr>
+<h2 id="10-固定帧推进"><a href="#10-固定帧推进" class="headerlink" title="10. 固定帧推进"></a>10. 固定帧推进</h2><p>服务端和客户端都使用 accumulator 控制固定时间步。</p>
+<p>基本结构：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">frame = now - prev</span><br><span class="line">acc += min(frame, maxFrame)</span><br><span class="line"></span><br><span class="line">while acc &gt;= dt:</span><br><span class="line">  step one tick</span><br><span class="line">  acc -= dt</span><br></pre></td></tr></table></figure>
+
+<p>项目里：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dt = <span class="number">1.0</span> / <span class="number">60.0</span></span><br><span class="line">maxFrame = <span class="number">0.25</span></span><br></pre></td></tr></table></figure>
+
+<p>为什么不用真实 frameTime 直接推进？</p>
+<p>因为真实时间不稳定：</p>
+<ul>
+<li>系统调度会抖动</li>
+<li>渲染耗时会变化</li>
+<li>网络回调时间不可控</li>
+</ul>
+<p>固定 dt 的好处是：</p>
+<ul>
+<li>模拟稳定</li>
+<li>回滚可重放</li>
+<li>hash 更容易一致</li>
+<li>测试更容易复现</li>
+</ul>
+<p>AI 工程迁移理解：</p>
+<p>在 Agent、多轮任务执行、流式处理、训练调度里，也应该尽量区分：</p>
+<ul>
+<li>真实时间</li>
+<li>逻辑步数</li>
+<li>状态版本</li>
+</ul>
+<p>系统内部最好基于逻辑 step 推进，而不是让 wall clock 到处影响业务逻辑。</p>
+<hr>
+<h2 id="11-回滚同步完整链路"><a href="#11-回滚同步完整链路" class="headerlink" title="11. 回滚同步完整链路"></a>11. 回滚同步完整链路</h2><p>完整链路可以这样理解。</p>
+<h3 id="11-1-正常预测阶段"><a href="#11-1-正常预测阶段" class="headerlink" title="11.1 正常预测阶段"></a>11.1 正常预测阶段</h3><p>每个客户端每 tick 做：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">采样本地输入</span><br><span class="line">保存 localHist[tick]</span><br><span class="line">预测远端输入</span><br><span class="line">World::Step(allCmds, dt)</span><br><span class="line">保存 stateHist[tick]</span><br><span class="line">发送最近 K 帧输入给服务端</span><br><span class="line">tick++</span><br></pre></td></tr></table></figure>
+
+<h3 id="11-2-服务端权威阶段"><a href="#11-2-服务端权威阶段" class="headerlink" title="11.2 服务端权威阶段"></a>11.2 服务端权威阶段</h3><p>服务端每 tick 做：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">读取每个玩家输入</span><br><span class="line">缺输入则 hold/default</span><br><span class="line">World::Step(allCmds, dt)</span><br><span class="line">生成权威 snapshot</span><br><span class="line">计算 hash</span><br><span class="line">发送 Ack</span><br><span class="line">按频率发送 State</span><br><span class="line">tick++</span><br></pre></td></tr></table></figure>
+
+<h3 id="11-3-客户端校正阶段"><a href="#11-3-客户端校正阶段" class="headerlink" title="11.3 客户端校正阶段"></a>11.3 客户端校正阶段</h3><p>客户端收到权威 State：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">解码 State</span><br><span class="line">还原 auth snapshot</span><br><span class="line">校验 stateHash</span><br><span class="line">比较本地玩家误差</span><br><span class="line">写入权威快照</span><br><span class="line">Restore(auth)</span><br><span class="line">Replay auth.tick + 1 到当前 tick</span><br></pre></td></tr></table></figure>
+
+<p>这个流程的本质是：</p>
+<blockquote>
+<p>客户端永远允许自己先猜，但最终必须回到服务端认可的历史上。</p>
+</blockquote>
+<hr>
+<h2 id="12-测试设计"><a href="#12-测试设计" class="headerlink" title="12. 测试设计"></a>12. 测试设计</h2><p>项目测试分两类。</p>
+<h3 id="12-1-core-tests"><a href="#12-1-core-tests" class="headerlink" title="12.1 core_tests"></a>12.1 core_tests</h3><p>文件：</p>
+<p><code>tests/core_tests.cpp</code></p>
+<p>主要验证：</p>
+<ul>
+<li><code>InputBuffer</code> 零容量时会被修正为 1</li>
+<li><code>StateHistory</code> 零容量时会被修正为 1</li>
+<li><code>InputPacket</code> 编解码正确</li>
+<li><code>StatePacket</code> 编解码正确</li>
+<li><code>Hasher</code> 使用毫米精度</li>
+<li><code>Hasher</code> 覆盖 shotCooldown</li>
+<li><code>World(0)</code> 会至少创建 1 个玩家</li>
+</ul>
+<p>这些是小而关键的回归测试。</p>
+<h3 id="12-2-stress-tests"><a href="#12-2-stress-tests" class="headerlink" title="12.2 stress_tests"></a>12.2 stress_tests</h3><p>文件：</p>
+<p><code>tests/stress_tests.cpp</code></p>
+<p>压力测试更重要。</p>
+<p>它在单进程里模拟：</p>
+<ul>
+<li>权威世界</li>
+<li>客户端预测世界</li>
+<li>输入历史</li>
+<li>网络包编解码</li>
+<li>State 延迟</li>
+<li>State 抖动</li>
+<li>回滚重放</li>
+<li>hash 校验</li>
+</ul>
+<p>测试重点不是窗口和真实 socket，而是核心逻辑链路。</p>
+<p>它验证：</p>
+<ul>
+<li>从原始权威快照恢复并重放，能追上权威历史</li>
+<li>从网络量化后的 State 恢复并重放，hash 仍然一致</li>
+<li>输入冗余包可以正常编解码</li>
+<li>长时间 tick 推进不会破坏状态一致性</li>
+</ul>
+<p>这类测试对 AI 工程也有参考意义：</p>
+<blockquote>
+<p>真正可靠的系统，不只测单个函数，还要测“数据经过网络、延迟、恢复、重放之后是否仍然正确”。</p>
+</blockquote>
+<hr>
+<h2 id="13-这个项目值得学习的重点知识点"><a href="#13-这个项目值得学习的重点知识点" class="headerlink" title="13. 这个项目值得学习的重点知识点"></a>13. 这个项目值得学习的重点知识点</h2><h3 id="13-1-分层设计"><a href="#13-1-分层设计" class="headerlink" title="13.1 分层设计"></a>13.1 分层设计</h3><p>项目没有把所有逻辑写在一个 main 里，而是拆成：</p>
+<ul>
+<li>sim</li>
+<li>net</li>
+<li>app</li>
+<li>tests</li>
+</ul>
+<p>这种拆分让核心模拟可以脱离网络和渲染测试。</p>
+<p>AI 工程对应：</p>
+<ul>
+<li>模型调用逻辑不要和 HTTP handler 混在一起</li>
+<li>数据处理逻辑不要和 UI 混在一起</li>
+<li>推理服务核心最好能被单元测试和压测直接调用</li>
+</ul>
+<h3 id="13-2-状态快照"><a href="#13-2-状态快照" class="headerlink" title="13.2 状态快照"></a>13.2 状态快照</h3><p><code>WorldSnapshot</code> 是这个项目的核心中间结构。</p>
+<p>它让系统可以：</p>
+<ul>
+<li>保存状态</li>
+<li>传输状态</li>
+<li>恢复状态</li>
+<li>比较状态</li>
+<li>hash 状态</li>
+</ul>
+<p>AI 工程对应：</p>
+<ul>
+<li>Agent 运行状态</li>
+<li>RAG 查询状态</li>
+<li>会话上下文快照</li>
+<li>任务执行 checkpoint</li>
+<li>分布式训练 checkpoint</li>
+</ul>
+<h3 id="13-3-输入日志"><a href="#13-3-输入日志" class="headerlink" title="13.3 输入日志"></a>13.3 输入日志</h3><p>项目不是只保存当前输入，而是保存输入历史。</p>
+<p>这让系统可以从任意历史点重新计算。</p>
+<p>AI 工程对应：</p>
+<ul>
+<li>prompt history</li>
+<li>tool call history</li>
+<li>message queue event log</li>
+<li>workflow step log</li>
+<li>训练样本处理日志</li>
+</ul>
+<h3 id="13-4-确定性推进"><a href="#13-4-确定性推进" class="headerlink" title="13.4 确定性推进"></a>13.4 确定性推进</h3><p>同样状态 + 同样输入 + 同样 dt，应该得到同样结果。</p>
+<p>这对回滚极其重要。</p>
+<p>AI 工程里虽然模型推理本身可能有随机性，但工程层也可以尽量确定：</p>
+<ul>
+<li>固定 prompt 模板版本</li>
+<li>固定模型版本</li>
+<li>固定采样参数</li>
+<li>固定工具调用输入</li>
+<li>固定数据预处理逻辑</li>
+</ul>
+<p>否则线上问题很难复现。</p>
+<h3 id="13-5-网络协议版本化"><a href="#13-5-网络协议版本化" class="headerlink" title="13.5 网络协议版本化"></a>13.5 网络协议版本化</h3><p>项目协议有：</p>
+<ul>
+<li>magic</li>
+<li>version</li>
+<li>packet type</li>
+</ul>
+<p>这能避免错误解码。</p>
+<p>AI 服务接口也应该重视：</p>
+<ul>
+<li>API version</li>
+<li>request schema version</li>
+<li>model version</li>
+<li>embedding version</li>
+<li>prompt version</li>
+</ul>
+<h3 id="13-6-冗余和幂等"><a href="#13-6-冗余和幂等" class="headerlink" title="13.6 冗余和幂等"></a>13.6 冗余和幂等</h3><p>Input 包重复携带最近 K 帧输入。</p>
+<p>这是一种用冗余换可靠性的设计。</p>
+<p>AI 工程对应：</p>
+<ul>
+<li>任务重试要有 task id</li>
+<li>消息重复消费要能去重</li>
+<li>请求超时后重发不能重复扣费或重复写库</li>
+<li>流式输出恢复要能从 offset 继续</li>
+</ul>
+<h3 id="13-7-Hash-对账"><a href="#13-7-Hash-对账" class="headerlink" title="13.7 Hash 对账"></a>13.7 Hash 对账</h3><p>项目用 hash 判断状态是否一致。</p>
+<p>AI 工程也可以用类似思想：</p>
+<ul>
+<li>对输入文档算 hash</li>
+<li>对 chunk 结果算 hash</li>
+<li>对 embedding 输入算 hash</li>
+<li>对模型配置算 hash</li>
+<li>对 prompt 模板算 hash</li>
+<li>对 workflow 状态算 hash</li>
+</ul>
+<p>这能帮助定位：</p>
+<ul>
+<li>是输入变了</li>
+<li>是模型变了</li>
+<li>是参数变了</li>
+<li>是代码逻辑变了</li>
+<li>是缓存污染了</li>
+</ul>
+<h3 id="13-8-压力测试"><a href="#13-8-压力测试" class="headerlink" title="13.8 压力测试"></a>13.8 压力测试</h3><p><code>lab_stress</code> 很值得参考。</p>
+<p>它没有依赖窗口和真实 socket，而是直接压核心逻辑。</p>
+<p>AI 工程里也可以这样做：</p>
+<ul>
+<li>不一定先压真实 API</li>
+<li>可以先压核心 pipeline</li>
+<li>模拟延迟、乱序、失败和重试</li>
+<li>验证恢复后结果是否一致</li>
+</ul>
+<hr>
+<h2 id="14-和-AI-模型开发的关联"><a href="#14-和-AI-模型开发的关联" class="headerlink" title="14. 和 AI 模型开发的关联"></a>14. 和 AI 模型开发的关联</h2><p>这个项目虽然不是 AI 项目，但可以帮助理解 AI 工程里的几个难点。</p>
+<h3 id="14-1-和推理服务的关系"><a href="#14-1-和推理服务的关系" class="headerlink" title="14.1 和推理服务的关系"></a>14.1 和推理服务的关系</h3><p>推理服务也有类似问题：</p>
+<ul>
+<li>请求并发</li>
+<li>网络延迟</li>
+<li>状态追踪</li>
+<li>版本一致性</li>
+<li>超时重试</li>
+<li>结果校验</li>
+</ul>
+<p>可以借鉴：</p>
+<ul>
+<li>每个请求带 request id</li>
+<li>每个模型有 model version</li>
+<li>每次调用记录输入 hash</li>
+<li>缓存 key 包含模型和参数版本</li>
+<li>异步任务保存 checkpoint</li>
+</ul>
+<h3 id="14-2-和-Agent-系统的关系"><a href="#14-2-和-Agent-系统的关系" class="headerlink" title="14.2 和 Agent 系统的关系"></a>14.2 和 Agent 系统的关系</h3><p>Agent 执行多步任务时，很像 tick 推进。</p>
+<p>每一步可以看成：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">step_id</span><br><span class="line">observation</span><br><span class="line">decision</span><br><span class="line">tool_call</span><br><span class="line">tool_result</span><br><span class="line">state_update</span><br></pre></td></tr></table></figure>
+
+<p>如果中途失败，就需要：</p>
+<ul>
+<li>从某个 step 恢复</li>
+<li>重放历史</li>
+<li>判断状态是否一致</li>
+<li>避免重复执行副作用工具</li>
+</ul>
+<p>这和回滚同步的思路很接近。</p>
+<h3 id="14-3-和-RAG-系统的关系"><a href="#14-3-和-RAG-系统的关系" class="headerlink" title="14.3 和 RAG 系统的关系"></a>14.3 和 RAG 系统的关系</h3><p>RAG 里也需要状态和版本管理。</p>
+<p>例如：</p>
+<ul>
+<li>文档版本</li>
+<li>chunk 版本</li>
+<li>embedding 模型版本</li>
+<li>向量库索引版本</li>
+<li>查询改写版本</li>
+<li>reranker 版本</li>
+</ul>
+<p>如果没有这些版本，线上效果变化时很难排查。</p>
+<p>可以参考这个项目的 hash 思想，对关键中间结果做记录。</p>
+<h3 id="14-4-和分布式训练的关系"><a href="#14-4-和分布式训练的关系" class="headerlink" title="14.4 和分布式训练的关系"></a>14.4 和分布式训练的关系</h3><p>分布式训练也重视：</p>
+<ul>
+<li>step</li>
+<li>checkpoint</li>
+<li>deterministic replay</li>
+<li>状态恢复</li>
+<li>参数同步</li>
+<li>异常恢复</li>
+</ul>
+<p><code>WorldSnapshot</code> 类似训练 checkpoint。</p>
+<p><code>InputCmd</code> 类似每一步的 batch &#x2F; event。</p>
+<p><code>StateHistory</code> 类似最近 checkpoint 历史。</p>
+<p><code>Hasher</code> 类似一致性校验。</p>
+<hr>
+<h2 id="15-如果继续完善这个项目"><a href="#15-如果继续完善这个项目" class="headerlink" title="15. 如果继续完善这个项目"></a>15. 如果继续完善这个项目</h2><p>这个项目已经把核心链路跑通了，但如果要继续做，可以考虑这些方向。</p>
+<h3 id="15-1-网络层增强"><a href="#15-1-网络层增强" class="headerlink" title="15.1 网络层增强"></a>15.1 网络层增强</h3><p>可以增加：</p>
+<ul>
+<li>延迟统计</li>
+<li>丢包率统计</li>
+<li>RTT 估计</li>
+<li>抖动缓冲</li>
+<li>包乱序处理</li>
+<li>客户端 ping &#x2F; pong</li>
+<li>输入确认窗口</li>
+</ul>
+<h3 id="15-2-协议层增强"><a href="#15-2-协议层增强" class="headerlink" title="15.2 协议层增强"></a>15.2 协议层增强</h3><p>可以增加：</p>
+<ul>
+<li>协议 schema 文档</li>
+<li>包大小统计</li>
+<li>包字段版本兼容</li>
+<li>State 增量同步</li>
+<li>压缩</li>
+<li>加密或签名</li>
+</ul>
+<h3 id="15-3-回滚体验增强"><a href="#15-3-回滚体验增强" class="headerlink" title="15.3 回滚体验增强"></a>15.3 回滚体验增强</h3><p>可以增加：</p>
+<ul>
+<li>插值平滑</li>
+<li>远端玩家视觉修正</li>
+<li>回滚次数可视化</li>
+<li>回滚帧数统计</li>
+<li>输入延迟动态调整</li>
+</ul>
+<h3 id="15-4-测试增强"><a href="#15-4-测试增强" class="headerlink" title="15.4 测试增强"></a>15.4 测试增强</h3><p>可以增加：</p>
+<ul>
+<li>真实 UDP bot 压测</li>
+<li>随机丢包模拟</li>
+<li>随机乱序模拟</li>
+<li>多平台 hash 对比</li>
+<li>fuzz 解码测试</li>
+<li>长时间 soak test</li>
+</ul>
+<h3 id="15-5-工程结构增强"><a href="#15-5-工程结构增强" class="headerlink" title="15.5 工程结构增强"></a>15.5 工程结构增强</h3><p>可以增加：</p>
+<ul>
+<li>更明确的协议文档</li>
+<li>更统一的配置来源</li>
+<li>CI 自动测试</li>
+<li>clang-format</li>
+<li>sanitizers</li>
+<li>性能 profiling</li>
+</ul>
+<hr>
+<h2 id="16-学习路线建议"><a href="#16-学习路线建议" class="headerlink" title="16. 学习路线建议"></a>16. 学习路线建议</h2><p>如果你要用这个项目作为学习材料，可以按这个顺序看。</p>
+<h3 id="16-1-第一遍：先看整体"><a href="#16-1-第一遍：先看整体" class="headerlink" title="16.1 第一遍：先看整体"></a>16.1 第一遍：先看整体</h3><p>先读：</p>
+<ul>
+<li><code>README.md</code></li>
+<li><code>docs/ARCHITECTURE.md</code></li>
+<li><code>CMakeLists.txt</code></li>
+</ul>
+<p>目标是知道：</p>
+<ul>
+<li>项目怎么构建</li>
+<li>有哪些模块</li>
+<li>服务端和客户端怎么交互</li>
+</ul>
+<h3 id="16-2-第二遍：看数据结构"><a href="#16-2-第二遍：看数据结构" class="headerlink" title="16.2 第二遍：看数据结构"></a>16.2 第二遍：看数据结构</h3><p>重点看：</p>
+<ul>
+<li><code>InputCmd.h</code></li>
+<li><code>StateSnapshot.h</code></li>
+<li><code>InputBuffer.h</code></li>
+<li><code>StateHistory.h</code></li>
+<li><code>Packets.h</code></li>
+</ul>
+<p>目标是理解：</p>
+<ul>
+<li>输入怎么表示</li>
+<li>状态怎么表示</li>
+<li>网络包怎么表示</li>
+<li>历史怎么保存</li>
+</ul>
+<h3 id="16-3-第三遍：看核心模拟"><a href="#16-3-第三遍：看核心模拟" class="headerlink" title="16.3 第三遍：看核心模拟"></a>16.3 第三遍：看核心模拟</h3><p>重点看：</p>
+<ul>
+<li><code>World.h</code></li>
+<li><code>World.cpp</code></li>
+<li><code>Rules.h</code></li>
+<li><code>Hasher.cpp</code></li>
+</ul>
+<p>目标是理解：</p>
+<ul>
+<li>一帧怎么推进</li>
+<li>哪些字段影响确定性</li>
+<li>为什么 hash 要覆盖这些字段</li>
+</ul>
+<h3 id="16-4-第四遍：看服务端"><a href="#16-4-第四遍：看服务端" class="headerlink" title="16.4 第四遍：看服务端"></a>16.4 第四遍：看服务端</h3><p>重点看：</p>
+<ul>
+<li><code>server_main.cpp</code></li>
+</ul>
+<p>目标是理解：</p>
+<ul>
+<li>玩家怎么分配</li>
+<li>输入怎么接收</li>
+<li>缺输入怎么处理</li>
+<li>权威状态怎么广播</li>
+</ul>
+<h3 id="16-5-第五遍：看客户端"><a href="#16-5-第五遍：看客户端" class="headerlink" title="16.5 第五遍：看客户端"></a>16.5 第五遍：看客户端</h3><p>重点看：</p>
+<ul>
+<li><code>client_main.cpp</code></li>
+<li><code>InputPrediction.cpp</code></li>
+</ul>
+<p>目标是理解：</p>
+<ul>
+<li>本地预测怎么做</li>
+<li>远端输入怎么猜</li>
+<li>收到权威 State 后怎么回滚</li>
+<li>hash mismatch 怎么统计</li>
+</ul>
+<h3 id="16-6-第六遍：看测试"><a href="#16-6-第六遍：看测试" class="headerlink" title="16.6 第六遍：看测试"></a>16.6 第六遍：看测试</h3><p>重点看：</p>
+<ul>
+<li><code>core_tests.cpp</code></li>
+<li><code>stress_tests.cpp</code></li>
+</ul>
+<p>目标是理解：</p>
+<ul>
+<li>这个项目如何验证状态一致性</li>
+<li>压测为什么不依赖真实窗口和 socket</li>
+<li>如何模拟延迟和重放</li>
+</ul>
+<hr>
+<h2 id="17-重点代码阅读清单"><a href="#17-重点代码阅读清单" class="headerlink" title="17. 重点代码阅读清单"></a>17. 重点代码阅读清单</h2><p>建议重点阅读这些文件：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">include/lab/sim/InputCmd.h</span><br><span class="line">include/lab/sim/StateSnapshot.h</span><br><span class="line">include/lab/sim/InputBuffer.h</span><br><span class="line">include/lab/sim/StateHistory.h</span><br><span class="line">include/lab/net/Packets.h</span><br><span class="line">src/sim/World.cpp</span><br><span class="line">src/sim/Hasher.cpp</span><br><span class="line">src/net/NetCode.cpp</span><br><span class="line">apps/server_main.cpp</span><br><span class="line">apps/client_main.cpp</span><br><span class="line">tests/stress_tests.cpp</span><br></pre></td></tr></table></figure>
+
+<p>阅读时重点问自己几个问题：</p>
+<ul>
+<li>每个 tick 的输入从哪里来？</li>
+<li>服务端和客户端的 tick 如何对齐？</li>
+<li>客户端什么时候预测？</li>
+<li>权威状态什么时候覆盖预测状态？</li>
+<li>什么字段进入 Snapshot？</li>
+<li>什么字段进入网络包？</li>
+<li>什么字段进入 hash？</li>
+<li>如果新增一个状态字段，需要改哪些地方？</li>
+<li>如果 UDP 丢包，会发生什么？</li>
+<li>如果 State 延迟到达，客户端如何追上当前 tick？</li>
+</ul>
+<hr>
+<h2 id="18-常见易错点"><a href="#18-常见易错点" class="headerlink" title="18. 常见易错点"></a>18. 常见易错点</h2><h3 id="18-1-新增字段只改了-World，没有改-Snapshot"><a href="#18-1-新增字段只改了-World，没有改-Snapshot" class="headerlink" title="18.1 新增字段只改了 World，没有改 Snapshot"></a>18.1 新增字段只改了 World，没有改 Snapshot</h3><p>如果新增字段会影响模拟，但没有进入 Snapshot，回滚恢复后就会丢状态。</p>
+<h3 id="18-2-新增字段只改了-Snapshot，没有改网络包"><a href="#18-2-新增字段只改了-Snapshot，没有改网络包" class="headerlink" title="18.2 新增字段只改了 Snapshot，没有改网络包"></a>18.2 新增字段只改了 Snapshot，没有改网络包</h3><p>服务端有这个状态，但客户端收不到，预测和权威会分叉。</p>
+<h3 id="18-3-新增字段没有进入-hash"><a href="#18-3-新增字段没有进入-hash" class="headerlink" title="18.3 新增字段没有进入 hash"></a>18.3 新增字段没有进入 hash</h3><p>状态已经不同，但 hash 检查不出来。</p>
+<h3 id="18-4-直接-hash-float-内存"><a href="#18-4-直接-hash-float-内存" class="headerlink" title="18.4 直接 hash float 内存"></a>18.4 直接 hash float 内存</h3><p>不同平台或编解码后可能有微小浮点差异，导致假 mismatch。</p>
+<p>项目用毫米量化规避了这个问题。</p>
+<h3 id="18-5-环形缓冲读取时不校验-tick"><a href="#18-5-环形缓冲读取时不校验-tick" class="headerlink" title="18.5 环形缓冲读取时不校验 tick"></a>18.5 环形缓冲读取时不校验 tick</h3><p>只用 <code>tick % cap</code> 会读到被覆盖的旧数据。</p>
+<p>项目里读取时会校验真实 tick，这是正确做法。</p>
+<h3 id="18-6-把远端预测误差也算作-rollback-条件"><a href="#18-6-把远端预测误差也算作-rollback-条件" class="headerlink" title="18.6 把远端预测误差也算作 rollback 条件"></a>18.6 把远端预测误差也算作 rollback 条件</h3><p>远端玩家本来就是猜的。</p>
+<p>如果把远端差异也作为回滚计数依据，会导致 rollback 统计爆炸。</p>
+<p>项目只比较本地玩家，比较合理。</p>
+<hr>
+<h2 id="19-可以写成博客的版本"><a href="#19-可以写成博客的版本" class="headerlink" title="19. 可以写成博客的版本"></a>19. 可以写成博客的版本</h2><h3 id="标题"><a href="#标题" class="headerlink" title="标题"></a>标题</h3><p>从一个 C++ 格斗游戏 Demo 学实时系统：固定帧、预测、回滚与状态一致性</p>
+<h3 id="开头"><a href="#开头" class="headerlink" title="开头"></a>开头</h3><p>很多人以为游戏网络同步只是“把坐标发给别人”。</p>
+<p>但动作游戏真正困难的地方在于：</p>
+<ul>
+<li>玩家按键必须立刻有反馈</li>
+<li>网络包可能延迟或丢失</li>
+<li>服务端必须保持权威</li>
+<li>客户端预测错了还要能修回来</li>
+</ul>
+<p>这个项目用一个小型 60Hz 顶视角对战 Demo，把这些问题完整串了起来。</p>
+<h3 id="第一部分：为什么需要固定帧"><a href="#第一部分：为什么需要固定帧" class="headerlink" title="第一部分：为什么需要固定帧"></a>第一部分：为什么需要固定帧</h3><p>实时系统最怕逻辑跟真实时间强绑定。</p>
+<p>如果每一帧都直接用真实耗时推进，状态会受到系统调度、渲染耗时和网络回调影响。</p>
+<p>所以项目采用固定 tick：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 秒 60 帧</span><br><span class="line">每帧 dt = 1 / 60</span><br><span class="line">所有输入和状态都绑定 tick</span><br></pre></td></tr></table></figure>
+
+<p>这让回放、回滚和调试都变得可控。</p>
+<h3 id="第二部分：客户端为什么要预测"><a href="#第二部分：客户端为什么要预测" class="headerlink" title="第二部分：客户端为什么要预测"></a>第二部分：客户端为什么要预测</h3><p>如果玩家按键后必须等服务端确认，游戏会非常卡。</p>
+<p>所以客户端先假设自己的输入有效，立即推进本地世界。</p>
+<p>这样玩家看到的是即时反馈。</p>
+<p>但客户端不是最终权威。</p>
+<p>服务端稍后会下发真实状态，客户端再根据权威状态修正。</p>
+<h3 id="第三部分：回滚的本质"><a href="#第三部分：回滚的本质" class="headerlink" title="第三部分：回滚的本质"></a>第三部分：回滚的本质</h3><p>回滚不是简单地把当前位置拉回服务端位置。</p>
+<p>真正的流程是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">恢复到服务端给的历史快照</span><br><span class="line">重新执行这之后的输入</span><br><span class="line">追上当前本地 tick</span><br></pre></td></tr></table></figure>
+
+<p>这要求系统必须保存：</p>
+<ul>
+<li>历史输入</li>
+<li>历史状态</li>
+<li>可恢复的快照</li>
+<li>确定性的 Step 函数</li>
+</ul>
+<h3 id="第四部分：为什么-hash-很重要"><a href="#第四部分：为什么-hash-很重要" class="headerlink" title="第四部分：为什么 hash 很重要"></a>第四部分：为什么 hash 很重要</h3><p>服务端和客户端状态一旦分叉，肉眼很难定位原因。</p>
+<p>项目用 <code>Hasher</code> 对关键状态做 hash。</p>
+<p>只要 hash 不一致，就说明某个状态字段不同。</p>
+<p>更重要的是，hash 不是直接混合 float，而是和网络包一样做毫米量化。</p>
+<p>这样可以避免浮点误差造成误报。</p>
+<h3 id="第五部分：这个项目对-AI-工程的启发"><a href="#第五部分：这个项目对-AI-工程的启发" class="headerlink" title="第五部分：这个项目对 AI 工程的启发"></a>第五部分：这个项目对 AI 工程的启发</h3><p>虽然这是游戏项目，但它的工程思想非常适合迁移到 AI 系统。</p>
+<p>AI Agent 也有 step。</p>
+<p>RAG 也有中间状态。</p>
+<p>推理服务也有请求版本、模型版本和缓存一致性。</p>
+<p>分布式训练也有 checkpoint 和恢复。</p>
+<p>如果一个 AI 系统需要稳定运行，就不能只关心模型输出，还要关心：</p>
+<ul>
+<li>输入是否可追踪</li>
+<li>中间状态是否可恢复</li>
+<li>版本是否明确</li>
+<li>错误是否可复现</li>
+<li>结果是否可校验</li>
+</ul>
+<h3 id="结尾"><a href="#结尾" class="headerlink" title="结尾"></a>结尾</h3><p>这个 Fighting 项目真正值得学习的，不只是 Rollback Netcode，而是它展示了一套实时系统的基本工程方法：</p>
+<ul>
+<li>用 tick 管理时间</li>
+<li>用输入日志支撑回放</li>
+<li>用快照支撑恢复</li>
+<li>用 hash 支撑一致性检查</li>
+<li>用压力测试验证长链路正确性</li>
+</ul>
+<p>这些能力放到 AI 模型开发中，同样非常重要。</p>
+<hr>
+<h2 id="20-可扩展博客选题"><a href="#20-可扩展博客选题" class="headerlink" title="20. 可扩展博客选题"></a>20. 可扩展博客选题</h2><p>后续可以基于这份笔记拆成几篇博客。</p>
+<h3 id="20-1-选题一：Rollback-Netcode-入门"><a href="#20-1-选题一：Rollback-Netcode-入门" class="headerlink" title="20.1 选题一：Rollback Netcode 入门"></a>20.1 选题一：Rollback Netcode 入门</h3><p>重点讲：</p>
+<ul>
+<li>为什么动作游戏不能只靠服务端确认</li>
+<li>本地预测是什么</li>
+<li>回滚重放是什么</li>
+<li>输入历史和状态快照怎么设计</li>
+</ul>
+<h3 id="20-2-选题二：用-C-实现一个确定性模拟核心"><a href="#20-2-选题二：用-C-实现一个确定性模拟核心" class="headerlink" title="20.2 选题二：用 C++ 实现一个确定性模拟核心"></a>20.2 选题二：用 C++ 实现一个确定性模拟核心</h3><p>重点讲：</p>
+<ul>
+<li><code>World::Step</code></li>
+<li>固定 dt</li>
+<li>状态字段管理</li>
+<li>碰撞和子弹逻辑</li>
+<li>如何避免不确定性</li>
+</ul>
+<h3 id="20-3-选题三：UDP-协议如何对抗丢包"><a href="#20-3-选题三：UDP-协议如何对抗丢包" class="headerlink" title="20.3 选题三：UDP 协议如何对抗丢包"></a>20.3 选题三：UDP 协议如何对抗丢包</h3><p>重点讲：</p>
+<ul>
+<li>为什么用 UDP</li>
+<li>Input 包为什么带冗余</li>
+<li>服务端如何 hold last input</li>
+<li>Ack 和 State 分别解决什么问题</li>
+</ul>
+<h3 id="20-4-选题四：状态-hash-如何定位分布式系统分叉"><a href="#20-4-选题四：状态-hash-如何定位分布式系统分叉" class="headerlink" title="20.4 选题四：状态 hash 如何定位分布式系统分叉"></a>20.4 选题四：状态 hash 如何定位分布式系统分叉</h3><p>重点讲：</p>
+<ul>
+<li>为什么需要 hash</li>
+<li>为什么不能直接 hash float</li>
+<li>哪些字段必须进入 hash</li>
+<li>hash mismatch 如何排查</li>
+</ul>
+<h3 id="20-5-选题五：从游戏同步看-AI-Agent-状态恢复"><a href="#20-5-选题五：从游戏同步看-AI-Agent-状态恢复" class="headerlink" title="20.5 选题五：从游戏同步看 AI Agent 状态恢复"></a>20.5 选题五：从游戏同步看 AI Agent 状态恢复</h3><p>重点讲：</p>
+<ul>
+<li>tick 和 Agent step 的类比</li>
+<li>InputCmd 和 tool call 的类比</li>
+<li>Snapshot 和 checkpoint 的类比</li>
+<li>Replay 和失败恢复的类比</li>
+</ul>
+<hr>
+<h2 id="21-总结"><a href="#21-总结" class="headerlink" title="21. 总结"></a>21. 总结</h2><p>这个项目可以用一句话总结：</p>
+<blockquote>
+<p>用 C++ 实现了一个小型实时联机同步系统，通过固定帧、输入冗余、本地预测、服务端权威、回滚重放和 hash 对账来解决网络延迟下的状态一致性问题。</p>
+</blockquote>
+<p>最应该记住的重点：</p>
+<ul>
+<li><code>Tick</code> 是逻辑时间基础</li>
+<li><code>InputCmd</code> 是最小输入事件</li>
+<li><code>WorldSnapshot</code> 是恢复和同步的核心</li>
+<li><code>World::Step</code> 必须尽量确定性</li>
+<li><code>InputBuffer</code> 和 <code>StateHistory</code> 用环形缓冲保存历史</li>
+<li>客户端预测是为了体验，服务端权威是为了正确</li>
+<li>回滚不是瞬移，而是恢复历史状态后重放输入</li>
+<li>hash 对账要和网络量化精度一致</li>
+<li>压力测试应该覆盖完整链路，而不是只测单个函数</li>
+</ul>
+<p>放到 AI 模型开发学习里，这个项目最有价值的地方是：</p>
+<blockquote>
+<p>它训练的是工程化思维：状态、版本、恢复、重放、对账、压测。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>楚天
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://chutianduan.github.io/notes/%E9%A1%B9%E7%9B%AE%E5%88%86%E6%9E%90/fighting-netcode-%E9%A1%B9%E7%9B%AE%E7%9F%A5%E8%AF%86%E7%AC%94%E8%AE%B0/" title="Fighting Netcode 项目知识笔记">https://chutianduan.github.io/notes/项目分析/fighting-netcode-项目知识笔记/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/qwen%E6%A8%A1%E5%9E%8B%E6%BC%94%E8%BF%9B/" rel="prev" title="Qwen 模型演进笔记">
+                  <i class="fa fa-angle-left"></i> Qwen 模型演进笔记
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/fasthapi/" rel="next" title="FastAPI 学习笔记">
+                  FastAPI 学习笔记 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-code"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">楚天</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

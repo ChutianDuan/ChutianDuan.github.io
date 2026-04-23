@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chutianduan.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":2,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="FastAPI 学习笔记1. FastAPI 是什么FastAPI 是一个基于 Python 类型注解构建的 Web API 框架，适合用来开发：  后端接口服务 AI 模型推理接口 文件上传和处理接口 内部微服务 需要自动生成接口文档的项目  它的几个核心特点：  开发效率高，写法接近普通 Python 函数 自动参数校验 自动生成 OpenAPI 文档 支持异步 和 Pydantic 配合很好">
+<meta property="og:type" content="article">
+<meta property="og:title" content="FastAPI 学习笔记">
+<meta property="og:url" content="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/fasthapi/index.html">
+<meta property="og:site_name" content="楚天">
+<meta property="og:description" content="FastAPI 学习笔记1. FastAPI 是什么FastAPI 是一个基于 Python 类型注解构建的 Web API 框架，适合用来开发：  后端接口服务 AI 模型推理接口 文件上传和处理接口 内部微服务 需要自动生成接口文档的项目  它的几个核心特点：  开发效率高，写法接近普通 Python 函数 自动参数校验 自动生成 OpenAPI 文档 支持异步 和 Pydantic 配合很好">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-04-23T02:53:53.000Z">
+<meta property="article:modified_time" content="2026-04-23T02:53:53.000Z">
+<meta property="article:author" content="楚天">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="游戏网络">
+<meta property="article:tag" content="技术博客">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/fasthapi/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/fasthapi/","path":"/notes/ai模型开发/知识点学习/框架/fasthapi/","title":"FastAPI 学习笔记"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>FastAPI 学习笔记 | 楚天</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">楚天</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">惟楚有材，于斯为盛</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-友情链接"><a href="/link/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#FastAPI-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0"><span class="nav-number">1.</span> <span class="nav-text">FastAPI 学习笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-FastAPI-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.1.</span> <span class="nav-text">1. FastAPI 是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%BE%88%E5%A4%9A-AI-%E9%A1%B9%E7%9B%AE%E5%96%9C%E6%AC%A2%E7%94%A8-FastAPI"><span class="nav-number">1.2.</span> <span class="nav-text">2. 为什么很多 AI 项目喜欢用 FastAPI</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%AE%89%E8%A3%85"><span class="nav-number">1.3.</span> <span class="nav-text">3. 安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E6%9C%80%E5%B0%8F%E5%8F%AF%E8%BF%90%E8%A1%8C%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.4.</span> <span class="nav-text">4. 最小可运行示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-FastAPI-%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%B7%A5%E4%BD%9C%E6%96%B9%E5%BC%8F"><span class="nav-number">1.5.</span> <span class="nav-text">5. FastAPI 的基本工作方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E8%B7%AF%E7%94%B1%E5%9F%BA%E7%A1%80"><span class="nav-number">1.6.</span> <span class="nav-text">6. 路由基础</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-%E8%B7%AF%E5%BE%84%E5%8F%82%E6%95%B0%E3%80%81%E6%9F%A5%E8%AF%A2%E5%8F%82%E6%95%B0%E3%80%81%E8%AF%B7%E6%B1%82%E4%BD%93"><span class="nav-number">1.7.</span> <span class="nav-text">7. 路径参数、查询参数、请求体</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-%E8%B7%AF%E5%BE%84%E5%8F%82%E6%95%B0"><span class="nav-number">1.7.1.</span> <span class="nav-text">7.1 路径参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-%E6%9F%A5%E8%AF%A2%E5%8F%82%E6%95%B0"><span class="nav-number">1.7.2.</span> <span class="nav-text">7.2 查询参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-3-%E8%AF%B7%E6%B1%82%E4%BD%93"><span class="nav-number">1.7.3.</span> <span class="nav-text">7.3 请求体</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-Pydantic-%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.8.</span> <span class="nav-text">8. Pydantic 模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-%E5%9F%BA%E6%9C%AC%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.8.1.</span> <span class="nav-text">8.1 基本示例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-%E4%BD%9C%E4%B8%BA%E8%BF%94%E5%9B%9E%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.8.2.</span> <span class="nav-text">8.2 作为返回模型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-def-%E5%92%8C-async-def-%E6%80%8E%E4%B9%88%E9%80%89"><span class="nav-number">1.9.</span> <span class="nav-text">9. def 和 async def 怎么选</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#9-1-%E7%94%A8-async-def-%E7%9A%84%E6%83%85%E5%86%B5"><span class="nav-number">1.9.1.</span> <span class="nav-text">9.1 用 async def 的情况</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-2-%E7%94%A8%E6%99%AE%E9%80%9A-def-%E7%9A%84%E6%83%85%E5%86%B5"><span class="nav-number">1.9.2.</span> <span class="nav-text">9.2 用普通 def 的情况</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0%E7%9A%84%E6%9B%B4%E6%98%8E%E7%A1%AE%E5%86%99%E6%B3%95"><span class="nav-number">1.10.</span> <span class="nav-text">10. 请求参数的更明确写法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-APIRouter-%E8%B7%AF%E7%94%B1%E6%8B%86%E5%88%86"><span class="nav-number">1.11.</span> <span class="nav-text">11. APIRouter 路由拆分</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#11-1-%E5%9F%BA%E6%9C%AC%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.11.1.</span> <span class="nav-text">11.1 基本示例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-2-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E6%8B%86-Router"><span class="nav-number">1.11.2.</span> <span class="nav-text">11.2 为什么要拆 Router</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-%E8%B7%AF%E7%94%B1%E5%89%8D%E7%BC%80%E5%92%8C-API-%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86"><span class="nav-number">1.12.</span> <span class="nav-text">12. 路由前缀和 API 版本管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#12-1-%E7%BB%9F%E4%B8%80%E5%8A%A0%E5%89%8D%E7%BC%80"><span class="nav-number">1.12.1.</span> <span class="nav-text">12.1 统一加前缀</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-2-%E5%9C%A8-Router-%E4%B8%8A%E7%9B%B4%E6%8E%A5%E5%B8%A6%E4%B8%9A%E5%8A%A1%E5%89%8D%E7%BC%80"><span class="nav-number">1.12.2.</span> <span class="nav-text">12.2 在 Router 上直接带业务前缀</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-3-%E5%A4%9A%E7%89%88%E6%9C%AC%E5%BA%94%E7%94%A8%E6%8C%82%E8%BD%BD"><span class="nav-number">1.12.3.</span> <span class="nav-text">12.3 多版本应用挂载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-4-%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.12.4.</span> <span class="nav-text">12.4 版本管理建议</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5-Depends"><span class="nav-number">1.13.</span> <span class="nav-text">13. 依赖注入 Depends</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#13-1-%E5%9F%BA%E6%9C%AC%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.13.1.</span> <span class="nav-text">13.1 基本示例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-2-%E5%B8%B8%E8%A7%81%E4%BE%9D%E8%B5%96%E5%9C%BA%E6%99%AF"><span class="nav-number">1.13.2.</span> <span class="nav-text">13.2 常见依赖场景</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86"><span class="nav-number">1.14.</span> <span class="nav-text">14. 异常处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#15-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0"><span class="nav-number">1.15.</span> <span class="nav-text">15. 文件上传</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#15-1-%E5%8D%95%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0"><span class="nav-number">1.15.1.</span> <span class="nav-text">15.1 单文件上传</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-2-%E4%BF%9D%E5%AD%98%E5%88%B0%E6%9C%AC%E5%9C%B0"><span class="nav-number">1.15.2.</span> <span class="nav-text">15.2 保存到本地</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-3-%E5%AE%9E%E6%88%98%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.15.3.</span> <span class="nav-text">15.3 实战建议</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#16-%E8%A1%A8%E5%8D%95%E4%B8%8E%E6%96%87%E4%BB%B6%E6%B7%B7%E5%90%88%E6%8F%90%E4%BA%A4"><span class="nav-number">1.16.</span> <span class="nav-text">16. 表单与文件混合提交</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#17-%E4%B8%AD%E9%97%B4%E4%BB%B6%E5%92%8C-CORS"><span class="nav-number">1.17.</span> <span class="nav-text">17. 中间件和 CORS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#17-1-%E4%B8%AD%E9%97%B4%E4%BB%B6%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.17.1.</span> <span class="nav-text">17.1 中间件是什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#17-2-CORS"><span class="nav-number">1.17.2.</span> <span class="nav-text">17.2 CORS</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#18-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E4%BA%8B%E4%BB%B6"><span class="nav-number">1.18.</span> <span class="nav-text">18. 生命周期事件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#19-BackgroundTasks-%E5%92%8C-Celery-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">1.19.</span> <span class="nav-text">19. BackgroundTasks 和 Celery 的区别</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#19-1-BackgroundTasks"><span class="nav-number">1.19.1.</span> <span class="nav-text">19.1 BackgroundTasks</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#19-2-Celery"><span class="nav-number">1.19.2.</span> <span class="nav-text">19.2 Celery</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#20-FastAPI-%E5%92%8C-Celery-%E7%9A%84%E5%85%B8%E5%9E%8B%E9%85%8D%E5%90%88%E6%96%B9%E5%BC%8F"><span class="nav-number">1.20.</span> <span class="nav-text">20. FastAPI 和 Celery 的典型配合方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#21-%E5%93%8D%E5%BA%94%E6%A8%A1%E5%9E%8B%E5%92%8C%E7%8A%B6%E6%80%81%E7%A0%81"><span class="nav-number">1.21.</span> <span class="nav-text">21. 响应模型和状态码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#22-%E6%B5%8B%E8%AF%95"><span class="nav-number">1.22.</span> <span class="nav-text">22. 测试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#23-FastAPI-%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%B7%A5%E7%A8%8B%E7%BB%93%E6%9E%84"><span class="nav-number">1.23.</span> <span class="nav-text">23. FastAPI 项目的工程结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#23-1-%E5%90%84%E7%9B%AE%E5%BD%95%E8%B4%9F%E8%B4%A3%E4%BB%80%E4%B9%88"><span class="nav-number">1.23.1.</span> <span class="nav-text">23.1 各目录负责什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#23-2-%E4%B8%80%E6%AC%A1%E8%AF%B7%E6%B1%82%E5%9C%A8%E7%BB%93%E6%9E%84%E9%87%8C%E7%9A%84%E6%B5%81%E5%8A%A8"><span class="nav-number">1.23.2.</span> <span class="nav-text">23.2 一次请求在结构里的流动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#23-3-main-py-%E5%BA%94%E8%AF%A5%E4%BF%9D%E6%8C%81%E5%BE%88%E8%96%84"><span class="nav-number">1.23.3.</span> <span class="nav-text">23.3 main.py 应该保持很薄</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#23-4-API-Router-%E6%B1%87%E6%80%BB%E6%96%B9%E5%BC%8F"><span class="nav-number">1.23.4.</span> <span class="nav-text">23.4 API Router 汇总方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#23-5-%E9%85%8D%E7%BD%AE%E5%B1%82-core-config-py"><span class="nav-number">1.23.5.</span> <span class="nav-text">23.5 配置层 core&#x2F;config.py</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#23-6-%E7%BB%93%E5%90%88-RAG-%E9%A1%B9%E7%9B%AE%E7%9A%84%E6%8E%A8%E8%8D%90%E7%BB%93%E6%9E%84"><span class="nav-number">1.23.6.</span> <span class="nav-text">23.6 结合 RAG 项目的推荐结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#23-7-%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E9%9C%80%E8%A6%81%E6%8B%86%E5%BE%97%E6%9B%B4%E7%BB%86"><span class="nav-number">1.23.7.</span> <span class="nav-text">23.7 什么时候需要拆得更细</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#24-%E5%B8%B8%E8%A7%81%E5%9D%91"><span class="nav-number">1.24.</span> <span class="nav-text">24. 常见坑</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#24-1-%E6%8A%8A%E6%89%80%E6%9C%89%E4%BB%A3%E7%A0%81%E9%83%BD%E5%86%99%E5%9C%A8%E4%B8%80%E4%B8%AA%E6%96%87%E4%BB%B6%E9%87%8C"><span class="nav-number">1.24.1.</span> <span class="nav-text">24.1 把所有代码都写在一个文件里</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#24-2-%E5%9C%A8-async-def-%E9%87%8C%E8%B7%91%E9%87%8D%E5%90%8C%E6%AD%A5%E4%BB%BB%E5%8A%A1"><span class="nav-number">1.24.2.</span> <span class="nav-text">24.2 在 async def 里跑重同步任务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#24-3-%E8%AF%B7%E6%B1%82%E4%BD%93%E9%AA%8C%E8%AF%81%E5%92%8C%E8%BF%94%E5%9B%9E%E7%BB%93%E6%9E%84%E4%B8%8D%E7%BB%9F%E4%B8%80"><span class="nav-number">1.24.3.</span> <span class="nav-text">24.3 请求体验证和返回结构不统一</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#24-4-%E5%BF%BD%E7%95%A5%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98"><span class="nav-number">1.24.4.</span> <span class="nav-text">24.4 忽略文件上传安全问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#24-5-%E6%8A%8A-FastAPI-%E5%BD%93%E6%88%90%E2%80%9C%E4%B8%87%E8%83%BD%E5%90%8E%E5%8F%B0%E7%BA%BF%E7%A8%8B%E6%A1%86%E6%9E%B6%E2%80%9D"><span class="nav-number">1.24.5.</span> <span class="nav-text">24.5 把 FastAPI 当成“万能后台线程框架”</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#25-%E4%B8%80%E5%A5%97%E6%AF%94%E8%BE%83%E5%AE%9E%E7%94%A8%E7%9A%84%E5%AD%A6%E4%B9%A0%E9%A1%BA%E5%BA%8F"><span class="nav-number">1.25.</span> <span class="nav-text">25. 一套比较实用的学习顺序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#26-%E6%80%BB%E7%BB%93"><span class="nav-number">1.26.</span> <span class="nav-text">26. 总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#27-%E5%8F%82%E8%80%83"><span class="nav-number">1.27.</span> <span class="nav-text">27. 参考</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="楚天"
+      src="/img/me.jpg">
+  <p class="site-author-name" itemprop="name">楚天</p>
+  <div class="site-description" itemprop="description">记录深度学习、C++、游戏网络与生活旅行的学习笔记。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ChutianDuan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ChutianDuan" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:3383006954@qq.com" title="E-Mail → mailto:3383006954@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/fasthapi/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="FastAPI 学习笔记 | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          FastAPI 学习笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-04-23 10:53:53" itemprop="dateCreated datePublished" datetime="2026-04-23T10:53:53+08:00">2026-04-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/AI%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">AI模型开发</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/AI%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">知识点学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/AI%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/" itemprop="url" rel="index"><span itemprop="name">框架</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="FastAPI-学习笔记"><a href="#FastAPI-学习笔记" class="headerlink" title="FastAPI 学习笔记"></a>FastAPI 学习笔记</h1><h2 id="1-FastAPI-是什么"><a href="#1-FastAPI-是什么" class="headerlink" title="1. FastAPI 是什么"></a>1. FastAPI 是什么</h2><p>FastAPI 是一个基于 Python 类型注解构建的 Web API 框架，适合用来开发：</p>
+<ul>
+<li>后端接口服务</li>
+<li>AI 模型推理接口</li>
+<li>文件上传和处理接口</li>
+<li>内部微服务</li>
+<li>需要自动生成接口文档的项目</li>
+</ul>
+<p>它的几个核心特点：</p>
+<ul>
+<li>开发效率高，写法接近普通 Python 函数</li>
+<li>自动参数校验</li>
+<li>自动生成 OpenAPI 文档</li>
+<li>支持异步</li>
+<li>和 Pydantic 配合很好，适合结构化数据处理</li>
+</ul>
+<p>FastAPI 最实用的地方在于：你写的是普通 Python 函数，但它会顺手帮你把 HTTP 请求、参数校验和接口文档这些事情一起处理掉。</p>
+<h2 id="2-为什么很多-AI-项目喜欢用-FastAPI"><a href="#2-为什么很多-AI-项目喜欢用-FastAPI" class="headerlink" title="2. 为什么很多 AI 项目喜欢用 FastAPI"></a>2. 为什么很多 AI 项目喜欢用 FastAPI</h2><p>在 AI 项目里，FastAPI 很常见，因为它很适合做这些事情：</p>
+<ul>
+<li>暴露模型推理接口</li>
+<li>上传文档、图片、音频</li>
+<li>提供任务提交和状态查询接口</li>
+<li>给前端或其他服务提供统一 API</li>
+<li>和 Celery、Redis、数据库组合成一套服务</li>
+</ul>
+<p>尤其是下面这种场景：</p>
+<ol>
+<li>前端上传文件</li>
+<li>FastAPI 接收请求</li>
+<li>把耗时任务交给 Celery</li>
+<li>再通过 FastAPI 提供任务状态查询接口</li>
+</ol>
+<p>这类架构在 RAG、推理平台、数据处理平台里非常常见。</p>
+<h2 id="3-安装"><a href="#3-安装" class="headerlink" title="3. 安装"></a>3. 安装</h2><p>最基础的安装：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install fastapi uvicorn</span><br></pre></td></tr></table></figure>
+
+<p>如果要做文件上传，还需要：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install python-multipart</span><br></pre></td></tr></table></figure>
+
+<p>说明：</p>
+<ul>
+<li><code>fastapi</code>：框架本身</li>
+<li><code>uvicorn</code>：ASGI Server，用来启动服务</li>
+<li><code>python-multipart</code>：处理表单和文件上传</li>
+</ul>
+<h2 id="4-最小可运行示例"><a href="#4-最小可运行示例" class="headerlink" title="4. 最小可运行示例"></a>4. 最小可运行示例</h2><p>文件：<code>main.py</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI</span><br><span class="line"></span><br><span class="line">app = FastAPI()</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.get(<span class="params"><span class="string">&quot;/&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">read_root</span>():</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;message&quot;</span>: <span class="string">&quot;hello fastapi&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>启动命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uvicorn main:app --reload</span><br></pre></td></tr></table></figure>
+
+<p>含义：</p>
+<ul>
+<li><code>main</code>：Python 文件名 <code>main.py</code></li>
+<li><code>app</code>：文件中的 FastAPI 实例</li>
+<li><code>--reload</code>：代码变更后自动重启，适合开发环境</li>
+</ul>
+<p>启动后可以访问：</p>
+<ul>
+<li><code>http://127.0.0.1:8000/</code></li>
+<li><code>http://127.0.0.1:8000/docs</code></li>
+<li><code>http://127.0.0.1:8000/redoc</code></li>
+</ul>
+<p>其中：</p>
+<ul>
+<li><code>/docs</code>：Swagger UI</li>
+<li><code>/redoc</code>：ReDoc 文档页面</li>
+</ul>
+<h2 id="5-FastAPI-的基本工作方式"><a href="#5-FastAPI-的基本工作方式" class="headerlink" title="5. FastAPI 的基本工作方式"></a>5. FastAPI 的基本工作方式</h2><p>可以把一个接口理解成：</p>
+<ol>
+<li>定义一个路径</li>
+<li>指定请求方法，比如 <code>GET</code>、<code>POST</code></li>
+<li>声明这个接口需要哪些参数</li>
+<li>FastAPI 自动帮你解析参数并做校验</li>
+<li>函数返回值自动转换为 JSON 响应</li>
+</ol>
+<p>示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI</span><br><span class="line"></span><br><span class="line">app = FastAPI()</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.get(<span class="params"><span class="string">&quot;/hello&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">hello</span>(<span class="params">name: <span class="built_in">str</span></span>):</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;message&quot;</span>: <span class="string">f&quot;hello <span class="subst">&#123;name&#125;</span>&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>访问：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/hello?name=tom</span><br></pre></td></tr></table></figure>
+
+<p>返回：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;message&quot;</span><span class="punctuation">:</span> <span class="string">&quot;hello tom&quot;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>这里的 <code>name: str</code> 会被 FastAPI 识别为查询参数。</p>
+<h2 id="6-路由基础"><a href="#6-路由基础" class="headerlink" title="6. 路由基础"></a>6. 路由基础</h2><p>FastAPI 支持常见的 HTTP 方法：</p>
+<ul>
+<li><code>@app.get()</code></li>
+<li><code>@app.post()</code></li>
+<li><code>@app.put()</code></li>
+<li><code>@app.delete()</code></li>
+<li><code>@app.patch()</code></li>
+</ul>
+<p>示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI</span><br><span class="line"></span><br><span class="line">app = FastAPI()</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.get(<span class="params"><span class="string">&quot;/users&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_users</span>():</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;action&quot;</span>: <span class="string">&quot;list users&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.post(<span class="params"><span class="string">&quot;/users&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">create_user</span>():</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;action&quot;</span>: <span class="string">&quot;create user&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.get(<span class="params"><span class="string">&quot;/users/&#123;user_id&#125;&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_user</span>(<span class="params">user_id: <span class="built_in">int</span></span>):</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;user_id&quot;</span>: user_id&#125;</span><br></pre></td></tr></table></figure>
+
+<p>说明：</p>
+<ul>
+<li><code>/users</code> 通常表示资源集合</li>
+<li><code>/users/&#123;user_id&#125;</code> 表示某个具体资源</li>
+<li><code>user_id: int</code> 会自动做类型校验</li>
+</ul>
+<p>如果路径参数类型不对，FastAPI 会直接返回校验错误。</p>
+<h2 id="7-路径参数、查询参数、请求体"><a href="#7-路径参数、查询参数、请求体" class="headerlink" title="7. 路径参数、查询参数、请求体"></a>7. 路径参数、查询参数、请求体</h2><p>这是 FastAPI 最重要的基础之一。</p>
+<h3 id="7-1-路径参数"><a href="#7-1-路径参数" class="headerlink" title="7.1 路径参数"></a>7.1 路径参数</h3><p>路径里写在 <code>&#123;&#125;</code> 中的内容就是路径参数。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.get(<span class="params"><span class="string">&quot;/items/&#123;item_id&#125;&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_item</span>(<span class="params">item_id: <span class="built_in">int</span></span>):</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;item_id&quot;</span>: item_id&#125;</span><br></pre></td></tr></table></figure>
+
+<p>例如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/items/100</span><br></pre></td></tr></table></figure>
+
+<p>这里的 <code>item_id</code> 就是路径参数。</p>
+<h3 id="7-2-查询参数"><a href="#7-2-查询参数" class="headerlink" title="7.2 查询参数"></a>7.2 查询参数</h3><p>函数里那些不在路径中的普通基础类型参数，通常会被当成查询参数。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.get(<span class="params"><span class="string">&quot;/items&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">list_items</span>(<span class="params">page: <span class="built_in">int</span> = <span class="number">1</span>, size: <span class="built_in">int</span> = <span class="number">10</span></span>):</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;page&quot;</span>: page, <span class="string">&quot;size&quot;</span>: size&#125;</span><br></pre></td></tr></table></figure>
+
+<p>例如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/items?page=2&amp;size=20</span><br></pre></td></tr></table></figure>
+
+<h3 id="7-3-请求体"><a href="#7-3-请求体" class="headerlink" title="7.3 请求体"></a>7.3 请求体</h3><p>如果参数是 Pydantic 模型，FastAPI 会把它当成请求体。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pydantic <span class="keyword">import</span> BaseModel</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">UserCreate</span>(<span class="title class_ inherited__">BaseModel</span>):</span><br><span class="line">    name: <span class="built_in">str</span></span><br><span class="line">    age: <span class="built_in">int</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.post(<span class="params"><span class="string">&quot;/users&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">create_user</span>(<span class="params">user: UserCreate</span>):</span><br><span class="line">    <span class="keyword">return</span> user</span><br></pre></td></tr></table></figure>
+
+<p>请求：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;alice&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">18</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>结论：</p>
+<ul>
+<li>路径里的参数是路径参数</li>
+<li>简单类型参数通常是查询参数</li>
+<li>Pydantic 模型通常是请求体</li>
+</ul>
+<h2 id="8-Pydantic-模型"><a href="#8-Pydantic-模型" class="headerlink" title="8. Pydantic 模型"></a>8. Pydantic 模型</h2><p>FastAPI 的数据校验非常依赖 Pydantic。</p>
+<p>最常见的用途：</p>
+<ul>
+<li>定义请求体结构</li>
+<li>定义返回体结构</li>
+<li>做字段校验</li>
+<li>约束字段类型</li>
+</ul>
+<h3 id="8-1-基本示例"><a href="#8-1-基本示例" class="headerlink" title="8.1 基本示例"></a>8.1 基本示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pydantic <span class="keyword">import</span> BaseModel, Field</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ArticleCreate</span>(<span class="title class_ inherited__">BaseModel</span>):</span><br><span class="line">    title: <span class="built_in">str</span> = Field(min_length=<span class="number">1</span>, max_length=<span class="number">100</span>)</span><br><span class="line">    content: <span class="built_in">str</span></span><br><span class="line">    author: <span class="built_in">str</span></span><br></pre></td></tr></table></figure>
+
+<p>这里的好处是：</p>
+<ul>
+<li>字段缺失会报错</li>
+<li>类型不对会报错</li>
+<li>长度不满足约束会报错</li>
+</ul>
+<h3 id="8-2-作为返回模型"><a href="#8-2-作为返回模型" class="headerlink" title="8.2 作为返回模型"></a>8.2 作为返回模型</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI</span><br><span class="line"><span class="keyword">from</span> pydantic <span class="keyword">import</span> BaseModel</span><br><span class="line"></span><br><span class="line">app = FastAPI()</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">UserOut</span>(<span class="title class_ inherited__">BaseModel</span>):</span><br><span class="line">    <span class="built_in">id</span>: <span class="built_in">int</span></span><br><span class="line">    name: <span class="built_in">str</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.get(<span class="params"><span class="string">&quot;/users/&#123;user_id&#125;&quot;</span>, response_model=UserOut</span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_user</span>(<span class="params">user_id: <span class="built_in">int</span></span>):</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;id&quot;</span>: user_id, <span class="string">&quot;name&quot;</span>: <span class="string">&quot;tom&quot;</span>, <span class="string">&quot;password&quot;</span>: <span class="string">&quot;secret&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>返回给客户端时，<code>password</code> 这类不在 <code>response_model</code> 中的字段会被过滤掉。</p>
+<p>这非常适合做：</p>
+<ul>
+<li>隐藏敏感字段</li>
+<li>固定接口返回结构</li>
+<li>保证前后端契约一致</li>
+</ul>
+<h2 id="9-def-和-async-def-怎么选"><a href="#9-def-和-async-def-怎么选" class="headerlink" title="9. def 和 async def 怎么选"></a>9. <code>def</code> 和 <code>async def</code> 怎么选</h2><p>这是 FastAPI 初学时很容易混淆的点。</p>
+<h3 id="9-1-用-async-def-的情况"><a href="#9-1-用-async-def-的情况" class="headerlink" title="9.1 用 async def 的情况"></a>9.1 用 <code>async def</code> 的情况</h3><p>适合：</p>
+<ul>
+<li>调用异步数据库客户端</li>
+<li>调用异步 HTTP 客户端</li>
+<li>WebSocket</li>
+<li>其他真正支持异步的 IO 场景</li>
+</ul>
+<h3 id="9-2-用普通-def-的情况"><a href="#9-2-用普通-def-的情况" class="headerlink" title="9.2 用普通 def 的情况"></a>9.2 用普通 <code>def</code> 的情况</h3><p>适合：</p>
+<ul>
+<li>普通同步逻辑</li>
+<li>CPU 密集型计算</li>
+<li>调用同步库</li>
+<li>本来就不是异步的代码</li>
+</ul>
+<p>注意：</p>
+<blockquote>
+<p><code>async def</code> 不是“更快”的意思，它只是更适合异步 IO。</p>
+</blockquote>
+<p>如果你在 <code>async def</code> 里直接跑很重的同步任务，照样会阻塞。</p>
+<p>对于重任务，通常应该交给：</p>
+<ul>
+<li>Celery</li>
+<li>任务队列</li>
+<li>独立 Worker</li>
+</ul>
+<h2 id="10-请求参数的更明确写法"><a href="#10-请求参数的更明确写法" class="headerlink" title="10. 请求参数的更明确写法"></a>10. 请求参数的更明确写法</h2><p>FastAPI 虽然能自动推断参数来源，但实际项目里更推荐写明确一些。</p>
+<p>可以使用：</p>
+<ul>
+<li><code>Path</code></li>
+<li><code>Query</code></li>
+<li><code>Body</code></li>
+</ul>
+<p>示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> Body, FastAPI, Path, Query</span><br><span class="line"></span><br><span class="line">app = FastAPI()</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.post(<span class="params"><span class="string">&quot;/items/&#123;item_id&#125;&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">update_item</span>(<span class="params"></span></span><br><span class="line"><span class="params">    item_id: <span class="built_in">int</span> = Path(<span class="params">..., ge=<span class="number">1</span></span>),</span></span><br><span class="line"><span class="params">    keyword: <span class="built_in">str</span> | <span class="literal">None</span> = Query(<span class="params">default=<span class="literal">None</span>, min_length=<span class="number">1</span></span>),</span></span><br><span class="line"><span class="params">    data: <span class="built_in">dict</span> = Body(<span class="params">...</span>),</span></span><br><span class="line"><span class="params"></span>):</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        <span class="string">&quot;item_id&quot;</span>: item_id,</span><br><span class="line">        <span class="string">&quot;keyword&quot;</span>: keyword,</span><br><span class="line">        <span class="string">&quot;data&quot;</span>: data,</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里：</p>
+<ul>
+<li><code>Path(..., ge=1)</code> 表示路径参数必须大于等于 1</li>
+<li><code>Query(...)</code> 用来描述查询参数校验</li>
+<li><code>Body(...)</code> 明确说明这个参数来自请求体</li>
+</ul>
+<p>这种写法更清晰，也更适合团队协作。</p>
+<h2 id="11-APIRouter-路由拆分"><a href="#11-APIRouter-路由拆分" class="headerlink" title="11. APIRouter 路由拆分"></a>11. APIRouter 路由拆分</h2><p>项目一大，通常不会把所有接口都写在一个 <code>main.py</code> 里。</p>
+<p>FastAPI 推荐使用 <code>APIRouter</code> 拆模块。</p>
+<h3 id="11-1-基本示例"><a href="#11-1-基本示例" class="headerlink" title="11.1 基本示例"></a>11.1 基本示例</h3><p>文件：<code>routers/health.py</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> APIRouter</span><br><span class="line"></span><br><span class="line">router = APIRouter(prefix=<span class="string">&quot;/health&quot;</span>, tags=[<span class="string">&quot;health&quot;</span>])</span><br><span class="line"></span><br><span class="line"><span class="meta">@router.get(<span class="params"><span class="string">&quot;&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">health_check</span>():</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;status&quot;</span>: <span class="string">&quot;ok&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>主文件：<code>main.py</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> routers.health <span class="keyword">import</span> router <span class="keyword">as</span> health_router</span><br><span class="line"></span><br><span class="line">app = FastAPI()</span><br><span class="line">app.include_router(health_router)</span><br></pre></td></tr></table></figure>
+
+<p>访问路径：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/health</span><br></pre></td></tr></table></figure>
+
+<h3 id="11-2-为什么要拆-Router"><a href="#11-2-为什么要拆-Router" class="headerlink" title="11.2 为什么要拆 Router"></a>11.2 为什么要拆 Router</h3><p>好处：</p>
+<ul>
+<li>按业务模块组织代码</li>
+<li>主入口文件更简洁</li>
+<li>适合多人协作</li>
+<li>后续做版本管理更方便</li>
+</ul>
+<p>常见拆分方式：</p>
+<ul>
+<li><code>routers/user.py</code></li>
+<li><code>routers/auth.py</code></li>
+<li><code>routers/files.py</code></li>
+<li><code>routers/tasks.py</code></li>
+</ul>
+<h2 id="12-路由前缀和-API-版本管理"><a href="#12-路由前缀和-API-版本管理" class="headerlink" title="12. 路由前缀和 API 版本管理"></a>12. 路由前缀和 API 版本管理</h2><p>你原来的笔记重点写的是这部分，这里整理成更清晰的版本。</p>
+<h3 id="12-1-统一加前缀"><a href="#12-1-统一加前缀" class="headerlink" title="12.1 统一加前缀"></a>12.1 统一加前缀</h3><p>如果整个项目都希望走 <code>/api/v1</code> 前缀，可以在 <code>include_router()</code> 时统一加上。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> routers.health <span class="keyword">import</span> router <span class="keyword">as</span> health_router</span><br><span class="line"></span><br><span class="line">app = FastAPI()</span><br><span class="line"></span><br><span class="line">root_prefix = <span class="string">&quot;/api/v1&quot;</span></span><br><span class="line">app.include_router(health_router, prefix=root_prefix)</span><br></pre></td></tr></table></figure>
+
+<p>如果 <code>health_router</code> 本身是：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">router = APIRouter(prefix=<span class="string">&quot;/health&quot;</span>, tags=[<span class="string">&quot;health&quot;</span>])</span><br></pre></td></tr></table></figure>
+
+<p>那么最终路径就是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/api/v1/health</span><br></pre></td></tr></table></figure>
+
+<h3 id="12-2-在-Router-上直接带业务前缀"><a href="#12-2-在-Router-上直接带业务前缀" class="headerlink" title="12.2 在 Router 上直接带业务前缀"></a>12.2 在 Router 上直接带业务前缀</h3><p>例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">router = APIRouter(prefix=<span class="string">&quot;/users&quot;</span>, tags=[<span class="string">&quot;users&quot;</span>])</span><br></pre></td></tr></table></figure>
+
+<p>再在主应用里挂上版本前缀：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.include_router(user_router, prefix=<span class="string">&quot;/api/v1&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>最后效果就是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/api/v1/users</span><br></pre></td></tr></table></figure>
+
+<h3 id="12-3-多版本应用挂载"><a href="#12-3-多版本应用挂载" class="headerlink" title="12.3 多版本应用挂载"></a>12.3 多版本应用挂载</h3><p>如果你想同时保留多个版本，也可以挂多个 FastAPI 子应用。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI</span><br><span class="line"></span><br><span class="line">app = FastAPI()</span><br><span class="line"></span><br><span class="line">app_v1 = FastAPI(title=<span class="string">&quot;API V1&quot;</span>)</span><br><span class="line">app_v2 = FastAPI(title=<span class="string">&quot;API V2&quot;</span>)</span><br><span class="line"></span><br><span class="line">app.mount(<span class="string">&quot;/api/v1&quot;</span>, app_v1)</span><br><span class="line">app.mount(<span class="string">&quot;/api/v2&quot;</span>, app_v2)</span><br></pre></td></tr></table></figure>
+
+<p>这种方式适合：</p>
+<ul>
+<li>两个版本差异非常大</li>
+<li>想彻底隔离文档和路由</li>
+<li>历史接口需要长期兼容</li>
+</ul>
+<p>但如果只是小规模版本演进，通常直接用：</p>
+<ul>
+<li><code>include_router(..., prefix=&quot;/api/v1&quot;)</code></li>
+<li><code>include_router(..., prefix=&quot;/api/v2&quot;)</code></li>
+</ul>
+<p>就够了。</p>
+<h3 id="12-4-版本管理建议"><a href="#12-4-版本管理建议" class="headerlink" title="12.4 版本管理建议"></a>12.4 版本管理建议</h3><p>实际项目里一般这样做：</p>
+<ul>
+<li>先按模块拆 Router</li>
+<li>再统一加版本前缀</li>
+<li>不要一开始就把版本设计得过于复杂</li>
+</ul>
+<p>多数项目初期使用：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/api/v1/xxx</span><br></pre></td></tr></table></figure>
+
+<p>已经足够。</p>
+<h2 id="13-依赖注入-Depends"><a href="#13-依赖注入-Depends" class="headerlink" title="13. 依赖注入 Depends"></a>13. 依赖注入 <code>Depends</code></h2><p><code>Depends</code> 是 FastAPI 很重要的能力。</p>
+<p>它的核心作用是：</p>
+<ul>
+<li>把公共逻辑抽出来复用</li>
+<li>给接口注入数据库连接、用户信息、分页参数等</li>
+<li>让路由函数更干净</li>
+</ul>
+<h3 id="13-1-基本示例"><a href="#13-1-基本示例" class="headerlink" title="13.1 基本示例"></a>13.1 基本示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> Depends, FastAPI</span><br><span class="line"></span><br><span class="line">app = FastAPI()</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">common_pagination</span>(<span class="params">page: <span class="built_in">int</span> = <span class="number">1</span>, size: <span class="built_in">int</span> = <span class="number">10</span></span>):</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;page&quot;</span>: page, <span class="string">&quot;size&quot;</span>: size&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.get(<span class="params"><span class="string">&quot;/articles&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">list_articles</span>(<span class="params">pagination=Depends(<span class="params">common_pagination</span>)</span>):</span><br><span class="line">    <span class="keyword">return</span> pagination</span><br></pre></td></tr></table></figure>
+
+<p>说明：</p>
+<ul>
+<li><code>page</code> 和 <code>size</code> 可以在多个接口中复用</li>
+<li>路由函数里只拿最终整理好的结果</li>
+</ul>
+<h3 id="13-2-常见依赖场景"><a href="#13-2-常见依赖场景" class="headerlink" title="13.2 常见依赖场景"></a>13.2 常见依赖场景</h3><ul>
+<li>获取当前登录用户</li>
+<li>获取数据库 Session</li>
+<li>提取分页参数</li>
+<li>权限校验</li>
+<li>校验请求头</li>
+</ul>
+<p>例如认证场景：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> Depends, FastAPI, Header, HTTPException</span><br><span class="line"></span><br><span class="line">app = FastAPI()</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">verify_token</span>(<span class="params">x_token: <span class="built_in">str</span> = Header(<span class="params">...</span>)</span>):</span><br><span class="line">    <span class="keyword">if</span> x_token != <span class="string">&quot;demo-token&quot;</span>:</span><br><span class="line">        <span class="keyword">raise</span> HTTPException(status_code=<span class="number">401</span>, detail=<span class="string">&quot;invalid token&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> x_token</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.get(<span class="params"><span class="string">&quot;/secure&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">secure_api</span>(<span class="params">token: <span class="built_in">str</span> = Depends(<span class="params">verify_token</span>)</span>):</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;token&quot;</span>: token&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="14-异常处理"><a href="#14-异常处理" class="headerlink" title="14. 异常处理"></a>14. 异常处理</h2><p>FastAPI 常用 <code>HTTPException</code> 抛业务错误。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI, HTTPException</span><br><span class="line"></span><br><span class="line">app = FastAPI()</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.get(<span class="params"><span class="string">&quot;/users/&#123;user_id&#125;&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_user</span>(<span class="params">user_id: <span class="built_in">int</span></span>):</span><br><span class="line">    <span class="keyword">if</span> user_id != <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">raise</span> HTTPException(status_code=<span class="number">404</span>, detail=<span class="string">&quot;user not found&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;id&quot;</span>: <span class="number">1</span>, <span class="string">&quot;name&quot;</span>: <span class="string">&quot;tom&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>适合用在：</p>
+<ul>
+<li>资源不存在</li>
+<li>权限不足</li>
+<li>参数不合法</li>
+<li>业务状态不满足要求</li>
+</ul>
+<p>补充理解：</p>
+<ul>
+<li>参数校验错误通常由 FastAPI 自动处理</li>
+<li>业务逻辑错误通常由你主动抛 <code>HTTPException</code></li>
+</ul>
+<h2 id="15-文件上传"><a href="#15-文件上传" class="headerlink" title="15. 文件上传"></a>15. 文件上传</h2><p>这在 AI 项目里很常见，比如：</p>
+<ul>
+<li>上传 PDF</li>
+<li>上传图片</li>
+<li>上传音频</li>
+<li>上传知识库文档</li>
+</ul>
+<h3 id="15-1-单文件上传"><a href="#15-1-单文件上传" class="headerlink" title="15.1 单文件上传"></a>15.1 单文件上传</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI, File, UploadFile</span><br><span class="line"></span><br><span class="line">app = FastAPI()</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.post(<span class="params"><span class="string">&quot;/upload&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">upload_file</span>(<span class="params">file: UploadFile = File(<span class="params">...</span>)</span>):</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        <span class="string">&quot;filename&quot;</span>: file.filename,</span><br><span class="line">        <span class="string">&quot;content_type&quot;</span>: file.content_type,</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="15-2-保存到本地"><a href="#15-2-保存到本地" class="headerlink" title="15.2 保存到本地"></a>15.2 保存到本地</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pathlib <span class="keyword">import</span> Path</span><br><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI, File, UploadFile</span><br><span class="line"></span><br><span class="line">app = FastAPI()</span><br><span class="line"></span><br><span class="line">UPLOAD_DIR = Path(<span class="string">&quot;uploads&quot;</span>)</span><br><span class="line">UPLOAD_DIR.mkdir(exist_ok=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.post(<span class="params"><span class="string">&quot;/upload&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">upload_file</span>(<span class="params">file: UploadFile = File(<span class="params">...</span>)</span>):</span><br><span class="line">    save_path = UPLOAD_DIR / file.filename</span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> save_path.<span class="built_in">open</span>(<span class="string">&quot;wb&quot;</span>) <span class="keyword">as</span> buffer:</span><br><span class="line">        shutil.copyfileobj(file.file, buffer)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;path&quot;</span>: <span class="built_in">str</span>(save_path)&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="15-3-实战建议"><a href="#15-3-实战建议" class="headerlink" title="15.3 实战建议"></a>15.3 实战建议</h3><ul>
+<li>不要直接相信上传文件名</li>
+<li>最好自己生成唯一文件名</li>
+<li>大文件处理不要阻塞接口太久</li>
+<li>上传成功后可以把处理任务交给 Celery</li>
+</ul>
+<h2 id="16-表单与文件混合提交"><a href="#16-表单与文件混合提交" class="headerlink" title="16. 表单与文件混合提交"></a>16. 表单与文件混合提交</h2><p>有时接口既要文件，也要普通字段，比如：</p>
+<ul>
+<li>文件 + 文档类型</li>
+<li>图片 + 用户 ID</li>
+<li>音频 + 语言参数</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI, File, Form, UploadFile</span><br><span class="line"></span><br><span class="line">app = FastAPI()</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.post(<span class="params"><span class="string">&quot;/documents&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">create_document</span>(<span class="params"></span></span><br><span class="line"><span class="params">    file: UploadFile = File(<span class="params">...</span>),</span></span><br><span class="line"><span class="params">    doc_type: <span class="built_in">str</span> = Form(<span class="params">...</span>),</span></span><br><span class="line"><span class="params"></span>):</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        <span class="string">&quot;filename&quot;</span>: file.filename,</span><br><span class="line">        <span class="string">&quot;doc_type&quot;</span>: doc_type,</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="17-中间件和-CORS"><a href="#17-中间件和-CORS" class="headerlink" title="17. 中间件和 CORS"></a>17. 中间件和 CORS</h2><h3 id="17-1-中间件是什么"><a href="#17-1-中间件是什么" class="headerlink" title="17.1 中间件是什么"></a>17.1 中间件是什么</h3><p>中间件是在请求进入路由前、响应返回客户端前统一插入的一层处理逻辑。</p>
+<p>常见用途：</p>
+<ul>
+<li>记录请求日志</li>
+<li>统计耗时</li>
+<li>增加追踪 ID</li>
+<li>统一鉴权</li>
+</ul>
+<h3 id="17-2-CORS"><a href="#17-2-CORS" class="headerlink" title="17.2 CORS"></a>17.2 CORS</h3><p>如果前后端分离，浏览器经常会遇到跨域问题。</p>
+<p>FastAPI 通常这样加：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI</span><br><span class="line"><span class="keyword">from</span> fastapi.middleware.cors <span class="keyword">import</span> CORSMiddleware</span><br><span class="line"></span><br><span class="line">app = FastAPI()</span><br><span class="line"></span><br><span class="line">app.add_middleware(</span><br><span class="line">    CORSMiddleware,</span><br><span class="line">    allow_origins=[<span class="string">&quot;http://localhost:3000&quot;</span>],</span><br><span class="line">    allow_credentials=<span class="literal">True</span>,</span><br><span class="line">    allow_methods=[<span class="string">&quot;*&quot;</span>],</span><br><span class="line">    allow_headers=[<span class="string">&quot;*&quot;</span>],</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>开发环境常见，生产环境一般要更严格地限制来源。</p>
+<h2 id="18-生命周期事件"><a href="#18-生命周期事件" class="headerlink" title="18. 生命周期事件"></a>18. 生命周期事件</h2><p>很多项目需要在服务启动时做初始化，比如：</p>
+<ul>
+<li>建立连接池</li>
+<li>加载配置</li>
+<li>初始化日志</li>
+<li>加载模型</li>
+</ul>
+<p>FastAPI 支持应用生命周期管理。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> contextlib <span class="keyword">import</span> asynccontextmanager</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI</span><br><span class="line"></span><br><span class="line"><span class="meta">@asynccontextmanager</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">lifespan</span>(<span class="params">app: FastAPI</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;service starting&quot;</span>)</span><br><span class="line">    <span class="keyword">yield</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;service stopping&quot;</span>)</span><br><span class="line"></span><br><span class="line">app = FastAPI(lifespan=lifespan)</span><br></pre></td></tr></table></figure>
+
+<p>如果项目里有大模型、向量库客户端、数据库连接池，这一层会比较重要。</p>
+<h2 id="19-BackgroundTasks-和-Celery-的区别"><a href="#19-BackgroundTasks-和-Celery-的区别" class="headerlink" title="19. BackgroundTasks 和 Celery 的区别"></a>19. <code>BackgroundTasks</code> 和 Celery 的区别</h2><p>这点和你刚整理的 <code>Celery.md</code> 是连着的。</p>
+<h3 id="19-1-BackgroundTasks"><a href="#19-1-BackgroundTasks" class="headerlink" title="19.1 BackgroundTasks"></a>19.1 <code>BackgroundTasks</code></h3><p>适合：</p>
+<ul>
+<li>很轻量的后台操作</li>
+<li>和当前 Web 进程生命周期绑定</li>
+<li>不需要重试</li>
+<li>不需要独立扩容</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> BackgroundTasks, FastAPI</span><br><span class="line"></span><br><span class="line">app = FastAPI()</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">write_log</span>(<span class="params">message: <span class="built_in">str</span></span>):</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;app.log&quot;</span>, <span class="string">&quot;a&quot;</span>, encoding=<span class="string">&quot;utf-8&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        f.write(message + <span class="string">&quot;\n&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.post(<span class="params"><span class="string">&quot;/notify&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">notify</span>(<span class="params">background_tasks: BackgroundTasks</span>):</span><br><span class="line">    background_tasks.add_task(write_log, <span class="string">&quot;new request&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;message&quot;</span>: <span class="string">&quot;accepted&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="19-2-Celery"><a href="#19-2-Celery" class="headerlink" title="19.2 Celery"></a>19.2 Celery</h3><p>更适合：</p>
+<ul>
+<li>长耗时任务</li>
+<li>文件处理</li>
+<li>模型推理</li>
+<li>批量任务</li>
+<li>需要失败重试</li>
+<li>需要多机扩展</li>
+</ul>
+<p>一句话：</p>
+<blockquote>
+<p>轻任务用 <code>BackgroundTasks</code>，重任务用 Celery。</p>
+</blockquote>
+<h2 id="20-FastAPI-和-Celery-的典型配合方式"><a href="#20-FastAPI-和-Celery-的典型配合方式" class="headerlink" title="20. FastAPI 和 Celery 的典型配合方式"></a>20. FastAPI 和 Celery 的典型配合方式</h2><p>在 AI 项目里，比较常见的结构是：</p>
+<ol>
+<li>FastAPI 负责接收请求</li>
+<li>接口做参数校验和鉴权</li>
+<li>把耗时任务提交给 Celery</li>
+<li>返回 <code>task_id</code></li>
+<li>前端轮询任务状态</li>
+</ol>
+<p>例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> tasks <span class="keyword">import</span> process_document</span><br><span class="line"></span><br><span class="line">app = FastAPI()</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.post(<span class="params"><span class="string">&quot;/tasks/documents&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">create_document_task</span>(<span class="params">file_path: <span class="built_in">str</span></span>):</span><br><span class="line">    task = process_document.delay(file_path)</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;task_id&quot;</span>: task.<span class="built_in">id</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个思路尤其适合：</p>
+<ul>
+<li>文档解析</li>
+<li>embedding 计算</li>
+<li>批量摘要</li>
+<li>图片处理</li>
+<li>音频转写</li>
+</ul>
+<h2 id="21-响应模型和状态码"><a href="#21-响应模型和状态码" class="headerlink" title="21. 响应模型和状态码"></a>21. 响应模型和状态码</h2><p>建议在正式项目里尽量把返回结构固定下来。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI, status</span><br><span class="line"><span class="keyword">from</span> pydantic <span class="keyword">import</span> BaseModel</span><br><span class="line"></span><br><span class="line">app = FastAPI()</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">UserCreate</span>(<span class="title class_ inherited__">BaseModel</span>):</span><br><span class="line">    name: <span class="built_in">str</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">UserOut</span>(<span class="title class_ inherited__">BaseModel</span>):</span><br><span class="line">    <span class="built_in">id</span>: <span class="built_in">int</span></span><br><span class="line">    name: <span class="built_in">str</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.post(<span class="params"><span class="string">&quot;/users&quot;</span>, response_model=UserOut, status_code=status.HTTP_201_CREATED</span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">create_user</span>(<span class="params">user: UserCreate</span>):</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;id&quot;</span>: <span class="number">1</span>, <span class="string">&quot;name&quot;</span>: user.name&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样做的好处：</p>
+<ul>
+<li>文档更清晰</li>
+<li>前端更好联调</li>
+<li>返回结构更稳定</li>
+</ul>
+<h2 id="22-测试"><a href="#22-测试" class="headerlink" title="22. 测试"></a>22. 测试</h2><p>FastAPI 支持用 <code>TestClient</code> 做接口测试。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi.testclient <span class="keyword">import</span> TestClient</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> main <span class="keyword">import</span> app</span><br><span class="line"></span><br><span class="line">client = TestClient(app)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">test_read_root</span>():</span><br><span class="line">    response = client.get(<span class="string">&quot;/&quot;</span>)</span><br><span class="line">    <span class="keyword">assert</span> response.status_code == <span class="number">200</span></span><br><span class="line">    <span class="keyword">assert</span> response.json() == &#123;<span class="string">&quot;message&quot;</span>: <span class="string">&quot;hello fastapi&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个对接口开发很有用，特别是：</p>
+<ul>
+<li>改接口时防止回归</li>
+<li>验证参数校验</li>
+<li>验证权限逻辑</li>
+</ul>
+<h2 id="23-FastAPI-项目的工程结构"><a href="#23-FastAPI-项目的工程结构" class="headerlink" title="23. FastAPI 项目的工程结构"></a>23. FastAPI 项目的工程结构</h2><p>当项目从 demo 变成一个后端服务时，最重要的不是目录多，而是每一层职责清楚。</p>
+<p>FastAPI 官方文档里会用 <code>app/main.py</code>、<code>app/dependencies.py</code>、<code>app/routers/</code> 这种结构说明大型应用拆分。实际项目里可以在这个基础上继续细分成：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">project/</span><br><span class="line">├── app/</span><br><span class="line">│   ├── main.py</span><br><span class="line">│   ├── api/</span><br><span class="line">│   │   └── v1/</span><br><span class="line">│   │       ├── router.py</span><br><span class="line">│   │       └── endpoints/</span><br><span class="line">│   │           ├── health.py</span><br><span class="line">│   │           ├── documents.py</span><br><span class="line">│   │           ├── chat.py</span><br><span class="line">│   │           └── tasks.py</span><br><span class="line">│   ├── core/</span><br><span class="line">│   │   ├── config.py</span><br><span class="line">│   │   ├── logging.py</span><br><span class="line">│   │   ├── security.py</span><br><span class="line">│   │   └── exceptions.py</span><br><span class="line">│   ├── schemas/</span><br><span class="line">│   │   ├── document.py</span><br><span class="line">│   │   ├── chat.py</span><br><span class="line">│   │   └── task.py</span><br><span class="line">│   ├── models/</span><br><span class="line">│   │   ├── document.py</span><br><span class="line">│   │   ├── chunk.py</span><br><span class="line">│   │   └── message.py</span><br><span class="line">│   ├── crud/</span><br><span class="line">│   │   ├── document.py</span><br><span class="line">│   │   └── task.py</span><br><span class="line">│   ├── services/</span><br><span class="line">│   │   ├── document_service.py</span><br><span class="line">│   │   ├── rag_service.py</span><br><span class="line">│   │   ├── embedding_service.py</span><br><span class="line">│   │   └── llm_service.py</span><br><span class="line">│   ├── clients/</span><br><span class="line">│   │   ├── redis_client.py</span><br><span class="line">│   │   ├── vector_store.py</span><br><span class="line">│   │   └── llm_client.py</span><br><span class="line">│   ├── db/</span><br><span class="line">│   │   ├── session.py</span><br><span class="line">│   │   └── base.py</span><br><span class="line">│   └── workers/</span><br><span class="line">│       ├── celery_app.py</span><br><span class="line">│       └── tasks.py</span><br><span class="line">├── tests/</span><br><span class="line">│   ├── test_documents.py</span><br><span class="line">│   └── test_chat.py</span><br><span class="line">└── requirements.txt</span><br></pre></td></tr></table></figure>
+
+<p>不一定每个项目都要这么全。目录结构应该跟项目复杂度匹配，小项目可以先从 <code>main.py + routers + schemas + services</code> 开始。</p>
+<h3 id="23-1-各目录负责什么"><a href="#23-1-各目录负责什么" class="headerlink" title="23.1 各目录负责什么"></a>23.1 各目录负责什么</h3><ul>
+<li><code>main.py</code>：应用入口，只负责创建 <code>FastAPI</code> 实例、注册中间件、注册路由、声明生命周期逻辑。</li>
+<li><code>api/v1/router.py</code>：汇总某个 API 版本下的所有 router，例如 <code>/documents</code>、<code>/chat</code>、<code>/tasks</code>。</li>
+<li><code>api/v1/endpoints/</code>：HTTP 接口层，只处理请求参数、依赖注入、状态码和响应模型，不直接堆复杂业务。</li>
+<li><code>schemas/</code>：Pydantic 模型，定义请求体、返回体和接口契约。</li>
+<li><code>models/</code>：数据库 ORM 模型，对应 MySQL 表结构。</li>
+<li><code>crud/</code>：数据库读写封装，只做增删改查，不写复杂业务流程。</li>
+<li><code>services/</code>：业务逻辑层，负责组织多个 <code>crud</code>、<code>client</code>、算法模块完成一个完整业务动作。</li>
+<li><code>clients/</code>：外部服务或基础设施客户端，例如 Redis、向量库、LLM 服务、对象存储。</li>
+<li><code>core/</code>：全局配置、日志、安全、异常处理、公共常量。</li>
+<li><code>workers/</code>：Celery 应用和后台任务，处理文档解析、embedding、索引构建等耗时流程。</li>
+<li><code>tests/</code>：接口测试、业务测试、E2E 测试。</li>
+</ul>
+<p>最关键的原则：</p>
+<blockquote>
+<p>Router 不写重业务，Service 不关心 HTTP，CRUD 不关心业务流程。</p>
+</blockquote>
+<h3 id="23-2-一次请求在结构里的流动"><a href="#23-2-一次请求在结构里的流动" class="headerlink" title="23.2 一次请求在结构里的流动"></a>23.2 一次请求在结构里的流动</h3><p>以创建文档任务为例：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Client</span><br><span class="line">  -&gt; FastAPI middleware</span><br><span class="line">  -&gt; api/v1/endpoints/documents.py</span><br><span class="line">  -&gt; Depends 获取配置、数据库 Session、用户信息</span><br><span class="line">  -&gt; schemas/document.py 校验请求体</span><br><span class="line">  -&gt; services/document_service.py 组织业务</span><br><span class="line">  -&gt; crud/document.py 写入文档记录</span><br><span class="line">  -&gt; workers/tasks.py 提交 Celery 任务</span><br><span class="line">  -&gt; 返回 task_id</span><br></pre></td></tr></table></figure>
+
+<p>接口函数应该尽量薄，例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> APIRouter, Depends, UploadFile</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> app.db.session <span class="keyword">import</span> get_db</span><br><span class="line"><span class="keyword">from</span> app.schemas.document <span class="keyword">import</span> DocumentUploadResponse</span><br><span class="line"><span class="keyword">from</span> app.services.document_service <span class="keyword">import</span> DocumentService</span><br><span class="line"></span><br><span class="line">router = APIRouter(prefix=<span class="string">&quot;/documents&quot;</span>, tags=[<span class="string">&quot;documents&quot;</span>])</span><br><span class="line"></span><br><span class="line"><span class="meta">@router.post(<span class="params"><span class="string">&quot;&quot;</span>, response_model=DocumentUploadResponse</span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">upload_document</span>(<span class="params">file: UploadFile, db=Depends(<span class="params">get_db</span>)</span>):</span><br><span class="line">    service = DocumentService(db)</span><br><span class="line">    <span class="keyword">return</span> service.create_ingest_task(file)</span><br></pre></td></tr></table></figure>
+
+<p>这个接口只做三件事：</p>
+<ul>
+<li>接收 HTTP 请求</li>
+<li>通过 <code>Depends</code> 拿到依赖</li>
+<li>调用 service 返回结果</li>
+</ul>
+<p>文件保存、数据库写入、任务提交、错误处理都应该下沉到 service 或更底层。</p>
+<h3 id="23-3-main-py-应该保持很薄"><a href="#23-3-main-py-应该保持很薄" class="headerlink" title="23.3 main.py 应该保持很薄"></a>23.3 <code>main.py</code> 应该保持很薄</h3><p><code>main.py</code> 更像“装配入口”，不要把业务逻辑都塞进去。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI</span><br><span class="line"><span class="keyword">from</span> fastapi.middleware.cors <span class="keyword">import</span> CORSMiddleware</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> app.api.v1.router <span class="keyword">import</span> api_router</span><br><span class="line"><span class="keyword">from</span> app.core.config <span class="keyword">import</span> settings</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">create_app</span>() -&gt; FastAPI:</span><br><span class="line">    app = FastAPI(title=settings.app_name)</span><br><span class="line"></span><br><span class="line">    app.add_middleware(</span><br><span class="line">        CORSMiddleware,</span><br><span class="line">        allow_origins=settings.cors_origins,</span><br><span class="line">        allow_credentials=<span class="literal">True</span>,</span><br><span class="line">        allow_methods=[<span class="string">&quot;*&quot;</span>],</span><br><span class="line">        allow_headers=[<span class="string">&quot;*&quot;</span>],</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    app.include_router(api_router, prefix=<span class="string">&quot;/api/v1&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> app</span><br><span class="line"></span><br><span class="line">app = create_app()</span><br></pre></td></tr></table></figure>
+
+<p>好处：</p>
+<ul>
+<li>应用创建逻辑清楚</li>
+<li>测试时可以复用 <code>create_app()</code></li>
+<li>业务模块不会和框架入口互相缠住</li>
+</ul>
+<h3 id="23-4-API-Router-汇总方式"><a href="#23-4-API-Router-汇总方式" class="headerlink" title="23.4 API Router 汇总方式"></a>23.4 API Router 汇总方式</h3><p>可以用一个 <code>api/v1/router.py</code> 统一挂载各业务模块：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> APIRouter</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> app.api.v1.endpoints <span class="keyword">import</span> chat, documents, health, tasks</span><br><span class="line"></span><br><span class="line">api_router = APIRouter()</span><br><span class="line">api_router.include_router(health.router)</span><br><span class="line">api_router.include_router(documents.router)</span><br><span class="line">api_router.include_router(tasks.router)</span><br><span class="line">api_router.include_router(chat.router)</span><br></pre></td></tr></table></figure>
+
+<p>这样 <code>main.py</code> 只需要引入一个 <code>api_router</code>，不会随着接口数量变多而越来越乱。</p>
+<h3 id="23-5-配置层-core-config-py"><a href="#23-5-配置层-core-config-py" class="headerlink" title="23.5 配置层 core/config.py"></a>23.5 配置层 <code>core/config.py</code></h3><p>正式项目不要把数据库地址、Redis 地址、模型地址直接写死在业务代码里。更好的做法是用配置对象统一管理。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pydantic_settings <span class="keyword">import</span> BaseSettings, SettingsConfigDict</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Settings</span>(<span class="title class_ inherited__">BaseSettings</span>):</span><br><span class="line">    model_config = SettingsConfigDict(env_file=<span class="string">&quot;.env&quot;</span>)</span><br><span class="line"></span><br><span class="line">    app_name: <span class="built_in">str</span> = <span class="string">&quot;rag-api&quot;</span></span><br><span class="line">    mysql_url: <span class="built_in">str</span></span><br><span class="line">    redis_url: <span class="built_in">str</span></span><br><span class="line">    llm_base_url: <span class="built_in">str</span></span><br><span class="line">    embedding_model: <span class="built_in">str</span> = <span class="string">&quot;KaLM-Embedding-0.5B&quot;</span></span><br><span class="line">    cors_origins: <span class="built_in">list</span>[<span class="built_in">str</span>] = [<span class="string">&quot;http://localhost:3000&quot;</span>]</span><br><span class="line"></span><br><span class="line">settings = Settings()</span><br></pre></td></tr></table></figure>
+
+<p>这样可以做到：</p>
+<ul>
+<li>本地、测试、生产环境分开配置</li>
+<li>敏感信息不写进代码</li>
+<li>配置类型可以被 Pydantic 校验</li>
+</ul>
+<h3 id="23-6-结合-RAG-项目的推荐结构"><a href="#23-6-结合-RAG-项目的推荐结构" class="headerlink" title="23.6 结合 RAG 项目的推荐结构"></a>23.6 结合 RAG 项目的推荐结构</h3><p>如果是你的 RAG 文档检索项目，可以这样对应：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">接口层：</span><br><span class="line">- documents.py：上传文档、查询文档列表、删除文档</span><br><span class="line">- tasks.py：查询 Celery 任务状态和进度</span><br><span class="line">- chat.py：创建会话、提交问题、返回回答和 citations</span><br><span class="line">- health.py：健康检查和依赖状态检查</span><br><span class="line"></span><br><span class="line">业务层：</span><br><span class="line">- document_service.py：保存文件、创建文档记录、提交 ingest 任务</span><br><span class="line">- rag_service.py：Top-K 检索、上下文拼接、调用 LLM、保存 message/citation</span><br><span class="line">- embedding_service.py：文本向量化、批量 embedding</span><br><span class="line">- index_service.py：FAISS 索引构建、加载、保存</span><br><span class="line"></span><br><span class="line">基础设施层：</span><br><span class="line">- db/session.py：MySQL Session</span><br><span class="line">- clients/redis_client.py：Redis 连接</span><br><span class="line">- clients/llm_client.py：OpenAI-compatible LLM 调用</span><br><span class="line">- clients/vector_store.py：FAISS 检索封装</span><br><span class="line">- workers/tasks.py：文档解析、chunk、embedding、建索引</span><br></pre></td></tr></table></figure>
+
+<p>RAG 链路可以这样记：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">上传接口</span><br><span class="line">  -&gt; document_service 创建文档和任务</span><br><span class="line">  -&gt; Celery worker 解析文档</span><br><span class="line">  -&gt; chunk 切片</span><br><span class="line">  -&gt; embedding_service 生成向量</span><br><span class="line">  -&gt; index_service 写入 FAISS</span><br><span class="line">  -&gt; task 状态更新</span><br><span class="line"></span><br><span class="line">问答接口</span><br><span class="line">  -&gt; rag_service 接收问题</span><br><span class="line">  -&gt; vector_store Top-K 检索</span><br><span class="line">  -&gt; 拼接上下文和 Prompt</span><br><span class="line">  -&gt; llm_client 调用模型</span><br><span class="line">  -&gt; 保存 answer 和 citation</span><br><span class="line">  -&gt; 返回给前端</span><br></pre></td></tr></table></figure>
+
+<h3 id="23-7-什么时候需要拆得更细"><a href="#23-7-什么时候需要拆得更细" class="headerlink" title="23.7 什么时候需要拆得更细"></a>23.7 什么时候需要拆得更细</h3><p>如果项目只有几个接口：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">main.py</span><br><span class="line">routers/</span><br><span class="line">schemas/</span><br><span class="line">services/</span><br></pre></td></tr></table></figure>
+
+<p>就已经够用。</p>
+<p>当出现下面情况时，再继续拆：</p>
+<ul>
+<li>接口超过十几个</li>
+<li>多个接口复用同一批业务逻辑</li>
+<li>数据库表开始变多</li>
+<li>出现 Celery、Redis、LLM、向量库等外部依赖</li>
+<li>测试变得难写</li>
+<li><code>main.py</code> 或某个 router 文件超过几百行</li>
+</ul>
+<p>不要为了“看起来专业”一开始就堆很多目录。目录结构的目的不是复杂，而是让业务边界清楚。</p>
+<h2 id="24-常见坑"><a href="#24-常见坑" class="headerlink" title="24. 常见坑"></a>24. 常见坑</h2><h3 id="24-1-把所有代码都写在一个文件里"><a href="#24-1-把所有代码都写在一个文件里" class="headerlink" title="24.1 把所有代码都写在一个文件里"></a>24.1 把所有代码都写在一个文件里</h3><p>初学时能跑，项目一大就很难维护。</p>
+<p>建议尽快学会：</p>
+<ul>
+<li><code>APIRouter</code></li>
+<li>模块拆分</li>
+<li>业务逻辑下沉到 service 层</li>
+</ul>
+<h3 id="24-2-在-async-def-里跑重同步任务"><a href="#24-2-在-async-def-里跑重同步任务" class="headerlink" title="24.2 在 async def 里跑重同步任务"></a>24.2 在 <code>async def</code> 里跑重同步任务</h3><p>这会阻塞事件循环。</p>
+<p>如果是：</p>
+<ul>
+<li>长时间计算</li>
+<li>文件处理</li>
+<li>模型推理</li>
+</ul>
+<p>通常不应该直接堆在接口函数里。</p>
+<h3 id="24-3-请求体验证和返回结构不统一"><a href="#24-3-请求体验证和返回结构不统一" class="headerlink" title="24.3 请求体验证和返回结构不统一"></a>24.3 请求体验证和返回结构不统一</h3><p>如果不定义 Pydantic 模型，接口会越来越乱。</p>
+<p>建议：</p>
+<ul>
+<li>请求体尽量用模型</li>
+<li>返回值尽量用 <code>response_model</code></li>
+</ul>
+<h3 id="24-4-忽略文件上传安全问题"><a href="#24-4-忽略文件上传安全问题" class="headerlink" title="24.4 忽略文件上传安全问题"></a>24.4 忽略文件上传安全问题</h3><p>例如：</p>
+<ul>
+<li>直接使用用户传上来的文件名</li>
+<li>不限制文件类型</li>
+<li>不限制文件大小</li>
+</ul>
+<p>这些在正式项目里都容易出问题。</p>
+<h3 id="24-5-把-FastAPI-当成“万能后台线程框架”"><a href="#24-5-把-FastAPI-当成“万能后台线程框架”" class="headerlink" title="24.5 把 FastAPI 当成“万能后台线程框架”"></a>24.5 把 FastAPI 当成“万能后台线程框架”</h3><p>FastAPI 主要是 Web API 框架，不是专门的任务调度系统。</p>
+<p>如果任务已经明显是：</p>
+<ul>
+<li>重任务</li>
+<li>批处理</li>
+<li>需要排队</li>
+<li>需要重试</li>
+</ul>
+<p>就应该交给 Celery 之类的任务系统。</p>
+<h2 id="25-一套比较实用的学习顺序"><a href="#25-一套比较实用的学习顺序" class="headerlink" title="25. 一套比较实用的学习顺序"></a>25. 一套比较实用的学习顺序</h2><p>建议按这个顺序掌握：</p>
+<ol>
+<li>先跑通最小示例</li>
+<li>理解路由、路径参数、查询参数</li>
+<li>学会用 Pydantic 定义请求体和返回体</li>
+<li>学会拆 <code>APIRouter</code></li>
+<li>学会 <code>Depends</code></li>
+<li>学会文件上传</li>
+<li>学会 <code>BackgroundTasks</code></li>
+<li>最后再接入 Celery、数据库、鉴权</li>
+</ol>
+<h2 id="26-总结"><a href="#26-总结" class="headerlink" title="26. 总结"></a>26. 总结</h2><p>FastAPI 的核心价值在于：</p>
+<ul>
+<li>用很少的代码快速暴露 API</li>
+<li>自动完成参数解析和校验</li>
+<li>自动生成接口文档</li>
+<li>很适合和 Pydantic、Celery、Redis、数据库组合</li>
+</ul>
+<p>对于 AI 项目，可以把它理解成：</p>
+<ul>
+<li>对外接口入口</li>
+<li>请求校验层</li>
+<li>文件上传入口</li>
+<li>任务分发入口</li>
+<li>状态查询入口</li>
+</ul>
+<p>如果你后面要继续整理 AI 模型开发相关知识点，FastAPI、Redis、Celery 这三份笔记其实可以看成一条链：</p>
+<ul>
+<li>FastAPI：接请求</li>
+<li>Redis：做缓存 &#x2F; 消息中间件</li>
+<li>Celery：处理后台任务</li>
+</ul>
+<h2 id="27-参考"><a href="#27-参考" class="headerlink" title="27. 参考"></a>27. 参考</h2><ul>
+<li>FastAPI Official Docs: <a target="_blank" rel="noopener" href="https://fastapi.tiangolo.com/">https://fastapi.tiangolo.com/</a></li>
+<li>FastAPI Path Params: <a target="_blank" rel="noopener" href="https://fastapi.tiangolo.com/tutorial/path-params/">https://fastapi.tiangolo.com/tutorial/path-params/</a></li>
+<li>FastAPI Query Params: <a target="_blank" rel="noopener" href="https://fastapi.tiangolo.com/tutorial/query-params/">https://fastapi.tiangolo.com/tutorial/query-params/</a></li>
+<li>FastAPI Request Body: <a target="_blank" rel="noopener" href="https://fastapi.tiangolo.com/tutorial/body/">https://fastapi.tiangolo.com/tutorial/body/</a></li>
+<li>FastAPI APIRouter: <a target="_blank" rel="noopener" href="https://fastapi.tiangolo.com/tutorial/bigger-applications/">https://fastapi.tiangolo.com/tutorial/bigger-applications/</a></li>
+<li>FastAPI Dependencies: <a target="_blank" rel="noopener" href="https://fastapi.tiangolo.com/tutorial/dependencies/">https://fastapi.tiangolo.com/tutorial/dependencies/</a></li>
+<li>FastAPI File Upload: <a target="_blank" rel="noopener" href="https://fastapi.tiangolo.com/tutorial/request-files/">https://fastapi.tiangolo.com/tutorial/request-files/</a></li>
+<li>FastAPI Background Tasks: <a target="_blank" rel="noopener" href="https://fastapi.tiangolo.com/tutorial/background-tasks/">https://fastapi.tiangolo.com/tutorial/background-tasks/</a></li>
+<li>FastAPI Testing: <a target="_blank" rel="noopener" href="https://fastapi.tiangolo.com/tutorial/testing/">https://fastapi.tiangolo.com/tutorial/testing/</a></li>
+<li>FastAPI Middleware: <a target="_blank" rel="noopener" href="https://fastapi.tiangolo.com/tutorial/middleware/">https://fastapi.tiangolo.com/tutorial/middleware/</a></li>
+<li>FastAPI Lifespan Events: <a target="_blank" rel="noopener" href="https://fastapi.tiangolo.com/advanced/events/">https://fastapi.tiangolo.com/advanced/events/</a></li>
+<li>FastAPI Settings: <a target="_blank" rel="noopener" href="https://fastapi.tiangolo.com/advanced/settings/">https://fastapi.tiangolo.com/advanced/settings/</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>楚天
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/fasthapi/" title="FastAPI 学习笔记">https://chutianduan.github.io/notes/ai模型开发/知识点学习/框架/fasthapi/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/notes/%E9%A1%B9%E7%9B%AE%E5%88%86%E6%9E%90/fighting-netcode-%E9%A1%B9%E7%9B%AE%E7%9F%A5%E8%AF%86%E7%AC%94%E8%AE%B0/" rel="prev" title="Fighting Netcode 项目知识笔记">
+                  <i class="fa fa-angle-left"></i> Fighting Netcode 项目知识笔记
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/faiss/" rel="next" title="FAISS 学习笔记">
+                  FAISS 学习笔记 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-code"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">楚天</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

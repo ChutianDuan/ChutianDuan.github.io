@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chutianduan.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":2,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="流体仿真实战时间：2026&#x2F;04&#x2F;09  关键词：Eulerian grid、advection、diffusion、projection、pressure solve、ping-pong、texture object、CUDA核心目标：从工程角度理解一个实时流体模拟在 GPU 上通常由哪些步骤组成，以及每一步为什么这样设计。   1. 先建立问题模型实时流体仿真通常不是在“跟">
+<meta property="og:type" content="article">
+<meta property="og:title" content="流体仿真实战">
+<meta property="og:url" content="https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/12-%E6%B5%81%E4%BD%93%E4%BB%BF%E7%9C%9F%E5%AE%9E%E6%88%98/index.html">
+<meta property="og:site_name" content="楚天">
+<meta property="og:description" content="流体仿真实战时间：2026&#x2F;04&#x2F;09  关键词：Eulerian grid、advection、diffusion、projection、pressure solve、ping-pong、texture object、CUDA核心目标：从工程角度理解一个实时流体模拟在 GPU 上通常由哪些步骤组成，以及每一步为什么这样设计。   1. 先建立问题模型实时流体仿真通常不是在“跟">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-04-09T02:27:50.000Z">
+<meta property="article:modified_time" content="2026-04-09T02:27:50.000Z">
+<meta property="article:author" content="楚天">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="游戏网络">
+<meta property="article:tag" content="技术博客">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/12-%E6%B5%81%E4%BD%93%E4%BB%BF%E7%9C%9F%E5%AE%9E%E6%88%98/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/12-%E6%B5%81%E4%BD%93%E4%BB%BF%E7%9C%9F%E5%AE%9E%E6%88%98/","path":"/notes/高性能c-并行编程/12-流体仿真实战/","title":"流体仿真实战"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>流体仿真实战 | 楚天</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">楚天</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">惟楚有材，于斯为盛</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-友情链接"><a href="/link/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B5%81%E4%BD%93%E4%BB%BF%E7%9C%9F%E5%AE%9E%E6%88%98"><span class="nav-number">1.</span> <span class="nav-text">流体仿真实战</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%85%88%E5%BB%BA%E7%AB%8B%E9%97%AE%E9%A2%98%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.1.</span> <span class="nav-text">1. 先建立问题模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E4%B8%80%E5%B8%A7%E6%B5%81%E4%BD%93%E6%A8%A1%E6%8B%9F%E9%80%9A%E5%B8%B8%E5%81%9A%E4%BB%80%E4%B9%88"><span class="nav-number">1.2.</span> <span class="nav-text">2. 一帧流体模拟通常做什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%BE%88%E5%A4%9A%E5%AE%9E%E6%97%B6%E6%B5%81%E4%BD%93%E7%94%A8-Stable-Fluids"><span class="nav-number">1.3.</span> <span class="nav-text">3. 为什么很多实时流体用 Stable Fluids</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E7%BD%91%E6%A0%BC%E3%80%81%E8%BE%B9%E7%95%8C%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%B8%83%E5%B1%80"><span class="nav-number">1.4.</span> <span class="nav-text">4. 网格、边界与数据布局</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E6%9C%80%E5%B8%B8%E8%A7%81%E7%9A%84%E6%95%B0%E6%8D%AE"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 最常见的数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E5%B8%B8%E8%A7%81%E5%AD%98%E5%82%A8%E6%96%B9%E5%BC%8F"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 常见存储方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%B8%B8%E7%94%A8-SoA-%E6%80%9D%E8%B7%AF"><span class="nav-number">1.4.3.</span> <span class="nav-text">4.3 为什么常用 SoA 思路</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E5%B9%B3%E6%B5%81%EF%BC%88Advection%EF%BC%89%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.5.</span> <span class="nav-text">5. 平流（Advection）是什么</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-%E5%8D%8A%E6%8B%89%E6%A0%BC%E6%9C%97%E6%97%A5%EF%BC%88Semi-Lagrangian%EF%BC%89%E5%B9%B3%E6%B5%81"><span class="nav-number">1.5.1.</span> <span class="nav-text">5.1 半拉格朗日（Semi-Lagrangian）平流</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%AE%83%E9%80%82%E5%90%88-GPU"><span class="nav-number">1.5.2.</span> <span class="nav-text">5.2 为什么它适合 GPU</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E4%B8%BA%E4%BB%80%E4%B9%88%E7%BA%B9%E7%90%86%E5%AF%B9%E8%B1%A1%E5%9C%A8%E6%B5%81%E4%BD%93%E9%87%8C%E5%B8%B8%E8%A7%81"><span class="nav-number">1.6.</span> <span class="nav-text">6. 为什么纹理对象在流体里常见</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-%E7%BA%B9%E7%90%86%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%AE%9E%E9%99%85%E4%BC%98%E5%8A%BF"><span class="nav-number">1.6.1.</span> <span class="nav-text">6.1 纹理对象的实际优势</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-%E4%B8%80%E4%B8%AA%E5%B8%B8%E8%A7%81%E5%B7%A5%E7%A8%8B%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.6.2.</span> <span class="nav-text">6.2 一个常见工程模式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-Ping-Pong-%E5%8F%8C%E7%BC%93%E5%86%B2%E4%B8%BA%E4%BB%80%E4%B9%88%E5%87%A0%E4%B9%8E%E6%98%AF%E6%A0%87%E9%85%8D"><span class="nav-number">1.7.</span> <span class="nav-text">7. Ping-Pong 双缓冲为什么几乎是标配</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-%E6%95%A3%E5%BA%A6%EF%BC%88Divergence%EF%BC%89%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E7%AE%97"><span class="nav-number">1.8.</span> <span class="nav-text">8. 散度（Divergence）为什么要算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-%E5%8E%8B%E5%8A%9B%E6%B1%82%E8%A7%A3%EF%BC%88Pressure-Solve%EF%BC%89%E6%98%AF%E6%A0%B8%E5%BF%83%E7%93%B6%E9%A2%88%E4%B9%8B%E4%B8%80"><span class="nav-number">1.9.</span> <span class="nav-text">9. 压力求解（Pressure Solve）是核心瓶颈之一</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#9-1-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E6%98%AF%E9%9A%BE%E7%82%B9"><span class="nav-number">1.9.1.</span> <span class="nav-text">9.1 为什么这是难点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-2-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%BE%88%E5%A4%9A%E6%95%99%E7%A8%8B%E5%85%88%E7%94%A8-Jacobi"><span class="nav-number">1.9.2.</span> <span class="nav-text">9.2 为什么很多教程先用 Jacobi</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-%E6%8A%95%E5%BD%B1%EF%BC%88Projection%EF%BC%89%E5%9C%A8%E5%81%9A%E4%BB%80%E4%B9%88"><span class="nav-number">1.10.</span> <span class="nav-text">10. 投影（Projection）在做什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-%E8%BE%B9%E7%95%8C%E6%9D%A1%E4%BB%B6%E4%B8%8D%E8%83%BD%E5%BF%BD%E7%95%A5"><span class="nav-number">1.11.</span> <span class="nav-text">11. 边界条件不能忽略</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-CUDA-%E4%B8%8A%E9%80%9A%E5%B8%B8%E5%A6%82%E4%BD%95%E6%8B%86-kernel"><span class="nav-number">1.12.</span> <span class="nav-text">12. CUDA 上通常如何拆 kernel</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-%E4%B8%80%E4%B8%AA%E5%85%B8%E5%9E%8B%E7%9A%84-CUDA-%E6%95%B0%E6%8D%AE%E6%B5%81"><span class="nav-number">1.13.</span> <span class="nav-text">13. 一个典型的 CUDA 数据流</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-%E7%BA%B9%E7%90%86%E5%AF%B9%E8%B1%A1%E5%9C%A8%E8%BF%99%E9%87%8C%E6%9C%80%E5%B8%B8%E8%A7%81%E7%9A%84%E8%90%BD%E7%82%B9"><span class="nav-number">1.14.</span> <span class="nav-text">14. 纹理对象在这里最常见的落点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#14-1-%E5%B9%B3%E6%B5%81%E6%97%B6"><span class="nav-number">1.14.1.</span> <span class="nav-text">14.1 平流时</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14-2-%E5%8F%AF%E8%A7%86%E5%8C%96%E6%97%B6"><span class="nav-number">1.14.2.</span> <span class="nav-text">14.2 可视化时</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14-3-%E6%9C%89%E6%97%B6%E4%B8%8D%E7%94%A8%E7%BA%B9%E7%90%86%E4%B9%9F%E8%83%BD%E5%81%9A"><span class="nav-number">1.14.3.</span> <span class="nav-text">14.3 有时不用纹理也能做</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#15-%E6%80%A7%E8%83%BD%E7%93%B6%E9%A2%88%E9%80%9A%E5%B8%B8%E5%9C%A8%E5%93%AA"><span class="nav-number">1.15.</span> <span class="nav-text">15. 性能瓶颈通常在哪</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#15-1-%E4%B8%8D%E4%B8%80%E5%AE%9A%E6%98%AF%E7%AE%97%E6%9C%AF%EF%BC%8C%E8%80%8C%E6%98%AF%E5%B8%A6%E5%AE%BD"><span class="nav-number">1.15.1.</span> <span class="nav-text">15.1 不一定是算术，而是带宽</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-2-%E5%8E%8B%E5%8A%9B%E8%BF%AD%E4%BB%A3%E8%BD%AE%E6%95%B0"><span class="nav-number">1.15.2.</span> <span class="nav-text">15.2 压力迭代轮数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-3-%E8%BE%B9%E7%95%8C%E5%92%8C%E6%9D%A1%E4%BB%B6%E5%88%A4%E6%96%AD"><span class="nav-number">1.15.3.</span> <span class="nav-text">15.3 边界和条件判断</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#16-%E5%B8%B8%E8%A7%81%E4%BC%98%E5%8C%96%E6%96%B9%E5%90%91"><span class="nav-number">1.16.</span> <span class="nav-text">16. 常见优化方向</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#16-1-%E5%87%8F%E5%B0%91%E5%85%A8%E5%B1%80%E5%86%85%E5%AD%98%E5%BE%80%E8%BF%94"><span class="nav-number">1.16.1.</span> <span class="nav-text">16.1 减少全局内存往返</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16-2-%E7%94%A8-shared-memory-%E5%81%9A%E5%B1%80%E9%83%A8%E9%82%BB%E5%9F%9F%E7%BC%93%E5%AD%98"><span class="nav-number">1.16.2.</span> <span class="nav-text">16.2 用 shared memory 做局部邻域缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16-3-%E8%AE%A9%E8%AE%BF%E9%97%AE%E5%B0%BD%E9%87%8F%E8%A7%84%E5%88%99"><span class="nav-number">1.16.3.</span> <span class="nav-text">16.3 让访问尽量规则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16-4-%E5%8C%BA%E5%88%86%E2%80%9C%E8%A7%86%E8%A7%89%E4%B8%8A%E5%A4%9F%E7%94%A8%E2%80%9D%E5%92%8C%E2%80%9C%E6%95%B0%E5%80%BC%E4%B8%8A%E6%9B%B4%E5%87%86%E2%80%9D"><span class="nav-number">1.16.4.</span> <span class="nav-text">16.4 区分“视觉上够用”和“数值上更准”</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#17-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E7%B1%BB%E9%A1%B9%E7%9B%AE%E7%89%B9%E5%88%AB%E9%80%82%E5%90%88%E5%81%9A%E7%BB%BC%E5%90%88%E7%BB%83%E4%B9%A0"><span class="nav-number">1.17.</span> <span class="nav-text">17. 为什么这类项目特别适合做综合练习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#18-%E5%88%9D%E5%AD%A6%E5%AE%9E%E7%8E%B0%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.18.</span> <span class="nav-text">18. 初学实现建议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#19-%E4%B8%80%E9%A1%B5%E6%80%BB%E7%BB%93"><span class="nav-number">1.19.</span> <span class="nav-text">19. 一页总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#20-%E5%BB%BA%E8%AE%AE%E7%BB%A7%E7%BB%AD%E8%A1%A5%E5%85%85%E7%9A%84%E7%9B%B8%E5%85%B3%E4%B8%BB%E9%A2%98"><span class="nav-number">1.20.</span> <span class="nav-text">20. 建议继续补充的相关主题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#21-%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.21.</span> <span class="nav-text">21. 参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="楚天"
+      src="/img/me.jpg">
+  <p class="site-author-name" itemprop="name">楚天</p>
+  <div class="site-description" itemprop="description">记录深度学习、C++、游戏网络与生活旅行的学习笔记。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ChutianDuan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ChutianDuan" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:3383006954@qq.com" title="E-Mail → mailto:3383006954@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/12-%E6%B5%81%E4%BD%93%E4%BB%BF%E7%9C%9F%E5%AE%9E%E6%88%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="流体仿真实战 | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          流体仿真实战
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-04-09 10:27:50" itemprop="dateCreated datePublished" datetime="2026-04-09T10:27:50+08:00">2026-04-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/%E9%AB%98%E6%80%A7%E8%83%BDC-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">高性能C++并行编程</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="流体仿真实战"><a href="#流体仿真实战" class="headerlink" title="流体仿真实战"></a>流体仿真实战</h1><p>时间：2026&#x2F;04&#x2F;09</p>
+<blockquote>
+<p>关键词：Eulerian grid、advection、diffusion、projection、pressure solve、ping-pong、texture object、CUDA<br>核心目标：从工程角度理解一个实时流体模拟在 GPU 上通常由哪些步骤组成，以及每一步为什么这样设计。</p>
+</blockquote>
+<hr>
+<h2 id="1-先建立问题模型"><a href="#1-先建立问题模型" class="headerlink" title="1. 先建立问题模型"></a>1. 先建立问题模型</h2><p>实时流体仿真通常不是在“跟踪每一个分子”，而是在求解离散化后的场：</p>
+<ul>
+<li>速度场 <code>u(x, y[, z])</code></li>
+<li>压力场 <code>p</code></li>
+<li>密度&#x2F;烟雾浓度 <code>d</code></li>
+<li>温度、外力等附加场</li>
+</ul>
+<p>在图形学实时仿真里，最常见的是 <strong>Eulerian 网格法</strong>：</p>
+<ul>
+<li>空间被划分成规则网格</li>
+<li>每个网格单元保存局部状态</li>
+<li>关注的是“这个位置上的流体状态”，而不是“某个粒子去哪了”</li>
+</ul>
+<hr>
+<h2 id="2-一帧流体模拟通常做什么"><a href="#2-一帧流体模拟通常做什么" class="headerlink" title="2. 一帧流体模拟通常做什么"></a>2. 一帧流体模拟通常做什么</h2><p>一个经典的 2D&#x2F;3D 实时烟雾模拟步骤，通常长这样：</p>
+<ol>
+<li>对速度场做平流（advection）</li>
+<li>对密度&#x2F;温度做平流</li>
+<li>加入外力（force &#x2F; impulse）</li>
+<li>计算散度（divergence）</li>
+<li>解压强泊松方程（pressure solve）</li>
+<li>用压力梯度做投影（projection）</li>
+<li>得到无散速度场</li>
+<li>渲染密度或其他可视化结果</li>
+</ol>
+<p>这条管线里最关键的思想是：</p>
+<ul>
+<li>平流负责“把东西搬着走”</li>
+<li>压力投影负责“让速度场满足不可压缩约束”</li>
+</ul>
+<hr>
+<h2 id="3-为什么很多实时流体用-Stable-Fluids"><a href="#3-为什么很多实时流体用-Stable-Fluids" class="headerlink" title="3. 为什么很多实时流体用 Stable Fluids"></a>3. 为什么很多实时流体用 Stable Fluids</h2><p>Jos Stam 的 Stable Fluids 思想之所以经典，是因为它强调：</p>
+<ul>
+<li>数值上更稳定</li>
+<li>能容忍较大的时间步长</li>
+<li>非常适合图形实时场景</li>
+</ul>
+<p>它的代价通常是：</p>
+<ul>
+<li>会更粘、更耗散</li>
+<li>细节可能被抹平</li>
+</ul>
+<p>所以工程上通常要在：</p>
+<ul>
+<li>稳定性</li>
+<li>速度</li>
+<li>视觉效果</li>
+</ul>
+<p>之间做平衡。</p>
+<hr>
+<h2 id="4-网格、边界与数据布局"><a href="#4-网格、边界与数据布局" class="headerlink" title="4. 网格、边界与数据布局"></a>4. 网格、边界与数据布局</h2><h3 id="4-1-最常见的数据"><a href="#4-1-最常见的数据" class="headerlink" title="4.1 最常见的数据"></a>4.1 最常见的数据</h3><p>二维时经常有：</p>
+<ul>
+<li><code>vel_x</code></li>
+<li><code>vel_y</code></li>
+<li><code>pressure</code></li>
+<li><code>divergence</code></li>
+<li><code>density</code></li>
+</ul>
+<h3 id="4-2-常见存储方式"><a href="#4-2-常见存储方式" class="headerlink" title="4.2 常见存储方式"></a>4.2 常见存储方式</h3><p>对 GPU 更友好的方式通常是：</p>
+<ul>
+<li>扁平连续数组</li>
+<li>纹理&#x2F;表面对象</li>
+<li>ping-pong 双缓冲</li>
+</ul>
+<p>例如二维数组常展平成：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">idx = y * width + x;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-3-为什么常用-SoA-思路"><a href="#4-3-为什么常用-SoA-思路" class="headerlink" title="4.3 为什么常用 SoA 思路"></a>4.3 为什么常用 SoA 思路</h3><p>不同字段通常分开存：</p>
+<ul>
+<li>一个数组&#x2F;纹理存 <code>vel_x</code></li>
+<li>一个数组&#x2F;纹理存 <code>vel_y</code></li>
+<li>一个数组&#x2F;纹理存 <code>pressure</code></li>
+</ul>
+<p>这比把所有字段塞进一个大结构更容易：</p>
+<ul>
+<li>控制带宽</li>
+<li>做批量 kernel</li>
+<li>针对单一字段优化访问</li>
+</ul>
+<hr>
+<h2 id="5-平流（Advection）是什么"><a href="#5-平流（Advection）是什么" class="headerlink" title="5. 平流（Advection）是什么"></a>5. 平流（Advection）是什么</h2><p>直觉上，平流就是：</p>
+<blockquote>
+<p>按速度场把某个量“搬运”到下一个时刻。</p>
+</blockquote>
+<p>对于密度场来说，可以理解成：</p>
+<ul>
+<li>烟雾随着流速移动</li>
+</ul>
+<p>对于速度场本身来说：</p>
+<ul>
+<li>速度也会被自身流动搬运</li>
+</ul>
+<h3 id="5-1-半拉格朗日（Semi-Lagrangian）平流"><a href="#5-1-半拉格朗日（Semi-Lagrangian）平流" class="headerlink" title="5.1 半拉格朗日（Semi-Lagrangian）平流"></a>5.1 半拉格朗日（Semi-Lagrangian）平流</h3><p>实时图形里很常见的做法是“反向追踪”：</p>
+<ul>
+<li>对当前网格点 <code>(x, y)</code></li>
+<li>沿速度反方向回溯到上一个时刻的位置</li>
+<li>从旧场中插值取样</li>
+</ul>
+<p>公式直觉：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">phi_new(x) = phi_old(x - dt * u(x))</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-2-为什么它适合-GPU"><a href="#5-2-为什么它适合-GPU" class="headerlink" title="5.2 为什么它适合 GPU"></a>5.2 为什么它适合 GPU</h3><p>因为每个网格点都能独立算：</p>
+<ul>
+<li>回溯位置</li>
+<li>插值取样</li>
+<li>写回新值</li>
+</ul>
+<p>这非常适合 data-parallel kernel。</p>
+<hr>
+<h2 id="6-为什么纹理对象在流体里常见"><a href="#6-为什么纹理对象在流体里常见" class="headerlink" title="6. 为什么纹理对象在流体里常见"></a>6. 为什么纹理对象在流体里常见</h2><p>流体平流特别需要“按浮点坐标插值采样旧场”。<br>这正是纹理对象很擅长的事情。</p>
+<h3 id="6-1-纹理对象的实际优势"><a href="#6-1-纹理对象的实际优势" class="headerlink" title="6.1 纹理对象的实际优势"></a>6.1 纹理对象的实际优势</h3><ul>
+<li>支持硬件插值</li>
+<li>支持边界寻址模式</li>
+<li>访问接口清晰</li>
+<li>对二维&#x2F;三维场很自然</li>
+</ul>
+<p>因此在 CUDA 流体项目里，经常会看到：</p>
+<ul>
+<li>旧场绑定成 texture</li>
+<li>新场写到 output buffer &#x2F; surface</li>
+</ul>
+<h3 id="6-2-一个常见工程模式"><a href="#6-2-一个常见工程模式" class="headerlink" title="6.2 一个常见工程模式"></a>6.2 一个常见工程模式</h3><ul>
+<li><code>src</code> 作为只读纹理</li>
+<li><code>dst</code> 作为可写 buffer</li>
+<li>kernel 结束后交换 <code>src/dst</code></li>
+</ul>
+<p>这就是典型的 ping-pong。</p>
+<hr>
+<h2 id="7-Ping-Pong-双缓冲为什么几乎是标配"><a href="#7-Ping-Pong-双缓冲为什么几乎是标配" class="headerlink" title="7. Ping-Pong 双缓冲为什么几乎是标配"></a>7. Ping-Pong 双缓冲为什么几乎是标配</h2><p>平流、扩散、压力迭代这类步骤，通常不能一边读旧值一边原地覆盖写新值，否则会污染后续计算。</p>
+<p>最常见做法：</p>
+<ul>
+<li><code>A</code> 存旧场</li>
+<li><code>B</code> 存新场</li>
+<li>一步计算后交换 <code>A/B</code></li>
+</ul>
+<p>例如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">advect:    vel0 -&gt; vel1</span><br><span class="line">swap</span><br><span class="line">project:   vel1 -&gt; vel0</span><br><span class="line">swap</span><br></pre></td></tr></table></figure>
+
+<p>双缓冲的代价是多占一份显存，但好处是：</p>
+<ul>
+<li>读写依赖清晰</li>
+<li>kernel 更容易写对</li>
+<li>更适合并行</li>
+</ul>
+<hr>
+<h2 id="8-散度（Divergence）为什么要算"><a href="#8-散度（Divergence）为什么要算" class="headerlink" title="8. 散度（Divergence）为什么要算"></a>8. 散度（Divergence）为什么要算</h2><p>不可压缩流体通常要求：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">div(u) = 0</span><br></pre></td></tr></table></figure>
+
+<p>但经过加力、平流等步骤后，速度场往往不再满足这个条件。<br>所以需要先计算散度，看看当前速度场“有多不守恒”。</p>
+<p>二维中心差分的直觉形式：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">div = (u_right - u_left + v_up - v_down) * 0.5 / h</span><br></pre></td></tr></table></figure>
+
+<p>算出来的散度场会成为后面压力方程的右端项。</p>
+<hr>
+<h2 id="9-压力求解（Pressure-Solve）是核心瓶颈之一"><a href="#9-压力求解（Pressure-Solve）是核心瓶颈之一" class="headerlink" title="9. 压力求解（Pressure Solve）是核心瓶颈之一"></a>9. 压力求解（Pressure Solve）是核心瓶颈之一</h2><p>为了让速度场重新无散，通常要解一个泊松方程：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">∇²p = div</span><br></pre></td></tr></table></figure>
+
+<p>这里：</p>
+<ul>
+<li><code>p</code> 是压力</li>
+<li><code>div</code> 是上一阶段算出的散度</li>
+</ul>
+<h3 id="9-1-为什么这是难点"><a href="#9-1-为什么这是难点" class="headerlink" title="9.1 为什么这是难点"></a>9.1 为什么这是难点</h3><p>因为它不是一个局部一步完成的更新，而是一个全局耦合问题。<br>实时实现中常用近似迭代法，例如：</p>
+<ul>
+<li>Jacobi</li>
+<li>Gauss-Seidel</li>
+<li>Red-Black Gauss-Seidel</li>
+<li>Multigrid（更复杂也更强）</li>
+</ul>
+<h3 id="9-2-为什么很多教程先用-Jacobi"><a href="#9-2-为什么很多教程先用-Jacobi" class="headerlink" title="9.2 为什么很多教程先用 Jacobi"></a>9.2 为什么很多教程先用 Jacobi</h3><p>因为它简单、规则、容易并行：</p>
+<ul>
+<li>每次迭代只读旧压力</li>
+<li>写新压力</li>
+<li>适合 GPU 大规模并行</li>
+</ul>
+<p>代价是收敛速度不算快。</p>
+<hr>
+<h2 id="10-投影（Projection）在做什么"><a href="#10-投影（Projection）在做什么" class="headerlink" title="10. 投影（Projection）在做什么"></a>10. 投影（Projection）在做什么</h2><p>解出压力场后，用压力梯度修正速度：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">u&#x27; = u - ∇p</span><br></pre></td></tr></table></figure>
+
+<p>直觉上就是：</p>
+<ul>
+<li>从原速度里减掉“造成体积膨胀&#x2F;压缩”的那部分</li>
+</ul>
+<p>投影之后，速度场更接近无散状态，也就更符合不可压缩流体假设。</p>
+<p>这一步通常是：</p>
+<ol>
+<li>读取速度</li>
+<li>读取相邻压力</li>
+<li>做梯度差分</li>
+<li>写回新速度</li>
+</ol>
+<hr>
+<h2 id="11-边界条件不能忽略"><a href="#11-边界条件不能忽略" class="headerlink" title="11. 边界条件不能忽略"></a>11. 边界条件不能忽略</h2><p>很多新手代码“能跑但看起来不对”，问题往往在边界。</p>
+<p>常见边界处理包括：</p>
+<ul>
+<li>固壁边界</li>
+<li>开放边界</li>
+<li>周期边界</li>
+<li>障碍物边界</li>
+</ul>
+<p>例如固壁边界时，速度在法向方向通常要满足不穿透约束。</p>
+<p>如果边界没处理好，可能会出现：</p>
+<ul>
+<li>烟雾穿墙</li>
+<li>边缘数值爆炸</li>
+<li>压力解不稳定</li>
+</ul>
+<hr>
+<h2 id="12-CUDA-上通常如何拆-kernel"><a href="#12-CUDA-上通常如何拆-kernel" class="headerlink" title="12. CUDA 上通常如何拆 kernel"></a>12. CUDA 上通常如何拆 kernel</h2><p>一个典型实时流体项目不会把全部逻辑塞进一个 kernel，而是拆成多步：</p>
+<ul>
+<li><code>advect_velocity</code></li>
+<li><code>advect_density</code></li>
+<li><code>add_force</code></li>
+<li><code>compute_divergence</code></li>
+<li><code>jacobi_pressure</code></li>
+<li><code>project_velocity</code></li>
+<li><code>render_density</code></li>
+</ul>
+<p>这样做的好处：</p>
+<ul>
+<li>每步逻辑清晰</li>
+<li>便于调试</li>
+<li>便于替换某一步算法</li>
+</ul>
+<p>代价是：</p>
+<ul>
+<li>kernel launch 次数变多</li>
+<li>中间结果要反复读写全局内存</li>
+</ul>
+<p>所以工程优化通常是在“模块清晰”和“减少中间带宽”之间折中。</p>
+<hr>
+<h2 id="13-一个典型的-CUDA-数据流"><a href="#13-一个典型的-CUDA-数据流" class="headerlink" title="13. 一个典型的 CUDA 数据流"></a>13. 一个典型的 CUDA 数据流</h2><p>可以把一帧想成这样：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">velocity_src --advect--&gt; velocity_dst</span><br><span class="line">swap</span><br><span class="line"></span><br><span class="line">density_src --advect--&gt; density_dst</span><br><span class="line">swap</span><br><span class="line"></span><br><span class="line">velocity_src --add_force--&gt; velocity_dst</span><br><span class="line">swap</span><br><span class="line"></span><br><span class="line">velocity_src --divergence--&gt; divergence</span><br><span class="line"></span><br><span class="line">pressure_src --jacobi--&gt; pressure_dst</span><br><span class="line">swap</span><br><span class="line">... 迭代多次 ...</span><br><span class="line"></span><br><span class="line">velocity_src + pressure_src --project--&gt; velocity_dst</span><br><span class="line">swap</span><br><span class="line"></span><br><span class="line">density_src --render--&gt; framebuffer</span><br></pre></td></tr></table></figure>
+
+<p>其中压力求解阶段往往会迭代很多轮，是核心带宽热点之一。</p>
+<hr>
+<h2 id="14-纹理对象在这里最常见的落点"><a href="#14-纹理对象在这里最常见的落点" class="headerlink" title="14. 纹理对象在这里最常见的落点"></a>14. 纹理对象在这里最常见的落点</h2><h3 id="14-1-平流时"><a href="#14-1-平流时" class="headerlink" title="14.1 平流时"></a>14.1 平流时</h3><p>因为需要按浮点坐标回溯并插值取样旧场。</p>
+<h3 id="14-2-可视化时"><a href="#14-2-可视化时" class="headerlink" title="14.2 可视化时"></a>14.2 可视化时</h3><p>例如把密度场映射到图像。</p>
+<h3 id="14-3-有时不用纹理也能做"><a href="#14-3-有时不用纹理也能做" class="headerlink" title="14.3 有时不用纹理也能做"></a>14.3 有时不用纹理也能做</h3><p>完全可以手写双线性插值，但纹理对象通常更方便，也更贴近 GPU 图像管线思维。</p>
+<hr>
+<h2 id="15-性能瓶颈通常在哪"><a href="#15-性能瓶颈通常在哪" class="headerlink" title="15. 性能瓶颈通常在哪"></a>15. 性能瓶颈通常在哪</h2><h3 id="15-1-不一定是算术，而是带宽"><a href="#15-1-不一定是算术，而是带宽" class="headerlink" title="15.1 不一定是算术，而是带宽"></a>15.1 不一定是算术，而是带宽</h3><p>流体很多步骤都是 stencil &#x2F; 邻域访问：</p>
+<ul>
+<li>读周围多个点</li>
+<li>写一个点</li>
+</ul>
+<p>因此常见瓶颈是：</p>
+<ul>
+<li>全局内存带宽</li>
+<li>多次中间场读写</li>
+</ul>
+<h3 id="15-2-压力迭代轮数"><a href="#15-2-压力迭代轮数" class="headerlink" title="15.2 压力迭代轮数"></a>15.2 压力迭代轮数</h3><p>Jacobi 每多迭代一轮，都意味着：</p>
+<ul>
+<li>再扫一遍整个压力场</li>
+</ul>
+<p>所以视觉质量和帧率经常直接在这里博弈。</p>
+<h3 id="15-3-边界和条件判断"><a href="#15-3-边界和条件判断" class="headerlink" title="15.3 边界和条件判断"></a>15.3 边界和条件判断</h3><p>边界格子处理如果分支太多，也会影响 warp 执行效率。</p>
+<hr>
+<h2 id="16-常见优化方向"><a href="#16-常见优化方向" class="headerlink" title="16. 常见优化方向"></a>16. 常见优化方向</h2><h3 id="16-1-减少全局内存往返"><a href="#16-1-减少全局内存往返" class="headerlink" title="16.1 减少全局内存往返"></a>16.1 减少全局内存往返</h3><p>例如：</p>
+<ul>
+<li>更少的中间缓冲</li>
+<li>更合理的 kernel 融合</li>
+</ul>
+<h3 id="16-2-用-shared-memory-做局部邻域缓存"><a href="#16-2-用-shared-memory-做局部邻域缓存" class="headerlink" title="16.2 用 shared memory 做局部邻域缓存"></a>16.2 用 shared memory 做局部邻域缓存</h3><p>对于 stencil 类计算，局部 tile 常能减少重复全局加载。</p>
+<h3 id="16-3-让访问尽量规则"><a href="#16-3-让访问尽量规则" class="headerlink" title="16.3 让访问尽量规则"></a>16.3 让访问尽量规则</h3><p>例如：</p>
+<ul>
+<li>扁平数组</li>
+<li>合理线程块布局</li>
+<li>连续内存访问</li>
+</ul>
+<h3 id="16-4-区分“视觉上够用”和“数值上更准”"><a href="#16-4-区分“视觉上够用”和“数值上更准”" class="headerlink" title="16.4 区分“视觉上够用”和“数值上更准”"></a>16.4 区分“视觉上够用”和“数值上更准”</h3><p>实时图形里很多时候不是求学术最优，而是：</p>
+<ul>
+<li>足够稳定</li>
+<li>足够快</li>
+<li>视觉上自然</li>
+</ul>
+<hr>
+<h2 id="17-为什么这类项目特别适合做综合练习"><a href="#17-为什么这类项目特别适合做综合练习" class="headerlink" title="17. 为什么这类项目特别适合做综合练习"></a>17. 为什么这类项目特别适合做综合练习</h2><p>流体仿真把很多高性能主题都串起来了：</p>
+<ul>
+<li>数据布局</li>
+<li>邻域访存</li>
+<li>ping-pong 双缓冲</li>
+<li>GPU kernel 设计</li>
+<li>纹理对象</li>
+<li>迭代求解器</li>
+<li>可视化与物理折中</li>
+</ul>
+<p>所以它既是一个图形学题目，也是一个很典型的并行计算工程题。</p>
+<hr>
+<h2 id="18-初学实现建议"><a href="#18-初学实现建议" class="headerlink" title="18. 初学实现建议"></a>18. 初学实现建议</h2><p>如果你第一次做，比较稳的路线是：</p>
+<ol>
+<li>先做 2D，不要一开始上 3D</li>
+<li>先做密度平流，再加速度场</li>
+<li>再补散度、压力、投影</li>
+<li>压力求解先用 Jacobi 跑通</li>
+<li>最后再考虑纹理对象、shared memory、性能优化</li>
+</ol>
+<p>因为最难的不是“写出一个 kernel”，而是：</p>
+<ul>
+<li>整条数据流逻辑正确</li>
+<li>每步边界一致</li>
+<li>数值上稳定</li>
+</ul>
+<hr>
+<h2 id="19-一页总结"><a href="#19-一页总结" class="headerlink" title="19. 一页总结"></a>19. 一页总结</h2><p>实时流体仿真的工程骨架，可以压缩成下面几句：</p>
+<ol>
+<li>用规则网格存速度、压力和密度场</li>
+<li>用平流把量沿速度场搬运</li>
+<li>用散度和压力解修正速度场</li>
+<li>用投影得到近似不可压缩流体</li>
+<li>用 ping-pong 双缓冲保证每一步读写分离</li>
+<li>用纹理对象和连续布局提高 GPU 访问效率</li>
+</ol>
+<p>如果只记一个最核心的工程关系，那就是：</p>
+<blockquote>
+<p>平流负责“搬”，压力投影负责“稳”。</p>
+</blockquote>
+<hr>
+<h2 id="20-建议继续补充的相关主题"><a href="#20-建议继续补充的相关主题" class="headerlink" title="20. 建议继续补充的相关主题"></a>20. 建议继续补充的相关主题</h2><p>和本篇衔接最紧密的内容：</p>
+<ol>
+<li>CUDA texture &#x2F; surface object 细节</li>
+<li>Staggered grid（MAC grid）</li>
+<li>Jacobi &#x2F; Gauss-Seidel &#x2F; Multigrid 对比</li>
+<li>Vorticity confinement 与视觉细节增强</li>
+<li>3D 烟雾与体渲染</li>
+</ol>
+<hr>
+<h2 id="21-参考资料"><a href="#21-参考资料" class="headerlink" title="21. 参考资料"></a>21. 参考资料</h2><ol>
+<li><p>Jos Stam, Stable Fluids<br><a target="_blank" rel="noopener" href="https://www.dgp.toronto.edu/public_user/stam/reality/Research/pdf/GDC03.pdf">https://www.dgp.toronto.edu/public_user/stam/reality/Research/pdf/GDC03.pdf</a></p>
+</li>
+<li><p>GPU Gems: Fast Fluid Dynamics Simulation on the GPU<br><a target="_blank" rel="noopener" href="https://developer.nvidia.com/gpugems/gpugems/part-vi-beyond-triangles/chapter-38-fast-fluid-dynamics-simulation-gpu">https://developer.nvidia.com/gpugems/gpugems/part-vi-beyond-triangles/chapter-38-fast-fluid-dynamics-simulation-gpu</a></p>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>楚天
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/12-%E6%B5%81%E4%BD%93%E4%BB%BF%E7%9C%9F%E5%AE%9E%E6%88%98/" title="流体仿真实战">https://chutianduan.github.io/notes/高性能c-并行编程/12-流体仿真实战/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/07-%E8%AE%BF%E5%AD%98%E4%BC%98%E5%8C%96/" rel="prev" title="深入浅出访存优化">
+                  <i class="fa fa-angle-left"></i> 深入浅出访存优化
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/09-%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C-%E5%86%85%E5%AD%98%E5%BA%8F%E4%B8%8E%E6%97%A0%E9%94%81%E5%9F%BA%E7%A1%80/" rel="next" title="原子操作、内存序与无锁基础">
+                  原子操作、内存序与无锁基础 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-code"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">楚天</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

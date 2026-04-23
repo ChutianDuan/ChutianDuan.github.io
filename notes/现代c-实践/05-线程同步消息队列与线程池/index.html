@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chutianduan.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":2,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="线程同步消息队列与线程池时间：2026&#x2F;04&#x2F;09  关键词：任务队列、worker thread、future、停止协议、背压、线程池核心目标：理解线程池为什么几乎总是“队列 + 工作线程 + 生命周期管理”的组合。   1. 为什么线程池比“每个任务一个线程”更常见直接为每个任务创建线程的问题在于：  创建销毁开销高 线程数不可控 容易把系统调度器压爆  线程池的思路是：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="线程同步消息队列与线程池">
+<meta property="og:url" content="https://chutianduan.github.io/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/05-%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%B8%8E%E7%BA%BF%E7%A8%8B%E6%B1%A0/index.html">
+<meta property="og:site_name" content="楚天">
+<meta property="og:description" content="线程同步消息队列与线程池时间：2026&#x2F;04&#x2F;09  关键词：任务队列、worker thread、future、停止协议、背压、线程池核心目标：理解线程池为什么几乎总是“队列 + 工作线程 + 生命周期管理”的组合。   1. 为什么线程池比“每个任务一个线程”更常见直接为每个任务创建线程的问题在于：  创建销毁开销高 线程数不可控 容易把系统调度器压爆  线程池的思路是：">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-04-09T02:39:21.000Z">
+<meta property="article:modified_time" content="2026-04-09T02:39:21.000Z">
+<meta property="article:author" content="楚天">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="游戏网络">
+<meta property="article:tag" content="技术博客">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://chutianduan.github.io/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/05-%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%B8%8E%E7%BA%BF%E7%A8%8B%E6%B1%A0/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://chutianduan.github.io/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/05-%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%B8%8E%E7%BA%BF%E7%A8%8B%E6%B1%A0/","path":"/notes/现代c-实践/05-线程同步消息队列与线程池/","title":"线程同步消息队列与线程池"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>线程同步消息队列与线程池 | 楚天</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">楚天</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">惟楚有材，于斯为盛</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-友情链接"><a href="/link/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%B8%8E%E7%BA%BF%E7%A8%8B%E6%B1%A0"><span class="nav-number">1.</span> <span class="nav-text">线程同步消息队列与线程池</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E4%B8%BA%E4%BB%80%E4%B9%88%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%AF%94%E2%80%9C%E6%AF%8F%E4%B8%AA%E4%BB%BB%E5%8A%A1%E4%B8%80%E4%B8%AA%E7%BA%BF%E7%A8%8B%E2%80%9D%E6%9B%B4%E5%B8%B8%E8%A7%81"><span class="nav-number">1.1.</span> <span class="nav-text">1. 为什么线程池比“每个任务一个线程”更常见</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%9C%80%E5%B0%8F%E7%BB%93%E6%9E%84"><span class="nav-number">1.2.</span> <span class="nav-text">2. 线程池最小结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%8E%A8%E8%8D%90%E7%9A%84%E4%BB%BB%E5%8A%A1%E8%A1%A8%E7%A4%BA"><span class="nav-number">1.3.</span> <span class="nav-text">3. 推荐的任务表示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E4%B8%80%E4%B8%AA%E6%9C%80%E5%B0%8F%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%AA%A8%E6%9E%B6"><span class="nav-number">1.4.</span> <span class="nav-text">4. 一个最小线程池骨架</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%81%9C%E6%AD%A2%E5%8D%8F%E8%AE%AE%E5%BE%88%E9%87%8D%E8%A6%81"><span class="nav-number">1.5.</span> <span class="nav-text">5. 为什么停止协议很重要</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E8%BF%94%E5%9B%9E%E5%80%BC%E6%80%8E%E4%B9%88%E5%81%9A"><span class="nav-number">1.6.</span> <span class="nav-text">6. 返回值怎么做</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-%E6%9C%89%E7%95%8C%E4%BB%BB%E5%8A%A1%E9%98%9F%E5%88%97%E4%B8%8E%E8%83%8C%E5%8E%8B"><span class="nav-number">1.7.</span> <span class="nav-text">7. 有界任务队列与背压</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-%E7%BA%BF%E7%A8%8B%E6%B1%A0%E4%B8%8D%E6%98%AF%E8%B6%8A%E5%A4%9A%E7%BA%BF%E7%A8%8B%E8%B6%8A%E5%A5%BD"><span class="nav-number">1.8.</span> <span class="nav-text">8. 线程池不是越多线程越好</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97-vs-%E7%BA%BF%E7%A8%8B%E6%B1%A0"><span class="nav-number">1.9.</span> <span class="nav-text">9. 消息队列 vs 线程池</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-%E5%B8%B8%E8%A7%81%E5%9D%91"><span class="nav-number">1.10.</span> <span class="nav-text">10. 常见坑</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#10-1-%E4%BB%BB%E5%8A%A1%E9%87%8C%E6%8A%9B%E5%BC%82%E5%B8%B8%E6%B2%A1%E4%BA%BA%E7%AE%A1"><span class="nav-number">1.10.1.</span> <span class="nav-text">10.1 任务里抛异常没人管</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-2-%E6%9E%90%E6%9E%84%E6%97%B6%E4%BB%8D%E5%85%81%E8%AE%B8%E6%8F%90%E4%BA%A4%E4%BB%BB%E5%8A%A1"><span class="nav-number">1.10.2.</span> <span class="nav-text">10.2 析构时仍允许提交任务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-3-%E6%8C%81%E9%94%81%E6%89%A7%E8%A1%8C%E4%BB%BB%E5%8A%A1"><span class="nav-number">1.10.3.</span> <span class="nav-text">10.3 持锁执行任务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-4-%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%87%8C%E5%86%8D%E6%97%A0%E9%99%90%E6%8F%90%E4%BA%A4%E5%86%85%E9%83%A8%E4%BB%BB%E5%8A%A1"><span class="nav-number">1.10.4.</span> <span class="nav-text">10.4 线程池里再无限提交内部任务</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-%E4%B8%80%E9%A1%B5%E6%80%BB%E7%BB%93"><span class="nav-number">1.11.</span> <span class="nav-text">11. 一页总结</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="楚天"
+      src="/img/me.jpg">
+  <p class="site-author-name" itemprop="name">楚天</p>
+  <div class="site-description" itemprop="description">记录深度学习、C++、游戏网络与生活旅行的学习笔记。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ChutianDuan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ChutianDuan" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:3383006954@qq.com" title="E-Mail → mailto:3383006954@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/05-%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%B8%8E%E7%BA%BF%E7%A8%8B%E6%B1%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="线程同步消息队列与线程池 | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          线程同步消息队列与线程池
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-04-09 10:39:21" itemprop="dateCreated datePublished" datetime="2026-04-09T10:39:21+08:00">2026-04-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/%E7%8E%B0%E4%BB%A3C-%E5%AE%9E%E8%B7%B5/" itemprop="url" rel="index"><span itemprop="name">现代C++实践</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="线程同步消息队列与线程池"><a href="#线程同步消息队列与线程池" class="headerlink" title="线程同步消息队列与线程池"></a>线程同步消息队列与线程池</h1><p>时间：2026&#x2F;04&#x2F;09</p>
+<blockquote>
+<p>关键词：任务队列、worker thread、<code>future</code>、停止协议、背压、线程池<br>核心目标：理解线程池为什么几乎总是“队列 + 工作线程 + 生命周期管理”的组合。</p>
+</blockquote>
+<hr>
+<h2 id="1-为什么线程池比“每个任务一个线程”更常见"><a href="#1-为什么线程池比“每个任务一个线程”更常见" class="headerlink" title="1. 为什么线程池比“每个任务一个线程”更常见"></a>1. 为什么线程池比“每个任务一个线程”更常见</h2><p>直接为每个任务创建线程的问题在于：</p>
+<ul>
+<li>创建销毁开销高</li>
+<li>线程数不可控</li>
+<li>容易把系统调度器压爆</li>
+</ul>
+<p>线程池的思路是：</p>
+<ul>
+<li>预先创建固定数量 worker</li>
+<li>任务进入共享队列</li>
+<li>worker 从队列取任务执行</li>
+</ul>
+<hr>
+<h2 id="2-线程池最小结构"><a href="#2-线程池最小结构" class="headerlink" title="2. 线程池最小结构"></a>2. 线程池最小结构</h2><p>一个线程池通常包含：</p>
+<ul>
+<li>任务队列</li>
+<li>多个工作线程</li>
+<li>停止标志</li>
+<li>提交接口</li>
+</ul>
+<p>示意：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">producer -&gt; task queue -&gt; workers</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="3-推荐的任务表示"><a href="#3-推荐的任务表示" class="headerlink" title="3. 推荐的任务表示"></a>3. 推荐的任务表示</h2><p>最常见的是：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">std::function&lt;<span class="type">void</span>()&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这样线程池不关心任务具体类型，只负责执行。</p>
+<p>如果要返回值，可以把真实任务包装进：</p>
+<ul>
+<li><code>std::packaged_task</code></li>
+<li><code>std::promise</code></li>
+<li><code>std::future</code></li>
+</ul>
+<hr>
+<h2 id="4-一个最小线程池骨架"><a href="#4-一个最小线程池骨架" class="headerlink" title="4. 一个最小线程池骨架"></a>4. 一个最小线程池骨架</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;condition_variable&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;functional&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;mutex&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;queue&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;thread&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ThreadPool</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">explicit</span> <span class="title">ThreadPool</span><span class="params">(std::<span class="type">size_t</span> n)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (std::<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; n; ++i) &#123;</span><br><span class="line">            workers_.<span class="built_in">emplace_back</span>([<span class="keyword">this</span>] &#123; <span class="built_in">worker_loop</span>(); &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ~<span class="built_in">ThreadPool</span>() &#123;</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="function">std::lock_guard&lt;std::mutex&gt; <span class="title">lk</span><span class="params">(mutex_)</span></span>;</span><br><span class="line">            stop_ = <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        cv_.<span class="built_in">notify_all</span>();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span>&amp; t : workers_) &#123;</span><br><span class="line">            <span class="keyword">if</span> (t.<span class="built_in">joinable</span>()) t.<span class="built_in">join</span>();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">submit</span><span class="params">(std::function&lt;<span class="type">void</span>()&gt; task)</span> </span>&#123;</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="function">std::lock_guard&lt;std::mutex&gt; <span class="title">lk</span><span class="params">(mutex_)</span></span>;</span><br><span class="line">            tasks_.<span class="built_in">push</span>(std::<span class="built_in">move</span>(task));</span><br><span class="line">        &#125;</span><br><span class="line">        cv_.<span class="built_in">notify_one</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">worker_loop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">            std::function&lt;<span class="type">void</span>()&gt; task;</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="function">std::unique_lock&lt;std::mutex&gt; <span class="title">lk</span><span class="params">(mutex_)</span></span>;</span><br><span class="line">                cv_.<span class="built_in">wait</span>(lk, [&amp;] &#123; <span class="keyword">return</span> stop_ || !tasks_.<span class="built_in">empty</span>(); &#125;);</span><br><span class="line">                <span class="keyword">if</span> (stop_ &amp;&amp; tasks_.<span class="built_in">empty</span>()) <span class="keyword">return</span>;</span><br><span class="line">                task = std::<span class="built_in">move</span>(tasks_.<span class="built_in">front</span>());</span><br><span class="line">                tasks_.<span class="built_in">pop</span>();</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="built_in">task</span>();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">bool</span> stop_ = <span class="literal">false</span>;</span><br><span class="line">    std::mutex mutex_;</span><br><span class="line">    std::condition_variable cv_;</span><br><span class="line">    std::queue&lt;std::function&lt;<span class="type">void</span>()&gt;&gt; tasks_;</span><br><span class="line">    std::vector&lt;std::thread&gt; workers_;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="5-为什么停止协议很重要"><a href="#5-为什么停止协议很重要" class="headerlink" title="5. 为什么停止协议很重要"></a>5. 为什么停止协议很重要</h2><p>如果没有明确的停止逻辑，线程池很容易在析构时：</p>
+<ul>
+<li>worker 永远等在 <code>wait</code></li>
+<li>主线程 join 不回来</li>
+</ul>
+<p>正确退出条件通常是：</p>
+<ul>
+<li><code>stop_ == true</code></li>
+<li>并且队列已空</li>
+</ul>
+<hr>
+<h2 id="6-返回值怎么做"><a href="#6-返回值怎么做" class="headerlink" title="6. 返回值怎么做"></a>6. 返回值怎么做</h2><p>常见写法是：</p>
+<ul>
+<li>把用户任务包装成 <code>packaged_task</code></li>
+<li>返回对应 <code>future</code></li>
+</ul>
+<p>这样提交方既能异步执行，也能之后 <code>get()</code> 结果。</p>
+<p>线程池的接口常见长这样：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">F</span>, <span class="keyword">class</span>... Args&gt;</span><br><span class="line"><span class="function"><span class="keyword">auto</span> <span class="title">enqueue</span><span class="params">(F&amp;&amp; f, Args&amp;&amp;... args)</span> -&gt; std::future&lt;...&gt;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这也是完美转发的高频实战场景。</p>
+<hr>
+<h2 id="7-有界任务队列与背压"><a href="#7-有界任务队列与背压" class="headerlink" title="7. 有界任务队列与背压"></a>7. 有界任务队列与背压</h2><p>如果任务生产速度远大于消费速度，线程池也可能把内存吃爆。<br>所以工程上经常要考虑：</p>
+<ul>
+<li>队列容量上限</li>
+<li>超限后阻塞</li>
+<li>超限后丢弃</li>
+<li>超限后降级</li>
+</ul>
+<p>这其实就是背压策略。</p>
+<hr>
+<h2 id="8-线程池不是越多线程越好"><a href="#8-线程池不是越多线程越好" class="headerlink" title="8. 线程池不是越多线程越好"></a>8. 线程池不是越多线程越好</h2><p>线程数通常取决于：</p>
+<ul>
+<li>CPU 核心数</li>
+<li>任务是否 CPU 密集</li>
+<li>任务是否经常阻塞 I&#x2F;O</li>
+</ul>
+<p>经验上：</p>
+<ul>
+<li>CPU 密集型：线程数通常接近核心数</li>
+<li>I&#x2F;O 密集型：线程数可适当更大</li>
+</ul>
+<hr>
+<h2 id="9-消息队列-vs-线程池"><a href="#9-消息队列-vs-线程池" class="headerlink" title="9. 消息队列 vs 线程池"></a>9. 消息队列 vs 线程池</h2><p>这两个概念经常一起出现，但不完全一样。</p>
+<ul>
+<li>消息队列：强调数据传递与同步</li>
+<li>线程池：强调任务执行与线程复用</li>
+</ul>
+<p>线程池内部几乎总会用到任务队列，但消息队列本身不一定等于线程池。</p>
+<hr>
+<h2 id="10-常见坑"><a href="#10-常见坑" class="headerlink" title="10. 常见坑"></a>10. 常见坑</h2><h3 id="10-1-任务里抛异常没人管"><a href="#10-1-任务里抛异常没人管" class="headerlink" title="10.1 任务里抛异常没人管"></a>10.1 任务里抛异常没人管</h3><p>如果没有 <code>future</code> 或显式捕获，异常可能直接导致线程终止。</p>
+<h3 id="10-2-析构时仍允许提交任务"><a href="#10-2-析构时仍允许提交任务" class="headerlink" title="10.2 析构时仍允许提交任务"></a>10.2 析构时仍允许提交任务</h3><p>这会让生命周期变得混乱。</p>
+<h3 id="10-3-持锁执行任务"><a href="#10-3-持锁执行任务" class="headerlink" title="10.3 持锁执行任务"></a>10.3 持锁执行任务</h3><p>这是严重错误。<br>正确做法是：</p>
+<ul>
+<li>取出任务后释放锁</li>
+<li>再执行任务</li>
+</ul>
+<h3 id="10-4-线程池里再无限提交内部任务"><a href="#10-4-线程池里再无限提交内部任务" class="headerlink" title="10.4 线程池里再无限提交内部任务"></a>10.4 线程池里再无限提交内部任务</h3><p>这可能制造级联膨胀和死锁风险。</p>
+<hr>
+<h2 id="11-一页总结"><a href="#11-一页总结" class="headerlink" title="11. 一页总结"></a>11. 一页总结</h2><p>线程池最关键的不是模板技巧，而是三个工程点：</p>
+<ol>
+<li>任务队列</li>
+<li>worker 生命周期</li>
+<li>明确的停止与背压策略</li>
+</ol>
+<p>如果只记一句：</p>
+<blockquote>
+<p>线程池本质上是“用受控线程数去消费一个受控任务流”。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>楚天
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://chutianduan.github.io/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/05-%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%B8%8E%E7%BA%BF%E7%A8%8B%E6%B1%A0/" title="线程同步消息队列与线程池">https://chutianduan.github.io/notes/现代c-实践/05-线程同步消息队列与线程池/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/07-%E6%B8%B8%E6%88%8F%E5%B8%B8%E8%A7%81%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="prev" title="游戏常见设计模式">
+                  <i class="fa fa-angle-left"></i> 游戏常见设计模式
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/04-%E7%94%9F%E4%BA%A7%E8%80%85-%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%BC%8F%E4%B8%8E%E9%98%BB%E5%A1%9E%E9%98%9F%E5%88%97/" rel="next" title="生产者-消费者模式与阻塞队列">
+                  生产者-消费者模式与阻塞队列 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-code"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">楚天</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

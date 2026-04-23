@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chutianduan.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":2,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="左值、右值、std::forward 与完美转发笔记时间：2026&#x2F;04&#x2F;09  关键词：左值、右值、移动语义、std::move、转发引用、引用折叠、std::forward、完美转发核心目标：搞清楚“一个参数到底该拷贝、移动，还是原样转发”。   1. 这篇笔记解决什么问题C++ 模板和现代泛型代码里，最容易混乱的一组概念就是：  左值 &#x2F; 右值 左值引用 &amp;#x">
+<meta property="og:type" content="article">
+<meta property="og:title" content="左值、右值、&#96;std::forward&#96; 与完美转发笔记">
+<meta property="og:url" content="https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/03-%E5%B7%A6%E5%8F%B3%E5%80%BC-%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91%E4%B8%8E%E5%BC%95%E7%94%A8%E6%8A%98%E5%8F%A0/index.html">
+<meta property="og:site_name" content="楚天">
+<meta property="og:description" content="左值、右值、std::forward 与完美转发笔记时间：2026&#x2F;04&#x2F;09  关键词：左值、右值、移动语义、std::move、转发引用、引用折叠、std::forward、完美转发核心目标：搞清楚“一个参数到底该拷贝、移动，还是原样转发”。   1. 这篇笔记解决什么问题C++ 模板和现代泛型代码里，最容易混乱的一组概念就是：  左值 &#x2F; 右值 左值引用 &amp;#x">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-04-09T01:59:17.000Z">
+<meta property="article:modified_time" content="2026-04-09T01:59:17.000Z">
+<meta property="article:author" content="楚天">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="游戏网络">
+<meta property="article:tag" content="技术博客">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/03-%E5%B7%A6%E5%8F%B3%E5%80%BC-%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91%E4%B8%8E%E5%BC%95%E7%94%A8%E6%8A%98%E5%8F%A0/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/03-%E5%B7%A6%E5%8F%B3%E5%80%BC-%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91%E4%B8%8E%E5%BC%95%E7%94%A8%E6%8A%98%E5%8F%A0/","path":"/notes/高性能c-并行编程/03-左右值-完美转发与引用折叠/","title":"左值、右值、`std::forward` 与完美转发笔记"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>左值、右值、`std::forward` 与完美转发笔记 | 楚天</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">楚天</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">惟楚有材，于斯为盛</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-友情链接"><a href="/link/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B7%A6%E5%80%BC%E3%80%81%E5%8F%B3%E5%80%BC%E3%80%81std-forward-%E4%B8%8E%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91%E7%AC%94%E8%AE%B0"><span class="nav-number">1.</span> <span class="nav-text">左值、右值、std::forward 与完美转发笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E8%BF%99%E7%AF%87%E7%AC%94%E8%AE%B0%E8%A7%A3%E5%86%B3%E4%BB%80%E4%B9%88%E9%97%AE%E9%A2%98"><span class="nav-number">1.1.</span> <span class="nav-text">1. 这篇笔记解决什么问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E4%BB%80%E4%B9%88%E6%98%AF%E5%B7%A6%E5%80%BC%E5%92%8C%E5%8F%B3%E5%80%BC"><span class="nav-number">1.2.</span> <span class="nav-text">2. 什么是左值和右值</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%85%88%E7%94%A8%E7%9B%B4%E8%A7%89%E7%90%86%E8%A7%A3"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 先用直觉理解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E5%B8%B8%E8%A7%81%E4%BE%8B%E5%AD%90"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 常见例子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E6%9B%B4%E5%87%86%E7%A1%AE%E7%9A%84%E7%8E%B0%E4%BB%A3%E5%88%86%E7%B1%BB"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 更准确的现代分类</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%B7%A6%E5%80%BC%E5%BC%95%E7%94%A8%E4%B8%8E%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8"><span class="nav-number">1.3.</span> <span class="nav-text">3. 左值引用与右值引用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E5%B7%A6%E5%80%BC%E5%BC%95%E7%94%A8-T"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 左值引用 T&amp;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-const-T-%E5%BE%88%E7%89%B9%E6%AE%8A"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 const T&amp; 很特殊</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8-T"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 右值引用 T&amp;&amp;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E4%B8%80%E4%B8%AA%E5%AE%B9%E6%98%93%E5%BF%BD%E7%95%A5%E4%BD%86%E6%9E%81%E5%85%B6%E9%87%8D%E8%A6%81%E7%9A%84%E4%BA%8B%E5%AE%9E"><span class="nav-number">1.4.</span> <span class="nav-text">4. 一个容易忽略但极其重要的事实</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E7%A7%BB%E5%8A%A8%E8%AF%AD%E4%B9%89"><span class="nav-number">1.5.</span> <span class="nav-text">5. 为什么需要移动语义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-std-move-%E5%88%B0%E5%BA%95%E5%81%9A%E4%BA%86%E4%BB%80%E4%B9%88"><span class="nav-number">1.6.</span> <span class="nav-text">6. std::move 到底做了什么</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-std-move-%E4%B8%8D%E6%98%AF%E2%80%9C%E7%A7%BB%E5%8A%A8%E2%80%9D"><span class="nav-number">1.6.1.</span> <span class="nav-text">6.1 std::move 不是“移动”</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-%E5%8F%AF%E4%BB%A5%E6%8A%8A%E5%AE%83%E7%90%86%E8%A7%A3%E6%88%90"><span class="nav-number">1.6.2.</span> <span class="nav-text">6.2 可以把它理解成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-%E8%A2%AB%E7%A7%BB%E5%8A%A8%E5%90%8E%E7%9A%84%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.6.3.</span> <span class="nav-text">6.3 被移动后的对象</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-std-move-%E5%92%8C%E6%8B%B7%E8%B4%9D-%E7%A7%BB%E5%8A%A8%E6%9E%84%E9%80%A0%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">1.7.</span> <span class="nav-text">7. std::move 和拷贝 &#x2F; 移动构造的关系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-%E8%BD%AC%E5%8F%91%E5%BC%95%E7%94%A8%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.8.</span> <span class="nav-text">8. 转发引用是什么</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-%E6%9C%80%E7%BB%8F%E5%85%B8%E5%AE%9A%E4%B9%89"><span class="nav-number">1.8.1.</span> <span class="nav-text">8.1 最经典定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%AE%83%E7%89%B9%E6%AE%8A"><span class="nav-number">1.8.2.</span> <span class="nav-text">8.2 为什么它特殊</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-%E4%B8%8D%E6%98%AF%E6%89%80%E6%9C%89-%E9%83%BD%E6%98%AF%E8%BD%AC%E5%8F%91%E5%BC%95%E7%94%A8"><span class="nav-number">1.8.3.</span> <span class="nav-text">8.3 不是所有 &amp;&amp; 都是转发引用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-4-auto-%E4%B9%9F%E5%B8%B8%E5%B8%B8%E6%98%AF%E8%BD%AC%E5%8F%91%E5%BC%95%E7%94%A8"><span class="nav-number">1.8.4.</span> <span class="nav-text">8.4 auto&amp;&amp; 也常常是转发引用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-%E5%BC%95%E7%94%A8%E6%8A%98%E5%8F%A0"><span class="nav-number">1.9.</span> <span class="nav-text">9. 引用折叠</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#9-1-%E5%9B%9B%E6%9D%A1%E8%A7%84%E5%88%99"><span class="nav-number">1.9.1.</span> <span class="nav-text">9.1 四条规则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-2-%E4%B8%BA%E4%BB%80%E4%B9%88-wrapper-a-%E8%83%BD%E6%88%90%E7%AB%8B"><span class="nav-number">1.9.2.</span> <span class="nav-text">9.2 为什么 wrapper(a) 能成立</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-3-%E4%BC%A0%E5%8F%B3%E5%80%BC%E6%97%B6"><span class="nav-number">1.9.3.</span> <span class="nav-text">9.3 传右值时</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81-std-forward"><span class="nav-number">1.10.</span> <span class="nav-text">10. 为什么需要 std::forward</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-std-forward-%E5%A6%82%E4%BD%95%E4%BF%9D%E7%95%99%E5%80%BC%E7%B1%BB%E5%88%AB"><span class="nav-number">1.11.</span> <span class="nav-text">11. std::forward 如何保留值类别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.12.</span> <span class="nav-text">12. 完美转发是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-std-forward-%E5%92%8C-std-move-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">1.13.</span> <span class="nav-text">13. std::forward 和 std::move 的区别</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#13-1-%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E7%94%A8-move"><span class="nav-number">1.13.1.</span> <span class="nav-text">13.1 什么时候用 move</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-2-%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E7%94%A8-forward"><span class="nav-number">1.13.2.</span> <span class="nav-text">13.2 什么时候用 forward</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-%E4%B8%80%E4%B8%AA%E6%9C%80%E9%87%8D%E8%A6%81%E7%9A%84%E5%B7%A5%E5%8E%82%E5%87%BD%E6%95%B0%E4%BE%8B%E5%AD%90"><span class="nav-number">1.14.</span> <span class="nav-text">14. 一个最重要的工厂函数例子</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#14-1-%E9%94%99%E8%AF%AF%E6%88%96%E9%80%80%E5%8C%96%E7%9A%84%E7%89%88%E6%9C%AC"><span class="nav-number">1.14.1.</span> <span class="nav-text">14.1 错误或退化的版本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14-2-%E6%AD%A3%E7%A1%AE%E7%9A%84%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91%E7%89%88%E6%9C%AC"><span class="nav-number">1.14.2.</span> <span class="nav-text">14.2 正确的完美转发版本</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#15-emplace-back-%E4%B8%BA%E4%BB%80%E4%B9%88%E7%A6%BB%E4%B8%8D%E5%BC%80%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91"><span class="nav-number">1.15.</span> <span class="nav-text">15. emplace_back 为什么离不开完美转发</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#16-std-forward-%E7%9A%84%E7%9B%B4%E8%A7%89%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.16.</span> <span class="nav-text">16. std::forward 的直觉实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#17-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%AF%B4%E2%80%9C%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91%E2%80%9D%E7%A6%BB%E4%B8%8D%E5%BC%80%E5%BC%95%E7%94%A8%E6%8A%98%E5%8F%A0"><span class="nav-number">1.17.</span> <span class="nav-text">17. 为什么说“完美转发”离不开引用折叠</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#18-%E5%B8%B8%E8%A7%81%E5%9D%91"><span class="nav-number">1.18.</span> <span class="nav-text">18. 常见坑</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#18-1-%E4%B8%8D%E6%98%AF%E6%89%80%E6%9C%89-T-%E9%83%BD%E8%A6%81-std-forward"><span class="nav-number">1.18.1.</span> <span class="nav-text">18.1 不是所有 T&amp;&amp; 都要 std::forward</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#18-2-%E4%B8%8D%E8%A6%81%E5%AF%B9%E5%90%8C%E4%B8%80%E4%B8%AA%E5%AF%B9%E8%B1%A1%E9%87%8D%E5%A4%8D-forward-move"><span class="nav-number">1.18.2.</span> <span class="nav-text">18.2 不要对同一个对象重复 forward &#x2F; move</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#18-3-const-%E4%BC%9A%E9%99%90%E5%88%B6%E7%A7%BB%E5%8A%A8"><span class="nav-number">1.18.3.</span> <span class="nav-text">18.3 const 会限制移动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#18-4-const-T-%E5%BE%88%E5%B0%91%E7%94%A8"><span class="nav-number">1.18.4.</span> <span class="nav-text">18.4 const T&amp;&amp; 很少用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#18-5-%E5%91%BD%E5%90%8D%E5%90%8E%E7%9A%84%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8%E5%8F%98%E9%87%8F%E4%BB%8D%E7%84%B6%E6%98%AF%E5%B7%A6%E5%80%BC"><span class="nav-number">1.18.5.</span> <span class="nav-text">18.5 命名后的右值引用变量仍然是左值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#18-6-%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91%E4%B8%8D%E6%98%AF%E2%80%9C%E6%80%A7%E8%83%BD%E9%93%B6%E5%BC%B9%E2%80%9D"><span class="nav-number">1.18.6.</span> <span class="nav-text">18.6 完美转发不是“性能银弹”</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#19-%E9%9D%A2%E8%AF%95%E5%92%8C%E5%A4%8D%E4%B9%A0%E9%AB%98%E9%A2%91%E9%97%AE%E9%A2%98"><span class="nav-number">1.19.</span> <span class="nav-text">19. 面试和复习高频问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Q1%EF%BC%9Astd-move-%E4%BC%9A%E7%9C%9F%E7%9A%84%E7%A7%BB%E5%8A%A8%E5%AF%B9%E8%B1%A1%E5%90%97%EF%BC%9F"><span class="nav-number">1.19.1.</span> <span class="nav-text">Q1：std::move 会真的移动对象吗？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Q2%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88-T-%E8%83%BD%E5%90%8C%E6%97%B6%E6%8E%A5%E5%B7%A6%E5%80%BC%E5%92%8C%E5%8F%B3%E5%80%BC%EF%BC%9F"><span class="nav-number">1.19.2.</span> <span class="nav-text">Q2：为什么 T&amp;&amp; 能同时接左值和右值？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Q3%EF%BC%9Astd-forward-%E5%92%8C-std-move-%E6%9C%80%E5%A4%A7%E5%8C%BA%E5%88%AB%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">1.19.3.</span> <span class="nav-text">Q3：std::forward 和 std::move 最大区别是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Q4%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8C%85%E8%A3%85%E5%87%BD%E6%95%B0%E9%87%8C%E7%9B%B4%E6%8E%A5-target-arg-%E4%B8%8D%E8%A1%8C%EF%BC%9F"><span class="nav-number">1.19.4.</span> <span class="nav-text">Q4：为什么包装函数里直接 target(arg) 不行？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Q5%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88-emplace-back-%E5%B8%B8%E5%92%8C%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91%E4%B8%80%E8%B5%B7%E5%87%BA%E7%8E%B0%EF%BC%9F"><span class="nav-number">1.19.5.</span> <span class="nav-text">Q5：为什么 emplace_back 常和完美转发一起出现？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#20-%E4%B8%80%E9%A1%B5%E6%80%BB%E7%BB%93"><span class="nav-number">1.20.</span> <span class="nav-text">20. 一页总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#21-%E5%BB%BA%E8%AE%AE%E7%BB%A7%E7%BB%AD%E8%A1%A5%E5%85%85%E7%9A%84%E7%9B%B8%E5%85%B3%E4%B8%BB%E9%A2%98"><span class="nav-number">1.21.</span> <span class="nav-text">21. 建议继续补充的相关主题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#22-%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.22.</span> <span class="nav-text">22. 参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="楚天"
+      src="/img/me.jpg">
+  <p class="site-author-name" itemprop="name">楚天</p>
+  <div class="site-description" itemprop="description">记录深度学习、C++、游戏网络与生活旅行的学习笔记。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ChutianDuan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ChutianDuan" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:3383006954@qq.com" title="E-Mail → mailto:3383006954@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/03-%E5%B7%A6%E5%8F%B3%E5%80%BC-%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91%E4%B8%8E%E5%BC%95%E7%94%A8%E6%8A%98%E5%8F%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="左值、右值、&#96;std::forward&#96; 与完美转发笔记 | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          左值、右值、`std::forward` 与完美转发笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-04-09 09:59:17" itemprop="dateCreated datePublished" datetime="2026-04-09T09:59:17+08:00">2026-04-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/%E9%AB%98%E6%80%A7%E8%83%BDC-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">高性能C++并行编程</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="左值、右值、std-forward-与完美转发笔记"><a href="#左值、右值、std-forward-与完美转发笔记" class="headerlink" title="左值、右值、std::forward 与完美转发笔记"></a>左值、右值、<code>std::forward</code> 与完美转发笔记</h1><p>时间：2026&#x2F;04&#x2F;09</p>
+<blockquote>
+<p>关键词：左值、右值、移动语义、<code>std::move</code>、转发引用、引用折叠、<code>std::forward</code>、完美转发<br>核心目标：搞清楚“一个参数到底该拷贝、移动，还是原样转发”。</p>
+</blockquote>
+<hr>
+<h2 id="1-这篇笔记解决什么问题"><a href="#1-这篇笔记解决什么问题" class="headerlink" title="1. 这篇笔记解决什么问题"></a>1. 这篇笔记解决什么问题</h2><p>C++ 模板和现代泛型代码里，最容易混乱的一组概念就是：</p>
+<ul>
+<li>左值 &#x2F; 右值</li>
+<li>左值引用 &#x2F; 右值引用</li>
+<li><code>std::move</code></li>
+<li><code>std::forward</code></li>
+<li>完美转发</li>
+<li>引用折叠</li>
+</ul>
+<p>如果这几个点没有打通，就很容易出现这些问题：</p>
+<ul>
+<li>以为 <code>T&amp;&amp;</code> 一定是右值引用</li>
+<li>以为 <code>std::move</code> 真的会“立即移动对象”</li>
+<li>写了包装函数，却把右值错误地当成左值传下去了</li>
+<li>用错 <code>std::forward</code>，导致重复移动或行为退化</li>
+</ul>
+<p>这篇笔记的主线是：</p>
+<ol>
+<li>先分清值类别</li>
+<li>再理解引用类型</li>
+<li>再理解移动语义</li>
+<li>最后看 <code>std::forward</code> 和完美转发为什么成立</li>
+</ol>
+<hr>
+<h2 id="2-什么是左值和右值"><a href="#2-什么是左值和右值" class="headerlink" title="2. 什么是左值和右值"></a>2. 什么是左值和右值</h2><h3 id="2-1-先用直觉理解"><a href="#2-1-先用直觉理解" class="headerlink" title="2.1 先用直觉理解"></a>2.1 先用直觉理解</h3><p>可以先粗略理解为：</p>
+<ul>
+<li><strong>左值</strong>：有身份、可定位、可被多次使用的对象</li>
+<li><strong>右值</strong>：通常是临时结果，生命周期短，更适合被移动</li>
+</ul>
+<p>例子：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> a = <span class="number">10</span>;</span><br><span class="line"><span class="type">int</span> b = a;      <span class="comment">// a 是左值</span></span><br><span class="line"><span class="type">int</span> c = a + <span class="number">1</span>;  <span class="comment">// a + 1 是右值</span></span><br></pre></td></tr></table></figure>
+
+<p>这里：</p>
+<ul>
+<li><code>a</code> 有名字、有地址，通常是左值</li>
+<li><code>a + 1</code> 是表达式求值结果，通常是右值</li>
+</ul>
+<h3 id="2-2-常见例子"><a href="#2-2-常见例子" class="headerlink" title="2.2 常见例子"></a>2.2 常见例子</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> x = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">x           <span class="comment">// 左值</span></span><br><span class="line">(x)         <span class="comment">// 左值</span></span><br><span class="line">std::<span class="built_in">move</span>(x) <span class="comment">// 右值中的 xvalue</span></span><br><span class="line"><span class="number">1</span>           <span class="comment">// 右值</span></span><br><span class="line">x + <span class="number">1</span>       <span class="comment">// 右值</span></span><br><span class="line"><span class="string">&quot;hello&quot;</span>     <span class="comment">// 字符串字面量是左值</span></span><br></pre></td></tr></table></figure>
+
+<p>注意：很多入门资料喜欢说“能放在赋值号左边的是左值”，这个说法只能帮助建立最初直觉，<strong>不够严格</strong>。</p>
+<h3 id="2-3-更准确的现代分类"><a href="#2-3-更准确的现代分类" class="headerlink" title="2.3 更准确的现代分类"></a>2.3 更准确的现代分类</h3><p>C++11 以后，值类别更完整地分成：</p>
+<ul>
+<li><code>lvalue</code></li>
+<li><code>xvalue</code></li>
+<li><code>prvalue</code></li>
+</ul>
+<p>再往上组合成：</p>
+<ul>
+<li><code>glvalue = lvalue + xvalue</code></li>
+<li><code>rvalue = prvalue + xvalue</code></li>
+</ul>
+<p>复习时可以先抓住最重要的：</p>
+<ul>
+<li>普通有名字对象，大多是 <code>lvalue</code></li>
+<li>临时值大多是 <code>prvalue</code></li>
+<li><code>std::move(x)</code> 产生的是 <code>xvalue</code></li>
+</ul>
+<hr>
+<h2 id="3-左值引用与右值引用"><a href="#3-左值引用与右值引用" class="headerlink" title="3. 左值引用与右值引用"></a>3. 左值引用与右值引用</h2><h3 id="3-1-左值引用-T"><a href="#3-1-左值引用-T" class="headerlink" title="3.1 左值引用 T&amp;"></a>3.1 左值引用 <code>T&amp;</code></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> x = <span class="number">10</span>;</span><br><span class="line"><span class="type">int</span>&amp; ref = x;</span><br></pre></td></tr></table></figure>
+
+<p>特点：</p>
+<ul>
+<li>必须绑定到左值</li>
+<li>绑定后就是原对象的别名</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span>&amp; a = x;   <span class="comment">// 对</span></span><br><span class="line"><span class="type">int</span>&amp; b = <span class="number">10</span>;  <span class="comment">// 错，普通左值引用不能绑定右值</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-const-T-很特殊"><a href="#3-2-const-T-很特殊" class="headerlink" title="3.2 const T&amp; 很特殊"></a>3.2 <code>const T&amp;</code> 很特殊</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> <span class="type">int</span>&amp; a = <span class="number">10</span>; <span class="comment">// 对</span></span><br></pre></td></tr></table></figure>
+
+<p><code>const T&amp;</code> 可以绑定：</p>
+<ul>
+<li>左值</li>
+<li>右值</li>
+<li>临时对象</li>
+</ul>
+<p>这也是它经常被用来做“只读传参”的原因。</p>
+<h3 id="3-3-右值引用-T"><a href="#3-3-右值引用-T" class="headerlink" title="3.3 右值引用 T&amp;&amp;"></a>3.3 右值引用 <code>T&amp;&amp;</code></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span>&amp;&amp; r = <span class="number">10</span>; <span class="comment">// 对</span></span><br></pre></td></tr></table></figure>
+
+<p>特点：</p>
+<ul>
+<li>通常绑定右值</li>
+<li>常用于移动语义</li>
+<li>常用于表达“这个对象可以被偷资源”</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> x = <span class="number">10</span>;</span><br><span class="line"><span class="type">int</span>&amp;&amp; a = <span class="number">20</span>;          <span class="comment">// 对</span></span><br><span class="line"><span class="type">int</span>&amp;&amp; b = std::<span class="built_in">move</span>(x); <span class="comment">// 对</span></span><br><span class="line"><span class="type">int</span>&amp;&amp; c = x;           <span class="comment">// 错，x 是左值</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="4-一个容易忽略但极其重要的事实"><a href="#4-一个容易忽略但极其重要的事实" class="headerlink" title="4. 一个容易忽略但极其重要的事实"></a>4. 一个容易忽略但极其重要的事实</h2><blockquote>
+<p>任何“有名字的变量”，即使它的类型是 <code>T&amp;&amp;</code>，表达式本身依然是左值。</p>
+</blockquote>
+<p>例子：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">f</span><span class="params">(<span class="type">int</span>&amp;&amp; x)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// x 的类型是 int&amp;&amp;</span></span><br><span class="line">    <span class="comment">// 但表达式 x 是左值</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这句话是理解 <code>std::forward</code> 和 <code>std::move</code> 的关键前提。<br>因为只要参数进入函数体，它就有名字了，于是直接写 <code>x</code> 时，它就是左值表达式。</p>
+<hr>
+<h2 id="5-为什么需要移动语义"><a href="#5-为什么需要移动语义" class="headerlink" title="5. 为什么需要移动语义"></a>5. 为什么需要移动语义</h2><p>在 C++11 之前，临时对象也只能拷贝，很多场景成本很高。</p>
+<p>例如一个大对象：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">std::vector&lt;<span class="type">int</span>&gt; <span class="title">make_big_vector</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function">std::vector&lt;<span class="type">int</span>&gt; <span class="title">v</span><span class="params">(<span class="number">1&#x27;000&#x27;000</span>, <span class="number">42</span>)</span></span>;</span><br><span class="line">    <span class="keyword">return</span> v;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果只能拷贝，那么返回 <code>v</code> 的代价很大。<br>移动语义的核心思想是：</p>
+<ul>
+<li>对于即将销毁的对象，不一定要深拷贝</li>
+<li>可以“偷走”它内部持有的资源</li>
+</ul>
+<p>这就引出了移动构造和移动赋值。</p>
+<hr>
+<h2 id="6-std-move-到底做了什么"><a href="#6-std-move-到底做了什么" class="headerlink" title="6. std::move 到底做了什么"></a>6. <code>std::move</code> 到底做了什么</h2><h3 id="6-1-std-move-不是“移动”"><a href="#6-1-std-move-不是“移动”" class="headerlink" title="6.1 std::move 不是“移动”"></a>6.1 <code>std::move</code> 不是“移动”</h3><p>它本质上只是一个<strong>类型转换</strong>，把表达式转换成右值形式，告诉编译器：</p>
+<blockquote>
+<p>这个对象后面我不打算保留原语义了，可以把它当成可移动对象处理。</p>
+</blockquote>
+<p>例子：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;utility&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"></span><br><span class="line">std::string s = <span class="string">&quot;hello&quot;</span>;</span><br><span class="line">std::string t = std::<span class="built_in">move</span>(s);</span><br></pre></td></tr></table></figure>
+
+<p>这里真正发生移动的是：</p>
+<ul>
+<li><code>std::string</code> 的移动构造函数</li>
+</ul>
+<p>而不是 <code>std::move</code> 本身。</p>
+<h3 id="6-2-可以把它理解成"><a href="#6-2-可以把它理解成" class="headerlink" title="6.2 可以把它理解成"></a>6.2 可以把它理解成</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">std::<span class="built_in">move</span>(x)</span><br></pre></td></tr></table></figure>
+
+<p>约等于：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static_cast</span>&lt;std::<span class="type">remove_reference_t</span>&lt;<span class="keyword">decltype</span>(x)&gt;&amp;&amp;&gt;(x)</span><br></pre></td></tr></table></figure>
+
+<p>也就是把 <code>x</code> 强制转成右值。</p>
+<h3 id="6-3-被移动后的对象"><a href="#6-3-被移动后的对象" class="headerlink" title="6.3 被移动后的对象"></a>6.3 被移动后的对象</h3><p>被移动后的对象通常满足：</p>
+<ul>
+<li>仍然处于<strong>有效状态</strong></li>
+<li>但值是<strong>未指定的</strong></li>
+</ul>
+<p>这意味着：</p>
+<ul>
+<li>可以析构</li>
+<li>可以重新赋值</li>
+<li>不应该假设它仍然保持原值</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">std::string s = <span class="string">&quot;hello&quot;</span>;</span><br><span class="line">std::string t = std::<span class="built_in">move</span>(s);</span><br><span class="line"></span><br><span class="line"><span class="comment">// s 依然有效，但内容不要依赖</span></span><br><span class="line">s = <span class="string">&quot;new value&quot;</span>; <span class="comment">// 可以</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="7-std-move-和拷贝-移动构造的关系"><a href="#7-std-move-和拷贝-移动构造的关系" class="headerlink" title="7. std::move 和拷贝 &#x2F; 移动构造的关系"></a>7. <code>std::move</code> 和拷贝 &#x2F; 移动构造的关系</h2><p>看一个最典型的重载：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;utility&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">consume</span><span class="params">(<span class="type">const</span> std::string&amp; s)</span> </span>&#123;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;copy-style view: &quot;</span> &lt;&lt; s &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">consume</span><span class="params">(std::string&amp;&amp; s)</span> </span>&#123;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;move-style view: &quot;</span> &lt;&lt; s &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::string s = <span class="string">&quot;hello&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">consume</span>(s);            <span class="comment">// 传左值</span></span><br><span class="line">    <span class="built_in">consume</span>(std::<span class="built_in">move</span>(s)); <span class="comment">// 传右值</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里：</p>
+<ul>
+<li><code>consume(s)</code> 选中左值版本</li>
+<li><code>consume(std::move(s))</code> 选中右值版本</li>
+</ul>
+<p>所以 <code>std::move</code> 更准确的作用是：</p>
+<ul>
+<li><strong>改变重载决议和构造&#x2F;赋值选择</strong></li>
+</ul>
+<hr>
+<h2 id="8-转发引用是什么"><a href="#8-转发引用是什么" class="headerlink" title="8. 转发引用是什么"></a>8. 转发引用是什么</h2><h3 id="8-1-最经典定义"><a href="#8-1-最经典定义" class="headerlink" title="8.1 最经典定义"></a>8.1 最经典定义</h3><p>当且仅当满足下面条件时，<code>T&amp;&amp;</code> 才是<strong>转发引用</strong>：</p>
+<ul>
+<li>形式是 <code>T&amp;&amp;</code></li>
+<li><code>T</code> 需要通过模板参数推导得到</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">T</span>&gt;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">wrapper</span><span class="params">(T&amp;&amp; x)</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的 <code>x</code> 是转发引用。</p>
+<h3 id="8-2-为什么它特殊"><a href="#8-2-为什么它特殊" class="headerlink" title="8.2 为什么它特殊"></a>8.2 为什么它特殊</h3><p>因为它既能接左值，也能接右值：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> a = <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line"><span class="built_in">wrapper</span>(a);   <span class="comment">// T 推导为 int&amp;</span></span><br><span class="line"><span class="built_in">wrapper</span>(<span class="number">20</span>);  <span class="comment">// T 推导为 int</span></span><br></pre></td></tr></table></figure>
+
+<p>于是：</p>
+<ul>
+<li>传左值时，<code>T = int&amp;</code></li>
+<li>传右值时，<code>T = int</code></li>
+</ul>
+<p>这正是完美转发的前提。</p>
+<h3 id="8-3-不是所有-都是转发引用"><a href="#8-3-不是所有-都是转发引用" class="headerlink" title="8.3 不是所有 &amp;&amp; 都是转发引用"></a>8.3 不是所有 <code>&amp;&amp;</code> 都是转发引用</h3><p>下面这些都<strong>不是</strong>转发引用：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">f</span><span class="params">(<span class="type">int</span>&amp;&amp; x)</span></span>;          <span class="comment">// 不是，T 没有推导</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">T</span>&gt;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">g</span><span class="params">(std::vector&lt;T&gt;&amp;&amp; x)</span></span>; <span class="comment">// 这里参数整体不是 T&amp;&amp;，不是转发引用</span></span><br></pre></td></tr></table></figure>
+
+<p>类模板中也常见这个坑：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">T</span>&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Box</span> &#123;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">set</span><span class="params">(T&amp;&amp; x)</span></span>; <span class="comment">// 这里通常不是转发引用</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>因为这里的 <code>T</code> 是类模板参数，在成员函数处并不是靠这次调用来推导。</p>
+<h3 id="8-4-auto-也常常是转发引用"><a href="#8-4-auto-也常常是转发引用" class="headerlink" title="8.4 auto&amp;&amp; 也常常是转发引用"></a>8.4 <code>auto&amp;&amp;</code> 也常常是转发引用</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span>&amp;&amp; x = expr;</span><br></pre></td></tr></table></figure>
+
+<p>当 <code>auto</code> 发生推导时，<code>auto&amp;&amp;</code> 也会表现出类似转发引用的特性。</p>
+<hr>
+<h2 id="9-引用折叠"><a href="#9-引用折叠" class="headerlink" title="9. 引用折叠"></a>9. 引用折叠</h2><p>引用折叠是解释“为什么 <code>T&amp;&amp;</code> 能同时接左值和右值”的关键规则。</p>
+<h3 id="9-1-四条规则"><a href="#9-1-四条规则" class="headerlink" title="9.1 四条规则"></a>9.1 四条规则</h3><table>
+<thead>
+<tr>
+<th>写出来的形式</th>
+<th>折叠结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>T&amp; &amp;</code></td>
+<td><code>T&amp;</code></td>
+</tr>
+<tr>
+<td><code>T&amp; &amp;&amp;</code></td>
+<td><code>T&amp;</code></td>
+</tr>
+<tr>
+<td><code>T&amp;&amp; &amp;</code></td>
+<td><code>T&amp;</code></td>
+</tr>
+<tr>
+<td><code>T&amp;&amp; &amp;&amp;</code></td>
+<td><code>T&amp;&amp;</code></td>
+</tr>
+</tbody></table>
+<p>可以直接记成一句：</p>
+<blockquote>
+<p>只要有左值引用参与折叠，结果就是左值引用；只有全是右值引用时，结果才是右值引用。</p>
+</blockquote>
+<h3 id="9-2-为什么-wrapper-a-能成立"><a href="#9-2-为什么-wrapper-a-能成立" class="headerlink" title="9.2 为什么 wrapper(a) 能成立"></a>9.2 为什么 <code>wrapper(a)</code> 能成立</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">T</span>&gt;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">wrapper</span><span class="params">(T&amp;&amp; x)</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> a = <span class="number">10</span>;</span><br><span class="line"><span class="built_in">wrapper</span>(a);</span><br></pre></td></tr></table></figure>
+
+<p>当传入左值 <code>a</code> 时：</p>
+<ul>
+<li><code>T</code> 推导为 <code>int&amp;</code></li>
+<li>于是参数类型变成 <code>int&amp; &amp;&amp;</code></li>
+<li>根据引用折叠规则，最终变成 <code>int&amp;</code></li>
+</ul>
+<p>所以左值能匹配成功。</p>
+<h3 id="9-3-传右值时"><a href="#9-3-传右值时" class="headerlink" title="9.3 传右值时"></a>9.3 传右值时</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">wrapper</span>(<span class="number">10</span>);</span><br></pre></td></tr></table></figure>
+
+<p>此时：</p>
+<ul>
+<li><code>T</code> 推导为 <code>int</code></li>
+<li>参数类型是 <code>int&amp;&amp;</code></li>
+</ul>
+<p>于是右值版本也能成立。</p>
+<hr>
+<h2 id="10-为什么需要-std-forward"><a href="#10-为什么需要-std-forward" class="headerlink" title="10. 为什么需要 std::forward"></a>10. 为什么需要 <code>std::forward</code></h2><p>看一个最典型的包装函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">process</span><span class="params">(<span class="type">int</span>&amp; x)</span> </span>&#123;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;lvalue\n&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">process</span><span class="params">(<span class="type">int</span>&amp;&amp; x)</span> </span>&#123;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;rvalue\n&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">T</span>&gt;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">wrapper</span><span class="params">(T&amp;&amp; arg)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">process</span>(arg); <span class="comment">// 有问题</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>调用：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> a = <span class="number">1</span>;</span><br><span class="line"><span class="built_in">wrapper</span>(a);</span><br><span class="line"><span class="built_in">wrapper</span>(<span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+
+<p>结果会是：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lvalue</span><br><span class="line">lvalue</span><br></pre></td></tr></table></figure>
+
+<p>原因不是模板坏了，而是：</p>
+<ul>
+<li><code>arg</code> 在函数体里有名字</li>
+<li>所以表达式 <code>arg</code> 永远是左值</li>
+</ul>
+<p>这就导致即使最初传进来的是右值，传给 <code>process</code> 时也退化成了左值。</p>
+<hr>
+<h2 id="11-std-forward-如何保留值类别"><a href="#11-std-forward-如何保留值类别" class="headerlink" title="11. std::forward 如何保留值类别"></a>11. <code>std::forward</code> 如何保留值类别</h2><p>正确写法：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;utility&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">process</span><span class="params">(<span class="type">int</span>&amp; x)</span> </span>&#123;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;lvalue\n&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">process</span><span class="params">(<span class="type">int</span>&amp;&amp; x)</span> </span>&#123;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;rvalue\n&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">T</span>&gt;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">wrapper</span><span class="params">(T&amp;&amp; arg)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">process</span>(std::forward&lt;T&gt;(arg));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> a = <span class="number">1</span>;</span><br><span class="line">    <span class="built_in">wrapper</span>(a);  <span class="comment">// lvalue</span></span><br><span class="line">    <span class="built_in">wrapper</span>(<span class="number">2</span>);  <span class="comment">// rvalue</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里：</p>
+<ul>
+<li>如果 <code>T = int&amp;</code>，那么 <code>std::forward&lt;T&gt;(arg)</code> 最终是左值</li>
+<li>如果 <code>T = int</code>，那么 <code>std::forward&lt;T&gt;(arg)</code> 最终是右值</li>
+</ul>
+<p>所以 <code>std::forward</code> 的本质是：</p>
+<ul>
+<li><strong>按模板参数 <code>T</code> 原样恢复调用点的值类别</strong></li>
+</ul>
+<p>这就是“转发”的含义。</p>
+<hr>
+<h2 id="12-完美转发是什么"><a href="#12-完美转发是什么" class="headerlink" title="12. 完美转发是什么"></a>12. 完美转发是什么</h2><p>所谓完美转发，就是：</p>
+<blockquote>
+<p>在包装层不改变实参的左值&#x2F;右值属性、不额外引入拷贝或错误移动，把参数继续传给下游函数。</p>
+</blockquote>
+<p>标准写法几乎总是：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">T</span>&gt;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">wrapper</span><span class="params">(T&amp;&amp; arg)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">target</span>(std::forward&lt;T&gt;(arg));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>多个参数时：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span>... Ts&gt;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">wrapper</span><span class="params">(Ts&amp;&amp;... args)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">target</span>(std::forward&lt;Ts&gt;(args)...);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这就是最经典的完美转发模板。</p>
+<hr>
+<h2 id="13-std-forward-和-std-move-的区别"><a href="#13-std-forward-和-std-move-的区别" class="headerlink" title="13. std::forward 和 std::move 的区别"></a>13. <code>std::forward</code> 和 <code>std::move</code> 的区别</h2><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>作用</th>
+<th>典型用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>std::move(x)</code></td>
+<td>无条件把 <code>x</code> 转成右值</td>
+<td>明确表示“可以移动”</td>
+</tr>
+<tr>
+<td><code>std::forward&lt;T&gt;(x)</code></td>
+<td>按 <code>T</code> 的推导结果恢复原值类别</td>
+<td>转发引用场景下继续传参</td>
+</tr>
+</tbody></table>
+<p>一句话记忆：</p>
+<ul>
+<li><code>move</code> 是“我决定把它当右值”</li>
+<li><code>forward</code> 是“我保持它原本是什么就还是什么”</li>
+</ul>
+<h3 id="13-1-什么时候用-move"><a href="#13-1-什么时候用-move" class="headerlink" title="13.1 什么时候用 move"></a>13.1 什么时候用 <code>move</code></h3><p>当你明确知道：</p>
+<ul>
+<li>这个对象后面不再按原语义使用</li>
+<li>想把资源交出去</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">std::string s = <span class="string">&quot;hello&quot;</span>;</span><br><span class="line">vec.<span class="built_in">push_back</span>(std::<span class="built_in">move</span>(s));</span><br></pre></td></tr></table></figure>
+
+<h3 id="13-2-什么时候用-forward"><a href="#13-2-什么时候用-forward" class="headerlink" title="13.2 什么时候用 forward"></a>13.2 什么时候用 <code>forward</code></h3><p>当你写的是包装层、工厂函数、泛型接口，需要把参数继续传下去，并保留调用者传入时的左值&#x2F;右值属性。</p>
+<p>例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">T</span>&gt;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">relay</span><span class="params">(T&amp;&amp; x)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">consume</span>(std::forward&lt;T&gt;(x));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="14-一个最重要的工厂函数例子"><a href="#14-一个最重要的工厂函数例子" class="headerlink" title="14. 一个最重要的工厂函数例子"></a>14. 一个最重要的工厂函数例子</h2><h3 id="14-1-错误或退化的版本"><a href="#14-1-错误或退化的版本" class="headerlink" title="14.1 错误或退化的版本"></a>14.1 错误或退化的版本</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">T</span>, <span class="keyword">class</span> <span class="title class_">Arg</span>&gt;</span><br><span class="line"><span class="function">std::unique_ptr&lt;T&gt; <span class="title">make_obj_bad</span><span class="params">(Arg arg)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> std::<span class="built_in">make_unique</span>&lt;T&gt;(arg);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>问题：</p>
+<ul>
+<li>参数被按值接收，已经发生了一次拷贝或移动</li>
+<li>无法保留调用点的值类别</li>
+</ul>
+<h3 id="14-2-正确的完美转发版本"><a href="#14-2-正确的完美转发版本" class="headerlink" title="14.2 正确的完美转发版本"></a>14.2 正确的完美转发版本</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;memory&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;utility&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">T</span>, <span class="keyword">class</span>... Args&gt;</span><br><span class="line"><span class="function">std::unique_ptr&lt;T&gt; <span class="title">make_obj</span><span class="params">(Args&amp;&amp;... args)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> std::<span class="built_in">make_unique</span>&lt;T&gt;(std::forward&lt;Args&gt;(args)...);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这类写法在标准库里非常常见，例如：</p>
+<ul>
+<li><code>std::make_unique</code></li>
+<li><code>std::make_shared</code></li>
+<li>各种 <code>emplace</code></li>
+</ul>
+<hr>
+<h2 id="15-emplace-back-为什么离不开完美转发"><a href="#15-emplace-back-为什么离不开完美转发" class="headerlink" title="15. emplace_back 为什么离不开完美转发"></a>15. <code>emplace_back</code> 为什么离不开完美转发</h2><p>例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">std::vector&lt;std::string&gt; v;</span><br><span class="line">v.<span class="built_in">emplace_back</span>(<span class="string">&quot;hello&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p><code>emplace_back</code> 的核心价值不是“语法更短”，而是：</p>
+<ul>
+<li>直接在容器内部构造对象</li>
+<li>参数通过完美转发传给元素构造函数</li>
+</ul>
+<p>可以把它粗略理解成：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span>... Args&gt;</span><br><span class="line"><span class="function">reference <span class="title">emplace_back</span><span class="params">(Args&amp;&amp;... args)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 在尾部原地构造 T(std::forward&lt;Args&gt;(args)...)</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>也就是说：</p>
+<ul>
+<li>左值实参按左值传进去</li>
+<li>右值实参按右值传进去</li>
+</ul>
+<hr>
+<h2 id="16-std-forward-的直觉实现"><a href="#16-std-forward-的直觉实现" class="headerlink" title="16. std::forward 的直觉实现"></a>16. <code>std::forward</code> 的直觉实现</h2><p>可以先用一种“帮助理解”的方式记它：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">T</span>&gt;</span><br><span class="line"><span class="function">T&amp;&amp; <span class="title">forward</span><span class="params">(std::<span class="type">remove_reference_t</span>&lt;T&gt;&amp; arg)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">static_cast</span>&lt;T&amp;&amp;&gt;(arg);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>标准库实现会更严谨，通常还会提供多个重载并处理误用问题，但核心思想就是：</p>
+<ul>
+<li>先拿到一个引用</li>
+<li>再按 <code>T&amp;&amp;</code> 转回去</li>
+<li>借助引用折叠恢复正确类别</li>
+</ul>
+<p>所以 <code>forward</code> 能工作，不是因为它“会智能判断”，而是因为：</p>
+<ul>
+<li>模板推导已经把信息保存在 <code>T</code> 里了</li>
+</ul>
+<hr>
+<h2 id="17-为什么说“完美转发”离不开引用折叠"><a href="#17-为什么说“完美转发”离不开引用折叠" class="headerlink" title="17. 为什么说“完美转发”离不开引用折叠"></a>17. 为什么说“完美转发”离不开引用折叠</h2><p>还是看：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">T</span>&gt;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">wrapper</span><span class="params">(T&amp;&amp; arg)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">target</span>(std::forward&lt;T&gt;(arg));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果传左值：</p>
+<ul>
+<li><code>T = U&amp;</code></li>
+<li><code>T&amp;&amp; = U&amp; &amp;&amp;</code></li>
+<li>折叠后为 <code>U&amp;</code></li>
+<li><code>forward&lt;T&gt;(arg)</code> 返回左值</li>
+</ul>
+<p>如果传右值：</p>
+<ul>
+<li><code>T = U</code></li>
+<li><code>T&amp;&amp; = U&amp;&amp;</code></li>
+<li><code>forward&lt;T&gt;(arg)</code> 返回右值</li>
+</ul>
+<p>所以：</p>
+<ul>
+<li><strong>转发引用负责“接住任何值类别”</strong></li>
+<li><strong>引用折叠负责“把最终类型算对”</strong></li>
+<li><strong><code>std::forward</code> 负责“把原值类别恢复出来”</strong></li>
+</ul>
+<p>这三者必须连起来理解。</p>
+<hr>
+<h2 id="18-常见坑"><a href="#18-常见坑" class="headerlink" title="18. 常见坑"></a>18. 常见坑</h2><h3 id="18-1-不是所有-T-都要-std-forward"><a href="#18-1-不是所有-T-都要-std-forward" class="headerlink" title="18.1 不是所有 T&amp;&amp; 都要 std::forward"></a>18.1 不是所有 <code>T&amp;&amp;</code> 都要 <code>std::forward</code></h3><p>只有当它是<strong>转发引用</strong>，且你要把它继续传递给下游时，才需要 <code>std::forward&lt;T&gt;(x)</code>。</p>
+<p>如果你是普通右值引用参数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">f</span><span class="params">(std::string&amp;&amp; s)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">use</span>(std::<span class="built_in">move</span>(s)); <span class="comment">// 通常更合理</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里没有模板推导得到的 <code>T</code>，所以谈不上“恢复原值类别”，更常见的是显式 <code>move</code>。</p>
+<h3 id="18-2-不要对同一个对象重复-forward-move"><a href="#18-2-不要对同一个对象重复-forward-move" class="headerlink" title="18.2 不要对同一个对象重复 forward &#x2F; move"></a>18.2 不要对同一个对象重复 <code>forward</code> &#x2F; <code>move</code></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">target</span>(std::forward&lt;T&gt;(arg));</span><br><span class="line"><span class="built_in">target</span>(std::forward&lt;T&gt;(arg)); <span class="comment">// 危险</span></span><br></pre></td></tr></table></figure>
+
+<p>如果第一次已经把它作为右值传出，第二次再用通常就不合理了。</p>
+<h3 id="18-3-const-会限制移动"><a href="#18-3-const-会限制移动" class="headerlink" title="18.3 const 会限制移动"></a>18.3 <code>const</code> 会限制移动</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> std::string s = <span class="string">&quot;hello&quot;</span>;</span><br><span class="line"><span class="keyword">auto</span> t = std::<span class="built_in">move</span>(s); <span class="comment">// 通常会退化成拷贝</span></span><br></pre></td></tr></table></figure>
+
+<p>因为移动通常需要修改源对象内部状态，而 <code>const</code> 对象不允许。</p>
+<p>所以经验上：</p>
+<ul>
+<li>想要可移动，就不要随手把对象声明成 <code>const</code></li>
+</ul>
+<h3 id="18-4-const-T-很少用"><a href="#18-4-const-T-很少用" class="headerlink" title="18.4 const T&amp;&amp; 很少用"></a>18.4 <code>const T&amp;&amp;</code> 很少用</h3><p>它既不像 <code>const T&amp;</code> 那样通用，也不适合作为可移动对象接口。<br>绝大多数场景里，它都不是你想要的东西。</p>
+<h3 id="18-5-命名后的右值引用变量仍然是左值"><a href="#18-5-命名后的右值引用变量仍然是左值" class="headerlink" title="18.5 命名后的右值引用变量仍然是左值"></a>18.5 命名后的右值引用变量仍然是左值</h3><p>这个坑值得再强调一次：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">f</span><span class="params">(std::string&amp;&amp; s)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">g</span>(s);            <span class="comment">// s 是左值</span></span><br><span class="line">    <span class="built_in">g</span>(std::<span class="built_in">move</span>(s)); <span class="comment">// 才是右值</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="18-6-完美转发不是“性能银弹”"><a href="#18-6-完美转发不是“性能银弹”" class="headerlink" title="18.6 完美转发不是“性能银弹”"></a>18.6 完美转发不是“性能银弹”</h3><p>它的价值是：</p>
+<ul>
+<li>保留值类别</li>
+<li>避免不必要拷贝</li>
+</ul>
+<p>但如果接口设计本身不合理，或者对象很小、移动和拷贝差不多，那么完美转发不一定有明显收益。</p>
+<hr>
+<h2 id="19-面试和复习高频问题"><a href="#19-面试和复习高频问题" class="headerlink" title="19. 面试和复习高频问题"></a>19. 面试和复习高频问题</h2><h3 id="Q1：std-move-会真的移动对象吗？"><a href="#Q1：std-move-会真的移动对象吗？" class="headerlink" title="Q1：std::move 会真的移动对象吗？"></a>Q1：<code>std::move</code> 会真的移动对象吗？</h3><p>不会。<br>它只是把对象转换成右值形式，真正是否发生移动取决于后续是否匹配到移动构造 &#x2F; 移动赋值 &#x2F; 右值重载。</p>
+<h3 id="Q2：为什么-T-能同时接左值和右值？"><a href="#Q2：为什么-T-能同时接左值和右值？" class="headerlink" title="Q2：为什么 T&amp;&amp; 能同时接左值和右值？"></a>Q2：为什么 <code>T&amp;&amp;</code> 能同时接左值和右值？</h3><p>因为当 <code>T</code> 通过模板推导得到时，它是转发引用；传左值时 <code>T</code> 会推导成引用类型，再通过引用折叠得到左值引用。</p>
+<h3 id="Q3：std-forward-和-std-move-最大区别是什么？"><a href="#Q3：std-forward-和-std-move-最大区别是什么？" class="headerlink" title="Q3：std::forward 和 std::move 最大区别是什么？"></a>Q3：<code>std::forward</code> 和 <code>std::move</code> 最大区别是什么？</h3><ul>
+<li><code>move</code>：无条件转右值</li>
+<li><code>forward</code>：按模板参数恢复原值类别</li>
+</ul>
+<h3 id="Q4：为什么包装函数里直接-target-arg-不行？"><a href="#Q4：为什么包装函数里直接-target-arg-不行？" class="headerlink" title="Q4：为什么包装函数里直接 target(arg) 不行？"></a>Q4：为什么包装函数里直接 <code>target(arg)</code> 不行？</h3><p>因为 <code>arg</code> 有名字，所以它是左值表达式，右值信息丢了。</p>
+<h3 id="Q5：为什么-emplace-back-常和完美转发一起出现？"><a href="#Q5：为什么-emplace-back-常和完美转发一起出现？" class="headerlink" title="Q5：为什么 emplace_back 常和完美转发一起出现？"></a>Q5：为什么 <code>emplace_back</code> 常和完美转发一起出现？</h3><p>因为它需要把用户传入的构造参数原样传给元素构造函数，同时避免不必要的中间对象。</p>
+<hr>
+<h2 id="20-一页总结"><a href="#20-一页总结" class="headerlink" title="20. 一页总结"></a>20. 一页总结</h2><p>把这篇笔记压成最短记忆链，可以记成下面几句：</p>
+<ol>
+<li>左值有身份，右值更像临时结果</li>
+<li><code>T&amp;</code> 绑左值，<code>const T&amp;</code> 几乎都能绑，<code>T&amp;&amp;</code> 通常绑右值</li>
+<li>命名后的 <code>T&amp;&amp;</code> 变量，表达式本身仍然是左值</li>
+<li><code>std::move</code> 是把对象强制转成右值，不等于真的移动</li>
+<li>当 <code>T&amp;&amp;</code> 中的 <code>T</code> 需要推导时，它是转发引用</li>
+<li>完美转发的标准写法是 <code>std::forward&lt;T&gt;(arg)</code></li>
+<li>引用折叠的记忆口诀：只要有左值引用参与，结果就是左值引用</li>
+</ol>
+<p>如果只背一个代码模板，就背这个：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span>... Args&gt;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">wrapper</span><span class="params">(Args&amp;&amp;... args)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">target</span>(std::forward&lt;Args&gt;(args)...);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="21-建议继续补充的相关主题"><a href="#21-建议继续补充的相关主题" class="headerlink" title="21. 建议继续补充的相关主题"></a>21. 建议继续补充的相关主题</h2><p>和这篇衔接最紧密的内容：</p>
+<ol>
+<li>移动构造、移动赋值、Rule of Five</li>
+<li><code>noexcept move</code> 为什么影响容器扩容策略</li>
+<li><code>decltype(auto)</code>、返回值类别与转发返回</li>
+<li><code>std::invoke</code>、<code>std::apply</code> 与泛型调用包装</li>
+<li>C++23 的 <code>std::forward_like</code></li>
+</ol>
+<hr>
+<h2 id="22-参考资料"><a href="#22-参考资料" class="headerlink" title="22. 参考资料"></a>22. 参考资料</h2><ol>
+<li><p>cppreference: value categories<br><a target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/language/value_category">https://en.cppreference.com/w/cpp/language/value_category</a></p>
+</li>
+<li><p>cppreference: reference<br><a target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/language/reference">https://en.cppreference.com/w/cpp/language/reference</a></p>
+</li>
+<li><p>cppreference: <code>std::move</code><br><a target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/utility/move">https://en.cppreference.com/w/cpp/utility/move</a></p>
+</li>
+<li><p>cppreference: <code>std::forward</code><br><a target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/utility/forward">https://en.cppreference.com/w/cpp/utility/forward</a></p>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>楚天
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/03-%E5%B7%A6%E5%8F%B3%E5%80%BC-%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91%E4%B8%8E%E5%BC%95%E7%94%A8%E6%8A%98%E5%8F%A0/" title="左值、右值、&#96;std::forward&#96; 与完美转发笔记">https://chutianduan.github.io/notes/高性能c-并行编程/03-左右值-完美转发与引用折叠/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/04-%E6%A8%A1%E6%9D%BF%E4%B8%8E%E5%85%83%E7%BC%96%E7%A8%8B/" rel="prev" title="C++ 进阶编程：模板与元编程笔记">
+                  <i class="fa fa-angle-left"></i> C++ 进阶编程：模板与元编程笔记
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/01-c%E6%8C%87%E9%92%88%E4%B8%8E%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/" rel="next" title="从计算机原理探讨 C 指针">
+                  从计算机原理探讨 C 指针 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-code"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">楚天</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

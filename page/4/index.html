@@ -60,6 +60,8 @@
 <script src="/js/third-party/search/local-search.js" defer></script>
 
 
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
 
 
 
@@ -176,18 +178,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">43</span>
+          <span class="site-state-item-count">75</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-count">22</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">72</span>
+        <span class="site-state-item-count">24</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -225,7 +227,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/2025/12/09/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E6%89%A9%E6%95%A3/[%E4%BD%95%E6%81%BA%E6%98%8E]Masked%20Autoencoders%20Are%20Scalable%20Vision%20Learners/">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/10-c-20%E5%8D%8F%E7%A8%8B%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/img/me.jpg">
@@ -243,7 +245,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/12/09/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E6%89%A9%E6%95%A3/%5B%E4%BD%95%E6%81%BA%E6%98%8E%5DMasked%20Autoencoders%20Are%20Scalable%20Vision%20Learners/" class="post-title-link" itemprop="url">Masked Autoencoders Are Scalable Vision Learners</a>
+          <a href="/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/10-c-20%E5%8D%8F%E7%A8%8B%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/" class="post-title-link" itemprop="url">C++20 协程入门与实践</a>
         </h2>
 
         <div class="post-meta-container">
@@ -254,14 +256,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2025-12-09 13:58:26" itemprop="dateCreated datePublished" datetime="2025-12-09T13:58:26+08:00">2025-12-09</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-01-24 10:43:15" itemprop="dateModified" datetime="2026-01-24T10:43:15+08:00">2026-01-24</time>
+      <time title="创建时间：2026-04-09 10:39:21" itemprop="dateCreated datePublished" datetime="2026-04-09T10:39:21+08:00">2026-04-09</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -269,11 +264,11 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
         </span>
           ，
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E6%89%A9%E6%95%A3/" itemprop="url" rel="index"><span itemprop="name">扩散</span></a>
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/%E7%8E%B0%E4%BB%A3C-%E5%AE%9E%E8%B7%B5/" itemprop="url" rel="index"><span itemprop="name">现代C++实践</span></a>
         </span>
     </span>
 
@@ -287,9 +282,155 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="Masked-Autoencoders-Are-Scalable-Vision-Learners"><a href="#Masked-Autoencoders-Are-Scalable-Vision-Learners" class="headerlink" title="Masked Autoencoders Are Scalable Vision Learners"></a>Masked Autoencoders Are Scalable Vision Learners</h1><p>论文地址：<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2111.06377%E3%80%82">https://arxiv.org/pdf/2111.06377。</a><br>作者：何凯明<br>机构: Facebook</p>
-<h2 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h2><p>带掩码的自编码器是一个可拓展的视觉学习器<br>MAE基于两个核心设计，可以高效的训练大模型：<br>1、非对称的encoder-decoder架构编码器只作用在可见的patch中，对于丢掉的patch，编码器不会对它进行编码，这样能够节省一定的计算时间。解码器是一个比较轻量的解码器，拿到编码器的输出之后，重构被遮挡住的块。<br>2、使用较高的mask比例将mask比例设置为75%，迫使模型得到一个较好的自监督训练效果。如果只是遮住几块的话，只需要进行插值就可以出来了，模型可能学不到特别的东西。编码器只编码1&#x2F;4大小的图片，可以降低计算量，训练加速3倍或者以上模型结构。最终作者只使用一个最简单的ViT-Huge模型（模型结构来自ViT这篇文章），在ImageNet-1K（100万张图片）上预训练，准确率能达到87.8%；这个模型主要是用来做迁移学习，它证明了在迁移学习的其他任务上表现也非常好注：在ViT这篇文章的最后一段有提到过怎样做自监督学习，作者说效果并不是很好，结论是：用有标号的模型和大的训练集可以得到很好的效果。本文亮点是，只使用小的数据集（ImageNet-1k，100万张图片），而且是通过自监督，就能够做到跟之前可能效果一样好的模型了。</p>
-<h2 id="网络结构"><a href="#网络结构" class="headerlink" title="网络结构"></a>网络结构</h2><p><img src="/img/notes/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E6%89%A9%E6%95%A3/%E5%9B%BE%E5%BA%93/MAE/%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84.png" alt="网络图"></p>
+          <h1 id="C-20-协程入门与实践"><a href="#C-20-协程入门与实践" class="headerlink" title="C++20 协程入门与实践"></a>C++20 协程入门与实践</h1><p>时间：2026&#x2F;04&#x2F;09</p>
+<blockquote>
+<p>关键词：<code>co_await</code>、<code>co_return</code>、<code>co_yield</code>、<code>promise_type</code>、挂起点、异步流程、generator<br>核心目标：理解协程为什么不是“更轻的线程”，而是一种把异步控制流写成顺序代码的语言机制。</p>
+</blockquote>
+<hr>
+<h2 id="1-协程到底解决什么问题"><a href="#1-协程到底解决什么问题" class="headerlink" title="1. 协程到底解决什么问题"></a>1. 协程到底解决什么问题</h2><p>传统异步代码常见两个问题：</p>
+<ul>
+<li>回调层层嵌套</li>
+<li>状态机代码难写难读</li>
+</ul>
+<p>协程的核心价值是：</p>
+<ul>
+<li>把“会暂停、稍后恢复”的流程写成看起来接近顺序代码的形式</li>
+</ul>
+<p>所以它更像：</p>
+<ul>
+<li>语言级状态机生成器</li>
+</ul>
+<p>而不是线程替代品。</p>
+<hr>
+<h2 id="2-协程不是线程"><a href="#2-协程不是线程" class="headerlink" title="2. 协程不是线程"></a>2. 协程不是线程</h2><p>这点最重要。</p>
+<p>协程：</p>
+<ul>
+<li>默认不并行</li>
+<li>默认不自动切线程</li>
+<li>只是能挂起和恢复</li>
+</ul>
+<p>线程：</p>
+<ul>
+<li>是操作系统调度实体</li>
+<li>真正涉及并行执行</li>
+</ul>
+<p>所以：</p>
+<ul>
+<li>协程解决的是“控制流组织”</li>
+<li>线程解决的是“执行资源”</li>
+</ul>
+<hr>
+<h2 id="3-三个关键字"><a href="#3-三个关键字" class="headerlink" title="3. 三个关键字"></a>3. 三个关键字</h2><h3 id="3-1-co-await"><a href="#3-1-co-await" class="headerlink" title="3.1 co_await"></a>3.1 <code>co_await</code></h3><p>等待某个可等待对象，并可能挂起当前协程。</p>
+<h3 id="3-2-co-return"><a href="#3-2-co-return" class="headerlink" title="3.2 co_return"></a>3.2 <code>co_return</code></h3><p>从协程返回结果。</p>
+<h3 id="3-3-co-yield"><a href="#3-3-co-yield" class="headerlink" title="3.3 co_yield"></a>3.3 <code>co_yield</code></h3><p>常用于生成器场景，逐个产出值。</p>
+<hr>
+<h2 id="4-编译器视角下协程发生了什么"><a href="#4-编译器视角下协程发生了什么" class="headerlink" title="4. 编译器视角下协程发生了什么"></a>4. 编译器视角下协程发生了什么</h2><p>当函数里出现协程关键字后，它会被编译器改写成：</p>
+<ul>
+<li>一个协程状态对象</li>
+<li>一个 <code>promise_type</code></li>
+<li>若干挂起点</li>
+<li>一个恢复入口</li>
+</ul>
+<p>也就是说，协程本质上是：</p>
+<ul>
+<li>编译器自动帮你拆出来的状态机</li>
+</ul>
+<hr>
+<h2 id="5-promise-type-是什么"><a href="#5-promise-type-是什么" class="headerlink" title="5. promise_type 是什么"></a>5. <code>promise_type</code> 是什么</h2><p>如果一个返回类型想作为协程返回对象，就需要配套定义：</p>
+<ul>
+<li><code>promise_type</code></li>
+</ul>
+<p>它负责描述：</p>
+<ul>
+<li>协程如何创建</li>
+<li>如何返回值</li>
+<li>初始&#x2F;最终是否挂起</li>
+<li>异常怎么处理</li>
+</ul>
+<p>这是 C++ 协程里最“底层”的部分。</p>
+<hr>
+<h2 id="6-一个最小协程返回类型骨架"><a href="#6-一个最小协程返回类型骨架" class="headerlink" title="6. 一个最小协程返回类型骨架"></a>6. 一个最小协程返回类型骨架</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;coroutine&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Task</span> &#123;</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">promise_type</span> &#123;</span><br><span class="line">        <span class="function">Task <span class="title">get_return_object</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> &#123;&#125;; &#125;</span><br><span class="line">        <span class="function">std::suspend_never <span class="title">initial_suspend</span><span class="params">()</span> <span class="keyword">noexcept</span> </span>&#123; <span class="keyword">return</span> &#123;&#125;; &#125;</span><br><span class="line">        <span class="function">std::suspend_never <span class="title">final_suspend</span><span class="params">()</span> <span class="keyword">noexcept</span> </span>&#123; <span class="keyword">return</span> &#123;&#125;; &#125;</span><br><span class="line">        <span class="function"><span class="type">void</span> <span class="title">return_void</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">        <span class="function"><span class="type">void</span> <span class="title">unhandled_exception</span><span class="params">()</span> </span>&#123; std::<span class="built_in">terminate</span>(); &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这样一个返回 <code>Task</code> 的函数就可以写成协程。</p>
+<hr>
+<h2 id="7-co-await-的直觉"><a href="#7-co-await-的直觉" class="headerlink" title="7. co_await 的直觉"></a>7. <code>co_await</code> 的直觉</h2><p>写：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">co_await</span> something;</span><br></pre></td></tr></table></figure>
+
+<p>编译器会尝试把 <code>something</code> 变成一个 awaitable，并调用：</p>
+<ul>
+<li><code>await_ready()</code></li>
+<li><code>await_suspend()</code></li>
+<li><code>await_resume()</code></li>
+</ul>
+<p>可以粗略理解为：</p>
+<ol>
+<li>先问要不要挂起</li>
+<li>如果挂起，如何安排恢复</li>
+<li>恢复后返回什么结果</li>
+</ol>
+<hr>
+<h2 id="8-generator-场景为什么适合协程"><a href="#8-generator-场景为什么适合协程" class="headerlink" title="8. generator 场景为什么适合协程"></a>8. <code>generator</code> 场景为什么适合协程</h2><p>例如想逐个生成值：</p>
+<ul>
+<li>传统写法要手工保存状态</li>
+<li>协程可以自然写成“产出一个，暂停，再继续”</li>
+</ul>
+<p>这正是 <code>co_yield</code> 最直观的用法。</p>
+<p>所以协程特别适合：</p>
+<ul>
+<li>lazy sequence</li>
+<li>parser</li>
+<li>pipeline</li>
+<li>异步流</li>
+</ul>
+<hr>
+<h2 id="9-协程最常见的工程用途"><a href="#9-协程最常见的工程用途" class="headerlink" title="9. 协程最常见的工程用途"></a>9. 协程最常见的工程用途</h2><h3 id="9-1-异步-I-O"><a href="#9-1-异步-I-O" class="headerlink" title="9.1 异步 I&#x2F;O"></a>9.1 异步 I&#x2F;O</h3><p>把：</p>
+<ul>
+<li>发请求</li>
+<li>等待回包</li>
+<li>继续处理</li>
+</ul>
+<p>写成线性流程。</p>
+<h3 id="9-2-生成器"><a href="#9-2-生成器" class="headerlink" title="9.2 生成器"></a>9.2 生成器</h3><p>按需逐个产出数据。</p>
+<h3 id="9-3-Actor-任务系统"><a href="#9-3-Actor-任务系统" class="headerlink" title="9.3 Actor &#x2F; 任务系统"></a>9.3 Actor &#x2F; 任务系统</h3><p>用协程表达暂停与恢复点。</p>
+<hr>
+<h2 id="10-协程为什么很容易“看起来简单，实际上不简单”"><a href="#10-协程为什么很容易“看起来简单，实际上不简单”" class="headerlink" title="10. 协程为什么很容易“看起来简单，实际上不简单”"></a>10. 协程为什么很容易“看起来简单，实际上不简单”</h2><p>因为源码很线性，但真实问题仍然存在：</p>
+<ul>
+<li>生命周期谁管</li>
+<li>在哪条线程恢复</li>
+<li>恢复时机谁触发</li>
+<li>异常怎么传播</li>
+<li>取消怎么处理</li>
+</ul>
+<p>也就是说：</p>
+<ul>
+<li>协程简化的是控制流表达</li>
+<li>没有消灭异步系统的本质复杂度</li>
+</ul>
+<hr>
+<h2 id="11-一个最重要的工程问题：恢复在哪发生"><a href="#11-一个最重要的工程问题：恢复在哪发生" class="headerlink" title="11. 一个最重要的工程问题：恢复在哪发生"></a>11. 一个最重要的工程问题：恢复在哪发生</h2><p>协程本身不决定线程。<br>真正决定“恢复在哪个执行器&#x2F;事件循环&#x2F;线程池”的，是 awaitable 或运行时框架。</p>
+<p>所以写协程框架时一定要搞清楚：</p>
+<ul>
+<li>谁调 <code>resume</code></li>
+<li>什么时候调</li>
+<li>在哪调</li>
+</ul>
+<hr>
+<h2 id="12-常见坑"><a href="#12-常见坑" class="headerlink" title="12. 常见坑"></a>12. 常见坑</h2><h3 id="12-1-把协程当轻量线程"><a href="#12-1-把协程当轻量线程" class="headerlink" title="12.1 把协程当轻量线程"></a>12.1 把协程当轻量线程</h3><p>这是最常见误解。</p>
+<h3 id="12-2-忽略返回对象和-promise-生命周期"><a href="#12-2-忽略返回对象和-promise-生命周期" class="headerlink" title="12.2 忽略返回对象和 promise 生命周期"></a>12.2 忽略返回对象和 promise 生命周期</h3><p>协程帧如果没人管理，容易泄漏或悬空。</p>
+<h3 id="12-3-只学语法，不理解恢复机制"><a href="#12-3-只学语法，不理解恢复机制" class="headerlink" title="12.3 只学语法，不理解恢复机制"></a>12.3 只学语法，不理解恢复机制</h3><p>这样很快就会在真实异步项目里迷路。</p>
+<h3 id="12-4-在协程里捕获悬空引用"><a href="#12-4-在协程里捕获悬空引用" class="headerlink" title="12.4 在协程里捕获悬空引用"></a>12.4 在协程里捕获悬空引用</h3><p>因为协程可能挂起很久，引用生命周期尤其要小心。</p>
+<hr>
+<h2 id="13-一页总结"><a href="#13-一页总结" class="headerlink" title="13. 一页总结"></a>13. 一页总结</h2><p>协程最重要的理解链是：</p>
+<ol>
+<li>协程不是线程，而是可挂起函数</li>
+<li>编译器会把协程改写成状态机</li>
+<li><code>co_await</code> 的核心是等待、挂起和恢复</li>
+<li>真正工程难点在生命周期、调度器和恢复时机</li>
+</ol>
+<p>如果只记一句：</p>
+<blockquote>
+<p>协程的价值是把异步流程写直，而不是把并发问题自动解决掉。</p>
+</blockquote>
 
       
     </div>
@@ -316,7 +457,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/2025/12/09/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/%E8%AF%BB%E4%B9%A6%E6%9C%89%E6%84%9F/%E7%A6%85%E4%B8%8E%E6%91%A9%E6%89%98%E8%BD%A6%E7%BB%B4%E4%BF%AE%E8%89%BA%E6%9C%AF/">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/11-%E7%8E%B0%E4%BB%A3c-%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E7%B1%BB%E5%9E%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/img/me.jpg">
@@ -334,7 +475,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/12/09/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/%E8%AF%BB%E4%B9%A6%E6%9C%89%E6%84%9F/%E7%A6%85%E4%B8%8E%E6%91%A9%E6%89%98%E8%BD%A6%E7%BB%B4%E4%BF%AE%E8%89%BA%E6%9C%AF/" class="post-title-link" itemprop="url">禅与摩托车维修艺术</a>
+          <a href="/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/11-%E7%8E%B0%E4%BB%A3c-%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E7%B1%BB%E5%9E%8B/" class="post-title-link" itemprop="url">现代 C++ 常用工具类型</a>
         </h2>
 
         <div class="post-meta-container">
@@ -345,14 +486,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2025-12-09 07:29:44" itemprop="dateCreated datePublished" datetime="2025-12-09T07:29:44+08:00">2025-12-09</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-01-24 10:43:15" itemprop="dateModified" datetime="2026-01-24T10:43:15+08:00">2026-01-24</time>
+      <time title="创建时间：2026-04-09 10:39:21" itemprop="dateCreated datePublished" datetime="2026-04-09T10:39:21+08:00">2026-04-09</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -360,11 +494,11 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/" itemprop="url" rel="index"><span itemprop="name">杂七杂八</span></a>
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
         </span>
           ，
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/%E8%AF%BB%E4%B9%A6%E6%9C%89%E6%84%9F/" itemprop="url" rel="index"><span itemprop="name">读书有感</span></a>
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/%E7%8E%B0%E4%BB%A3C-%E5%AE%9E%E8%B7%B5/" itemprop="url" rel="index"><span itemprop="name">现代C++实践</span></a>
         </span>
     </span>
 
@@ -378,7 +512,139 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="良质"><a href="#良质" class="headerlink" title="良质"></a>良质</h1>
+          <h1 id="现代-C-常用工具类型"><a href="#现代-C-常用工具类型" class="headerlink" title="现代 C++ 常用工具类型"></a>现代 C++ 常用工具类型</h1><p>时间：2026&#x2F;04&#x2F;09</p>
+<blockquote>
+<p>关键词：<code>optional</code>、<code>variant</code>、<code>any</code>、<code>string_view</code>、<code>span</code>、<code>expected</code><br>核心目标：掌握几个现代 C++ 里非常高频、能直接改善接口表达和代码质量的标准库类型。</p>
+</blockquote>
+<hr>
+<h2 id="1-为什么这些类型重要"><a href="#1-为什么这些类型重要" class="headerlink" title="1. 为什么这些类型重要"></a>1. 为什么这些类型重要</h2><p>现代 C++ 的很多进步，不只在语法，还在于：</p>
+<ul>
+<li>用更明确的类型表达意图</li>
+</ul>
+<p>比如：</p>
+<ul>
+<li>“可能没有值”</li>
+<li>“可能是多种类型之一”</li>
+<li>“只读字符串视图”</li>
+<li>“一段连续内存视图”</li>
+</ul>
+<p>这些都不该继续靠：</p>
+<ul>
+<li><code>nullptr</code></li>
+<li>魔法值</li>
+<li><code>void*</code></li>
+<li>裸指针 + 长度</li>
+</ul>
+<p>来硬撑。</p>
+<hr>
+<h2 id="2-std-optional：可能有，也可能没有"><a href="#2-std-optional：可能有，也可能没有" class="headerlink" title="2. std::optional&lt;T&gt;：可能有，也可能没有"></a>2. <code>std::optional&lt;T&gt;</code>：可能有，也可能没有</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;optional&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function">std::optional&lt;<span class="type">int</span>&gt; <span class="title">find_id</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>它适合表达：</p>
+<ul>
+<li>成功返回一个值</li>
+<li>失败时没有值</li>
+</ul>
+<p>比“返回 <code>-1</code> 表示失败”更清晰。</p>
+<p>常用接口：</p>
+<ul>
+<li><code>has_value()</code></li>
+<li><code>value()</code></li>
+<li><code>value_or(default)</code></li>
+</ul>
+<hr>
+<h2 id="3-std-variant：类型安全的联合体"><a href="#3-std-variant：类型安全的联合体" class="headerlink" title="3. std::variant：类型安全的联合体"></a>3. <code>std::variant</code>：类型安全的联合体</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;variant&gt;</span></span></span><br><span class="line"></span><br><span class="line">std::variant&lt;<span class="type">int</span>, std::string&gt; v;</span><br></pre></td></tr></table></figure>
+
+<p>它表示：</p>
+<ul>
+<li>值一定是若干候选类型中的一个</li>
+</ul>
+<p>相比传统 <code>union</code>，它：</p>
+<ul>
+<li>类型安全</li>
+<li>自动管理对象生命周期</li>
+</ul>
+<p>配合 <code>std::visit</code> 很常见。</p>
+<hr>
+<h2 id="4-std-any：完全动态类型"><a href="#4-std-any：完全动态类型" class="headerlink" title="4. std::any：完全动态类型"></a>4. <code>std::any</code>：完全动态类型</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;any&gt;</span></span></span><br><span class="line"></span><br><span class="line">std::any x = <span class="number">42</span>;</span><br><span class="line">x = std::<span class="built_in">string</span>(<span class="string">&quot;hello&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>它适合：</p>
+<ul>
+<li>真正不知道运行期会是什么类型</li>
+</ul>
+<p>但代价是：</p>
+<ul>
+<li>类型信息晚到运行期</li>
+<li>可读性和性能都不如 <code>variant</code></li>
+</ul>
+<p>经验上：</p>
+<ul>
+<li>能用 <code>variant</code> 就不要先上 <code>any</code></li>
+</ul>
+<hr>
+<h2 id="5-std-string-view：无拷贝字符串视图"><a href="#5-std-string-view：无拷贝字符串视图" class="headerlink" title="5. std::string_view：无拷贝字符串视图"></a>5. <code>std::string_view</code>：无拷贝字符串视图</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string_view&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">print</span><span class="params">(std::string_view s)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>优点：</p>
+<ul>
+<li>不拥有字符串</li>
+<li>不分配内存</li>
+<li>可接 <code>std::string</code>、字面量、子串视图</li>
+</ul>
+<p>风险：</p>
+<ul>
+<li>它不延长底层字符串生命周期</li>
+</ul>
+<p>所以不能把它保存得比源字符串活得更久。</p>
+<hr>
+<h2 id="6-std-span：无拷贝连续内存视图"><a href="#6-std-span：无拷贝连续内存视图" class="headerlink" title="6. std::span&lt;T&gt;：无拷贝连续内存视图"></a>6. <code>std::span&lt;T&gt;</code>：无拷贝连续内存视图</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;span&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">process</span><span class="params">(std::span&lt;<span class="type">const</span> <span class="type">int</span>&gt; xs)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>适合：</p>
+<ul>
+<li>数组</li>
+<li><code>std::vector</code></li>
+<li><code>std::array</code></li>
+</ul>
+<p>相比传：</p>
+<ul>
+<li>裸指针 + 长度</li>
+</ul>
+<p>更清晰，也更安全。</p>
+<hr>
+<h2 id="7-std-expected：值或错误"><a href="#7-std-expected：值或错误" class="headerlink" title="7. std::expected：值或错误"></a>7. <code>std::expected</code>：值或错误</h2><p>如果你的环境支持 C++23，可以关注：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">std::expected&lt;Value, Error&gt;</span><br></pre></td></tr></table></figure>
+
+<p>它适合表达：</p>
+<ul>
+<li>成功时返回值</li>
+<li>失败时返回明确错误信息</li>
+</ul>
+<p>相比 <code>optional</code>，它多了：</p>
+<ul>
+<li>为什么失败</li>
+</ul>
+<hr>
+<h2 id="8-这些类型最核心的接口收益"><a href="#8-这些类型最核心的接口收益" class="headerlink" title="8. 这些类型最核心的接口收益"></a>8. 这些类型最核心的接口收益</h2><h3 id="8-1-optional"><a href="#8-1-optional" class="headerlink" title="8.1 optional"></a>8.1 <code>optional</code></h3><p>不再靠魔法值表示“没有结果”。</p>
+<h3 id="8-2-variant"><a href="#8-2-variant" class="headerlink" title="8.2 variant"></a>8.2 <code>variant</code></h3><p>不再靠手写 tag + union。</p>
+<h3 id="8-3-string-view"><a href="#8-3-string-view" class="headerlink" title="8.3 string_view"></a>8.3 <code>string_view</code></h3><p>函数参数更轻、更泛化。</p>
+<h3 id="8-4-span"><a href="#8-4-span" class="headerlink" title="8.4 span"></a>8.4 <code>span</code></h3><p>数组接口更现代。</p>
+<hr>
+<h2 id="9-常见坑"><a href="#9-常见坑" class="headerlink" title="9. 常见坑"></a>9. 常见坑</h2><h3 id="9-1-string-view-span-生命周期错误"><a href="#9-1-string-view-span-生命周期错误" class="headerlink" title="9.1 string_view &#x2F; span 生命周期错误"></a>9.1 <code>string_view</code> &#x2F; <code>span</code> 生命周期错误</h3><p>它们都只是视图，不拥有数据。</p>
+<h3 id="9-2-用-any-代替清晰设计"><a href="#9-2-用-any-代替清晰设计" class="headerlink" title="9.2 用 any 代替清晰设计"></a>9.2 用 <code>any</code> 代替清晰设计</h3><p>很多时候 <code>any</code> 只是把类型问题往后拖。</p>
+<h3 id="9-3-optional-里塞重对象却频繁拷贝"><a href="#9-3-optional-里塞重对象却频繁拷贝" class="headerlink" title="9.3 optional 里塞重对象却频繁拷贝"></a>9.3 <code>optional</code> 里塞重对象却频繁拷贝</h3><p>虽然语义清晰，但也要注意值类别和性能。</p>
+<hr>
+<h2 id="10-一页总结"><a href="#10-一页总结" class="headerlink" title="10. 一页总结"></a>10. 一页总结</h2><p>这几个类型的价值可以压缩成一句话：</p>
+<blockquote>
+<p>用更准确的标准库类型表达接口语义，减少魔法值、裸指针和不透明约定。</p>
+</blockquote>
+<p>最值得优先掌握的顺序通常是：</p>
+<ol>
+<li><code>optional</code></li>
+<li><code>string_view</code></li>
+<li><code>span</code></li>
+<li><code>variant</code></li>
+<li><code>any</code></li>
+<li><code>expected</code></li>
+</ol>
+
       
     </div>
 
@@ -404,7 +670,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/2025/11/28/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E8%B6%85%E5%88%86/%E7%9B%B2%E8%B6%85%E5%88%86/">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/09-%E7%BD%91%E7%BB%9C%E6%9C%8D%E5%8A%A1%E5%9F%BA%E7%A1%80-tcp%E7%B2%98%E5%8C%85-%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E4%B8%8Ehttp-s/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/img/me.jpg">
@@ -422,7 +688,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/11/28/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E8%B6%85%E5%88%86/%E7%9B%B2%E8%B6%85%E5%88%86/" class="post-title-link" itemprop="url">盲超分</a>
+          <a href="/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/09-%E7%BD%91%E7%BB%9C%E6%9C%8D%E5%8A%A1%E5%9F%BA%E7%A1%80-tcp%E7%B2%98%E5%8C%85-%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E4%B8%8Ehttp-s/" class="post-title-link" itemprop="url">网络服务基础：TCP 粘包、线程模型与 HTTP(S)</a>
         </h2>
 
         <div class="post-meta-container">
@@ -433,14 +699,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2025-11-28 10:45:46" itemprop="dateCreated datePublished" datetime="2025-11-28T10:45:46+08:00">2025-11-28</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-01-24 10:43:15" itemprop="dateModified" datetime="2026-01-24T10:43:15+08:00">2026-01-24</time>
+      <time title="创建时间：2026-04-09 10:39:21" itemprop="dateCreated datePublished" datetime="2026-04-09T10:39:21+08:00">2026-04-09</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -448,11 +707,11 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
         </span>
           ，
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E8%B6%85%E5%88%86/" itemprop="url" rel="index"><span itemprop="name">超分</span></a>
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/%E7%8E%B0%E4%BB%A3C-%E5%AE%9E%E8%B7%B5/" itemprop="url" rel="index"><span itemprop="name">现代C++实践</span></a>
         </span>
     </span>
 
@@ -466,8 +725,192 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="盲超分"><a href="#盲超分" class="headerlink" title="盲超分"></a>盲超分</h1><p>退化核？<br>综述：“看清”世界——从盲超分到真实超分 <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/657729852">https://zhuanlan.zhihu.com/p/657729852</a></p>
-<p>自监督：<a target="_blank" rel="noopener" href="https://ieeexplore.ieee.org/document/10868396">https://ieeexplore.ieee.org/document/10868396</a><br>自监督：单一遥感高光谱图像的盲超分辨率<a target="_blank" rel="noopener" href="https://github.com/zhiyuan0112/TSBSR">https://github.com/zhiyuan0112/TSBSR</a></p>
+          <h1 id="网络服务基础：TCP-粘包、线程模型与-HTTP-S"><a href="#网络服务基础：TCP-粘包、线程模型与-HTTP-S" class="headerlink" title="网络服务基础：TCP 粘包、线程模型与 HTTP(S)"></a>网络服务基础：TCP 粘包、线程模型与 HTTP(S)</h1><p>时间：2026&#x2F;04&#x2F;09</p>
+<blockquote>
+<p>关键词：TCP stream、粘包拆包、长度前缀、分隔符、线程池、epoll、TLS、wrk<br>核心目标：建立服务端编程的基本工程直觉，先把“消息边界、并发模型、协议分层”分清楚。</p>
+</blockquote>
+<hr>
+<h2 id="1-TCP-为什么会有“粘包”问题"><a href="#1-TCP-为什么会有“粘包”问题" class="headerlink" title="1. TCP 为什么会有“粘包”问题"></a>1. TCP 为什么会有“粘包”问题</h2><p>因为 TCP 是<strong>字节流</strong>，不是消息流。</p>
+<p>这意味着：</p>
+<ul>
+<li>发送端发了两次 <code>send</code></li>
+<li>接收端不一定就对应收到两次 <code>recv</code></li>
+</ul>
+<p>接收端看到的只是连续字节流，所以必须自己定义消息边界。</p>
+<hr>
+<h2 id="2-两种最常见的拆包方案"><a href="#2-两种最常见的拆包方案" class="headerlink" title="2. 两种最常见的拆包方案"></a>2. 两种最常见的拆包方案</h2><h3 id="2-1-长度前缀"><a href="#2-1-长度前缀" class="headerlink" title="2.1 长度前缀"></a>2.1 长度前缀</h3><p>格式示例：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[4字节长度][payload]</span><br></pre></td></tr></table></figure>
+
+<p>接收端流程：</p>
+<ol>
+<li>先读够头部</li>
+<li>解析长度</li>
+<li>再继续读够 payload</li>
+</ol>
+<p>这通常是最通用、最可靠的做法。</p>
+<h3 id="2-2-分隔符协议"><a href="#2-2-分隔符协议" class="headerlink" title="2.2 分隔符协议"></a>2.2 分隔符协议</h3><p>例如按 <code>\n</code> 分隔：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hello\nworld\n</span><br></pre></td></tr></table></figure>
+
+<p>优点：</p>
+<ul>
+<li>简单直观</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>payload 中若可能出现分隔符，需要转义或编码</li>
+</ul>
+<hr>
+<h2 id="3-长度前缀接收缓冲的核心思路"><a href="#3-长度前缀接收缓冲的核心思路" class="headerlink" title="3. 长度前缀接收缓冲的核心思路"></a>3. 长度前缀接收缓冲的核心思路</h2><p>接收端通常需要一个累积缓冲区：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">std::vector&lt;std::<span class="type">uint8_t</span>&gt; inbuf;</span><br></pre></td></tr></table></figure>
+
+<p>每次 <code>recv</code> 到数据后：</p>
+<ul>
+<li>先追加到 <code>inbuf</code></li>
+<li>再循环解析完整包</li>
+</ul>
+<p>关键不是“每次只解析一个包”，而是：</p>
+<ul>
+<li>一次 <code>recv</code> 可能带来 0.5 个包、1 个包、或者多个包</li>
+</ul>
+<hr>
+<h2 id="4-为什么不能假设一次-recv-就是一条完整消息"><a href="#4-为什么不能假设一次-recv-就是一条完整消息" class="headerlink" title="4. 为什么不能假设一次 recv 就是一条完整消息"></a>4. 为什么不能假设一次 <code>recv</code> 就是一条完整消息</h2><p>因为可能出现：</p>
+<ul>
+<li>半包</li>
+<li>多包合并</li>
+<li>多次拆散</li>
+</ul>
+<p>所以网络编程第一条纪律就是：</p>
+<blockquote>
+<p>任何协议都必须先定义并实现消息 framing。</p>
+</blockquote>
+<hr>
+<h2 id="5-线程模型的几种常见选择"><a href="#5-线程模型的几种常见选择" class="headerlink" title="5. 线程模型的几种常见选择"></a>5. 线程模型的几种常见选择</h2><h3 id="5-1-每连接一个线程"><a href="#5-1-每连接一个线程" class="headerlink" title="5.1 每连接一个线程"></a>5.1 每连接一个线程</h3><p>优点：</p>
+<ul>
+<li>思维简单</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>连接数一大就撑不住</li>
+</ul>
+<h3 id="5-2-单线程事件循环"><a href="#5-2-单线程事件循环" class="headerlink" title="5.2 单线程事件循环"></a>5.2 单线程事件循环</h3><p>优点：</p>
+<ul>
+<li>资源利用率高</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>业务阻塞会拖住整个 loop</li>
+</ul>
+<h3 id="5-3-Reactor-线程池"><a href="#5-3-Reactor-线程池" class="headerlink" title="5.3 Reactor + 线程池"></a>5.3 Reactor + 线程池</h3><p>常见工程做法：</p>
+<ul>
+<li>I&#x2F;O 线程负责收发和事件分发</li>
+<li>工作线程池处理业务</li>
+</ul>
+<p>这样可以同时兼顾：</p>
+<ul>
+<li>网络扩展性</li>
+<li>业务并发</li>
+</ul>
+<hr>
+<h2 id="6-epoll-kqueue-IOCP-在解决什么问题"><a href="#6-epoll-kqueue-IOCP-在解决什么问题" class="headerlink" title="6. epoll &#x2F; kqueue &#x2F; IOCP&#96; 在解决什么问题"></a>6. <code>epoll</code> &#x2F; <code>kqueue</code> &#x2F; IOCP&#96; 在解决什么问题</h2><p>这些机制本质上都在解决：</p>
+<ul>
+<li>如何高效等待大量连接上的 I&#x2F;O 事件</li>
+</ul>
+<p>Linux 上最常见的是：</p>
+<ul>
+<li><code>epoll</code></li>
+</ul>
+<p>它不是协议，也不是线程池，而是：</p>
+<ul>
+<li>一个事件通知机制</li>
+</ul>
+<hr>
+<h2 id="7-HTTP-和-HTTPS-不要混成一层"><a href="#7-HTTP-和-HTTPS-不要混成一层" class="headerlink" title="7. HTTP 和 HTTPS 不要混成一层"></a>7. HTTP 和 HTTPS 不要混成一层</h2><h3 id="7-1-HTTP"><a href="#7-1-HTTP" class="headerlink" title="7.1 HTTP"></a>7.1 HTTP</h3><p>应用层协议，定义：</p>
+<ul>
+<li>请求行</li>
+<li>头部</li>
+<li>body</li>
+</ul>
+<h3 id="7-2-HTTPS"><a href="#7-2-HTTPS" class="headerlink" title="7.2 HTTPS"></a>7.2 HTTPS</h3><p>可以粗略理解成：</p>
+<ul>
+<li>HTTP over TLS</li>
+</ul>
+<p>也就是：</p>
+<ul>
+<li>先做 TLS 加密通道</li>
+<li>再在其上跑 HTTP</li>
+</ul>
+<p>所以 HTTPS 的复杂度不仅来自 HTTP，还来自：</p>
+<ul>
+<li>握手</li>
+<li>证书</li>
+<li>加解密</li>
+</ul>
+<hr>
+<h2 id="8-一个服务端最基础的工程分层"><a href="#8-一个服务端最基础的工程分层" class="headerlink" title="8. 一个服务端最基础的工程分层"></a>8. 一个服务端最基础的工程分层</h2><p>可以先按这几层理解：</p>
+<ol>
+<li>socket 层</li>
+<li>缓冲区与 framing 层</li>
+<li>协议解析层</li>
+<li>业务处理层</li>
+<li>线程模型 &#x2F; 调度层</li>
+</ol>
+<p>很多初学者的问题是把所有逻辑都揉进一次 <code>recv</code> 回调里，后期几乎无法维护。</p>
+<hr>
+<h2 id="9-线程池在网络服务里的角色"><a href="#9-线程池在网络服务里的角色" class="headerlink" title="9. 线程池在网络服务里的角色"></a>9. 线程池在网络服务里的角色</h2><p>网络服务中，线程池通常不应该负责：</p>
+<ul>
+<li>直接阻塞式读写所有 socket</li>
+</ul>
+<p>更常见的是负责：</p>
+<ul>
+<li>处理业务任务</li>
+<li>数据库访问</li>
+<li>CPU 密集计算</li>
+<li>日志&#x2F;异步处理</li>
+</ul>
+<p>也就是说：</p>
+<ul>
+<li>I&#x2F;O 线程负责“把事情收进来”</li>
+<li>线程池负责“把事情做完”</li>
+</ul>
+<hr>
+<h2 id="10-TLS-HTTPS-的最小认知"><a href="#10-TLS-HTTPS-的最小认知" class="headerlink" title="10. TLS &#x2F; HTTPS 的最小认知"></a>10. TLS &#x2F; HTTPS 的最小认知</h2><p>只要记住这几点就够做入门框架理解：</p>
+<ul>
+<li>TLS 负责加密通道</li>
+<li>证书用于身份认证</li>
+<li>HTTPS 不是“新的 HTTP 消息格式”，而是多了一层安全传输</li>
+</ul>
+<p>工程上常见做法是：</p>
+<ul>
+<li>直接用成熟库处理 TLS</li>
+<li>不自己从零实现加密协议</li>
+</ul>
+<hr>
+<h2 id="11-压测为什么重要"><a href="#11-压测为什么重要" class="headerlink" title="11. 压测为什么重要"></a>11. 压测为什么重要</h2><p>服务端“能跑”不等于“能扛”。<br>至少要关注：</p>
+<ul>
+<li>QPS</li>
+<li>延迟</li>
+<li>P99</li>
+<li>错误率</li>
+<li>CPU &#x2F; 内存占用</li>
+</ul>
+<p><code>wrk</code> 是一个常用 HTTP 压测工具，适合快速做吞吐和延迟观察。</p>
+<hr>
+<h2 id="12-常见坑"><a href="#12-常见坑" class="headerlink" title="12. 常见坑"></a>12. 常见坑</h2><h3 id="12-1-把-TCP-当消息协议"><a href="#12-1-把-TCP-当消息协议" class="headerlink" title="12.1 把 TCP 当消息协议"></a>12.1 把 TCP 当消息协议</h3><p>这会直接导致粘包拆包错误。</p>
+<h3 id="12-2-收到数据就立刻假设包完整"><a href="#12-2-收到数据就立刻假设包完整" class="headerlink" title="12.2 收到数据就立刻假设包完整"></a>12.2 收到数据就立刻假设包完整</h3><p>半包是常态，不是例外。</p>
+<h3 id="12-3-网络线程直接做重业务"><a href="#12-3-网络线程直接做重业务" class="headerlink" title="12.3 网络线程直接做重业务"></a>12.3 网络线程直接做重业务</h3><p>会拖慢整个事件循环。</p>
+<h3 id="12-4-自己手写-TLS-协议栈"><a href="#12-4-自己手写-TLS-协议栈" class="headerlink" title="12.4 自己手写 TLS 协议栈"></a>12.4 自己手写 TLS 协议栈</h3><p>不现实，也没必要。</p>
+<hr>
+<h2 id="13-一页总结"><a href="#13-一页总结" class="headerlink" title="13. 一页总结"></a>13. 一页总结</h2><p>服务端编程最重要的理解链是：</p>
+<ol>
+<li>TCP 只有字节流，没有消息边界</li>
+<li>所以必须先做 framing</li>
+<li>高并发服务通常要把 I&#x2F;O 与业务处理分层</li>
+<li>HTTPS &#x3D; HTTP + TLS，不是单纯“更安全的 socket”</li>
+</ol>
+<p>如果只记一句：</p>
+<blockquote>
+<p>网络服务首先是“协议边界和并发模型”问题，其次才是 API 调用问题。</p>
+</blockquote>
 
       
     </div>
@@ -494,7 +937,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/2025/11/22/%E5%AD%A6%E4%B9%A0/%E9%AB%98%E6%80%A7%E8%83%BDC++%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/vector%E5%AE%B9%E5%99%A8%E4%BC%98%E5%8C%96%E7%BC%96%E7%A8%8B/">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/01-%E5%AF%B9%E8%B1%A1%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F-%E7%89%B9%E6%AE%8A%E6%88%90%E5%91%98%E5%87%BD%E6%95%B0%E4%B8%8E%E7%A7%BB%E5%8A%A8%E8%AF%AD%E4%B9%89/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/img/me.jpg">
@@ -512,7 +955,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/11/22/%E5%AD%A6%E4%B9%A0/%E9%AB%98%E6%80%A7%E8%83%BDC++%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/vector%E5%AE%B9%E5%99%A8%E4%BC%98%E5%8C%96%E7%BC%96%E7%A8%8B/" class="post-title-link" itemprop="url">vector容器优化编程</a>
+          <a href="/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/01-%E5%AF%B9%E8%B1%A1%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F-%E7%89%B9%E6%AE%8A%E6%88%90%E5%91%98%E5%87%BD%E6%95%B0%E4%B8%8E%E7%A7%BB%E5%8A%A8%E8%AF%AD%E4%B9%89/" class="post-title-link" itemprop="url">对象生命周期、特殊成员函数与移动语义</a>
         </h2>
 
         <div class="post-meta-container">
@@ -523,14 +966,665 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2025-11-22 15:30:58" itemprop="dateCreated datePublished" datetime="2025-11-22T15:30:58+08:00">2025-11-22</time>
+      <time title="创建时间：2026-04-09 10:35:32" itemprop="dateCreated datePublished" datetime="2026-04-09T10:35:32+08:00">2026-04-09</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
+        <i class="far fa-folder"></i>
       </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-01-24 10:43:15" itemprop="dateModified" datetime="2026-01-24T10:43:15+08:00">2026-01-24</time>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/%E7%8E%B0%E4%BB%A3C-%E5%AE%9E%E8%B7%B5/" itemprop="url" rel="index"><span itemprop="name">现代C++实践</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="对象生命周期、特殊成员函数与移动语义"><a href="#对象生命周期、特殊成员函数与移动语义" class="headerlink" title="对象生命周期、特殊成员函数与移动语义"></a>对象生命周期、特殊成员函数与移动语义</h1><p>时间：2026&#x2F;04&#x2F;09</p>
+<blockquote>
+<p>关键词：生命周期、RAII、拷贝构造、拷贝赋值、移动构造、移动赋值、Rule of Zero&#x2F;Five、<code>std::move</code><br>核心目标：搞清楚一个对象从创建到销毁会经历什么，以及类该如何正确管理资源。</p>
+</blockquote>
+<hr>
+<h2 id="1-对象生命周期是什么"><a href="#1-对象生命周期是什么" class="headerlink" title="1. 对象生命周期是什么"></a>1. 对象生命周期是什么</h2><p>一个对象通常会经历：</p>
+<ol>
+<li>构造</li>
+<li>使用</li>
+<li>析构</li>
+</ol>
+<p>最重要的实践原则是：</p>
+<ul>
+<li>对象一旦构造完成，就应该处于“可用且满足类不变量”的状态</li>
+<li>对象一旦析构完成，就不该再被访问</li>
+</ul>
+<p>局部对象在离开作用域时析构：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">f</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::string s = <span class="string">&quot;hello&quot;</span>;</span><br><span class="line">&#125; <span class="comment">// 这里自动析构</span></span><br></pre></td></tr></table></figure>
+
+<p>动态对象则由拥有者负责释放：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> p = std::<span class="built_in">make_unique</span>&lt;<span class="type">int</span>&gt;(<span class="number">42</span>);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="2-RAII-是生命周期管理的核心"><a href="#2-RAII-是生命周期管理的核心" class="headerlink" title="2. RAII 是生命周期管理的核心"></a>2. RAII 是生命周期管理的核心</h2><p>RAII 的意思是：</p>
+<ul>
+<li>构造时获取资源</li>
+<li>析构时释放资源</li>
+</ul>
+<p>典型资源包括：</p>
+<ul>
+<li>动态内存</li>
+<li>文件句柄</li>
+<li>socket</li>
+<li>锁</li>
+<li>线程句柄</li>
+</ul>
+<p>RAII 的价值不是“语法优雅”，而是：</p>
+<ul>
+<li>不容易忘记释放</li>
+<li>异常发生时也能自动清理</li>
+</ul>
+<hr>
+<h2 id="3-六个特殊成员函数"><a href="#3-六个特殊成员函数" class="headerlink" title="3. 六个特殊成员函数"></a>3. 六个特殊成员函数</h2><p>一个类最重要的 6 个函数是：</p>
+<ol>
+<li>默认构造函数</li>
+<li>析构函数</li>
+<li>拷贝构造函数</li>
+<li>拷贝赋值运算符</li>
+<li>移动构造函数</li>
+<li>移动赋值运算符</li>
+</ol>
+<p>它们决定了对象如何：</p>
+<ul>
+<li>创建</li>
+<li>复制</li>
+<li>转移资源</li>
+<li>销毁</li>
+</ul>
+<hr>
+<h2 id="4-拷贝构造-vs-拷贝赋值"><a href="#4-拷贝构造-vs-拷贝赋值" class="headerlink" title="4. 拷贝构造 vs 拷贝赋值"></a>4. 拷贝构造 vs 拷贝赋值</h2><h3 id="4-1-拷贝构造"><a href="#4-1-拷贝构造" class="headerlink" title="4.1 拷贝构造"></a>4.1 拷贝构造</h3><p>用一个对象去初始化另一个“新对象”：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">T <span class="title">b</span><span class="params">(a)</span></span>;</span><br><span class="line">T c = a;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-2-拷贝赋值"><a href="#4-2-拷贝赋值" class="headerlink" title="4.2 拷贝赋值"></a>4.2 拷贝赋值</h3><p>把一个已经存在的对象覆盖成另一个对象的状态：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">T b;</span><br><span class="line">b = a;</span><br></pre></td></tr></table></figure>
+
+<p>核心差异：</p>
+<ul>
+<li>拷贝构造是“从无到有”</li>
+<li>拷贝赋值是“已有对象被覆盖”</li>
+</ul>
+<p>后者通常还要考虑：</p>
+<ul>
+<li>旧资源释放</li>
+<li>自赋值</li>
+<li>异常安全</li>
+</ul>
+<hr>
+<h2 id="5-为什么移动语义很重要"><a href="#5-为什么移动语义很重要" class="headerlink" title="5. 为什么移动语义很重要"></a>5. 为什么移动语义很重要</h2><p>如果一个类持有资源，单纯拷贝代价可能很大。</p>
+<p>例如：</p>
+<ul>
+<li>动态数组</li>
+<li>大字符串</li>
+<li>文件句柄包装对象</li>
+</ul>
+<p>移动语义的核心思想是：</p>
+<ul>
+<li>不复制资源内容</li>
+<li>直接转移所有权或资源句柄</li>
+</ul>
+<p>这就需要：</p>
+<ul>
+<li>移动构造</li>
+<li>移动赋值</li>
+</ul>
+<hr>
+<h2 id="6-std-move-到底在做什么"><a href="#6-std-move-到底在做什么" class="headerlink" title="6. std::move 到底在做什么"></a>6. <code>std::move</code> 到底在做什么</h2><p><code>std::move</code> 本身不移动资源。<br>它只是把一个表达式转换成右值形式，让后续重载决议优先匹配移动版本。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">std::string s = <span class="string">&quot;hello&quot;</span>;</span><br><span class="line">std::string t = std::<span class="built_in">move</span>(s);</span><br></pre></td></tr></table></figure>
+
+<p>真正移动的是：</p>
+<ul>
+<li><code>std::string</code> 的移动构造函数</li>
+</ul>
+<p>不是 <code>std::move</code> 本身。</p>
+<hr>
+<h2 id="7-一个最小资源类示例"><a href="#7-一个最小资源类示例" class="headerlink" title="7. 一个最小资源类示例"></a>7. 一个最小资源类示例</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstddef&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Buffer</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">Buffer</span>() = <span class="keyword">default</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">explicit</span> <span class="title">Buffer</span><span class="params">(std::<span class="type">size_t</span> n)</span></span></span><br><span class="line"><span class="function">        : size_(n), data_(n ? new int[n] : nullptr) &#123;</span>&#125;</span><br><span class="line"></span><br><span class="line">    ~<span class="built_in">Buffer</span>() &#123;</span><br><span class="line">        <span class="keyword">delete</span>[] data_;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">Buffer</span>(<span class="type">const</span> Buffer&amp; other)</span><br><span class="line">        : <span class="built_in">size_</span>(other.size_), <span class="built_in">data_</span>(other.size_ ? <span class="keyword">new</span> <span class="type">int</span>[other.size_] : <span class="literal">nullptr</span>) &#123;</span><br><span class="line">        std::<span class="built_in">copy</span>(other.data_, other.data_ + size_, data_);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Buffer&amp; <span class="keyword">operator</span>=(<span class="type">const</span> Buffer&amp; other) &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">this</span> == &amp;other) <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">        <span class="function">Buffer <span class="title">tmp</span><span class="params">(other)</span></span>;</span><br><span class="line">        <span class="built_in">swap</span>(tmp);</span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">Buffer</span>(Buffer&amp;&amp; other) <span class="keyword">noexcept</span></span><br><span class="line">        : <span class="built_in">size_</span>(other.size_), <span class="built_in">data_</span>(other.data_) &#123;</span><br><span class="line">        other.size_ = <span class="number">0</span>;</span><br><span class="line">        other.data_ = <span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Buffer&amp; <span class="keyword">operator</span>=(Buffer&amp;&amp; other) <span class="keyword">noexcept</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">this</span> == &amp;other) <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">        <span class="keyword">delete</span>[] data_;</span><br><span class="line">        size_ = other.size_;</span><br><span class="line">        data_ = other.data_;</span><br><span class="line">        other.size_ = <span class="number">0</span>;</span><br><span class="line">        other.data_ = <span class="literal">nullptr</span>;</span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">swap</span><span class="params">(Buffer&amp; other)</span> <span class="keyword">noexcept</span> </span>&#123;</span><br><span class="line">        std::<span class="built_in">swap</span>(size_, other.size_);</span><br><span class="line">        std::<span class="built_in">swap</span>(data_, other.data_);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    std::<span class="type">size_t</span> size_ = <span class="number">0</span>;</span><br><span class="line">    <span class="type">int</span>* data_ = <span class="literal">nullptr</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这个例子体现了：</p>
+<ul>
+<li>深拷贝</li>
+<li>资源转移</li>
+<li>移动后源对象置空</li>
+</ul>
+<hr>
+<h2 id="8-Rule-of-Three-Five-Zero"><a href="#8-Rule-of-Three-Five-Zero" class="headerlink" title="8. Rule of Three &#x2F; Five &#x2F; Zero"></a>8. Rule of Three &#x2F; Five &#x2F; Zero</h2><h3 id="8-1-Rule-of-Three"><a href="#8-1-Rule-of-Three" class="headerlink" title="8.1 Rule of Three"></a>8.1 Rule of Three</h3><p>如果类手写了下面之一，通常就要认真考虑另外两个：</p>
+<ul>
+<li>析构</li>
+<li>拷贝构造</li>
+<li>拷贝赋值</li>
+</ul>
+<p>因为这通常意味着类在管理资源。</p>
+<h3 id="8-2-Rule-of-Five"><a href="#8-2-Rule-of-Five" class="headerlink" title="8.2 Rule of Five"></a>8.2 Rule of Five</h3><p>C++11 以后再加上：</p>
+<ul>
+<li>移动构造</li>
+<li>移动赋值</li>
+</ul>
+<p>如果类显式管理资源，通常要一起考虑这五个。</p>
+<h3 id="8-3-Rule-of-Zero"><a href="#8-3-Rule-of-Zero" class="headerlink" title="8.3 Rule of Zero"></a>8.3 Rule of Zero</h3><p>现代 C++ 更推荐：</p>
+<ul>
+<li>尽量不要自己手写资源管理</li>
+<li>把资源交给现成 RAII 类型</li>
+</ul>
+<p>例如：</p>
+<ul>
+<li><code>std::vector</code></li>
+<li><code>std::string</code></li>
+<li><code>std::unique_ptr</code></li>
+</ul>
+<p>这样很多特殊成员函数甚至可以完全默认生成。</p>
+<hr>
+<h2 id="9-默认生成和-default-delete"><a href="#9-默认生成和-default-delete" class="headerlink" title="9. 默认生成和 = default &#x2F; = delete"></a>9. 默认生成和 <code>= default</code> &#x2F; <code>= delete</code></h2><h3 id="9-1-default"><a href="#9-1-default" class="headerlink" title="9.1 = default"></a>9.1 <code>= default</code></h3><p>显式告诉编译器：</p>
+<ul>
+<li>用默认生成版本</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">MyType</span>() = <span class="keyword">default</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="9-2-delete"><a href="#9-2-delete" class="headerlink" title="9.2 = delete"></a>9.2 <code>= delete</code></h3><p>显式禁止某种操作：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">MyType</span>(<span class="type">const</span> MyType&amp;) = <span class="keyword">delete</span>;</span><br><span class="line">MyType&amp; <span class="keyword">operator</span>=(<span class="type">const</span> MyType&amp;) = <span class="keyword">delete</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这在：</p>
+<ul>
+<li>独占资源类型</li>
+<li>锁对象</li>
+<li>文件句柄包装类</li>
+</ul>
+<p>里很常见。</p>
+<hr>
+<h2 id="10-拷贝省略与返回值优化"><a href="#10-拷贝省略与返回值优化" class="headerlink" title="10. 拷贝省略与返回值优化"></a>10. 拷贝省略与返回值优化</h2><p>现代 C++ 里：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Buffer <span class="title">make_buffer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function">Buffer <span class="title">b</span><span class="params">(<span class="number">1024</span>)</span></span>;</span><br><span class="line">    <span class="keyword">return</span> b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>很多情况下不会真的发生拷贝，甚至连移动都可能被省掉。<br>这就是：</p>
+<ul>
+<li>RVO</li>
+<li>NRVO</li>
+<li>guaranteed copy elision</li>
+</ul>
+<p>所以写代码时不要过度手工干预，先让编译器优化。</p>
+<hr>
+<h2 id="11-常见坑"><a href="#11-常见坑" class="headerlink" title="11. 常见坑"></a>11. 常见坑</h2><h3 id="11-1-移动后还把源对象当原值使用"><a href="#11-1-移动后还把源对象当原值使用" class="headerlink" title="11.1 移动后还把源对象当原值使用"></a>11.1 移动后还把源对象当原值使用</h3><p>移动后的对象通常只保证：</p>
+<ul>
+<li>仍然有效</li>
+<li>可以析构或重新赋值</li>
+</ul>
+<p>但不保证保留原内容。</p>
+<h3 id="11-2-手写资源类却只写析构，不写拷贝-移动"><a href="#11-2-手写资源类却只写析构，不写拷贝-移动" class="headerlink" title="11.2 手写资源类却只写析构，不写拷贝&#x2F;移动"></a>11.2 手写资源类却只写析构，不写拷贝&#x2F;移动</h3><p>这很容易造成：</p>
+<ul>
+<li>双重释放</li>
+<li>浅拷贝问题</li>
+</ul>
+<h3 id="11-3-拷贝赋值没处理自赋值和异常安全"><a href="#11-3-拷贝赋值没处理自赋值和异常安全" class="headerlink" title="11.3 拷贝赋值没处理自赋值和异常安全"></a>11.3 拷贝赋值没处理自赋值和异常安全</h3><p>尤其是手动 <code>delete</code> 再 <code>new</code> 的写法，容易把对象弄到半残状态。</p>
+<h3 id="11-4-本来可以-Rule-of-Zero，却硬写五个函数"><a href="#11-4-本来可以-Rule-of-Zero，却硬写五个函数" class="headerlink" title="11.4 本来可以 Rule of Zero，却硬写五个函数"></a>11.4 本来可以 Rule of Zero，却硬写五个函数</h3><p>不必要的手写资源管理会增加 bug 面积。</p>
+<hr>
+<h2 id="12-一页总结"><a href="#12-一页总结" class="headerlink" title="12. 一页总结"></a>12. 一页总结</h2><p>这篇最重要的是记住三件事：</p>
+<ol>
+<li>生命周期就是“构造到析构”的可控过程</li>
+<li>管资源的类必须认真处理拷贝和移动</li>
+<li>最好的实践通常不是手写五件套，而是尽量 Rule of Zero</li>
+</ol>
+<p>如果只记一个工程结论：</p>
+<blockquote>
+<p>能把资源交给现成 RAII 类型，就不要自己手写裸资源生命周期。</p>
+</blockquote>
+<hr>
+<h2 id="13-建议继续补充的相关主题"><a href="#13-建议继续补充的相关主题" class="headerlink" title="13. 建议继续补充的相关主题"></a>13. 建议继续补充的相关主题</h2><ol>
+<li>智能指针与所有权</li>
+<li>完美转发与引用折叠</li>
+<li>异常安全保证</li>
+<li><code>noexcept move</code> 与容器优化</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/03-allocator-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E4%B8%8Epmr%E5%85%A5%E9%97%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/03-allocator-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E4%B8%8Epmr%E5%85%A5%E9%97%A8/" class="post-title-link" itemprop="url">allocator、自定义内存分配与 pmr 入门</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-04-09 10:35:32" itemprop="dateCreated datePublished" datetime="2026-04-09T10:35:32+08:00">2026-04-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/%E7%8E%B0%E4%BB%A3C-%E5%AE%9E%E8%B7%B5/" itemprop="url" rel="index"><span itemprop="name">现代C++实践</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="allocator、自定义内存分配与-pmr-入门"><a href="#allocator、自定义内存分配与-pmr-入门" class="headerlink" title="allocator、自定义内存分配与 pmr 入门"></a>allocator、自定义内存分配与 pmr 入门</h1><p>时间：2026&#x2F;04&#x2F;09</p>
+<blockquote>
+<p>关键词：<code>std::allocator</code>、<code>allocator_traits</code>、分配与构造分离、状态型分配器、<code>std::pmr</code><br>核心目标：理解 STL 容器如何管理内存，以及什么时候值得定制分配器。</p>
+</blockquote>
+<hr>
+<h2 id="1-为什么-allocator-存在"><a href="#1-为什么-allocator-存在" class="headerlink" title="1. 为什么 allocator 存在"></a>1. 为什么 allocator 存在</h2><p>容器不仅要“放元素”，还要处理：</p>
+<ul>
+<li>申请原始内存</li>
+<li>在内存上构造对象</li>
+<li>销毁对象</li>
+<li>释放内存</li>
+</ul>
+<p>标准库把这层职责抽象成 allocator。</p>
+<hr>
+<h2 id="2-std-allocator-的核心职责"><a href="#2-std-allocator-的核心职责" class="headerlink" title="2. std::allocator 的核心职责"></a>2. <code>std::allocator</code> 的核心职责</h2><p>可以粗略理解成四步：</p>
+<ol>
+<li><code>allocate(n)</code>：分配能容纳 <code>n</code> 个对象的原始内存</li>
+<li><code>construct(...)</code>：在指定位置构造对象</li>
+<li><code>destroy(...)</code>：调用析构</li>
+<li><code>deallocate(...)</code>：释放内存</li>
+</ol>
+<p>现代实现中更常通过：</p>
+<ul>
+<li><code>std::allocator_traits</code></li>
+</ul>
+<p>来统一调度这些接口。</p>
+<hr>
+<h2 id="3-为什么“分配”和“构造”是两件事"><a href="#3-为什么“分配”和“构造”是两件事" class="headerlink" title="3. 为什么“分配”和“构造”是两件事"></a>3. 为什么“分配”和“构造”是两件事</h2><p>因为拿到一块内存，不等于对象已经存在。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">T* p = alloc.<span class="built_in">allocate</span>(<span class="number">4</span>); <span class="comment">// 只有内存</span></span><br><span class="line">std::<span class="built_in">construct_at</span>(p, value); <span class="comment">// 这里对象才真正构造</span></span><br></pre></td></tr></table></figure>
+
+<p>这也是容器能高效管理未初始化存储区的基础。</p>
+<hr>
+<h2 id="4-一个最小自定义分配器骨架"><a href="#4-一个最小自定义分配器骨架" class="headerlink" title="4. 一个最小自定义分配器骨架"></a>4. 一个最小自定义分配器骨架</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;memory&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">T</span>&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">MyAllocator</span> &#123;</span><br><span class="line">    <span class="keyword">using</span> value_type = T;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">MyAllocator</span>() = <span class="keyword">default</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">U</span>&gt;</span><br><span class="line">    <span class="built_in">MyAllocator</span>(<span class="type">const</span> MyAllocator&lt;U&gt;&amp;) &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">T* <span class="title">allocate</span><span class="params">(std::<span class="type">size_t</span> n)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">static_cast</span>&lt;T*&gt;(::<span class="keyword">operator</span> <span class="built_in">new</span>(n * <span class="built_in">sizeof</span>(T)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">deallocate</span><span class="params">(T* p, std::<span class="type">size_t</span>)</span> </span>&#123;</span><br><span class="line">        ::<span class="function"><span class="keyword">operator</span> <span class="title">delete</span><span class="params">(p)</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>配合容器使用：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">std::vector&lt;<span class="type">int</span>, MyAllocator&lt;<span class="type">int</span>&gt;&gt; v;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="5-什么时候值得自定义-allocator"><a href="#5-什么时候值得自定义-allocator" class="headerlink" title="5. 什么时候值得自定义 allocator"></a>5. 什么时候值得自定义 allocator</h2><p>不是所有项目都需要。</p>
+<p>更常见的适用场景：</p>
+<ul>
+<li>频繁小对象分配</li>
+<li>想用内存池减少碎片</li>
+<li>想把对象放到特定区域</li>
+<li>需要统计分配行为</li>
+<li>游戏&#x2F;服务端有帧级或 arena 分配需求</li>
+</ul>
+<p>如果只是普通业务代码，标准分配器通常已经够用。</p>
+<hr>
+<h2 id="6-状态型分配器"><a href="#6-状态型分配器" class="headerlink" title="6. 状态型分配器"></a>6. 状态型分配器</h2><p>有些分配器不仅有类型，还有内部状态，例如：</p>
+<ul>
+<li>指向某个内存池</li>
+<li>指向某个 arena</li>
+</ul>
+<p>这类分配器要特别注意：</p>
+<ul>
+<li>拷贝行为</li>
+<li>容器复制&#x2F;移动时状态如何传播</li>
+</ul>
+<p>这也是 <code>allocator_traits</code> 很重要的原因之一。</p>
+<hr>
+<h2 id="7-std-pmr：现代-C-更实用的内存资源抽象"><a href="#7-std-pmr：现代-C-更实用的内存资源抽象" class="headerlink" title="7. std::pmr：现代 C++ 更实用的内存资源抽象"></a>7. <code>std::pmr</code>：现代 C++ 更实用的内存资源抽象</h2><p>C++17 提供了 <code>std::pmr</code>：</p>
+<ul>
+<li>polymorphic memory resource</li>
+</ul>
+<p>它把“分配策略”从模板参数层搬到了运行时资源对象层。</p>
+<p>最常见组件：</p>
+<ul>
+<li><code>std::pmr::memory_resource</code></li>
+<li><code>std::pmr::polymorphic_allocator</code></li>
+<li><code>std::pmr::vector</code></li>
+<li><code>std::pmr::monotonic_buffer_resource</code></li>
+</ul>
+<p>这通常比手写 allocator 模板更实用。</p>
+<hr>
+<h2 id="8-monotonic-buffer-resource-的直觉"><a href="#8-monotonic-buffer-resource-的直觉" class="headerlink" title="8. monotonic_buffer_resource 的直觉"></a>8. <code>monotonic_buffer_resource</code> 的直觉</h2><p>这种资源很适合：</p>
+<ul>
+<li>批量分配</li>
+<li>很少单独释放</li>
+<li>整体回收</li>
+</ul>
+<p>例如一次请求、一次帧更新、一次解析过程。</p>
+<p>好处：</p>
+<ul>
+<li>分配快</li>
+<li>局部性好</li>
+</ul>
+<p>代价：</p>
+<ul>
+<li>单个对象通常不能灵活归还给池</li>
+</ul>
+<hr>
+<h2 id="9-和容器性能的关系"><a href="#9-和容器性能的关系" class="headerlink" title="9. 和容器性能的关系"></a>9. 和容器性能的关系</h2><p>allocator 影响的通常不是接口语义，而是：</p>
+<ul>
+<li>分配次数</li>
+<li>分配成本</li>
+<li>碎片</li>
+<li>局部性</li>
+</ul>
+<p>但要注意：</p>
+<ul>
+<li>allocator 优化通常排在算法和数据布局之后</li>
+<li>不要在没有证据前，把 allocator 当成首要瓶颈</li>
+</ul>
+<hr>
+<h2 id="10-常见误区"><a href="#10-常见误区" class="headerlink" title="10. 常见误区"></a>10. 常见误区</h2><h3 id="10-1-把-allocator-当成“所有性能问题的解药”"><a href="#10-1-把-allocator-当成“所有性能问题的解药”" class="headerlink" title="10.1 把 allocator 当成“所有性能问题的解药”"></a>10.1 把 allocator 当成“所有性能问题的解药”</h3><p>很多性能问题其实更可能出在：</p>
+<ul>
+<li>数据布局</li>
+<li>扩容策略</li>
+<li>锁争用</li>
+<li>随机访问</li>
+</ul>
+<h3 id="10-2-只会写-allocate-deallocate，却不理解对象构造时机"><a href="#10-2-只会写-allocate-deallocate，却不理解对象构造时机" class="headerlink" title="10.2 只会写 allocate/deallocate，却不理解对象构造时机"></a>10.2 只会写 <code>allocate/deallocate</code>，却不理解对象构造时机</h3><p>allocator 真正重要的是：</p>
+<ul>
+<li>内存和对象是分开的</li>
+</ul>
+<h3 id="10-3-在没有统一资源模型时滥用自定义-allocator"><a href="#10-3-在没有统一资源模型时滥用自定义-allocator" class="headerlink" title="10.3 在没有统一资源模型时滥用自定义 allocator"></a>10.3 在没有统一资源模型时滥用自定义 allocator</h3><p>结果容易让代码复杂度大幅上升。</p>
+<hr>
+<h2 id="11-一页总结"><a href="#11-一页总结" class="headerlink" title="11. 一页总结"></a>11. 一页总结</h2><p>allocator 这篇最值得记住的是：</p>
+<ol>
+<li>容器管理的是“原始内存 + 对象构造&#x2F;销毁”</li>
+<li>allocator 负责内存来源</li>
+<li><code>allocator_traits</code> 是现代实现的核心适配层</li>
+<li>真正工程里，<code>std::pmr</code> 往往比手写 allocator 更实用</li>
+</ol>
+<p>如果只记一句：</p>
+<blockquote>
+<p>allocator 优化通常是进阶优化，前提是你已经把算法、数据布局和容器选择做对了。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/02-%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E4%B8%8E%E6%89%80%E6%9C%89%E6%9D%83/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/notes/%E7%8E%B0%E4%BB%A3c-%E5%AE%9E%E8%B7%B5/02-%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E4%B8%8E%E6%89%80%E6%9C%89%E6%9D%83/" class="post-title-link" itemprop="url">智能指针与所有权</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-04-09 10:35:32" itemprop="dateCreated datePublished" datetime="2026-04-09T10:35:32+08:00">2026-04-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/%E7%8E%B0%E4%BB%A3C-%E5%AE%9E%E8%B7%B5/" itemprop="url" rel="index"><span itemprop="name">现代C++实践</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="智能指针与所有权"><a href="#智能指针与所有权" class="headerlink" title="智能指针与所有权"></a>智能指针与所有权</h1><p>时间：2026&#x2F;04&#x2F;09</p>
+<blockquote>
+<p>关键词：所有权、观察者、<code>unique_ptr</code>、<code>shared_ptr</code>、<code>weak_ptr</code>、自定义删除器<br>核心目标：把“谁负责释放资源”这件事表达清楚，而不是靠约定和记忆。</p>
+</blockquote>
+<hr>
+<h2 id="1-为什么现代-C-强调所有权"><a href="#1-为什么现代-C-强调所有权" class="headerlink" title="1. 为什么现代 C++ 强调所有权"></a>1. 为什么现代 C++ 强调所有权</h2><p>裸指针只能表达：</p>
+<ul>
+<li>“这里有个地址”</li>
+</ul>
+<p>但它不能天然表达：</p>
+<ul>
+<li>谁拥有这个对象</li>
+<li>谁负责释放</li>
+<li>是否允许共享</li>
+</ul>
+<p>现代 C++ 实践里，第一件要说清的就是所有权。</p>
+<hr>
+<h2 id="2-三种常见关系"><a href="#2-三种常见关系" class="headerlink" title="2. 三种常见关系"></a>2. 三种常见关系</h2><h3 id="2-1-拥有（owning）"><a href="#2-1-拥有（owning）" class="headerlink" title="2.1 拥有（owning）"></a>2.1 拥有（owning）</h3><p>对象负责管理资源生命周期。</p>
+<h3 id="2-2-观察（non-owning）"><a href="#2-2-观察（non-owning）" class="headerlink" title="2.2 观察（non-owning）"></a>2.2 观察（non-owning）</h3><p>对象只访问资源，不负责释放。</p>
+<h3 id="2-3-共享拥有（shared-owning）"><a href="#2-3-共享拥有（shared-owning）" class="headerlink" title="2.3 共享拥有（shared owning）"></a>2.3 共享拥有（shared owning）</h3><p>多个对象共同延长同一资源生命周期。</p>
+<hr>
+<h2 id="3-unique-ptr：默认首选"><a href="#3-unique-ptr：默认首选" class="headerlink" title="3. unique_ptr：默认首选"></a>3. <code>unique_ptr</code>：默认首选</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;memory&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">auto</span> p = std::<span class="built_in">make_unique</span>&lt;<span class="type">int</span>&gt;(<span class="number">42</span>);</span><br></pre></td></tr></table></figure>
+
+<p>特点：</p>
+<ul>
+<li>独占所有权</li>
+<li>不可拷贝</li>
+<li>可移动</li>
+<li>开销低</li>
+</ul>
+<p>经验上：</p>
+<ul>
+<li>只要不是明确需要共享，优先用 <code>unique_ptr</code></li>
+</ul>
+<hr>
+<h2 id="4-shared-ptr：共享拥有"><a href="#4-shared-ptr：共享拥有" class="headerlink" title="4. shared_ptr：共享拥有"></a>4. <code>shared_ptr</code>：共享拥有</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> p1 = std::<span class="built_in">make_shared</span>&lt;std::string&gt;(<span class="string">&quot;hello&quot;</span>);</span><br><span class="line"><span class="keyword">auto</span> p2 = p1;</span><br></pre></td></tr></table></figure>
+
+<p>特点：</p>
+<ul>
+<li>引用计数</li>
+<li>多个拥有者</li>
+<li>生命周期更灵活</li>
+</ul>
+<p>代价：</p>
+<ul>
+<li>控制块</li>
+<li>原子计数开销</li>
+<li>更复杂的所有权关系</li>
+</ul>
+<p>所以不要把它当默认选项。</p>
+<hr>
+<h2 id="5-weak-ptr：打破循环"><a href="#5-weak-ptr：打破循环" class="headerlink" title="5. weak_ptr：打破循环"></a>5. <code>weak_ptr</code>：打破循环</h2><p><code>weak_ptr</code> 不拥有对象，只是观察。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">std::weak_ptr&lt;Foo&gt; weak = shared;</span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">auto</span> sp = weak.<span class="built_in">lock</span>()) &#123;</span><br><span class="line">    <span class="comment">// 对象还活着</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>它最重要的作用是：</p>
+<ul>
+<li>避免两个 <code>shared_ptr</code> 互相引用导致循环泄漏</li>
+</ul>
+<hr>
+<h2 id="6-原则：拥有和观察要分开"><a href="#6-原则：拥有和观察要分开" class="headerlink" title="6. 原则：拥有和观察要分开"></a>6. 原则：拥有和观察要分开</h2><p>推荐的接口风格通常是：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">take</span><span class="params">(std::unique_ptr&lt;Foo&gt; p)</span></span>; <span class="comment">// 接管所有权</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">use</span><span class="params">(Foo&amp; x)</span></span>;                  <span class="comment">// 一定存在，只观察</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">maybe</span><span class="params">(Foo* p)</span></span>;                <span class="comment">// 可为空观察</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">share</span><span class="params">(std::shared_ptr&lt;Foo&gt; p)</span></span>;<span class="comment">// 共享拥有</span></span><br></pre></td></tr></table></figure>
+
+<p>这比“什么都传裸指针”更清楚。</p>
+<hr>
+<h2 id="7-自定义删除器"><a href="#7-自定义删除器" class="headerlink" title="7. 自定义删除器"></a>7. 自定义删除器</h2><p>有些资源不是 <code>delete</code> 释放，例如：</p>
+<ul>
+<li><code>FILE*</code> 要 <code>fclose</code></li>
+<li><code>malloc</code> 对应 <code>free</code></li>
+</ul>
+<p>可以这样包装：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;memory&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> FilePtr = std::unique_ptr&lt;FILE, <span class="built_in">int</span>(*)(FILE*)&gt;;</span><br><span class="line"></span><br><span class="line"><span class="function">FilePtr <span class="title">open_file</span><span class="params">(<span class="type">const</span> <span class="type">char</span>* path)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">FilePtr</span>(std::<span class="built_in">fopen</span>(path, <span class="string">&quot;r&quot;</span>), std::fclose);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="8-常见误区"><a href="#8-常见误区" class="headerlink" title="8. 常见误区"></a>8. 常见误区</h2><h3 id="8-1-裸指针默认表示拥有"><a href="#8-1-裸指针默认表示拥有" class="headerlink" title="8.1 裸指针默认表示拥有"></a>8.1 裸指针默认表示拥有</h3><p>不推荐。<br>裸指针更适合表达观察关系。</p>
+<h3 id="8-2-到处用-shared-ptr"><a href="#8-2-到处用-shared-ptr" class="headerlink" title="8.2 到处用 shared_ptr"></a>8.2 到处用 <code>shared_ptr</code></h3><p>这会让生命周期图变得混乱，还会带来额外开销。</p>
+<h3 id="8-3-从-unique-ptr-的-get-拿到裸指针后乱删"><a href="#8-3-从-unique-ptr-的-get-拿到裸指针后乱删" class="headerlink" title="8.3 从 unique_ptr 的 get() 拿到裸指针后乱删"></a>8.3 从 <code>unique_ptr</code> 的 <code>get()</code> 拿到裸指针后乱删</h3><p><code>get()</code> 只是观察，不转移所有权。</p>
+<hr>
+<h2 id="9-一页总结"><a href="#9-一页总结" class="headerlink" title="9. 一页总结"></a>9. 一页总结</h2><p>最值得记住的顺序是：</p>
+<ol>
+<li>默认值语义</li>
+<li>必须动态分配时优先 <code>unique_ptr</code></li>
+<li>确实共享拥有时才用 <code>shared_ptr</code></li>
+<li>观察关系用引用、裸指针或 <code>weak_ptr</code></li>
+</ol>
+<p>如果只记一句：</p>
+<blockquote>
+<p>智能指针不是为了“更高级”，而是为了把所有权表达清楚。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/00-%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B%E5%AF%BC%E8%AF%BB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/00-%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B%E5%AF%BC%E8%AF%BB/" class="post-title-link" itemprop="url">高性能 C++ 并行编程导读</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-04-09 10:29:27" itemprop="dateCreated datePublished" datetime="2026-04-09T10:29:27+08:00">2026-04-09</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -556,142 +1650,119 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="vector-容器优化编程笔记"><a href="#vector-容器优化编程笔记" class="headerlink" title="vector 容器优化编程笔记"></a>vector 容器优化编程笔记</h1><p>时间：2025&#x2F;11&#x2F;22<br>课程地址：Bilibili – BV1qF411T7sd<br>课件仓库：parallel101&#x2F;course（GitHub）</p>
+          <h1 id="高性能-C-并行编程导读"><a href="#高性能-C-并行编程导读" class="headerlink" title="高性能 C++ 并行编程导读"></a>高性能 C++ 并行编程导读</h1><p>时间：2026&#x2F;04&#x2F;09</p>
+<p>这组笔记现在按“从语言与内存基础，到 CPU 并行，再到 GPU 与实战”的顺序整理。<br>阅读时不建议完全按时间写作顺序看，而建议按下面这条主线走。</p>
 <hr>
-<h2 id="一、基础知识"><a href="#一、基础知识" class="headerlink" title="一、基础知识"></a>一、基础知识</h2><h3 id="1-分配器（Allocator）"><a href="#1-分配器（Allocator）" class="headerlink" title="1. 分配器（Allocator）"></a>1. 分配器（Allocator）</h3><table>
+<h2 id="1-推荐学习顺序"><a href="#1-推荐学习顺序" class="headerlink" title="1. 推荐学习顺序"></a>1. 推荐学习顺序</h2><ol>
+<li><code>C 指针与内存模型</code></li>
+<li><code>RAII 与智能指针</code></li>
+<li><code>左右值、完美转发与引用折叠</code></li>
+<li><code>模板与元编程</code></li>
+<li><code>vector 容器优化</code></li>
+<li><code>编译器优化与汇编视角</code></li>
+<li><code>访存优化</code></li>
+<li><code>C++11 多线程编程</code></li>
+<li><code>原子操作、内存序与无锁基础</code></li>
+<li><code>TBB 并行编程</code></li>
+<li><code>CUDA 开启的 GPU 编程</code></li>
+<li><code>流体仿真实战</code></li>
+</ol>
+<hr>
+<h2 id="2-每篇笔记解决什么问题"><a href="#2-每篇笔记解决什么问题" class="headerlink" title="2. 每篇笔记解决什么问题"></a>2. 每篇笔记解决什么问题</h2><table>
 <thead>
 <tr>
-<th>方法</th>
-<th>功能</th>
+<th>编号</th>
+<th>主题</th>
+<th>核心问题</th>
 </tr>
 </thead>
 <tbody><tr>
-<td><code>allocate(n)</code></td>
-<td>分配 n 个 T 的原始内存（未构造对象）</td>
+<td><code>[01]</code></td>
+<td>C 指针与内存模型</td>
+<td>地址、生命周期、数组退化、别名与缓存直觉</td>
 </tr>
 <tr>
-<td><code>deallocate(p, n)</code></td>
-<td>释放之前分配的内存</td>
+<td><code>[02]</code></td>
+<td>RAII 与智能指针</td>
+<td>资源如何自动释放，所有权如何表达</td>
 </tr>
 <tr>
-<td><code>construct(p, args...)</code></td>
-<td>在 p 指向的位置调用 T 的构造函数</td>
+<td><code>[03]</code></td>
+<td>左右值、完美转发与引用折叠</td>
+<td><code>std::move</code> &#x2F; <code>std::forward</code> 到底在做什么</td>
 </tr>
 <tr>
-<td><code>destroy(p)</code></td>
-<td>调用 p 指向对象的析构函数</td>
+<td><code>[04]</code></td>
+<td>模板与元编程</td>
+<td>泛型、类型推导、<code>if constexpr</code>、traits、concepts</td>
+</tr>
+<tr>
+<td><code>[05]</code></td>
+<td>vector 容器优化</td>
+<td>连续内存、扩容、失效规则、并发写入模式</td>
+</tr>
+<tr>
+<td><code>[06]</code></td>
+<td>编译器优化与汇编视角</td>
+<td>编译器如何重写 C++，哪些写法更利于优化</td>
+</tr>
+<tr>
+<td><code>[07]</code></td>
+<td>访存优化</td>
+<td>cache、AoS&#x2F;SoA、stride、blocking、false sharing</td>
+</tr>
+<tr>
+<td><code>[08]</code></td>
+<td>C++11 多线程编程</td>
+<td><code>thread/mutex/condition_variable/future/thread pool</code></td>
+</tr>
+<tr>
+<td><code>[09]</code></td>
+<td>原子操作、内存序与无锁基础</td>
+<td><code>atomic</code>、CAS、acquire&#x2F;release、<code>seq_cst</code></td>
+</tr>
+<tr>
+<td><code>[10]</code></td>
+<td>TBB 并行编程之旅</td>
+<td>task、并行循环、归约、scan、arena、pipeline</td>
+</tr>
+<tr>
+<td><code>[11]</code></td>
+<td>CUDA 开启的 GPU 编程</td>
+<td>kernel、内存、shared memory、stream、Thrust</td>
+</tr>
+<tr>
+<td><code>[12]</code></td>
+<td>流体仿真实战</td>
+<td>把 CUDA、访存、数值迭代放到一个完整案例里</td>
 </tr>
 </tbody></table>
-<p>vector 在扩容时会：</p>
-<p>allocator.allocate() 申请更大内存</p>
-<p>allocator.construct() 搬移原有元素</p>
-<p>allocator.destroy() 销毁旧元素</p>
-<p>allocator.deallocate() 释放旧内存</p>
-<h3 id="2-迭代器（Iterator）"><a href="#2-迭代器（Iterator）" class="headerlink" title="2. 迭代器（Iterator）"></a>2. 迭代器（Iterator）</h3><p>提供一个统一的、类似指针的访问接口</p>
-<p>迭代器 ≈ 指针的一般化版本</p>
-<p>vector 的迭代器本质就是指针（随机访问）</p>
-<p>list 的迭代器是包装了节点的对象（链式结构）</p>
-<p>map&#x2F;set 的迭代器包装了树节点（红黑树结构）</p>
-<p>所有迭代器都必须重载以下操作符：</p>
-<p>*it 返回元素</p>
-<p>it-&gt;member 访问结构体字段</p>
-<p>++it &#x2F; –it 移动位置</p>
-<p>it &#x3D;&#x3D; other 判断是否到达末尾</p>
-<table>
-<thead>
-<tr>
-<th>容器</th>
-<th>迭代器类型</th>
-<th>是否连续内存</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>vector</td>
-<td>随机访问（指针）</td>
-<td>是</td>
-</tr>
-<tr>
-<td>array</td>
-<td>随机访问（指针）</td>
-<td>是</td>
-</tr>
-<tr>
-<td>deque</td>
-<td>随机访问（复杂对象）</td>
-<td>否</td>
-</tr>
-<tr>
-<td>list</td>
-<td>双向迭代器</td>
-<td>否</td>
-</tr>
-<tr>
-<td>set&#x2F;map</td>
-<td>双向迭代器（红黑树）</td>
-<td>否</td>
-</tr>
-</tbody></table>
-<h3 id="3-仿函数（Functor）"><a href="#3-仿函数（Functor）" class="headerlink" title="3. 仿函数（Functor）"></a>3. 仿函数（Functor）</h3><p>仿函数也称“函数对象”（Function Object），本质是一个重载了 <code>operator()</code> 的类实例。<br>它既能像函数一样被调用，也能作为对象携带状态，因此常用于需要将“可调用对象”作为参数传入的场景中。</p>
-<p>编写仿函数的基本方式：<br>创建一个类 → 实现内部逻辑 → 重载 <code>operator()</code>。<br>这样可以避免大量使用全局变量，同时便于逻辑复用，使代码更易维护和管理。</p>
 <hr>
-<h2 id="二、vector-容器"><a href="#二、vector-容器" class="headerlink" title="二、vector 容器"></a>二、vector 容器</h2><p><code>std::vector</code> 是一种动态数组，其元素存储在堆上，支持自动扩容。</p>
-<p>常用操作说明：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">a</span><span class="params">(<span class="number">4</span>)</span></span></span><br></pre></td></tr></table></figure>
-
+<h2 id="3-这次整理做了什么"><a href="#3-这次整理做了什么" class="headerlink" title="3. 这次整理做了什么"></a>3. 这次整理做了什么</h2><p>这次不是只改文件名，而是做了三类整理：</p>
 <ol>
-<li><p><strong>size()</strong><br><code>a.size()</code> 返回当前长度（元素个数）。</p>
-</li>
-<li><p><strong>operator[]</strong><br><code>a[x]</code> 等价于 <code>*(a.begin() + x)</code>。<br>需要注意：为了性能 <strong>不会做越界检查</strong>，越界可能导致未定义行为（包括程序崩溃）。</p>
-</li>
-<li><p><strong>at()</strong><br><code>a.at(x)</code> 与 <code>a[x]</code> 功能一致，但会进行边界检查（异常处理），可靠性更高但性能略低。</p>
-</li>
-<li><p><strong>resize(n)</strong><br>修改 vector 的逻辑长度为 n：</p>
-<ul>
-<li>n 变大：扩容位置填充默认值（int 为 0）</li>
-<li>n 变小：截断，但多余空间不会立即释放，仅修改 size，不改 capacity</li>
-</ul>
-</li>
-<li><p><strong>resize(n, val)</strong><br>扩容部分使用 <code>val</code> 填充。</p>
-</li>
-<li><p><strong>clear()</strong><br><code>a.clear()</code> 等价于 <code>a.resize(0)</code>；清空元素但不释放已分配内存。</p>
-</li>
-<li><p><strong>push_back(x)</strong><br>在末尾添加一个元素。<br>等价于：<code>a.resize(a.size()+1, x)</code>。</p>
-</li>
-<li><p><strong>pop_back()</strong><br>删除末尾元素（不返回值）。<br>等价于：<code>a.resize(a.size()-1)</code>。</p>
-</li>
-<li><p><strong>back()</strong><br>返回最后一个元素 <code>a[a.size()-1]</code>。</p>
-</li>
-<li><p><strong>front()</strong><br>等价于 <code>a[0]</code>。</p>
-</li>
-<li><p><strong>data()</strong><br>返回底层数组的首地址，即 <code>&amp;a[0]</code>。<br>通常需搭配 <code>size()</code> 使用，方便与 C 风格接口交互。<br><strong>注意：扩容后 data() 可能失效，因为底层地址可能改变。</strong></p>
-</li>
-<li><p><strong>capacity()</strong><br>返回当前实际分配的容量（不等于 size）。</p>
-</li>
-<li><p><strong>shrink_to_fit()</strong><br>请求释放多余内存，使 capacity 接近 size（但不保证一定有效）。</p>
-</li>
+<li>把空白或草稿笔记补成正式版：<br><code>C 指针</code>、<code>RAII</code>、<code>编译器优化</code>、<code>访存优化</code>、<code>流体仿真</code></li>
+<li>新增了一篇缺失但关键的笔记：<br><code>原子操作、内存序与无锁基础</code></li>
+<li>统一为按内容排序的 <code>[NN]xxx.md</code> 命名</li>
 </ol>
 <hr>
-<h2 id="三、迭代器"><a href="#三、迭代器" class="headerlink" title="三、迭代器"></a>三、迭代器</h2><p>迭代器本质上类似指针，但通过重载运算符实现对不同容器的统一访问方式。<br>可以理解为：<strong>“为容器设计的通用指针行为适配层”</strong>，从而兼容 C 语言的指针风格遍历。</p>
+<h2 id="4-如果只想抓主干"><a href="#4-如果只想抓主干" class="headerlink" title="4. 如果只想抓主干"></a>4. 如果只想抓主干</h2><p>时间有限时，可以先看这 6 篇：</p>
+<ol>
+<li><code>C 指针与内存模型</code></li>
+<li><code>RAII 与智能指针</code></li>
+<li><code>左右值、完美转发与引用折叠</code></li>
+<li><code>vector 容器优化</code></li>
+<li><code>访存优化</code></li>
+<li><code>C++11 多线程编程</code></li>
+</ol>
+<p>这几篇能先把 C++ 高性能和并行里最常见的基础坑位补齐。</p>
 <hr>
-<h2 id="四、补充知识"><a href="#四、补充知识" class="headerlink" title="四、补充知识"></a>四、补充知识</h2><h3 id="1-栈与堆"><a href="#1-栈与堆" class="headerlink" title="1. 栈与堆"></a>1. 栈与堆</h3><h4 id="Vector-对象本身的存储位置"><a href="#Vector-对象本身的存储位置" class="headerlink" title="Vector 对象本身的存储位置"></a>Vector <strong>对象本身</strong>的存储位置</h4><p>若直接作为局部变量声明：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">std::vector&lt;<span class="type">int</span>&gt; vec;</span><br></pre></td></tr></table></figure>
-
-<p><code>vec</code> 变量本身存储在 <strong>栈</strong> 上，包括：</p>
-<ul>
-<li>size</li>
-<li>capacity</li>
-<li>data 指针</li>
-</ul>
-<h4 id="Vector-元素的存储位置"><a href="#Vector-元素的存储位置" class="headerlink" title="Vector 元素的存储位置"></a>Vector <strong>元素</strong>的存储位置</h4><p>元素总是在 <strong>堆</strong> 上，因为 vector 需要支持动态扩容。</p>
-<p>示意结构：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">栈内存</span><br><span class="line">    vector 对象本体</span><br><span class="line">    ├── size</span><br><span class="line">    ├── capacity</span><br><span class="line">    └── data 指针（指向堆）</span><br><span class="line"></span><br><span class="line">堆内存</span><br><span class="line">    元素1</span><br><span class="line">    元素2</span><br><span class="line">    ……</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h2 id="五、参考资料"><a href="#五、参考资料" class="headerlink" title="五、参考资料"></a>五、参考资料</h2><ol>
-<li><p><em>仿函数详解</em><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/helloylh/p/17209709.html">https://www.cnblogs.com/helloylh/p/17209709.html</a></p>
-</li>
-<li><p><em>Vector 对象到底在堆上还是栈上？</em><br><a target="_blank" rel="noopener" href="https://www.51cto.com/article/814126.html">https://www.51cto.com/article/814126.html</a></p>
-</li>
+<h2 id="5-接下来的自然扩展"><a href="#5-接下来的自然扩展" class="headerlink" title="5. 接下来的自然扩展"></a>5. 接下来的自然扩展</h2><p>如果后面继续补这套笔记，最值得优先新增的主题是：</p>
+<ol>
+<li>SIMD 与自动向量化</li>
+<li>Benchmark 与性能分析方法</li>
+<li>NUMA 与多路 CPU 内存访问</li>
+<li><code>std::pmr</code> 与内存池</li>
+<li>C++20&#x2F;23 并发工具：<code>jthread / latch / barrier / semaphore</code></li>
 </ol>
 
       
@@ -719,7 +1790,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/2025/11/21/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E6%89%A9%E6%95%A3/%E4%BD%95%E5%87%AF%E6%98%8E%E8%AE%A9%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E5%9B%9E%E5%BD%92%E2%80%9C%E5%8E%BB%E5%99%AA%E2%80%9D%E6%9C%AC%E8%B4%A8/">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/09-%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C-%E5%86%85%E5%AD%98%E5%BA%8F%E4%B8%8E%E6%97%A0%E9%94%81%E5%9F%BA%E7%A1%80/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/img/me.jpg">
@@ -737,7 +1808,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/11/21/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E6%89%A9%E6%95%A3/%E4%BD%95%E5%87%AF%E6%98%8E%E8%AE%A9%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E5%9B%9E%E5%BD%92%E2%80%9C%E5%8E%BB%E5%99%AA%E2%80%9D%E6%9C%AC%E8%B4%A8/" class="post-title-link" itemprop="url">让扩散模型回归“去噪”本质</a>
+          <a href="/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/09-%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C-%E5%86%85%E5%AD%98%E5%BA%8F%E4%B8%8E%E6%97%A0%E9%94%81%E5%9F%BA%E7%A1%80/" class="post-title-link" itemprop="url">原子操作、内存序与无锁基础</a>
         </h2>
 
         <div class="post-meta-container">
@@ -748,14 +1819,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2025-11-21 16:03:30" itemprop="dateCreated datePublished" datetime="2025-11-21T16:03:30+08:00">2025-11-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-01-24 10:43:15" itemprop="dateModified" datetime="2026-01-24T10:43:15+08:00">2026-01-24</time>
+      <time title="创建时间：2026-04-09 10:29:05" itemprop="dateCreated datePublished" datetime="2026-04-09T10:29:05+08:00">2026-04-09</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -763,11 +1827,11 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
         </span>
           ，
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E6%89%A9%E6%95%A3/" itemprop="url" rel="index"><span itemprop="name">扩散</span></a>
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/%E9%AB%98%E6%80%A7%E8%83%BDC-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">高性能C++并行编程</span></a>
         </span>
     </span>
 
@@ -781,7 +1845,339 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="让扩散模型回归“去噪”本质"><a href="#让扩散模型回归“去噪”本质" class="headerlink" title="让扩散模型回归“去噪”本质"></a>让扩散模型回归“去噪”本质</h1><p>论文标题: Back to Basics: Let Denoising Generative Models Denoise<br>作者: Tianhong Li(黎天鸿), Kaiming He(何恺明)<br>机构: 麻省理工学院 (MIT)<br>论文地址: <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2511.13720">https://arxiv.org/abs/2511.13720</a><br>代码仓库: <a target="_blank" rel="noopener" href="https://github.com/LTH14/JiT">https://github.com/LTH14/JiT</a><br>总结：本文指出了一个反常识问题，就是传统的去噪模型每步预测的唯噪声，而噪声在高维度中的分布是很难观察的，但是如果将预测噪声改为预测真实纯洁的图像就能改变这一问题。</p>
+          <h1 id="原子操作、内存序与无锁基础"><a href="#原子操作、内存序与无锁基础" class="headerlink" title="原子操作、内存序与无锁基础"></a>原子操作、内存序与无锁基础</h1><p>时间：2026&#x2F;04&#x2F;09</p>
+<blockquote>
+<p>关键词：<code>std::atomic</code>、CAS、memory order、acquire&#x2F;release、<code>seq_cst</code>、false sharing、lock-free<br>核心目标：搞清楚“原子变量为什么不仅是线程安全的普通变量”，以及不同内存序到底在约束什么。</p>
+</blockquote>
+<hr>
+<h2 id="1-为什么需要原子操作"><a href="#1-为什么需要原子操作" class="headerlink" title="1. 为什么需要原子操作"></a>1. 为什么需要原子操作</h2><p>并发程序里最核心的问题是：</p>
+<ul>
+<li>多个线程会同时访问共享数据</li>
+<li>如果至少一个线程写，且没有同步，就会产生数据竞争</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> counter = <span class="number">0</span>;</span><br><span class="line"><span class="comment">// 多线程同时 ++counter;</span></span><br></pre></td></tr></table></figure>
+
+<p>这不是“结果偶尔不准”，而是未定义行为。</p>
+<p>原子操作的价值就在于：</p>
+<ul>
+<li>某些共享读写可以不加互斥锁</li>
+<li>但仍然具备明确同步语义</li>
+</ul>
+<hr>
+<h2 id="2-std-atomic-是什么"><a href="#2-std-atomic-是什么" class="headerlink" title="2. std::atomic 是什么"></a>2. <code>std::atomic</code> 是什么</h2><p>最基本的用法：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;atomic&gt;</span></span></span><br><span class="line"></span><br><span class="line">std::atomic&lt;<span class="type">int</span>&gt; counter&#123;<span class="number">0</span>&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>它提供的不是“更快的 int”，而是：</p>
+<ul>
+<li>不会被撕裂的原子读写</li>
+<li>受内存模型约束的同步语义</li>
+</ul>
+<p>常见操作：</p>
+<ul>
+<li><code>load</code></li>
+<li><code>store</code></li>
+<li><code>fetch_add</code></li>
+<li><code>fetch_sub</code></li>
+<li><code>exchange</code></li>
+<li><code>compare_exchange_weak</code></li>
+<li><code>compare_exchange_strong</code></li>
+</ul>
+<hr>
+<h2 id="3-原子不等于万能替代锁"><a href="#3-原子不等于万能替代锁" class="headerlink" title="3. 原子不等于万能替代锁"></a>3. 原子不等于万能替代锁</h2><p>原子适合的场景通常是：</p>
+<ul>
+<li>计数器</li>
+<li>标志位</li>
+<li>状态发布</li>
+<li>无锁数据结构中的基本原语</li>
+</ul>
+<p>不适合的场景通常是：</p>
+<ul>
+<li>需要保护一整段复合逻辑</li>
+<li>需要同时维护多个共享变量的不变式</li>
+<li>业务逻辑复杂，容易写错同步关系</li>
+</ul>
+<p>一句话：</p>
+<ul>
+<li>原子擅长保护“一个共享状态”</li>
+<li>锁擅长保护“一个临界区”</li>
+</ul>
+<hr>
+<h2 id="4-最基本的原子操作"><a href="#4-最基本的原子操作" class="headerlink" title="4. 最基本的原子操作"></a>4. 最基本的原子操作</h2><h3 id="4-1-load-store"><a href="#4-1-load-store" class="headerlink" title="4.1 load &#x2F; store"></a>4.1 <code>load</code> &#x2F; <code>store</code></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">std::atomic&lt;<span class="type">int</span>&gt; x&#123;<span class="number">0</span>&#125;;</span><br><span class="line">x.<span class="built_in">store</span>(<span class="number">10</span>);</span><br><span class="line"><span class="type">int</span> v = x.<span class="built_in">load</span>();</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-2-fetch-add"><a href="#4-2-fetch-add" class="headerlink" title="4.2 fetch_add"></a>4.2 <code>fetch_add</code></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">std::atomic&lt;<span class="type">int</span>&gt; cnt&#123;<span class="number">0</span>&#125;;</span><br><span class="line">cnt.<span class="built_in">fetch_add</span>(<span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+
+<p>这比 <code>cnt = cnt + 1</code> 更重要，因为它是一个不可分割的原子读改写。</p>
+<h3 id="4-3-exchange"><a href="#4-3-exchange" class="headerlink" title="4.3 exchange"></a>4.3 <code>exchange</code></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">bool</span> old = flag.<span class="built_in">exchange</span>(<span class="literal">true</span>);</span><br></pre></td></tr></table></figure>
+
+<p>含义：</p>
+<ul>
+<li>把 <code>flag</code> 设为 <code>true</code></li>
+<li>返回旧值</li>
+</ul>
+<hr>
+<h2 id="5-CAS：无锁算法的核心原语"><a href="#5-CAS：无锁算法的核心原语" class="headerlink" title="5. CAS：无锁算法的核心原语"></a>5. CAS：无锁算法的核心原语</h2><p>CAS 指 Compare-And-Swap（或 Compare-And-Exchange）。</p>
+<h3 id="5-1-直觉理解"><a href="#5-1-直觉理解" class="headerlink" title="5.1 直觉理解"></a>5.1 直觉理解</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">如果当前值仍然等于 expected，</span><br><span class="line">就把它改成 desired；</span><br><span class="line">否则不改，并告诉我失败了。</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-2-C-里的写法"><a href="#5-2-C-里的写法" class="headerlink" title="5.2 C++ 里的写法"></a>5.2 C++ 里的写法</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">std::atomic&lt;<span class="type">int</span>&gt; x&#123;<span class="number">0</span>&#125;;</span><br><span class="line"><span class="type">int</span> expected = <span class="number">0</span>;</span><br><span class="line"><span class="type">bool</span> ok = x.<span class="built_in">compare_exchange_strong</span>(expected, <span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+
+<p>如果成功：</p>
+<ul>
+<li><code>x</code> 变成 1</li>
+<li>返回 <code>true</code></li>
+</ul>
+<p>如果失败：</p>
+<ul>
+<li><code>x</code> 保持原值</li>
+<li><code>expected</code> 会被写成当前实际值</li>
+</ul>
+<h3 id="5-3-weak-和-strong"><a href="#5-3-weak-和-strong" class="headerlink" title="5.3 weak 和 strong"></a>5.3 <code>weak</code> 和 <code>strong</code></h3><ul>
+<li><code>compare_exchange_weak</code>：允许伪失败，适合循环重试</li>
+<li><code>compare_exchange_strong</code>：不允许伪失败，语义更直接</li>
+</ul>
+<p>常见模式：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> expected = old;</span><br><span class="line"><span class="keyword">while</span> (!x.<span class="built_in">compare_exchange_weak</span>(expected, new_value)) &#123;</span><br><span class="line">    <span class="comment">// expected 已被更新为当前值，继续重试</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="6-“原子”到底保证了什么"><a href="#6-“原子”到底保证了什么" class="headerlink" title="6. “原子”到底保证了什么"></a>6. “原子”到底保证了什么</h2><p>原子操作通常有两层含义：</p>
+<h3 id="6-1-操作本身不可分割"><a href="#6-1-操作本身不可分割" class="headerlink" title="6.1 操作本身不可分割"></a>6.1 操作本身不可分割</h3><p>例如 <code>fetch_add</code> 不会被拆成“先读、再改、再写”被别的线程插进来。</p>
+<h3 id="6-2-它还可能携带同步顺序语义"><a href="#6-2-它还可能携带同步顺序语义" class="headerlink" title="6.2 它还可能携带同步顺序语义"></a>6.2 它还可能携带同步顺序语义</h3><p>这就进入<strong>内存序</strong>问题。</p>
+<p>如果只知道“原子不会撕裂”，还远远不够。</p>
+<hr>
+<h2 id="7-为什么会有内存序"><a href="#7-为什么会有内存序" class="headerlink" title="7. 为什么会有内存序"></a>7. 为什么会有内存序</h2><p>现代 CPU 和编译器都会重排指令，只要不改变单线程可观察结果就行。<br>但并发下，如果没有同步约束，另一个线程看到的顺序可能和源码顺序不一样。</p>
+<p>所以原子操作不只是“安全读写”，还承担：</p>
+<ul>
+<li>约束编译器重排</li>
+<li>约束 CPU 可见性顺序</li>
+</ul>
+<p>这就是 <code>memory_order</code> 的意义。</p>
+<hr>
+<h2 id="8-六种常见内存序"><a href="#8-六种常见内存序" class="headerlink" title="8. 六种常见内存序"></a>8. 六种常见内存序</h2><p>C++ 里最常见的有：</p>
+<ul>
+<li><code>memory_order_relaxed</code></li>
+<li><code>memory_order_consume</code></li>
+<li><code>memory_order_acquire</code></li>
+<li><code>memory_order_release</code></li>
+<li><code>memory_order_acq_rel</code></li>
+<li><code>memory_order_seq_cst</code></li>
+</ul>
+<p>实际工程里最常用、最值得掌握的是：</p>
+<ul>
+<li><code>relaxed</code></li>
+<li><code>acquire</code></li>
+<li><code>release</code></li>
+<li><code>acq_rel</code></li>
+<li><code>seq_cst</code></li>
+</ul>
+<p><code>consume</code> 在现代工程里很少主动使用。</p>
+<hr>
+<h2 id="9-relaxed：只保证原子性，不保证顺序"><a href="#9-relaxed：只保证原子性，不保证顺序" class="headerlink" title="9. relaxed：只保证原子性，不保证顺序"></a>9. <code>relaxed</code>：只保证原子性，不保证顺序</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">counter.<span class="built_in">fetch_add</span>(<span class="number">1</span>, std::memory_order_relaxed);</span><br></pre></td></tr></table></figure>
+
+<p>适合：</p>
+<ul>
+<li>纯计数</li>
+<li>统计量</li>
+<li>不需要借此发布其他数据</li>
+</ul>
+<p>不适合：</p>
+<ul>
+<li>“先写数据，再置位通知别人读取”</li>
+</ul>
+<p>因为 <code>relaxed</code> 不保证其他普通内存写入的可见顺序。</p>
+<hr>
+<h2 id="10-release-acquire：发布与获取"><a href="#10-release-acquire：发布与获取" class="headerlink" title="10. release &#x2F; acquire：发布与获取"></a>10. <code>release</code> &#x2F; <code>acquire</code>：发布与获取</h2><p>这是最重要的一组。</p>
+<h3 id="10-1-发布方：release"><a href="#10-1-发布方：release" class="headerlink" title="10.1 发布方：release"></a>10.1 发布方：<code>release</code></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">data = <span class="number">42</span>;</span><br><span class="line">ready.<span class="built_in">store</span>(<span class="literal">true</span>, std::memory_order_release);</span><br></pre></td></tr></table></figure>
+
+<p>含义可以粗略理解为：</p>
+<ul>
+<li>在这之前的写入，不能被重排到这个 <code>store</code> 之后</li>
+</ul>
+<h3 id="10-2-获取方：acquire"><a href="#10-2-获取方：acquire" class="headerlink" title="10.2 获取方：acquire"></a>10.2 获取方：<code>acquire</code></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (ready.<span class="built_in">load</span>(std::memory_order_acquire)) &#123;</span><br><span class="line">    <span class="built_in">use</span>(data);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果这个 <code>acquire load</code> 读到了对应的 <code>release store</code> 写入的值，那么发布前的写入也对当前线程可见。</p>
+<h3 id="10-3-最经典的发布-订阅模式"><a href="#10-3-最经典的发布-订阅模式" class="headerlink" title="10.3 最经典的发布-订阅模式"></a>10.3 最经典的发布-订阅模式</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;atomic&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> data = <span class="number">0</span>;</span><br><span class="line">std::atomic&lt;<span class="type">bool</span>&gt; ready&#123;<span class="literal">false</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">producer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    data = <span class="number">42</span>;</span><br><span class="line">    ready.<span class="built_in">store</span>(<span class="literal">true</span>, std::memory_order_release);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">consumer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">while</span> (!ready.<span class="built_in">load</span>(std::memory_order_acquire)) &#123;&#125;</span><br><span class="line">    <span class="comment">// 这里可以安全看到 data = 42</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这就是 acquire&#x2F;release 最核心的使用场景。</p>
+<hr>
+<h2 id="11-acq-rel：读改写操作常用"><a href="#11-acq-rel：读改写操作常用" class="headerlink" title="11. acq_rel：读改写操作常用"></a>11. <code>acq_rel</code>：读改写操作常用</h2><p>对于像 <code>fetch_add</code>、<code>exchange</code>、CAS 这样的读改写操作，经常用：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">std::memory_order_acq_rel</span><br></pre></td></tr></table></figure>
+
+<p>它表示：</p>
+<ul>
+<li>对之前的写有 release 效果</li>
+<li>对之后的读有 acquire 效果</li>
+</ul>
+<p>适合：</p>
+<ul>
+<li>需要同时承担“发布 + 获取”角色的 RMW 操作</li>
+</ul>
+<hr>
+<h2 id="12-seq-cst：最强也最直观"><a href="#12-seq-cst：最强也最直观" class="headerlink" title="12. seq_cst：最强也最直观"></a>12. <code>seq_cst</code>：最强也最直观</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">x.<span class="built_in">store</span>(<span class="number">1</span>, std::memory_order_seq_cst);</span><br></pre></td></tr></table></figure>
+
+<p>它提供最强、最容易理解的全局顺序语义。<br>可以先粗略理解为：</p>
+<ul>
+<li>所有 <code>seq_cst</code> 原子操作在所有线程看来像排成了一条总顺序</li>
+</ul>
+<p>优点：</p>
+<ul>
+<li>最不容易想错</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>可能比更弱顺序更保守</li>
+</ul>
+<p>经验上：</p>
+<ul>
+<li>不确定时可以先用 <code>seq_cst</code></li>
+<li>真有性能证据，再考虑是否降到 acquire&#x2F;release 或 relaxed</li>
+</ul>
+<hr>
+<h2 id="13-一个常见误区：原子变量保护不了“旁边的普通变量”，除非顺序写对"><a href="#13-一个常见误区：原子变量保护不了“旁边的普通变量”，除非顺序写对" class="headerlink" title="13. 一个常见误区：原子变量保护不了“旁边的普通变量”，除非顺序写对"></a>13. 一个常见误区：原子变量保护不了“旁边的普通变量”，除非顺序写对</h2><p>例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> data = <span class="number">0</span>;</span><br><span class="line">std::atomic&lt;<span class="type">bool</span>&gt; ready&#123;<span class="literal">false</span>&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>如果你这样写：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">data = <span class="number">42</span>;</span><br><span class="line">ready.<span class="built_in">store</span>(<span class="literal">true</span>, std::memory_order_relaxed);</span><br></pre></td></tr></table></figure>
+
+<p>另一个线程即便读到 <code>ready == true</code>，也不一定能可靠看见 <code>data == 42</code>。<br>因为这里只保证 <code>ready</code> 本身原子，不保证普通变量 <code>data</code> 的可见顺序。</p>
+<p>所以：</p>
+<ul>
+<li>“用一个原子标志通知别人去读普通数据”<br>这个模式必须认真选内存序</li>
+</ul>
+<hr>
+<h2 id="14-自旋等待与忙等"><a href="#14-自旋等待与忙等" class="headerlink" title="14. 自旋等待与忙等"></a>14. 自旋等待与忙等</h2><p>原子标志很容易写出自旋：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> (!ready.<span class="built_in">load</span>(std::memory_order_acquire)) &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这在短等待场景可能可接受，但有风险：</p>
+<ul>
+<li>浪费 CPU</li>
+<li>争抢资源</li>
+<li>等待时间一长非常低效</li>
+</ul>
+<p>所以如果等待时间不可控，通常更适合：</p>
+<ul>
+<li>条件变量</li>
+<li>futex &#x2F; event</li>
+<li>更高层并发原语</li>
+</ul>
+<hr>
+<h2 id="15-atomic-flag-与自旋锁"><a href="#15-atomic-flag-与自旋锁" class="headerlink" title="15. atomic_flag 与自旋锁"></a>15. <code>atomic_flag</code> 与自旋锁</h2><p>最简单的原子标志是：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">std::atomic_flag lock = ATOMIC_FLAG_INIT;</span><br></pre></td></tr></table></figure>
+
+<p>可实现一个最简单自旋锁：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> (lock.<span class="built_in">test_and_set</span>(std::memory_order_acquire)) &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// critical section</span></span><br><span class="line"></span><br><span class="line">lock.<span class="built_in">clear</span>(std::memory_order_release);</span><br></pre></td></tr></table></figure>
+
+<p>但要明确：</p>
+<ul>
+<li>这只是帮助理解 acquire&#x2F;release 的经典例子</li>
+<li>真实工程里自旋锁并不一定是好选择</li>
+</ul>
+<p>原因包括：</p>
+<ul>
+<li>高竞争下性能糟糕</li>
+<li>容易烧 CPU</li>
+<li>可能不公平</li>
+</ul>
+<hr>
+<h2 id="16-lock-free-不等于更快"><a href="#16-lock-free-不等于更快" class="headerlink" title="16. lock-free 不等于更快"></a>16. lock-free 不等于更快</h2><p>这是并发里最常见的误判之一。</p>
+<p>“无锁”通常只表示：</p>
+<ul>
+<li>线程推进不依赖传统互斥锁</li>
+</ul>
+<p>它不自动意味着：</p>
+<ul>
+<li>更低延迟</li>
+<li>更高吞吐</li>
+<li>更少 cache traffic</li>
+</ul>
+<p>实际上，原子和 CAS 往往会带来：</p>
+<ul>
+<li>cache line 抖动</li>
+<li>重试开销</li>
+<li>更难维护的代码</li>
+</ul>
+<p>所以工程经验是：</p>
+<blockquote>
+<p>先用正确、清晰的同步方案，再证明锁真的成了瓶颈，才考虑无锁化。</p>
+</blockquote>
+<hr>
+<h2 id="17-false-sharing-在原子场景里更常见"><a href="#17-false-sharing-在原子场景里更常见" class="headerlink" title="17. false sharing 在原子场景里更常见"></a>17. false sharing 在原子场景里更常见</h2><p>多个线程频繁更新不同的原子变量，如果这些变量落在同一个 cache line，也会很慢。</p>
+<p>例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Counters</span> &#123;</span><br><span class="line">    std::atomic&lt;<span class="type">long</span> <span class="type">long</span>&gt; a;</span><br><span class="line">    std::atomic&lt;<span class="type">long</span> <span class="type">long</span>&gt; b;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>如果两个线程分别只改 <code>a</code> 和 <code>b</code>，仍可能严重互相干扰。</p>
+<p>常见缓解方式：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">alignas</span>(<span class="number">64</span>) Counter &#123;</span><br><span class="line">    std::atomic&lt;<span class="type">long</span> <span class="type">long</span>&gt; value&#123;<span class="number">0</span>&#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>或者：</p>
+<ul>
+<li>每线程本地累加</li>
+<li>最后统一合并</li>
+</ul>
+<hr>
+<h2 id="18-原子引用计数与-shared-ptr"><a href="#18-原子引用计数与-shared-ptr" class="headerlink" title="18. 原子引用计数与 shared_ptr"></a>18. 原子引用计数与 <code>shared_ptr</code></h2><p><code>shared_ptr</code> 之所以比 <code>unique_ptr</code> 重，很大一部分原因就在于：</p>
+<ul>
+<li>它内部常涉及线程安全的引用计数更新</li>
+</ul>
+<p>也就是说，很多“我只是图省事用了 <code>shared_ptr</code>”的代码，实际上已经把原子开销带进来了。</p>
+<p>所以在性能敏感路径里：</p>
+<ul>
+<li>不要把共享所有权当默认方案</li>
+</ul>
+<hr>
+<h2 id="19-一个高频模式：单生产者发布结果"><a href="#19-一个高频模式：单生产者发布结果" class="headerlink" title="19. 一个高频模式：单生产者发布结果"></a>19. 一个高频模式：单生产者发布结果</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Result</span> &#123;</span><br><span class="line">    <span class="type">int</span> value;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">Result result;</span><br><span class="line">std::atomic&lt;<span class="type">bool</span>&gt; done&#123;<span class="literal">false</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">producer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    result.value = <span class="number">123</span>;</span><br><span class="line">    done.<span class="built_in">store</span>(<span class="literal">true</span>, std::memory_order_release);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">consumer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">while</span> (!done.<span class="built_in">load</span>(std::memory_order_acquire)) &#123;&#125;</span><br><span class="line">    <span class="comment">// 这里读取 result.value</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这类模式是 acquire&#x2F;release 最值得优先熟练掌握的用法。</p>
+<hr>
+<h2 id="20-一个高频模式：纯统计计数"><a href="#20-一个高频模式：纯统计计数" class="headerlink" title="20. 一个高频模式：纯统计计数"></a>20. 一个高频模式：纯统计计数</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">std::atomic&lt;<span class="type">long</span> <span class="type">long</span>&gt; counter&#123;<span class="number">0</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">worker</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100000</span>; ++i) &#123;</span><br><span class="line">        counter.<span class="built_in">fetch_add</span>(<span class="number">1</span>, std::memory_order_relaxed);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里若只是最后读总数，<code>relaxed</code> 往往就足够，因为你并不依赖这个计数去同步其他数据。</p>
+<hr>
+<h2 id="21-常见误区"><a href="#21-常见误区" class="headerlink" title="21. 常见误区"></a>21. 常见误区</h2><h3 id="21-1-“原子-不需要思考同步”"><a href="#21-1-“原子-不需要思考同步”" class="headerlink" title="21.1 “原子 &#x3D; 不需要思考同步”"></a>21.1 “原子 &#x3D; 不需要思考同步”</h3><p>错。<br>原子只解决了一部分问题，真正难的是：</p>
+<ul>
+<li>你想建立什么可见性关系</li>
+<li>你要不要顺序保证</li>
+</ul>
+<h3 id="21-2-“我用了原子，就能保护一大片普通变量”"><a href="#21-2-“我用了原子，就能保护一大片普通变量”" class="headerlink" title="21.2 “我用了原子，就能保护一大片普通变量”"></a>21.2 “我用了原子，就能保护一大片普通变量”</h3><p>只有当发布&#x2F;获取关系写对时才成立。</p>
+<h3 id="21-3-“lock-free-一定更先进”"><a href="#21-3-“lock-free-一定更先进”" class="headerlink" title="21.3 “lock-free 一定更先进”"></a>21.3 “lock-free 一定更先进”</h3><p>并发工程里先进不先进不重要，重要的是：</p>
+<ul>
+<li>正确</li>
+<li>可维护</li>
+<li>有实际性能收益</li>
+</ul>
+<h3 id="21-4-“volatile-可以替代-atomic”"><a href="#21-4-“volatile-可以替代-atomic”" class="headerlink" title="21.4 “volatile 可以替代 atomic”"></a>21.4 “<code>volatile</code> 可以替代 <code>atomic</code>”</h3><p>不能。<br><code>volatile</code> 不是线程同步原语。</p>
+<hr>
+<h2 id="22-一页总结"><a href="#22-一页总结" class="headerlink" title="22. 一页总结"></a>22. 一页总结</h2><p>原子操作最重要的不是 API 数量，而是建立这条理解链：</p>
+<ol>
+<li>原子保证操作本身不会被数据竞争破坏</li>
+<li>内存序决定不同线程看到这些操作及相关普通内存的顺序关系</li>
+<li><code>relaxed</code> 只保原子性，不保发布顺序</li>
+<li><code>release/acquire</code> 是最常用的发布-获取模型</li>
+<li><code>seq_cst</code> 最直观，适合先写对</li>
+<li>无锁不是性能银弹，false sharing 和 CAS 重试都可能很贵</li>
+</ol>
+<p>如果只记两个最高频结论：</p>
+<ul>
+<li>纯计数：优先考虑 <code>relaxed</code></li>
+<li>发布数据给别的线程：优先考虑 <code>release/acquire</code></li>
+</ul>
+<hr>
+<h2 id="23-建议继续补充的相关主题"><a href="#23-建议继续补充的相关主题" class="headerlink" title="23. 建议继续补充的相关主题"></a>23. 建议继续补充的相关主题</h2><p>和本篇衔接最紧密的内容：</p>
+<ol>
+<li>C++ 内存模型正式定义</li>
+<li>ABA 问题</li>
+<li>无锁队列 &#x2F; Michael-Scott Queue</li>
+<li>hazard pointers &#x2F; epoch reclamation</li>
+<li><code>atomic_ref</code> 与 <code>std::barrier</code></li>
+</ol>
+<hr>
+<h2 id="24-参考资料"><a href="#24-参考资料" class="headerlink" title="24. 参考资料"></a>24. 参考资料</h2><ol>
+<li><p>cppreference: <code>std::atomic</code><br><a target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/atomic/atomic">https://en.cppreference.com/w/cpp/atomic/atomic</a></p>
+</li>
+<li><p>cppreference: memory order<br><a target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/atomic/memory_order">https://en.cppreference.com/w/cpp/atomic/memory_order</a></p>
+</li>
+<li><p>C++ Core Guidelines, Concurrency<br><a target="_blank" rel="noopener" href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines">https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines</a></p>
+</li>
+</ol>
 
       
     </div>
@@ -808,7 +2204,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/2025/11/16/%E7%94%9F%E6%B4%BB/%E6%97%85%E6%B8%B8%E6%94%BB%E7%95%A5/%E9%BB%84%E5%B1%B1/">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/12-%E6%B5%81%E4%BD%93%E4%BB%BF%E7%9C%9F%E5%AE%9E%E6%88%98/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/img/me.jpg">
@@ -826,7 +2222,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/11/16/%E7%94%9F%E6%B4%BB/%E6%97%85%E6%B8%B8%E6%94%BB%E7%95%A5/%E9%BB%84%E5%B1%B1/" class="post-title-link" itemprop="url">黄山</a>
+          <a href="/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/12-%E6%B5%81%E4%BD%93%E4%BB%BF%E7%9C%9F%E5%AE%9E%E6%88%98/" class="post-title-link" itemprop="url">流体仿真实战</a>
         </h2>
 
         <div class="post-meta-container">
@@ -837,14 +2233,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2025-11-16 11:05:41" itemprop="dateCreated datePublished" datetime="2025-11-16T11:05:41+08:00">2025-11-16</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-01-24 10:43:15" itemprop="dateModified" datetime="2026-01-24T10:43:15+08:00">2026-01-24</time>
+      <time title="创建时间：2026-04-09 10:27:50" itemprop="dateCreated datePublished" datetime="2026-04-09T10:27:50+08:00">2026-04-09</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -852,11 +2241,11 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%94%9F%E6%B4%BB/" itemprop="url" rel="index"><span itemprop="name">生活</span></a>
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
         </span>
           ，
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%94%9F%E6%B4%BB/%E6%97%85%E6%B8%B8%E6%94%BB%E7%95%A5/" itemprop="url" rel="index"><span itemprop="name">旅游攻略</span></a>
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/%E9%AB%98%E6%80%A7%E8%83%BDC-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">高性能C++并行编程</span></a>
         </span>
     </span>
 
@@ -870,511 +2259,700 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="黄山"><a href="#黄山" class="headerlink" title="黄山"></a>黄山</h1><p><a target="_blank" rel="noopener" href="https://www.nipic.com/show/50091343.html?utm_source=chatgpt.com"><img src="https://tse4.mm.bing.net/th/id/OIP.a92obHwocDrNicbuQrWrswHaJ1?cb=ucfimg2&pid=Api&ucfimg=1" alt="AI创作图黄山 奇松 山谷 云海 松树 绿色 自然 风景 旅行 摄影 中国 安徽省 地理 生态 宁静 壮丽nipic.com-昵图网"></a></p>
-<h2 id="一、整体思路（预算版）"><a href="#一、整体思路（预算版）" class="headerlink" title="一、整体思路（预算版）"></a>一、整体思路（预算版）</h2><ul>
-<li><p><strong>出行方式</strong>：广州 → 黄山北 高铁往返，二等座一般单程 520–600 元左右，往返约 1100–1200 元。(<a target="_blank" rel="noopener" href="https://trains.ctrip.com/TrainBooking/guangzhounan-huangshan/gaotie/?utm_source=chatgpt.com" title="广州南到黄山高铁查询">携程火车票</a>)</p>
-</li>
-<li><p><strong>住宿策略</strong>：</p>
-<ul>
-<li>不住山上，<strong>两晚都住山下（汤口或者屯溪）</strong>，选 100–150&#x2F;晚的经济型酒店&#x2F;客栈。</li>
-</ul>
-</li>
-<li><p><strong>景点选择</strong>：</p>
-<ul>
-<li>D1–D2：黄山一日半：走索道+步行的轻量版线路</li>
-<li>D3：宏村半日 + 黄山市区随便逛，视预算可选</li>
-</ul>
-</li>
-<li><p><strong>控制花费的小技巧</strong>：</p>
-<ul>
-<li>索道只坐一段（上山坐，视体力下山走部分路）。</li>
-<li>山上的水&#x2F;零食尽量自带一些。</li>
-<li>宏村可以跟当地一日游&#x2F;拼车，省心也省一点车费。</li>
-</ul>
-</li>
-</ul>
-<hr>
-<h2 id="二、详细行程规划"><a href="#二、详细行程规划" class="headerlink" title="二、详细行程规划"></a>二、详细行程规划</h2><h3 id="▶-D1：广州-→-黄山北-→-汤口-屯溪（轻松抵达日）"><a href="#▶-D1：广州-→-黄山北-→-汤口-屯溪（轻松抵达日）" class="headerlink" title="▶ D1：广州 → 黄山北 → 汤口&#x2F;屯溪（轻松抵达日）"></a>▶ D1：广州 → 黄山北 → 汤口&#x2F;屯溪（轻松抵达日）</h3><p><strong>上午 &#x2F; 中午</strong></p>
-<ul>
-<li><p>从 <strong>广州南&#x2F;广州东&#x2F;广州新塘 → 黄山北</strong> 坐高铁，尽量选中午前出发、下午两三点到黄山北的车次（车程约 5 小时）。(<a target="_blank" rel="noopener" href="https://tw.trip.com/trains/china/route/guangzhou-to-huangshan/?utm_source=chatgpt.com" title="從廣州到黃山的高鐵預訂、票價及時刻表">Trip.com</a>)</p>
-</li>
-<li><p>黄山北出站后：</p>
-<ul>
-<li>若第二天一早上黄山：建议直接去 <strong>汤口镇（黄山南大门）</strong>，大巴或拼车约 1–1.5 小时。</li>
-<li>若想市区逛一逛：可以先住 <strong>屯溪老街附近</strong>，晚上吃吃逛逛。</li>
-</ul>
-</li>
-</ul>
-<p><strong>下午 &#x2F; 晚上</strong></p>
-<ul>
-<li>办理入住（控制在 <strong>100–150 元&#x2F;晚</strong> 的快捷酒店&#x2F;客栈）。</li>
-<li>在屯溪的话：逛 <strong>屯溪老街</strong>，吃一顿徽菜（毛豆腐、臭鳜鱼、刀板香等）。</li>
-<li>在汤口的话：熟悉第二天上山的大巴、售票处位置，早点休息。</li>
-</ul>
+          <h1 id="流体仿真实战"><a href="#流体仿真实战" class="headerlink" title="流体仿真实战"></a>流体仿真实战</h1><p>时间：2026&#x2F;04&#x2F;09</p>
 <blockquote>
-<p>建议：预算紧 &amp; 主要目标是黄山 → <strong>D1 晚上住汤口</strong> 会更高效，第二天可以早早上山。</p>
+<p>关键词：Eulerian grid、advection、diffusion、projection、pressure solve、ping-pong、texture object、CUDA<br>核心目标：从工程角度理解一个实时流体模拟在 GPU 上通常由哪些步骤组成，以及每一步为什么这样设计。</p>
 </blockquote>
 <hr>
-<h3 id="▶-D2：黄山一日游（索道-精华步行，不住山上）"><a href="#▶-D2：黄山一日游（索道-精华步行，不住山上）" class="headerlink" title="▶ D2：黄山一日游（索道 + 精华步行，不住山上）"></a>▶ D2：黄山一日游（索道 + 精华步行，不住山上）</h3><blockquote>
-<p>预算版选择：<strong>黄山一日“精华速刷版”</strong>，不上主峰也能感受到黄山特色。</p>
-</blockquote>
-<p><strong>早上</strong></p>
-<ol>
-<li><p>早起从酒店 → 汤口新国线换乘中心</p>
-</li>
-<li><p>买票：</p>
+<h2 id="1-先建立问题模型"><a href="#1-先建立问题模型" class="headerlink" title="1. 先建立问题模型"></a>1. 先建立问题模型</h2><p>实时流体仿真通常不是在“跟踪每一个分子”，而是在求解离散化后的场：</p>
 <ul>
-<li>景区门票：平旺季 <strong>190 元&#x2F;人</strong>(<a target="_blank" rel="noopener" href="https://hf.bendibao.com/tour/2023331/91141.shtm?utm_source=chatgpt.com" title="黄山门票多少钱2025？附索道价格">hf.bendibao.com</a>)</li>
-<li>景区大巴：单程 19 元，上下山合计约 38 元。(<a target="_blank" rel="noopener" href="https://wap.huangshan.com.cn/hsdetail/ticket/park2017122114525726?addressLabel=04&utm_source=chatgpt.com" title="黄山风景区-门票索道详情">wap.huangshan.com.cn</a>)</li>
+<li>速度场 <code>u(x, y[, z])</code></li>
+<li>压力场 <code>p</code></li>
+<li>密度&#x2F;烟雾浓度 <code>d</code></li>
+<li>温度、外力等附加场</li>
 </ul>
+<p>在图形学实时仿真里，最常见的是 <strong>Eulerian 网格法</strong>：</p>
+<ul>
+<li>空间被划分成规则网格</li>
+<li>每个网格单元保存局部状态</li>
+<li>关注的是“这个位置上的流体状态”，而不是“某个粒子去哪了”</li>
+</ul>
+<hr>
+<h2 id="2-一帧流体模拟通常做什么"><a href="#2-一帧流体模拟通常做什么" class="headerlink" title="2. 一帧流体模拟通常做什么"></a>2. 一帧流体模拟通常做什么</h2><p>一个经典的 2D&#x2F;3D 实时烟雾模拟步骤，通常长这样：</p>
+<ol>
+<li>对速度场做平流（advection）</li>
+<li>对密度&#x2F;温度做平流</li>
+<li>加入外力（force &#x2F; impulse）</li>
+<li>计算散度（divergence）</li>
+<li>解压强泊松方程（pressure solve）</li>
+<li>用压力梯度做投影（projection）</li>
+<li>得到无散速度场</li>
+<li>渲染密度或其他可视化结果</li>
+</ol>
+<p>这条管线里最关键的思想是：</p>
+<ul>
+<li>平流负责“把东西搬着走”</li>
+<li>压力投影负责“让速度场满足不可压缩约束”</li>
+</ul>
+<hr>
+<h2 id="3-为什么很多实时流体用-Stable-Fluids"><a href="#3-为什么很多实时流体用-Stable-Fluids" class="headerlink" title="3. 为什么很多实时流体用 Stable Fluids"></a>3. 为什么很多实时流体用 Stable Fluids</h2><p>Jos Stam 的 Stable Fluids 思想之所以经典，是因为它强调：</p>
+<ul>
+<li>数值上更稳定</li>
+<li>能容忍较大的时间步长</li>
+<li>非常适合图形实时场景</li>
+</ul>
+<p>它的代价通常是：</p>
+<ul>
+<li>会更粘、更耗散</li>
+<li>细节可能被抹平</li>
+</ul>
+<p>所以工程上通常要在：</p>
+<ul>
+<li>稳定性</li>
+<li>速度</li>
+<li>视觉效果</li>
+</ul>
+<p>之间做平衡。</p>
+<hr>
+<h2 id="4-网格、边界与数据布局"><a href="#4-网格、边界与数据布局" class="headerlink" title="4. 网格、边界与数据布局"></a>4. 网格、边界与数据布局</h2><h3 id="4-1-最常见的数据"><a href="#4-1-最常见的数据" class="headerlink" title="4.1 最常见的数据"></a>4.1 最常见的数据</h3><p>二维时经常有：</p>
+<ul>
+<li><code>vel_x</code></li>
+<li><code>vel_y</code></li>
+<li><code>pressure</code></li>
+<li><code>divergence</code></li>
+<li><code>density</code></li>
+</ul>
+<h3 id="4-2-常见存储方式"><a href="#4-2-常见存储方式" class="headerlink" title="4.2 常见存储方式"></a>4.2 常见存储方式</h3><p>对 GPU 更友好的方式通常是：</p>
+<ul>
+<li>扁平连续数组</li>
+<li>纹理&#x2F;表面对象</li>
+<li>ping-pong 双缓冲</li>
+</ul>
+<p>例如二维数组常展平成：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">idx = y * width + x;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-3-为什么常用-SoA-思路"><a href="#4-3-为什么常用-SoA-思路" class="headerlink" title="4.3 为什么常用 SoA 思路"></a>4.3 为什么常用 SoA 思路</h3><p>不同字段通常分开存：</p>
+<ul>
+<li>一个数组&#x2F;纹理存 <code>vel_x</code></li>
+<li>一个数组&#x2F;纹理存 <code>vel_y</code></li>
+<li>一个数组&#x2F;纹理存 <code>pressure</code></li>
+</ul>
+<p>这比把所有字段塞进一个大结构更容易：</p>
+<ul>
+<li>控制带宽</li>
+<li>做批量 kernel</li>
+<li>针对单一字段优化访问</li>
+</ul>
+<hr>
+<h2 id="5-平流（Advection）是什么"><a href="#5-平流（Advection）是什么" class="headerlink" title="5. 平流（Advection）是什么"></a>5. 平流（Advection）是什么</h2><p>直觉上，平流就是：</p>
+<blockquote>
+<p>按速度场把某个量“搬运”到下一个时刻。</p>
+</blockquote>
+<p>对于密度场来说，可以理解成：</p>
+<ul>
+<li>烟雾随着流速移动</li>
+</ul>
+<p>对于速度场本身来说：</p>
+<ul>
+<li>速度也会被自身流动搬运</li>
+</ul>
+<h3 id="5-1-半拉格朗日（Semi-Lagrangian）平流"><a href="#5-1-半拉格朗日（Semi-Lagrangian）平流" class="headerlink" title="5.1 半拉格朗日（Semi-Lagrangian）平流"></a>5.1 半拉格朗日（Semi-Lagrangian）平流</h3><p>实时图形里很常见的做法是“反向追踪”：</p>
+<ul>
+<li>对当前网格点 <code>(x, y)</code></li>
+<li>沿速度反方向回溯到上一个时刻的位置</li>
+<li>从旧场中插值取样</li>
+</ul>
+<p>公式直觉：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">phi_new(x) = phi_old(x - dt * u(x))</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-2-为什么它适合-GPU"><a href="#5-2-为什么它适合-GPU" class="headerlink" title="5.2 为什么它适合 GPU"></a>5.2 为什么它适合 GPU</h3><p>因为每个网格点都能独立算：</p>
+<ul>
+<li>回溯位置</li>
+<li>插值取样</li>
+<li>写回新值</li>
+</ul>
+<p>这非常适合 data-parallel kernel。</p>
+<hr>
+<h2 id="6-为什么纹理对象在流体里常见"><a href="#6-为什么纹理对象在流体里常见" class="headerlink" title="6. 为什么纹理对象在流体里常见"></a>6. 为什么纹理对象在流体里常见</h2><p>流体平流特别需要“按浮点坐标插值采样旧场”。<br>这正是纹理对象很擅长的事情。</p>
+<h3 id="6-1-纹理对象的实际优势"><a href="#6-1-纹理对象的实际优势" class="headerlink" title="6.1 纹理对象的实际优势"></a>6.1 纹理对象的实际优势</h3><ul>
+<li>支持硬件插值</li>
+<li>支持边界寻址模式</li>
+<li>访问接口清晰</li>
+<li>对二维&#x2F;三维场很自然</li>
+</ul>
+<p>因此在 CUDA 流体项目里，经常会看到：</p>
+<ul>
+<li>旧场绑定成 texture</li>
+<li>新场写到 output buffer &#x2F; surface</li>
+</ul>
+<h3 id="6-2-一个常见工程模式"><a href="#6-2-一个常见工程模式" class="headerlink" title="6.2 一个常见工程模式"></a>6.2 一个常见工程模式</h3><ul>
+<li><code>src</code> 作为只读纹理</li>
+<li><code>dst</code> 作为可写 buffer</li>
+<li>kernel 结束后交换 <code>src/dst</code></li>
+</ul>
+<p>这就是典型的 ping-pong。</p>
+<hr>
+<h2 id="7-Ping-Pong-双缓冲为什么几乎是标配"><a href="#7-Ping-Pong-双缓冲为什么几乎是标配" class="headerlink" title="7. Ping-Pong 双缓冲为什么几乎是标配"></a>7. Ping-Pong 双缓冲为什么几乎是标配</h2><p>平流、扩散、压力迭代这类步骤，通常不能一边读旧值一边原地覆盖写新值，否则会污染后续计算。</p>
+<p>最常见做法：</p>
+<ul>
+<li><code>A</code> 存旧场</li>
+<li><code>B</code> 存新场</li>
+<li>一步计算后交换 <code>A/B</code></li>
+</ul>
+<p>例如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">advect:    vel0 -&gt; vel1</span><br><span class="line">swap</span><br><span class="line">project:   vel1 -&gt; vel0</span><br><span class="line">swap</span><br></pre></td></tr></table></figure>
+
+<p>双缓冲的代价是多占一份显存，但好处是：</p>
+<ul>
+<li>读写依赖清晰</li>
+<li>kernel 更容易写对</li>
+<li>更适合并行</li>
+</ul>
+<hr>
+<h2 id="8-散度（Divergence）为什么要算"><a href="#8-散度（Divergence）为什么要算" class="headerlink" title="8. 散度（Divergence）为什么要算"></a>8. 散度（Divergence）为什么要算</h2><p>不可压缩流体通常要求：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">div(u) = 0</span><br></pre></td></tr></table></figure>
+
+<p>但经过加力、平流等步骤后，速度场往往不再满足这个条件。<br>所以需要先计算散度，看看当前速度场“有多不守恒”。</p>
+<p>二维中心差分的直觉形式：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">div = (u_right - u_left + v_up - v_down) * 0.5 / h</span><br></pre></td></tr></table></figure>
+
+<p>算出来的散度场会成为后面压力方程的右端项。</p>
+<hr>
+<h2 id="9-压力求解（Pressure-Solve）是核心瓶颈之一"><a href="#9-压力求解（Pressure-Solve）是核心瓶颈之一" class="headerlink" title="9. 压力求解（Pressure Solve）是核心瓶颈之一"></a>9. 压力求解（Pressure Solve）是核心瓶颈之一</h2><p>为了让速度场重新无散，通常要解一个泊松方程：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">∇²p = div</span><br></pre></td></tr></table></figure>
+
+<p>这里：</p>
+<ul>
+<li><code>p</code> 是压力</li>
+<li><code>div</code> 是上一阶段算出的散度</li>
+</ul>
+<h3 id="9-1-为什么这是难点"><a href="#9-1-为什么这是难点" class="headerlink" title="9.1 为什么这是难点"></a>9.1 为什么这是难点</h3><p>因为它不是一个局部一步完成的更新，而是一个全局耦合问题。<br>实时实现中常用近似迭代法，例如：</p>
+<ul>
+<li>Jacobi</li>
+<li>Gauss-Seidel</li>
+<li>Red-Black Gauss-Seidel</li>
+<li>Multigrid（更复杂也更强）</li>
+</ul>
+<h3 id="9-2-为什么很多教程先用-Jacobi"><a href="#9-2-为什么很多教程先用-Jacobi" class="headerlink" title="9.2 为什么很多教程先用 Jacobi"></a>9.2 为什么很多教程先用 Jacobi</h3><p>因为它简单、规则、容易并行：</p>
+<ul>
+<li>每次迭代只读旧压力</li>
+<li>写新压力</li>
+<li>适合 GPU 大规模并行</li>
+</ul>
+<p>代价是收敛速度不算快。</p>
+<hr>
+<h2 id="10-投影（Projection）在做什么"><a href="#10-投影（Projection）在做什么" class="headerlink" title="10. 投影（Projection）在做什么"></a>10. 投影（Projection）在做什么</h2><p>解出压力场后，用压力梯度修正速度：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">u&#x27; = u - ∇p</span><br></pre></td></tr></table></figure>
+
+<p>直觉上就是：</p>
+<ul>
+<li>从原速度里减掉“造成体积膨胀&#x2F;压缩”的那部分</li>
+</ul>
+<p>投影之后，速度场更接近无散状态，也就更符合不可压缩流体假设。</p>
+<p>这一步通常是：</p>
+<ol>
+<li>读取速度</li>
+<li>读取相邻压力</li>
+<li>做梯度差分</li>
+<li>写回新速度</li>
+</ol>
+<hr>
+<h2 id="11-边界条件不能忽略"><a href="#11-边界条件不能忽略" class="headerlink" title="11. 边界条件不能忽略"></a>11. 边界条件不能忽略</h2><p>很多新手代码“能跑但看起来不对”，问题往往在边界。</p>
+<p>常见边界处理包括：</p>
+<ul>
+<li>固壁边界</li>
+<li>开放边界</li>
+<li>周期边界</li>
+<li>障碍物边界</li>
+</ul>
+<p>例如固壁边界时，速度在法向方向通常要满足不穿透约束。</p>
+<p>如果边界没处理好，可能会出现：</p>
+<ul>
+<li>烟雾穿墙</li>
+<li>边缘数值爆炸</li>
+<li>压力解不稳定</li>
+</ul>
+<hr>
+<h2 id="12-CUDA-上通常如何拆-kernel"><a href="#12-CUDA-上通常如何拆-kernel" class="headerlink" title="12. CUDA 上通常如何拆 kernel"></a>12. CUDA 上通常如何拆 kernel</h2><p>一个典型实时流体项目不会把全部逻辑塞进一个 kernel，而是拆成多步：</p>
+<ul>
+<li><code>advect_velocity</code></li>
+<li><code>advect_density</code></li>
+<li><code>add_force</code></li>
+<li><code>compute_divergence</code></li>
+<li><code>jacobi_pressure</code></li>
+<li><code>project_velocity</code></li>
+<li><code>render_density</code></li>
+</ul>
+<p>这样做的好处：</p>
+<ul>
+<li>每步逻辑清晰</li>
+<li>便于调试</li>
+<li>便于替换某一步算法</li>
+</ul>
+<p>代价是：</p>
+<ul>
+<li>kernel launch 次数变多</li>
+<li>中间结果要反复读写全局内存</li>
+</ul>
+<p>所以工程优化通常是在“模块清晰”和“减少中间带宽”之间折中。</p>
+<hr>
+<h2 id="13-一个典型的-CUDA-数据流"><a href="#13-一个典型的-CUDA-数据流" class="headerlink" title="13. 一个典型的 CUDA 数据流"></a>13. 一个典型的 CUDA 数据流</h2><p>可以把一帧想成这样：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">velocity_src --advect--&gt; velocity_dst</span><br><span class="line">swap</span><br><span class="line"></span><br><span class="line">density_src --advect--&gt; density_dst</span><br><span class="line">swap</span><br><span class="line"></span><br><span class="line">velocity_src --add_force--&gt; velocity_dst</span><br><span class="line">swap</span><br><span class="line"></span><br><span class="line">velocity_src --divergence--&gt; divergence</span><br><span class="line"></span><br><span class="line">pressure_src --jacobi--&gt; pressure_dst</span><br><span class="line">swap</span><br><span class="line">... 迭代多次 ...</span><br><span class="line"></span><br><span class="line">velocity_src + pressure_src --project--&gt; velocity_dst</span><br><span class="line">swap</span><br><span class="line"></span><br><span class="line">density_src --render--&gt; framebuffer</span><br></pre></td></tr></table></figure>
+
+<p>其中压力求解阶段往往会迭代很多轮，是核心带宽热点之一。</p>
+<hr>
+<h2 id="14-纹理对象在这里最常见的落点"><a href="#14-纹理对象在这里最常见的落点" class="headerlink" title="14. 纹理对象在这里最常见的落点"></a>14. 纹理对象在这里最常见的落点</h2><h3 id="14-1-平流时"><a href="#14-1-平流时" class="headerlink" title="14.1 平流时"></a>14.1 平流时</h3><p>因为需要按浮点坐标回溯并插值取样旧场。</p>
+<h3 id="14-2-可视化时"><a href="#14-2-可视化时" class="headerlink" title="14.2 可视化时"></a>14.2 可视化时</h3><p>例如把密度场映射到图像。</p>
+<h3 id="14-3-有时不用纹理也能做"><a href="#14-3-有时不用纹理也能做" class="headerlink" title="14.3 有时不用纹理也能做"></a>14.3 有时不用纹理也能做</h3><p>完全可以手写双线性插值，但纹理对象通常更方便，也更贴近 GPU 图像管线思维。</p>
+<hr>
+<h2 id="15-性能瓶颈通常在哪"><a href="#15-性能瓶颈通常在哪" class="headerlink" title="15. 性能瓶颈通常在哪"></a>15. 性能瓶颈通常在哪</h2><h3 id="15-1-不一定是算术，而是带宽"><a href="#15-1-不一定是算术，而是带宽" class="headerlink" title="15.1 不一定是算术，而是带宽"></a>15.1 不一定是算术，而是带宽</h3><p>流体很多步骤都是 stencil &#x2F; 邻域访问：</p>
+<ul>
+<li>读周围多个点</li>
+<li>写一个点</li>
+</ul>
+<p>因此常见瓶颈是：</p>
+<ul>
+<li>全局内存带宽</li>
+<li>多次中间场读写</li>
+</ul>
+<h3 id="15-2-压力迭代轮数"><a href="#15-2-压力迭代轮数" class="headerlink" title="15.2 压力迭代轮数"></a>15.2 压力迭代轮数</h3><p>Jacobi 每多迭代一轮，都意味着：</p>
+<ul>
+<li>再扫一遍整个压力场</li>
+</ul>
+<p>所以视觉质量和帧率经常直接在这里博弈。</p>
+<h3 id="15-3-边界和条件判断"><a href="#15-3-边界和条件判断" class="headerlink" title="15.3 边界和条件判断"></a>15.3 边界和条件判断</h3><p>边界格子处理如果分支太多，也会影响 warp 执行效率。</p>
+<hr>
+<h2 id="16-常见优化方向"><a href="#16-常见优化方向" class="headerlink" title="16. 常见优化方向"></a>16. 常见优化方向</h2><h3 id="16-1-减少全局内存往返"><a href="#16-1-减少全局内存往返" class="headerlink" title="16.1 减少全局内存往返"></a>16.1 减少全局内存往返</h3><p>例如：</p>
+<ul>
+<li>更少的中间缓冲</li>
+<li>更合理的 kernel 融合</li>
+</ul>
+<h3 id="16-2-用-shared-memory-做局部邻域缓存"><a href="#16-2-用-shared-memory-做局部邻域缓存" class="headerlink" title="16.2 用 shared memory 做局部邻域缓存"></a>16.2 用 shared memory 做局部邻域缓存</h3><p>对于 stencil 类计算，局部 tile 常能减少重复全局加载。</p>
+<h3 id="16-3-让访问尽量规则"><a href="#16-3-让访问尽量规则" class="headerlink" title="16.3 让访问尽量规则"></a>16.3 让访问尽量规则</h3><p>例如：</p>
+<ul>
+<li>扁平数组</li>
+<li>合理线程块布局</li>
+<li>连续内存访问</li>
+</ul>
+<h3 id="16-4-区分“视觉上够用”和“数值上更准”"><a href="#16-4-区分“视觉上够用”和“数值上更准”" class="headerlink" title="16.4 区分“视觉上够用”和“数值上更准”"></a>16.4 区分“视觉上够用”和“数值上更准”</h3><p>实时图形里很多时候不是求学术最优，而是：</p>
+<ul>
+<li>足够稳定</li>
+<li>足够快</li>
+<li>视觉上自然</li>
+</ul>
+<hr>
+<h2 id="17-为什么这类项目特别适合做综合练习"><a href="#17-为什么这类项目特别适合做综合练习" class="headerlink" title="17. 为什么这类项目特别适合做综合练习"></a>17. 为什么这类项目特别适合做综合练习</h2><p>流体仿真把很多高性能主题都串起来了：</p>
+<ul>
+<li>数据布局</li>
+<li>邻域访存</li>
+<li>ping-pong 双缓冲</li>
+<li>GPU kernel 设计</li>
+<li>纹理对象</li>
+<li>迭代求解器</li>
+<li>可视化与物理折中</li>
+</ul>
+<p>所以它既是一个图形学题目，也是一个很典型的并行计算工程题。</p>
+<hr>
+<h2 id="18-初学实现建议"><a href="#18-初学实现建议" class="headerlink" title="18. 初学实现建议"></a>18. 初学实现建议</h2><p>如果你第一次做，比较稳的路线是：</p>
+<ol>
+<li>先做 2D，不要一开始上 3D</li>
+<li>先做密度平流，再加速度场</li>
+<li>再补散度、压力、投影</li>
+<li>压力求解先用 Jacobi 跑通</li>
+<li>最后再考虑纹理对象、shared memory、性能优化</li>
+</ol>
+<p>因为最难的不是“写出一个 kernel”，而是：</p>
+<ul>
+<li>整条数据流逻辑正确</li>
+<li>每步边界一致</li>
+<li>数值上稳定</li>
+</ul>
+<hr>
+<h2 id="19-一页总结"><a href="#19-一页总结" class="headerlink" title="19. 一页总结"></a>19. 一页总结</h2><p>实时流体仿真的工程骨架，可以压缩成下面几句：</p>
+<ol>
+<li>用规则网格存速度、压力和密度场</li>
+<li>用平流把量沿速度场搬运</li>
+<li>用散度和压力解修正速度场</li>
+<li>用投影得到近似不可压缩流体</li>
+<li>用 ping-pong 双缓冲保证每一步读写分离</li>
+<li>用纹理对象和连续布局提高 GPU 访问效率</li>
+</ol>
+<p>如果只记一个最核心的工程关系，那就是：</p>
+<blockquote>
+<p>平流负责“搬”，压力投影负责“稳”。</p>
+</blockquote>
+<hr>
+<h2 id="20-建议继续补充的相关主题"><a href="#20-建议继续补充的相关主题" class="headerlink" title="20. 建议继续补充的相关主题"></a>20. 建议继续补充的相关主题</h2><p>和本篇衔接最紧密的内容：</p>
+<ol>
+<li>CUDA texture &#x2F; surface object 细节</li>
+<li>Staggered grid（MAC grid）</li>
+<li>Jacobi &#x2F; Gauss-Seidel &#x2F; Multigrid 对比</li>
+<li>Vorticity confinement 与视觉细节增强</li>
+<li>3D 烟雾与体渲染</li>
+</ol>
+<hr>
+<h2 id="21-参考资料"><a href="#21-参考资料" class="headerlink" title="21. 参考资料"></a>21. 参考资料</h2><ol>
+<li><p>Jos Stam, Stable Fluids<br><a target="_blank" rel="noopener" href="https://www.dgp.toronto.edu/public_user/stam/reality/Research/pdf/GDC03.pdf">https://www.dgp.toronto.edu/public_user/stam/reality/Research/pdf/GDC03.pdf</a></p>
 </li>
-<li><p>坐大巴到 <strong>云谷寺（后山口）</strong> → 再坐 <strong>云谷索道上山</strong>，单程 80 元左右（平旺季）。(<a target="_blank" rel="noopener" href="https://hf.bendibao.com/tour/2023331/91141.shtm?utm_source=chatgpt.com" title="黄山门票多少钱2025？附索道价格">hf.bendibao.com</a>)</p>
+<li><p>GPU Gems: Fast Fluid Dynamics Simulation on the GPU<br><a target="_blank" rel="noopener" href="https://developer.nvidia.com/gpugems/gpugems/part-vi-beyond-triangles/chapter-38-fast-fluid-dynamics-simulation-gpu">https://developer.nvidia.com/gpugems/gpugems/part-vi-beyond-triangles/chapter-38-fast-fluid-dynamics-simulation-gpu</a></p>
 </li>
 </ol>
-<p><strong>上山后推荐线路（强度中等）：</strong></p>
-<ul>
-<li>索道上站（白鹅岭） → 始信峰（看奇松、怪石）</li>
-<li>北海景区：清凉台、猴子观海 等观景点</li>
-<li>喜欢走一点路的：可以往 西海入口 方向走一段，再折返，不进大峡谷深处（省体力）。</li>
-<li>中午在北海&#x2F;光明顶附近简单吃点自带干粮或景区快餐。</li>
-</ul>
-<p><strong>下午下山</strong></p>
-<ul>
-<li><p>体力不错：</p>
-<ul>
-<li>从北海 → 白鹅岭 → 步行下到 <strong>云谷寺</strong>（路程较长但一路风景不错）。</li>
-</ul>
-</li>
-<li><p>体力一般：</p>
-<ul>
-<li>返回云谷索道上站 → 再坐索道下山（再花 1×80 元）。</li>
-</ul>
-</li>
-</ul>
-<p>然后：云谷寺 → 大巴 → 汤口 → 回酒店休息。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/07-%E8%AE%BF%E5%AD%98%E4%BC%98%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/07-%E8%AE%BF%E5%AD%98%E4%BC%98%E5%8C%96/" class="post-title-link" itemprop="url">深入浅出访存优化</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-04-09 10:26:36" itemprop="dateCreated datePublished" datetime="2026-04-09T10:26:36+08:00">2026-04-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/%E9%AB%98%E6%80%A7%E8%83%BDC-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">高性能C++并行编程</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="深入浅出访存优化"><a href="#深入浅出访存优化" class="headerlink" title="深入浅出访存优化"></a>深入浅出访存优化</h1><p>时间：2026&#x2F;04&#x2F;09</p>
 <blockquote>
-<p>不上天都峰&#x2F;莲花峰，可以大幅度降低体力和时间消耗，一天玩得比较从容。</p>
+<p>关键词：缓存、cache line、局部性、AoS&#x2F;SoA、stride、blocking、false sharing、带宽、延迟<br>核心目标：理解“为什么同样是 <code>O(n)</code>，不同内存访问方式会有非常大的性能差异”。</p>
 </blockquote>
 <hr>
-<h3 id="▶-D3：宏村半日游-回广州"><a href="#▶-D3：宏村半日游-回广州" class="headerlink" title="▶ D3：宏村半日游 + 回广州"></a>▶ D3：宏村半日游 + 回广州</h3><p><strong>早上：汤口&#x2F;屯溪 → 宏村</strong></p>
+<h2 id="1-为什么访存优化这么重要"><a href="#1-为什么访存优化这么重要" class="headerlink" title="1. 为什么访存优化这么重要"></a>1. 为什么访存优化这么重要</h2><p>很多程序并不是算得慢，而是<strong>等内存等得慢</strong>。</p>
+<p>现代 CPU 的特点是：</p>
 <ul>
-<li>从汤口&#x2F;黄山市区报一个去 <strong>宏村的拼车&#x2F;一日游</strong>，或者去汽车站坐车，车程约 1–1.5 小时。</li>
-<li>宏村门票：成人约 <strong>90–100 元左右</strong>。(<a target="_blank" rel="noopener" href="https://touch.piao.qunar.com/touch/detail.htm?cat=from_area=ts_sku&from_index=4&from_value=%25E5%2590%2588%25E8%2582%25A5%25E5%25BF%2585%25E6%25B8%25B8&dist_city=%25E6%25B7%25AE%25E5%258C%2597&id=11072&utm_source=chatgpt.com" title="宏村景区门票 - 景点门票预订- 去哪儿网">去哪儿网</a>)</li>
+<li>算术单元非常快</li>
+<li>主存访问相对很慢</li>
+<li>一旦 cache miss，CPU 可能要空等很多周期</li>
 </ul>
-<p><strong>宏村游玩重点：</strong></p>
+<p>所以高性能编程里经常会出现这种现象：</p>
 <ul>
-<li>南湖、月沼：徽派建筑 + 水面倒影，拍照很好看。</li>
-<li>巷子里慢慢走走，找几家咖啡&#x2F;小吃店坐坐，体验古村氛围。</li>
+<li>算法复杂度没变</li>
+<li>指令数也没怎么变</li>
+<li>只是换了数据布局和访问顺序</li>
+<li>性能却提升一大截</li>
 </ul>
-<p><strong>下午</strong></p>
+<p>这背后的核心就是访存模式。</p>
+<hr>
+<h2 id="2-CPU-不是直接从内存一格一格取数据"><a href="#2-CPU-不是直接从内存一格一格取数据" class="headerlink" title="2. CPU 不是直接从内存一格一格取数据"></a>2. CPU 不是直接从内存一格一格取数据</h2><h3 id="2-1-缓存层级"><a href="#2-1-缓存层级" class="headerlink" title="2.1 缓存层级"></a>2.1 缓存层级</h3><p>可以先粗略理解成：</p>
 <ul>
-<li>午后从宏村 → 返回黄山北 &#x2F; 屯溪。</li>
-<li>预留足够时间，傍晚或晚上坐高铁 <strong>黄山北 → 广州</strong>。</li>
+<li><code>L1</code>：最小、最快</li>
+<li><code>L2</code>：更大、稍慢</li>
+<li><code>L3</code>：更大、共享、再慢一些</li>
+<li><code>DRAM</code>：远慢于缓存</li>
+</ul>
+<p>因此访问一个数据时：</p>
+<ul>
+<li>如果在缓存里，代价较低</li>
+<li>如果不在，就会发生 cache miss，从更慢层级取</li>
+</ul>
+<h3 id="2-2-cache-line"><a href="#2-2-cache-line" class="headerlink" title="2.2 cache line"></a>2.2 cache line</h3><p>CPU 取数据通常不是只取一个字节或一个 <code>int</code>，而是按<strong>缓存行</strong>成块搬运。</p>
+<p>常见 cache line 大小是：</p>
+<ul>
+<li>64 字节</li>
+</ul>
+<p>这意味着：</p>
+<ul>
+<li>如果你访问了 <code>a[i]</code></li>
+<li>那么 <code>a[i]</code> 周围的一片数据往往也会一起进缓存</li>
+</ul>
+<p>所以连续访问会特别受益。</p>
+<hr>
+<h2 id="3-两种最重要的局部性"><a href="#3-两种最重要的局部性" class="headerlink" title="3. 两种最重要的局部性"></a>3. 两种最重要的局部性</h2><h3 id="3-1-空间局部性"><a href="#3-1-空间局部性" class="headerlink" title="3.1 空间局部性"></a>3.1 空间局部性</h3><p>如果你访问了某个地址，附近地址也很可能马上会被访问。<br>连续数组遍历就是最典型例子。</p>
+<h3 id="3-2-时间局部性"><a href="#3-2-时间局部性" class="headerlink" title="3.2 时间局部性"></a>3.2 时间局部性</h3><p>如果你刚访问过某个数据，很可能短时间内还会再访问它。</p>
+<p>例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; n; ++i) &#123;</span><br><span class="line">    sum += a[i];</span><br><span class="line">    sum += a[i];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>第二次访问 <code>a[i]</code> 很可能仍在缓存里。</p>
+<hr>
+<h2 id="4-为什么顺序访问通常比随机访问快"><a href="#4-为什么顺序访问通常比随机访问快" class="headerlink" title="4. 为什么顺序访问通常比随机访问快"></a>4. 为什么顺序访问通常比随机访问快</h2><p>看两个模式：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; n; ++i) &#123;</span><br><span class="line">    sum += a[i];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>和：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; n; ++i) &#123;</span><br><span class="line">    sum += a[idx[i]];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>第二种如果 <code>idx</code> 很随机，就容易出现：</p>
+<ul>
+<li>cache line 利用率低</li>
+<li>硬件预取器很难提前猜中</li>
+<li>CPU 长时间等待内存</li>
+</ul>
+<p>这就是为什么：</p>
+<ul>
+<li>链表遍历</li>
+<li>稀疏随机访问</li>
+<li>指针追逐</li>
+</ul>
+<p>常常会显著慢于顺序数组遍历。</p>
+<hr>
+<h2 id="5-AoS-与-SoA"><a href="#5-AoS-与-SoA" class="headerlink" title="5. AoS 与 SoA"></a>5. AoS 与 SoA</h2><p>这是访存优化里最经典的话题之一。</p>
+<h3 id="5-1-AoS：Array-of-Struct"><a href="#5-1-AoS：Array-of-Struct" class="headerlink" title="5.1 AoS：Array of Struct"></a>5.1 AoS：Array of Struct</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Particle</span> &#123;</span><br><span class="line">    <span class="type">float</span> x, y, z;</span><br><span class="line">    <span class="type">float</span> vx, vy, vz;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">std::vector&lt;Particle&gt; a;</span><br></pre></td></tr></table></figure>
+
+<p>特点：</p>
+<ul>
+<li>单个对象的属性紧挨着存</li>
+<li>适合“经常整对象一起处理”的场景</li>
+</ul>
+<h3 id="5-2-SoA：Struct-of-Arrays"><a href="#5-2-SoA：Struct-of-Arrays" class="headerlink" title="5.2 SoA：Struct of Arrays"></a>5.2 SoA：Struct of Arrays</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Particles</span> &#123;</span><br><span class="line">    std::vector&lt;<span class="type">float</span>&gt; x, y, z;</span><br><span class="line">    std::vector&lt;<span class="type">float</span>&gt; vx, vy, vz;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>特点：</p>
+<ul>
+<li>同一属性的数据连续存储</li>
+<li>更适合批量处理同一字段</li>
+<li>常更利于 SIMD &#x2F; GPU &#x2F; cache</li>
+</ul>
+<h3 id="5-3-什么时候-SoA-更有优势"><a href="#5-3-什么时候-SoA-更有优势" class="headerlink" title="5.3 什么时候 SoA 更有优势"></a>5.3 什么时候 SoA 更有优势</h3><p>如果你的计算主要是：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (...) &#123;</span><br><span class="line">    x[i] += vx[i] * dt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>那么 SoA 往往更好，因为：</p>
+<ul>
+<li>访问字段连续</li>
+<li>每个 cache line 里装的都是“当前真正要用的数据”</li>
+</ul>
+<h3 id="5-4-什么时候-AoS-更自然"><a href="#5-4-什么时候-AoS-更自然" class="headerlink" title="5.4 什么时候 AoS 更自然"></a>5.4 什么时候 AoS 更自然</h3><p>如果逻辑经常要完整处理单个对象，例如：</p>
+<ul>
+<li>读一个粒子的全部属性</li>
+<li>面向对象接口较多</li>
+</ul>
+<p>AoS 可能更直观。</p>
+<p>经验上：</p>
+<ul>
+<li>计算密集且按字段批量处理时，优先考虑 SoA</li>
+<li>业务逻辑围绕单对象时，AoS 更自然</li>
 </ul>
 <hr>
-<h2 id="三、人均费用粗算（按“2000-左右”来配）"><a href="#三、人均费用粗算（按“2000-左右”来配）" class="headerlink" title="三、人均费用粗算（按“2000 左右”来配）"></a>三、人均费用粗算（按“2000 左右”来配）</h2><blockquote>
-<p>下表是<strong>大致估算</strong>，实际以你订到的车票&#x2F;酒店为准。</p>
-</blockquote>
-<h3 id="1-大头：往返高铁"><a href="#1-大头：往返高铁" class="headerlink" title="1. 大头：往返高铁"></a>1. 大头：往返高铁</h3><ul>
-<li>广州 → 黄山北 二等座：约 520–600 元</li>
-<li>黄山北 → 广州 二等座：约 520–600 元<br>👉 合计按 <strong>1100–1200 元</strong> 预估。(<a target="_blank" rel="noopener" href="https://trains.ctrip.com/TrainBooking/guangzhounan-huangshan/gaotie/?utm_source=chatgpt.com" title="广州南到黄山高铁查询">携程火车票</a>)</li>
-</ul>
-<h3 id="2-景区门票-索道-大巴"><a href="#2-景区门票-索道-大巴" class="headerlink" title="2. 景区门票 + 索道 + 大巴"></a>2. 景区门票 + 索道 + 大巴</h3><ul>
-<li><p>黄山门票：190</p>
-</li>
-<li><p>黄山景区大巴：38（往返）</p>
-</li>
-<li><p>索道：</p>
+<h2 id="6-stride（步长）为什么会直接影响性能"><a href="#6-stride（步长）为什么会直接影响性能" class="headerlink" title="6. stride（步长）为什么会直接影响性能"></a>6. stride（步长）为什么会直接影响性能</h2><h3 id="6-1-连续步长访问"><a href="#6-1-连续步长访问" class="headerlink" title="6.1 连续步长访问"></a>6.1 连续步长访问</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; n; ++i) &#123;</span><br><span class="line">    sum += a[i];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这通常最好。</p>
+<h3 id="6-2-大步长访问"><a href="#6-2-大步长访问" class="headerlink" title="6.2 大步长访问"></a>6.2 大步长访问</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; n; i += <span class="number">16</span>) &#123;</span><br><span class="line">    sum += a[i];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>问题在于：</p>
 <ul>
-<li>只坐上行一次：80</li>
-<li>若上下都坐：160</li>
+<li>每次只用到一个 cache line 里的很少一部分</li>
+<li>带宽利用率低</li>
 </ul>
-</li>
-<li><p>宏村门票：约 94（按网上成人价估算）(<a target="_blank" rel="noopener" href="https://touch.piao.qunar.com/touch/detail.htm?cat=from_area=ts_sku&from_index=4&from_value=%25E5%2590%2588%25E8%2582%25A5%25E5%25BF%2585%25E6%25B8%25B8&dist_city=%25E6%25B7%25AE%25E5%258C%2597&id=11072&utm_source=chatgpt.com" title="宏村景区门票 - 景点门票预订- 去哪儿网">去哪儿网</a>)</p>
-</li>
-</ul>
-<p><strong>控制版（只坐单程索道）合计：</strong><br><code>190 + 38 + 80 + 94 ≈ 402 元</code></p>
-<p>如果你觉得体力一般，上下都坐索道：<br><code>190 + 38 + 160 + 94 ≈ 482 元</code></p>
-<h3 id="3-住宿"><a href="#3-住宿" class="headerlink" title="3. 住宿"></a>3. 住宿</h3><ul>
-<li>D1：汤口&#x2F;屯溪经济型酒店 100–150</li>
-<li>D2：同上，再 100–150<br>👉 住宿预估：<strong>200–300 元</strong></li>
-</ul>
-<h3 id="4-吃饭-当地交通"><a href="#4-吃饭-当地交通" class="headerlink" title="4. 吃饭 + 当地交通"></a>4. 吃饭 + 当地交通</h3><ul>
-<li>吃饭按 <strong>80–100 元&#x2F;天</strong> 算，3 天 ≈ 240–300 元</li>
-<li>市内&#x2F;镇内小交通、拼车到宏村等：预留 <strong>100–150 元</strong>。</li>
+<h3 id="6-3-二维数组里的列访问"><a href="#6-3-二维数组里的列访问" class="headerlink" title="6.3 二维数组里的列访问"></a>6.3 二维数组里的列访问</h3><p>假设按行连续存储：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">size_t</span> j = <span class="number">0</span>; j &lt; m; ++j) &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; n; ++i) &#123;</span><br><span class="line">        sum += a[i][j];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果内层循环跨行跳，会比按行访问差很多。</p>
+<p>因此多维数据常见经验是：</p>
+<ul>
+<li><strong>内层循环尽量走连续维</strong></li>
 </ul>
 <hr>
-<h3 id="5-总体汇总（偏省钱方案）"><a href="#5-总体汇总（偏省钱方案）" class="headerlink" title="5. 总体汇总（偏省钱方案）"></a>5. 总体汇总（偏省钱方案）</h3><p>按较省的方式估算（高铁 1100、索道只坐一次、酒店便宜点）：</p>
+<h2 id="7-blocking-tiling：为什么分块常常更快"><a href="#7-blocking-tiling：为什么分块常常更快" class="headerlink" title="7. blocking &#x2F; tiling：为什么分块常常更快"></a>7. blocking &#x2F; tiling：为什么分块常常更快</h2><p>当工作集太大，无法完全放进缓存时，可以按块处理。</p>
+<h3 id="7-1-直觉"><a href="#7-1-直觉" class="headerlink" title="7.1 直觉"></a>7.1 直觉</h3><p>不要一次把全量数据扫完再回来重扫，而是：</p>
 <ul>
-<li>高铁：1100</li>
-<li>黄山 + 宏村门票&#x2F;车&#x2F;索道：约 400</li>
-<li>住宿：约 250</li>
-<li>吃饭 + 小交通：约 350</li>
+<li>先拿一小块</li>
+<li>在这小块上做尽量多的计算</li>
+<li>让这小块在缓存中被充分复用</li>
 </ul>
-<p><strong>合计 ≈ 2100 元左右</strong></p>
+<h3 id="7-2-矩阵乘法是最典型场景"><a href="#7-2-矩阵乘法是最典型场景" class="headerlink" title="7.2 矩阵乘法是最典型场景"></a>7.2 矩阵乘法是最典型场景</h3><p>朴素矩阵乘法经常很慢，不是乘法本身慢，而是访存复用差。<br>分块后的核心收益是：</p>
+<ul>
+<li>提高缓存命中</li>
+<li>减少大跨度反复读</li>
+</ul>
+<h3 id="7-3-图像处理也一样"><a href="#7-3-图像处理也一样" class="headerlink" title="7.3 图像处理也一样"></a>7.3 图像处理也一样</h3><p>例如卷积、滤波、stencil 计算，都常通过 tile&#x2F;block 改善访存。</p>
+<hr>
+<h2 id="8-预取与硬件预取器"><a href="#8-预取与硬件预取器" class="headerlink" title="8. 预取与硬件预取器"></a>8. 预取与硬件预取器</h2><p>现代 CPU 会尝试根据访问规律提前把数据搬进缓存，这就是硬件预取。</p>
+<p>它更擅长：</p>
+<ul>
+<li>连续访问</li>
+<li>稳定步长访问</li>
+</ul>
+<p>它不擅长：</p>
+<ul>
+<li>随机访问</li>
+<li>指针跳转</li>
+<li>强数据依赖链</li>
+</ul>
+<p>所以很多“看起来只是更整齐的循环”之所以更快，本质上是在帮硬件预取器工作。</p>
+<hr>
+<h2 id="9-false-sharing：并发里最隐蔽的访存杀手之一"><a href="#9-false-sharing：并发里最隐蔽的访存杀手之一" class="headerlink" title="9. false sharing：并发里最隐蔽的访存杀手之一"></a>9. false sharing：并发里最隐蔽的访存杀手之一</h2><h3 id="9-1-它是什么"><a href="#9-1-它是什么" class="headerlink" title="9.1 它是什么"></a>9.1 它是什么</h3><p>两个线程虽然更新的是<strong>不同变量</strong>，但这两个变量落在同一个 cache line 里。<br>结果两个核心会频繁抢这个 cache line 的所有权，导致性能急剧下降。</p>
+<h3 id="9-2-例子"><a href="#9-2-例子" class="headerlink" title="9.2 例子"></a>9.2 例子</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">CounterPair</span> &#123;</span><br><span class="line">    std::atomic&lt;<span class="type">int</span>&gt; a;</span><br><span class="line">    std::atomic&lt;<span class="type">int</span>&gt; b;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>如果线程 1 只写 <code>a</code>，线程 2 只写 <code>b</code>，理论上彼此独立；<br>但如果 <code>a</code> 和 <code>b</code> 在同一 cache line，就可能 false sharing。</p>
+<h3 id="9-3-典型缓解方式"><a href="#9-3-典型缓解方式" class="headerlink" title="9.3 典型缓解方式"></a>9.3 典型缓解方式</h3><ul>
+<li>padding</li>
+<li><code>alignas(64)</code></li>
+<li>每线程局部累加，最后汇总</li>
+</ul>
+<p>这在并行归约、线程本地统计里特别常见。</p>
+<hr>
+<h2 id="10-对齐、padding-与缓存布局"><a href="#10-对齐、padding-与缓存布局" class="headerlink" title="10. 对齐、padding 与缓存布局"></a>10. 对齐、padding 与缓存布局</h2><h3 id="10-1-对齐影响加载效率"><a href="#10-1-对齐影响加载效率" class="headerlink" title="10.1 对齐影响加载效率"></a>10.1 对齐影响加载效率</h3><p>对齐良好的数据更利于：</p>
+<ul>
+<li>高效加载</li>
+<li>SIMD 指令</li>
+<li>cache line 对齐访问</li>
+</ul>
+<h3 id="10-2-结构体布局会影响缓存利用率"><a href="#10-2-结构体布局会影响缓存利用率" class="headerlink" title="10.2 结构体布局会影响缓存利用率"></a>10.2 结构体布局会影响缓存利用率</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">A</span> &#123;</span><br><span class="line">    <span class="type">char</span> flag;</span><br><span class="line">    <span class="type">double</span> value;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>编译器可能为了对齐插入 padding。<br>如果一个结构体很大，而你每次只用其中一两个字段，就会带来缓存浪费。</p>
+<p>这也是为什么“对象设计”会直接变成“性能设计”。</p>
+<hr>
+<h2 id="11-分支与访存也常常绑定在一起"><a href="#11-分支与访存也常常绑定在一起" class="headerlink" title="11. 分支与访存也常常绑定在一起"></a>11. 分支与访存也常常绑定在一起</h2><p>下面这类代码既影响分支预测，也影响访存效率：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (a[i] &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    sum += heavy_table[a[i]];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果：</p>
+<ul>
+<li><code>a[i] &gt; 0</code> 高度不可预测</li>
+<li><code>heavy_table</code> 访问又很随机</li>
+</ul>
+<p>性能通常会明显变差。</p>
+<p>所以优化时别把“计算”和“访存”割裂看，它们常是一起出问题的。</p>
+<hr>
+<h2 id="12-为什么-vector-通常比-list-更快"><a href="#12-为什么-vector-通常比-list-更快" class="headerlink" title="12. 为什么 vector 通常比 list 更快"></a>12. 为什么 <code>vector</code> 通常比 <code>list</code> 更快</h2><p>很多人第一次接触会觉得：</p>
+<ul>
+<li><code>list</code> 插入删除是 <code>O(1)</code></li>
+<li><code>vector</code> 中间插删是 <code>O(n)</code></li>
+</ul>
+<p>于是误以为 <code>list</code> 应该经常更快。<br>但现实里，很多遍历型或批量处理场景中，<code>vector</code> 常常更快，原因就在于：</p>
+<ul>
+<li>连续内存</li>
+<li>cache 友好</li>
+<li>更利于预取与向量化</li>
+</ul>
+<p>所以算法复杂度只是第一层，访存模式是第二层。</p>
+<hr>
+<h2 id="13-多线程写入时为什么要分区"><a href="#13-多线程写入时为什么要分区" class="headerlink" title="13. 多线程写入时为什么要分区"></a>13. 多线程写入时为什么要分区</h2><p>如果多个线程写同一个大数组，比较好的模式通常是：</p>
+<ul>
+<li>每个线程负责一个连续区间</li>
+<li>尽量避免多个线程反复改同一个 cache line</li>
+</ul>
+<p>不好的模式则常见于：</p>
+<ul>
+<li>交错写入</li>
+<li>所有线程抢同一个计数器</li>
+<li>共享小对象频繁原子更新</li>
+</ul>
+<p>这会带来：</p>
+<ul>
+<li>cache line 争用</li>
+<li>false sharing</li>
+<li>带宽浪费</li>
+</ul>
+<hr>
+<h2 id="14-GPU-视角下为什么更重视-SoA"><a href="#14-GPU-视角下为什么更重视-SoA" class="headerlink" title="14. GPU 视角下为什么更重视 SoA"></a>14. GPU 视角下为什么更重视 SoA</h2><p>GPU 更强调大规模并行和合并访问（coalescing）。<br>因此当一批线程访问同一字段的连续元素时，SoA 往往比 AoS 更有优势。</p>
+<p>所以很多 CPU&#x2F;GPU 共享的高性能数据结构设计原则其实是相通的：</p>
+<ul>
+<li>扁平化</li>
+<li>连续化</li>
+<li>尽量批处理同类字段</li>
+</ul>
+<hr>
+<h2 id="15-访存优化的实战原则"><a href="#15-访存优化的实战原则" class="headerlink" title="15. 访存优化的实战原则"></a>15. 访存优化的实战原则</h2><p>可以直接记这几条：</p>
+<h3 id="15-1-尽量连续访问"><a href="#15-1-尽量连续访问" class="headerlink" title="15.1 尽量连续访问"></a>15.1 尽量连续访问</h3><p>先改访问顺序，再谈别的。</p>
+<h3 id="15-2-尽量缩小热数据集"><a href="#15-2-尽量缩小热数据集" class="headerlink" title="15.2 尽量缩小热数据集"></a>15.2 尽量缩小热数据集</h3><p>把频繁访问的数据做得更紧凑。</p>
+<h3 id="15-3-尽量增加复用"><a href="#15-3-尽量增加复用" class="headerlink" title="15.3 尽量增加复用"></a>15.3 尽量增加复用</h3><p>让已经进缓存的数据多用几次。</p>
+<h3 id="15-4-尽量避免无意义共享"><a href="#15-4-尽量避免无意义共享" class="headerlink" title="15.4 尽量避免无意义共享"></a>15.4 尽量避免无意义共享</h3><p>特别是在并行代码里。</p>
+<h3 id="15-5-用数据布局服务算法"><a href="#15-5-用数据布局服务算法" class="headerlink" title="15.5 用数据布局服务算法"></a>15.5 用数据布局服务算法</h3><p>不是“先写一个漂亮对象模型，再看性能”，而是：</p>
+<ul>
+<li>哪种布局更适合核心计算，就优先哪种</li>
+</ul>
+<hr>
+<h2 id="16-常见误区"><a href="#16-常见误区" class="headerlink" title="16. 常见误区"></a>16. 常见误区</h2><h3 id="16-1-只盯算法复杂度，不看访存"><a href="#16-1-只盯算法复杂度，不看访存" class="headerlink" title="16.1 只盯算法复杂度，不看访存"></a>16.1 只盯算法复杂度，不看访存</h3><p>两个同为 <code>O(n)</code> 的实现，真实速度可能差很多倍。</p>
+<h3 id="16-2-误以为-cache-是“编译器问题”"><a href="#16-2-误以为-cache-是“编译器问题”" class="headerlink" title="16.2 误以为 cache 是“编译器问题”"></a>16.2 误以为 cache 是“编译器问题”</h3><p>缓存问题本质上是：</p>
+<ul>
+<li>数据布局问题</li>
+<li>访问顺序问题</li>
+<li>并发共享问题</li>
+</ul>
+<h3 id="16-3-把所有对象都做成“大而全”"><a href="#16-3-把所有对象都做成“大而全”" class="headerlink" title="16.3 把所有对象都做成“大而全”"></a>16.3 把所有对象都做成“大而全”</h3><p>热路径只用两个字段时，大结构体会造成大量无效搬运。</p>
+<h3 id="16-4-并发场景只关注锁，不关注-cache-line"><a href="#16-4-并发场景只关注锁，不关注-cache-line" class="headerlink" title="16.4 并发场景只关注锁，不关注 cache line"></a>16.4 并发场景只关注锁，不关注 cache line</h3><p>很多“看起来没锁争用”的程序，其实卡在 false sharing。</p>
+<hr>
+<h2 id="17-一页总结"><a href="#17-一页总结" class="headerlink" title="17. 一页总结"></a>17. 一页总结</h2><p>访存优化可以压缩成一句话：</p>
 <blockquote>
-<p>也就是说：<strong>“两千左右”是可以做到的，但会略微紧张</strong>，主要看你高铁能不能抢到稍便宜的车次、酒店选多便宜的、索道坐几次。<br>如果你想更轻松一点（多坐索道、吃好一点），建议心里预留到 <strong>2200–2300</strong> 更舒服。</p>
+<p>让 CPU&#x2F;GPU 更容易在更少次、更连续、更可预测的内存访问中拿到真正需要的数据。</p>
 </blockquote>
-<hr>
-<h2 id="四、给你一个能直接照抄的简短行程版"><a href="#四、给你一个能直接照抄的简短行程版" class="headerlink" title="四、给你一个能直接照抄的简短行程版"></a>四、给你一个能直接照抄的简短行程版</h2><ul>
-<li><strong>D1</strong>：广州 → 黄山北（高铁）→ 汤口，入住；晚上简单逛逛、准备上山物资。</li>
-<li><strong>D2</strong>：汤口 → 黄山（云谷索道上 → 北海 → 始信峰 → 光明顶附近 → 视体力部分步行下山&#x2F;坐索道下），晚上回汤口 &#x2F; 屯溪休息。</li>
-<li><strong>D3</strong>：早上去宏村（南湖、月沼拍照闲逛），下午返回黄山北，傍晚&#x2F;晚上高铁回广州。</li>
-</ul>
-<p>如果你愿意告诉我<strong>大概出行月份 + 更偏“省钱”还是“轻松”</strong>，我可以帮你把上面每一天细到：大概几点出门、建议坐的车次时段、黄山具体走哪条步行路线，给你一个“可直接发给同伴&#x2F;直接订票用”的终版行程单。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/2024/09/13/%E7%AC%AC%E4%BA%8C%E6%AC%A1%E7%BB%84%E4%BC%9A/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/img/me.jpg">
-      <meta itemprop="name" content="楚天">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="楚天">
-      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | 楚天">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/09/13/%E7%AC%AC%E4%BA%8C%E6%AC%A1%E7%BB%84%E4%BC%9A/" class="post-title-link" itemprop="url">第二次组会</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-09-13 22:33:37" itemprop="dateCreated datePublished" datetime="2024-09-13T22:33:37+08:00">2024-09-13</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-01-24 10:43:15" itemprop="dateModified" datetime="2026-01-24T10:43:15+08:00">2026-01-24</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%94%9F%E6%B4%BB/" itemprop="url" rel="index"><span itemprop="name">生活</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="第二次组会"><a href="#第二次组会" class="headerlink" title="第二次组会"></a>第二次组会</h1><p>一共四个人汇报，其中在投文献一篇方向为拉曼，三篇论汇报拉曼两片，层析一篇</p>
-<h2 id="在投文献"><a href="#在投文献" class="headerlink" title="在投文献"></a>在投文献</h2><p>深度学习预测单细胞H2O2含量</p>
-<h3 id="数据集"><a href="#数据集" class="headerlink" title="数据集"></a>数据集</h3><p>细胞的数据集在预测问题上可以看作为时间序列，或者弱化其时间的数据看为序列。这种序列和文字序列有一定的相识性，在处理这方面数据可以更多的考虑循环神经网络和注意力机制进行处理</p>
-<h3 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h3><p>注意力机制</p>
-<h3 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h3><p>未知</p>
-<h3 id="评价指标"><a href="#评价指标" class="headerlink" title="评价指标"></a>评价指标</h3><p>R^2</p>
-<h2 id="论文问题"><a href="#论文问题" class="headerlink" title="论文问题"></a>论文问题</h2><p>网络结构不清晰，深度学习三要素 网络模型、损失函数和评价指标的选取有问题</p>
-<h2 id="论文汇报"><a href="#论文汇报" class="headerlink" title="论文汇报"></a>论文汇报</h2><h3 id="transformer-RNN-超高清重建图像"><a href="#transformer-RNN-超高清重建图像" class="headerlink" title="transformer+RNN 超高清重建图像"></a>transformer+RNN 超高清重建图像</h3><h4 id="网络-1"><a href="#网络-1" class="headerlink" title="网络"></a>网络</h4><p>RNN(head)</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/2024/09/13/GAN%E7%BD%91%E7%BB%9C/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/img/me.jpg">
-      <meta itemprop="name" content="楚天">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="楚天">
-      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | 楚天">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/09/13/GAN%E7%BD%91%E7%BB%9C/" class="post-title-link" itemprop="url">GAN生成式对抗网络</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-09-13 00:00:00" itemprop="dateCreated datePublished" datetime="2024-09-13T00:00:00+08:00">2024-09-13</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-01-24 10:43:15" itemprop="dateModified" datetime="2026-01-24T10:43:15+08:00">2026-01-24</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="GAN生成式对抗网络"><a href="#GAN生成式对抗网络" class="headerlink" title="GAN生成式对抗网络"></a>GAN生成式对抗网络</h1><p>GAN生成式对抗网络，GAN网络由生成网络和判别网络两个网络组成，生成式网络通过学习图片后将噪声转换为图片，而判别式网络将区分数据集图片和生成图片进行判别。生成式与判别式网络类似与小偷与警察，通过不断的博弈互相升级，在这场游戏中我们更加希望小偷取得胜利。既是生成式网络生成的图片可以让判别器难以判断。</p>
-<h2 id="网络结构"><a href="#网络结构" class="headerlink" title="网络结构"></a>网络结构</h2><h3 id="网络模型"><a href="#网络模型" class="headerlink" title="网络模型"></a>网络模型</h3><h3 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h3><h3 id="评价指标"><a href="#评价指标" class="headerlink" title="评价指标"></a>评价指标</h3><h2 id="pytorch实现"><a href="#pytorch实现" class="headerlink" title="pytorch实现"></a>pytorch实现</h2><h2 id="GAN缺陷与改进"><a href="#GAN缺陷与改进" class="headerlink" title="GAN缺陷与改进"></a>GAN缺陷与改进</h2>
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/2024/09/05/%E4%B8%80%E3%80%81%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/img/me.jpg">
-      <meta itemprop="name" content="楚天">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="楚天">
-      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | 楚天">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/09/05/%E4%B8%80%E3%80%81%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86/" class="post-title-link" itemprop="url">一、预备知识</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-09-05 18:43:48" itemprop="dateCreated datePublished" datetime="2024-09-05T18:43:48+08:00">2024-09-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-01-24 10:43:15" itemprop="dateModified" datetime="2026-01-24T10:43:15+08:00">2026-01-24</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%8A%A8%E6%89%8B%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">动手深度学习</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="预备知识"><a href="#预备知识" class="headerlink" title="预备知识"></a>预备知识</h1><h2 id="基础"><a href="#基础" class="headerlink" title="基础"></a>基础</h2><h2 id="重点"><a href="#重点" class="headerlink" title="重点"></a>重点</h2><h3 id="范数"><a href="#范数" class="headerlink" title="范数"></a>范数</h3><h3 id="矩阵求导"><a href="#矩阵求导" class="headerlink" title="矩阵求导"></a>矩阵求导</h3><h3 id="反向传播（sum函数）"><a href="#反向传播（sum函数）" class="headerlink" title="反向传播（sum函数）"></a>反向传播（sum函数）</h3><p>&#96;&#96;<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_43722079/article/details/136583592">https://blog.csdn.net/qq_43722079/article/details/136583592</a></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/2024/09/05/torchvision%E8%B7%AF%E5%BE%84%E5%BA%94%E7%94%A8%E5%A4%B1%E8%B4%A5%E9%97%AE%E9%A2%98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/img/me.jpg">
-      <meta itemprop="name" content="楚天">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="楚天">
-      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | 楚天">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/09/05/torchvision%E8%B7%AF%E5%BE%84%E5%BA%94%E7%94%A8%E5%A4%B1%E8%B4%A5%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">torchvision路径应用失败问题</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-09-05 09:17:06" itemprop="dateCreated datePublished" datetime="2024-09-05T09:17:06+08:00">2024-09-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-01-24 10:43:15" itemprop="dateModified" datetime="2026-01-24T10:43:15+08:00">2026-01-24</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%BD%AF%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">软件</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="torchvision模块路径引用问题"><a href="#torchvision模块路径引用问题" class="headerlink" title="torchvision模块路径引用问题"></a>torchvision模块路径引用问题</h1><p>前言：安装pytorch后可能会出现torch模块引用成功，而torchvision模块引用失败，失败原因为torchvision模块路径丢失。可能是三个问题导致的： </p>
+<p>最关键的实践点有：</p>
 <ol>
-<li>torch和torchvision版本不匹配</li>
-<li>pillow版本和torchvision版本不匹配</li>
+<li>顺序访问优于随机访问</li>
+<li>连续布局优于分散指针结构</li>
+<li>SoA 在按字段批量处理时常优于 AoS</li>
+<li>分块能提升缓存复用</li>
+<li>并发时要警惕 false sharing</li>
 </ol>
-<h1 id="torch和torchvision版本不匹配"><a href="#torch和torchvision版本不匹配" class="headerlink" title="torch和torchvision版本不匹配"></a>torch和torchvision版本不匹配</h1><p>建议从pytorch官网重新下载新版pytorch，或者查询历史版本重新选择一个版本进行下载</p>
-<h1 id="pillow版本和torchvision版本不匹配"><a href="#pillow版本和torchvision版本不匹配" class="headerlink" title="pillow版本和torchvision版本不匹配"></a>pillow版本和torchvision版本不匹配</h1><p>删除pillow 在重新下载pillow最新版</p>
+<hr>
+<h2 id="18-建议继续补充的相关主题"><a href="#18-建议继续补充的相关主题" class="headerlink" title="18. 建议继续补充的相关主题"></a>18. 建议继续补充的相关主题</h2><p>和本篇衔接最紧密的内容：</p>
+<ol>
+<li><code>vector</code> 容器优化</li>
+<li>自动向量化与 SIMD</li>
+<li>NUMA 与多路 CPU 访存</li>
+<li>GPU 合并访存与 shared memory</li>
+<li>矩阵分块与 stencil 优化</li>
+</ol>
+<hr>
+<h2 id="19-参考资料"><a href="#19-参考资料" class="headerlink" title="19. 参考资料"></a>19. 参考资料</h2><ol>
+<li><p>Intel Optimization Manual<br><a target="_blank" rel="noopener" href="https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html">https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html</a></p>
+</li>
+<li><p>cppreference: <code>alignas</code><br><a target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/language/alignas">https://en.cppreference.com/w/cpp/language/alignas</a></p>
+</li>
+</ol>
 
       
     </div>
@@ -1394,7 +2972,7 @@
 
 
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/3/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/5/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/3/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/5/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>

@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chutianduan.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":2,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Qwen 模型演进笔记1. 先说明“最新模型”指的是谁截至 2026-04-20，如果说“Qwen 最新模型”，其实要分两类看：  最新通用 API 旗舰模型：Qwen3.6-Plus发布时间：2026-04-02 最新开源主力模型：Qwen3.6-35B-A3B发布时间：2026-04-17  如果你更关心：  云端调用、Agent、编程能力：重点看 Qwen3.6-Plus 本地部署、开源权重">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Qwen 模型演进笔记">
+<meta property="og:url" content="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/qwen%E6%A8%A1%E5%9E%8B%E6%BC%94%E8%BF%9B/index.html">
+<meta property="og:site_name" content="楚天">
+<meta property="og:description" content="Qwen 模型演进笔记1. 先说明“最新模型”指的是谁截至 2026-04-20，如果说“Qwen 最新模型”，其实要分两类看：  最新通用 API 旗舰模型：Qwen3.6-Plus发布时间：2026-04-02 最新开源主力模型：Qwen3.6-35B-A3B发布时间：2026-04-17  如果你更关心：  云端调用、Agent、编程能力：重点看 Qwen3.6-Plus 本地部署、开源权重">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-04-20T12:15:23.000Z">
+<meta property="article:modified_time" content="2026-04-20T12:15:23.000Z">
+<meta property="article:author" content="楚天">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="游戏网络">
+<meta property="article:tag" content="技术博客">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/qwen%E6%A8%A1%E5%9E%8B%E6%BC%94%E8%BF%9B/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/qwen%E6%A8%A1%E5%9E%8B%E6%BC%94%E8%BF%9B/","path":"/notes/ai模型开发/知识点学习/大模型部署/qwen模型演进/","title":"Qwen 模型演进笔记"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Qwen 模型演进笔记 | 楚天</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">楚天</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">惟楚有材，于斯为盛</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-友情链接"><a href="/link/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Qwen-%E6%A8%A1%E5%9E%8B%E6%BC%94%E8%BF%9B%E7%AC%94%E8%AE%B0"><span class="nav-number">1.</span> <span class="nav-text">Qwen 模型演进笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%85%88%E8%AF%B4%E6%98%8E%E2%80%9C%E6%9C%80%E6%96%B0%E6%A8%A1%E5%9E%8B%E2%80%9D%E6%8C%87%E7%9A%84%E6%98%AF%E8%B0%81"><span class="nav-number">1.1.</span> <span class="nav-text">1. 先说明“最新模型”指的是谁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Qwen2-5-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.2.</span> <span class="nav-text">2. Qwen2.5 是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Qwen2-5-%E7%9A%84%E4%B8%BB%E8%A6%81%E6%94%B9%E8%BF%9B%E7%82%B9"><span class="nav-number">1.3.</span> <span class="nav-text">3. Qwen2.5 的主要改进点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E7%9F%A5%E8%AF%86%E3%80%81%E4%BB%A3%E7%A0%81%E3%80%81%E6%95%B0%E5%AD%A6%E8%83%BD%E5%8A%9B%E6%9B%B4%E5%BC%BA"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 知识、代码、数学能力更强</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E6%8C%87%E4%BB%A4%E8%B7%9F%E9%9A%8F%E6%9B%B4%E7%A8%B3"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 指令跟随更稳</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E7%BB%93%E6%9E%84%E5%8C%96%E8%BE%93%E5%87%BA%E6%9B%B4%E5%A5%BD"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 结构化输出更好</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-%E9%95%BF%E6%96%87%E6%9C%AC%E7%94%9F%E6%88%90%E6%9B%B4%E5%AE%9E%E7%94%A8"><span class="nav-number">1.3.4.</span> <span class="nav-text">3.4 长文本生成更实用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-%E5%A4%9A%E8%AF%AD%E8%A8%80%E8%83%BD%E5%8A%9B%E6%9B%B4%E5%BC%BA"><span class="nav-number">1.3.5.</span> <span class="nav-text">3.5 多语言能力更强</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-6-%E4%B8%93%E9%A1%B9%E6%A8%A1%E5%9E%8B%E6%9B%B4%E6%88%90%E7%86%9F"><span class="nav-number">1.3.6.</span> <span class="nav-text">3.6 专项模型更成熟</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Qwen2-5-%E7%9A%84%E4%BC%98%E7%82%B9"><span class="nav-number">1.4.</span> <span class="nav-text">4. Qwen2.5 的优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E4%BB%8E-Qwen2-5-%E5%88%B0%E6%9C%80%E6%96%B0%E6%A8%A1%E5%9E%8B%EF%BC%8C%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88%E5%8F%98%E5%8C%96"><span class="nav-number">1.5.</span> <span class="nav-text">5. 从 Qwen2.5 到最新模型，发生了什么变化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Qwen2-5"><span class="nav-number">1.5.1.</span> <span class="nav-text">Qwen2.5</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Qwen3"><span class="nav-number">1.5.2.</span> <span class="nav-text">Qwen3</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Qwen3-5"><span class="nav-number">1.5.3.</span> <span class="nav-text">Qwen3.5</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Qwen3-6"><span class="nav-number">1.5.4.</span> <span class="nav-text">Qwen3.6</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-Qwen3%EF%BC%9A%E7%9B%B8%E5%AF%B9-Qwen2-5-%E7%9A%84%E5%85%B3%E9%94%AE%E5%8D%87%E7%BA%A7"><span class="nav-number">1.6.</span> <span class="nav-text">6. Qwen3：相对 Qwen2.5 的关键升级</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-Hybrid-Thinking-Modes"><span class="nav-number">1.6.1.</span> <span class="nav-text">6.1 Hybrid Thinking Modes</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-%E8%AE%AD%E7%BB%83%E6%95%B0%E6%8D%AE%E8%A7%84%E6%A8%A1%E6%98%BE%E8%91%97%E6%8F%90%E5%8D%87"><span class="nav-number">1.6.2.</span> <span class="nav-text">6.2 训练数据规模显著提升</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-%E5%A4%9A%E8%AF%AD%E8%A8%80%E6%94%AF%E6%8C%81%E6%98%8E%E6%98%BE%E6%89%A9%E5%B1%95"><span class="nav-number">1.6.3.</span> <span class="nav-text">6.3 多语言支持明显扩展</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-4-Agent-%E5%92%8C%E7%BC%96%E7%A0%81%E8%83%BD%E5%8A%9B%E6%9B%B4%E5%BC%BA"><span class="nav-number">1.6.4.</span> <span class="nav-text">6.4 Agent 和编码能力更强</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-5-MoE-%E5%B8%A6%E6%9D%A5%E6%9B%B4%E5%A5%BD%E7%9A%84%E6%95%88%E7%8E%87"><span class="nav-number">1.6.5.</span> <span class="nav-text">6.5 MoE 带来更好的效率</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-Qwen3-5%EF%BC%9A%E7%9B%B8%E5%AF%B9-Qwen2-5-Qwen3-%E7%9A%84%E5%85%B3%E9%94%AE%E5%8D%87%E7%BA%A7"><span class="nav-number">1.7.</span> <span class="nav-text">7. Qwen3.5：相对 Qwen2.5 &#x2F; Qwen3 的关键升级</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-%E5%8E%9F%E7%94%9F%E5%A4%9A%E6%A8%A1%E6%80%81"><span class="nav-number">1.7.1.</span> <span class="nav-text">7.1 原生多模态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-%E6%9E%B6%E6%9E%84%E6%9B%B4%E5%85%88%E8%BF%9B"><span class="nav-number">1.7.2.</span> <span class="nav-text">7.2 架构更先进</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-3-%E8%AF%AD%E8%A8%80%E8%A6%86%E7%9B%96%E6%9B%B4%E5%A4%A7"><span class="nav-number">1.7.3.</span> <span class="nav-text">7.3 语言覆盖更大</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-4-Hosted-%E7%89%88%E6%9C%AC%E6%9B%B4%E9%80%82%E5%90%88%E5%81%9A-Agent"><span class="nav-number">1.7.4.</span> <span class="nav-text">7.4 Hosted 版本更适合做 Agent</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-Qwen3-6-Plus%EF%BC%9A%E6%88%AA%E8%87%B3-2026-04-20-%E7%9A%84%E6%9C%80%E6%96%B0-API-%E6%97%97%E8%88%B0"><span class="nav-number">1.8.</span> <span class="nav-text">8. Qwen3.6-Plus：截至 2026-04-20 的最新 API 旗舰</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-%E7%9B%B8%E6%AF%94-Qwen3-5-Plus-%E7%9A%84%E4%B8%BB%E8%A6%81%E6%94%B9%E8%BF%9B"><span class="nav-number">1.8.1.</span> <span class="nav-text">8.1 相比 Qwen3.5-Plus 的主要改进</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-%E5%AE%83%E6%9C%80%E5%BC%BA%E7%9A%84%E5%9C%B0%E6%96%B9%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.8.2.</span> <span class="nav-text">8.2 它最强的地方是什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-%E5%AE%83%E7%9A%84%E4%BC%98%E7%82%B9"><span class="nav-number">1.8.3.</span> <span class="nav-text">8.3 它的优点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-Qwen3-6-35B-A3B%EF%BC%9A%E6%88%AA%E8%87%B3-2026-04-20-%E7%9A%84%E6%9C%80%E6%96%B0%E5%BC%80%E6%BA%90%E4%B8%BB%E5%8A%9B"><span class="nav-number">1.9.</span> <span class="nav-text">9. Qwen3.6-35B-A3B：截至 2026-04-20 的最新开源主力</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#9-1-%E5%AE%83%E7%9A%84%E6%A0%B8%E5%BF%83%E7%89%B9%E7%82%B9"><span class="nav-number">1.9.1.</span> <span class="nav-text">9.1 它的核心特点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-2-%E7%9B%B8%E6%AF%94%E4%B8%8A%E4%B8%80%E4%BB%A3%E7%9A%84%E6%94%B9%E8%BF%9B"><span class="nav-number">1.9.2.</span> <span class="nav-text">9.2 相比上一代的改进</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-3-%E5%AE%83%E7%9A%84%E4%BC%98%E7%82%B9"><span class="nav-number">1.9.3.</span> <span class="nav-text">9.3 它的优点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-Qwen2-5-%E5%92%8C%E6%9C%80%E6%96%B0%E6%A8%A1%E5%9E%8B%E6%80%8E%E4%B9%88%E5%AF%B9%E6%AF%94"><span class="nav-number">1.10.</span> <span class="nav-text">10. Qwen2.5 和最新模型怎么对比</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-%E6%80%8E%E4%B9%88%E9%80%89"><span class="nav-number">1.11.</span> <span class="nav-text">11. 怎么选</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%89-Qwen2-5-%E7%9A%84%E5%9C%BA%E6%99%AF"><span class="nav-number">1.11.1.</span> <span class="nav-text">选 Qwen2.5 的场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%89-Qwen3-6-35B-A3B-%E7%9A%84%E5%9C%BA%E6%99%AF"><span class="nav-number">1.11.2.</span> <span class="nav-text">选 Qwen3.6-35B-A3B 的场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%89-Qwen3-6-Plus-%E7%9A%84%E5%9C%BA%E6%99%AF"><span class="nav-number">1.11.3.</span> <span class="nav-text">选 Qwen3.6-Plus 的场景</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-%E9%AB%98%E9%A2%91%E7%BB%93%E8%AE%BA"><span class="nav-number">1.12.</span> <span class="nav-text">12. 高频结论</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-%E6%8E%A8%E8%8D%90%E9%98%85%E8%AF%BB"><span class="nav-number">1.13.</span> <span class="nav-text">13. 推荐阅读</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%80%BB%E7%BB%93"><span class="nav-number">1.14.</span> <span class="nav-text">14. 一句话总结</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="楚天"
+      src="/img/me.jpg">
+  <p class="site-author-name" itemprop="name">楚天</p>
+  <div class="site-description" itemprop="description">记录深度学习、C++、游戏网络与生活旅行的学习笔记。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ChutianDuan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ChutianDuan" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:3383006954@qq.com" title="E-Mail → mailto:3383006954@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/qwen%E6%A8%A1%E5%9E%8B%E6%BC%94%E8%BF%9B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Qwen 模型演进笔记 | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Qwen 模型演进笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-04-20 20:15:23" itemprop="dateCreated datePublished" datetime="2026-04-20T20:15:23+08:00">2026-04-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/AI%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">AI模型开发</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/AI%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">知识点学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/AI%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/" itemprop="url" rel="index"><span itemprop="name">大模型部署</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Qwen-模型演进笔记"><a href="#Qwen-模型演进笔记" class="headerlink" title="Qwen 模型演进笔记"></a>Qwen 模型演进笔记</h1><h2 id="1-先说明“最新模型”指的是谁"><a href="#1-先说明“最新模型”指的是谁" class="headerlink" title="1. 先说明“最新模型”指的是谁"></a>1. 先说明“最新模型”指的是谁</h2><p>截至 <code>2026-04-20</code>，如果说“Qwen 最新模型”，其实要分两类看：</p>
+<ul>
+<li>最新通用 API 旗舰模型：<code>Qwen3.6-Plus</code><br>发布时间：<code>2026-04-02</code></li>
+<li>最新开源主力模型：<code>Qwen3.6-35B-A3B</code><br>发布时间：<code>2026-04-17</code></li>
+</ul>
+<p>如果你更关心：</p>
+<ul>
+<li>云端调用、Agent、编程能力：重点看 <code>Qwen3.6-Plus</code></li>
+<li>本地部署、开源权重、性价比：重点看 <code>Qwen3.6-35B-A3B</code></li>
+</ul>
+<hr>
+<h2 id="2-Qwen2-5-是什么"><a href="#2-Qwen2-5-是什么" class="headerlink" title="2. Qwen2.5 是什么"></a>2. Qwen2.5 是什么</h2><p><code>Qwen2.5</code> 是 Qwen 在 <code>2024-09-19</code> 发布的一代重要开源模型系列。</p>
+<p>这一代的定位可以理解成：</p>
+<blockquote>
+<p>把“通用聊天模型”真正做到了更稳、更全、更适合工程落地。</p>
+</blockquote>
+<p>Qwen2.5 这一代包含：</p>
+<ul>
+<li>通用语言模型：<code>Qwen2.5</code></li>
+<li>代码模型：<code>Qwen2.5-Coder</code></li>
+<li>数学模型：<code>Qwen2.5-Math</code></li>
+</ul>
+<p>开源尺寸覆盖比较广：</p>
+<ul>
+<li><code>0.5B</code></li>
+<li><code>1.5B</code></li>
+<li><code>3B</code></li>
+<li><code>7B</code></li>
+<li><code>14B</code></li>
+<li><code>32B</code></li>
+<li><code>72B</code></li>
+</ul>
+<hr>
+<h2 id="3-Qwen2-5-的主要改进点"><a href="#3-Qwen2-5-的主要改进点" class="headerlink" title="3. Qwen2.5 的主要改进点"></a>3. Qwen2.5 的主要改进点</h2><p>根据官方介绍，Qwen2.5 相比 Qwen2 的核心提升主要在下面几块：</p>
+<h3 id="3-1-知识、代码、数学能力更强"><a href="#3-1-知识、代码、数学能力更强" class="headerlink" title="3.1 知识、代码、数学能力更强"></a>3.1 知识、代码、数学能力更强</h3><p>官方提到 Qwen2.5 基于最多 <code>18T tokens</code> 的大规模数据训练，相比 Qwen2：</p>
+<ul>
+<li>知识能力更强</li>
+<li>代码能力提升明显</li>
+<li>数学能力提升明显</li>
+</ul>
+<p>这说明 Qwen2.5 不只是“能聊天”，而是开始更像一个泛用底座模型。</p>
+<h3 id="3-2-指令跟随更稳"><a href="#3-2-指令跟随更稳" class="headerlink" title="3.2 指令跟随更稳"></a>3.2 指令跟随更稳</h3><p>Qwen2.5 一个很实用的提升是：</p>
+<ul>
+<li>更能听懂要求</li>
+<li>更能按要求输出</li>
+<li>对不同 system prompt 更稳</li>
+</ul>
+<p>这在工程里很重要，因为很多模型不是“不会做”，而是：</p>
+<ul>
+<li>格式不稳</li>
+<li>角色设定容易跑偏</li>
+<li>提示词一换风格就漂</li>
+</ul>
+<p>Qwen2.5 在这方面明显更适合做产品。</p>
+<h3 id="3-3-结构化输出更好"><a href="#3-3-结构化输出更好" class="headerlink" title="3.3 结构化输出更好"></a>3.3 结构化输出更好</h3><p>Qwen2.5 官方特别强调了这几点：</p>
+<ul>
+<li>更理解结构化数据</li>
+<li>更擅长表格理解</li>
+<li>更擅长输出结构化结果</li>
+<li>特别是 <code>JSON</code> 输出更可靠</li>
+</ul>
+<p>这个优点对工程很关键，因为很多业务不是只要一段自然语言，而是要：</p>
+<ul>
+<li>JSON</li>
+<li>表单字段</li>
+<li>工具调用参数</li>
+<li>SQL &#x2F; API 请求体</li>
+</ul>
+<h3 id="3-4-长文本生成更实用"><a href="#3-4-长文本生成更实用" class="headerlink" title="3.4 长文本生成更实用"></a>3.4 长文本生成更实用</h3><p>Qwen2.5 支持：</p>
+<ul>
+<li>最长 <code>128K</code> 上下文</li>
+<li>最多 <code>8K</code> 生成长度</li>
+</ul>
+<p>对长文总结、长对话、多轮问答、文档问答更友好。</p>
+<h3 id="3-5-多语言能力更强"><a href="#3-5-多语言能力更强" class="headerlink" title="3.5 多语言能力更强"></a>3.5 多语言能力更强</h3><p>Qwen2.5 支持 <code>29+</code> 种语言，继续保持中英双强，同时兼顾多语种能力。</p>
+<h3 id="3-6-专项模型更成熟"><a href="#3-6-专项模型更成熟" class="headerlink" title="3.6 专项模型更成熟"></a>3.6 专项模型更成熟</h3><p>这一代不只是通用模型升级，专项模型也更成体系：</p>
+<ul>
+<li><code>Qwen2.5-Coder</code>：代码相关数据更多，适合编程助手</li>
+<li><code>Qwen2.5-Math</code>：支持中英文数学问题，并引入 <code>CoT</code>、<code>PoT</code>、<code>TIR</code></li>
+</ul>
+<p>这意味着：</p>
+<blockquote>
+<p>Qwen2.5 开始不是“一个模型打天下”，而是形成了通用底座 + 专项模型的完整产品线。</p>
+</blockquote>
+<hr>
+<h2 id="4-Qwen2-5-的优点"><a href="#4-Qwen2-5-的优点" class="headerlink" title="4. Qwen2.5 的优点"></a>4. Qwen2.5 的优点</h2><p>如果从“开发者和部署者”的角度看，Qwen2.5 的优点主要有这些：</p>
+<ul>
+<li>尺寸覆盖广，小到 <code>0.5B</code>，大到 <code>72B</code>，方便按机器选型</li>
+<li>作为 <code>dense model</code>，结构相对直观，部署门槛低</li>
+<li><code>128K</code> 上下文对很多 RAG 和长文场景已经够用</li>
+<li>指令跟随和 JSON 输出更稳，适合业务接入</li>
+<li><code>Qwen2.5-Coder</code>、<code>Qwen2.5-Math</code> 让专项任务更好选型</li>
+<li>已经很好适配 <code>Transformers</code>、<code>vLLM</code>、<code>Ollama</code></li>
+</ul>
+<p>一句话概括：</p>
+<blockquote>
+<p>Qwen2.5 的强项是“稳、全、好落地”，非常适合作为通用开源基座。</p>
+</blockquote>
+<hr>
+<h2 id="5-从-Qwen2-5-到最新模型，发生了什么变化"><a href="#5-从-Qwen2-5-到最新模型，发生了什么变化" class="headerlink" title="5. 从 Qwen2.5 到最新模型，发生了什么变化"></a>5. 从 Qwen2.5 到最新模型，发生了什么变化</h2><p>如果把后续几代串起来看，Qwen 的升级路线很清楚：</p>
+<h3 id="Qwen2-5"><a href="#Qwen2-5" class="headerlink" title="Qwen2.5"></a>Qwen2.5</h3><ul>
+<li>重点是把通用基础能力做强</li>
+<li>强化结构化输出、长文本、代码、数学</li>
+</ul>
+<h3 id="Qwen3"><a href="#Qwen3" class="headerlink" title="Qwen3"></a>Qwen3</h3><ul>
+<li>重点是把“推理模式 + 快速模式”融合</li>
+<li>开始明显强化 agent 和 reasoning 路线</li>
+</ul>
+<h3 id="Qwen3-5"><a href="#Qwen3-5" class="headerlink" title="Qwen3.5"></a>Qwen3.5</h3><ul>
+<li>重点转向“原生多模态 Agent”</li>
+<li>不再只是文本模型，而是朝着文字、图像、音频、视频统一理解发展</li>
+</ul>
+<h3 id="Qwen3-6"><a href="#Qwen3-6" class="headerlink" title="Qwen3.6"></a>Qwen3.6</h3><ul>
+<li>重点是把 Agent 真正往实战推进</li>
+<li>明显强化编程 Agent、工具调用、长链路任务执行、多模态推理</li>
+</ul>
+<p>一句话看演进：</p>
+<blockquote>
+<p>Qwen2.5 更像一个强通用模型，Qwen3.x 更像朝“能思考、能看、能调用工具、能完成任务”的 Agent 底座在走。</p>
+</blockquote>
+<hr>
+<h2 id="6-Qwen3：相对-Qwen2-5-的关键升级"><a href="#6-Qwen3：相对-Qwen2-5-的关键升级" class="headerlink" title="6. Qwen3：相对 Qwen2.5 的关键升级"></a>6. Qwen3：相对 Qwen2.5 的关键升级</h2><p><code>Qwen3</code> 发布于 <code>2025-04-29</code>，它是 Qwen 从“强聊天模型”走向“推理模型 + Agent 模型”的关键一代。</p>
+<h3 id="6-1-Hybrid-Thinking-Modes"><a href="#6-1-Hybrid-Thinking-Modes" class="headerlink" title="6.1 Hybrid Thinking Modes"></a>6.1 Hybrid Thinking Modes</h3><p>Qwen3 引入了一个很重要的设计：</p>
+<ul>
+<li><code>Thinking Mode</code></li>
+<li><code>Non-Thinking Mode</code></li>
+</ul>
+<p>也就是：</p>
+<ul>
+<li>复杂问题时，可以多想一会</li>
+<li>简单问题时，可以直接快速回答</li>
+</ul>
+<p>这个设计的意义很大，因为它开始把“推理预算”显式化。</p>
+<h3 id="6-2-训练数据规模显著提升"><a href="#6-2-训练数据规模显著提升" class="headerlink" title="6.2 训练数据规模显著提升"></a>6.2 训练数据规模显著提升</h3><p>Qwen3 官方提到：</p>
+<ul>
+<li>Qwen2.5：约 <code>18T tokens</code></li>
+<li>Qwen3：约 <code>36T tokens</code></li>
+</ul>
+<p>也就是差不多翻倍。</p>
+<h3 id="6-3-多语言支持明显扩展"><a href="#6-3-多语言支持明显扩展" class="headerlink" title="6.3 多语言支持明显扩展"></a>6.3 多语言支持明显扩展</h3><p>Qwen3 支持 <code>119</code> 种语言和方言，相比 Qwen2.5 的 <code>29+</code> 更进一步。</p>
+<h3 id="6-4-Agent-和编码能力更强"><a href="#6-4-Agent-和编码能力更强" class="headerlink" title="6.4 Agent 和编码能力更强"></a>6.4 Agent 和编码能力更强</h3><p>官方明确提到：</p>
+<ul>
+<li>强化了 coding 和 agentic capabilities</li>
+<li>增强了对 <code>MCP</code> 的支持</li>
+</ul>
+<p>这说明 Qwen3 不只是问答模型，而是开始面向：</p>
+<ul>
+<li>工具调用</li>
+<li>环境交互</li>
+<li>多步任务执行</li>
+</ul>
+<h3 id="6-5-MoE-带来更好的效率"><a href="#6-5-MoE-带来更好的效率" class="headerlink" title="6.5 MoE 带来更好的效率"></a>6.5 MoE 带来更好的效率</h3><p>Qwen3 这一代不仅有 dense 模型，也有 MoE 模型：</p>
+<ul>
+<li><code>Qwen3-30B-A3B</code></li>
+<li><code>Qwen3-235B-A22B</code></li>
+</ul>
+<p>MoE 的意义是：</p>
+<blockquote>
+<p>总参数很大，但每次推理只激活一部分参数，从而兼顾能力和成本。</p>
+</blockquote>
+<p>官方还提到：</p>
+<ul>
+<li><code>Qwen3-4B</code> 可以逼近 <code>Qwen2.5-72B-Instruct</code></li>
+<li>Qwen3 的 MoE 模型可以用更少激活参数达到接近 Qwen2.5 dense 模型的效果</li>
+</ul>
+<hr>
+<h2 id="7-Qwen3-5：相对-Qwen2-5-Qwen3-的关键升级"><a href="#7-Qwen3-5：相对-Qwen2-5-Qwen3-的关键升级" class="headerlink" title="7. Qwen3.5：相对 Qwen2.5 &#x2F; Qwen3 的关键升级"></a>7. Qwen3.5：相对 Qwen2.5 &#x2F; Qwen3 的关键升级</h2><p><code>Qwen3.5</code> 发布于 <code>2026-02-17</code>。</p>
+<p>这一代最重要的变化不是单点指标，而是方向变了：</p>
+<blockquote>
+<p>从文本大模型，进一步走向“原生多模态 Agent”。</p>
+</blockquote>
+<h3 id="7-1-原生多模态"><a href="#7-1-原生多模态" class="headerlink" title="7.1 原生多模态"></a>7.1 原生多模态</h3><p>官方将 <code>Qwen3.5-397B-A17B</code> 定义为：</p>
+<ul>
+<li>native vision-language model</li>
+</ul>
+<p>也就是说它不是简单地“LLM 外接视觉模块”，而是更强调模型本身对多模态信息的统一处理。</p>
+<h3 id="7-2-架构更先进"><a href="#7-2-架构更先进" class="headerlink" title="7.2 架构更先进"></a>7.2 架构更先进</h3><p>Qwen3.5 采用：</p>
+<ul>
+<li><code>linear attention</code></li>
+<li><code>Gated Delta Networks</code></li>
+<li><code>sparse MoE</code></li>
+</ul>
+<p>官方给出的核心信息是：</p>
+<ul>
+<li>总参数 <code>397B</code></li>
+<li>每次前向仅激活 <code>17B</code></li>
+</ul>
+<p>这类架构的目标很明确：</p>
+<ul>
+<li>降低推理成本</li>
+<li>提高长上下文和多模态处理效率</li>
+</ul>
+<h3 id="7-3-语言覆盖更大"><a href="#7-3-语言覆盖更大" class="headerlink" title="7.3 语言覆盖更大"></a>7.3 语言覆盖更大</h3><p>Qwen3.5 把语言和方言支持从 <code>119</code> 扩展到 <code>201</code></p>
+<p>这意味着它更适合：</p>
+<ul>
+<li>全球化产品</li>
+<li>多语检索</li>
+<li>多语客服</li>
+<li>多语 Agent</li>
+</ul>
+<h3 id="7-4-Hosted-版本更适合做-Agent"><a href="#7-4-Hosted-版本更适合做-Agent" class="headerlink" title="7.4 Hosted 版本更适合做 Agent"></a>7.4 Hosted 版本更适合做 Agent</h3><p>官方提到 <code>Qwen3.5-Plus</code> 具备：</p>
+<ul>
+<li>默认 <code>1M</code> context window</li>
+<li>官方内置工具</li>
+<li>adaptive tool use</li>
+</ul>
+<p>这和 Qwen2.5 的差别已经非常明显了。</p>
+<p>Qwen2.5 还是：</p>
+<ul>
+<li>更偏“问答 &#x2F; 聊天 &#x2F; 通用推理”</li>
+</ul>
+<p>而 Qwen3.5-Plus 开始变成：</p>
+<ul>
+<li>更偏“能理解环境、能调用工具、能在长上下文里持续工作”</li>
+</ul>
+<hr>
+<h2 id="8-Qwen3-6-Plus：截至-2026-04-20-的最新-API-旗舰"><a href="#8-Qwen3-6-Plus：截至-2026-04-20-的最新-API-旗舰" class="headerlink" title="8. Qwen3.6-Plus：截至 2026-04-20 的最新 API 旗舰"></a>8. Qwen3.6-Plus：截至 2026-04-20 的最新 API 旗舰</h2><p><code>Qwen3.6-Plus</code> 发布于 <code>2026-04-02</code>。</p>
+<p>如果你问“现在最强的 Qwen 云端 Agent 模型是谁”，答案基本就是它。</p>
+<h3 id="8-1-相比-Qwen3-5-Plus-的主要改进"><a href="#8-1-相比-Qwen3-5-Plus-的主要改进" class="headerlink" title="8.1 相比 Qwen3.5-Plus 的主要改进"></a>8.1 相比 Qwen3.5-Plus 的主要改进</h3><p>官方给出的核心升级点非常明确：</p>
+<ul>
+<li>编程 Agent 能力显著增强</li>
+<li>多模态感知和推理更强</li>
+<li>默认 <code>1M</code> 上下文</li>
+<li>更稳定、更可靠，更面向真实开发者场景</li>
+</ul>
+<h3 id="8-2-它最强的地方是什么"><a href="#8-2-它最强的地方是什么" class="headerlink" title="8.2 它最强的地方是什么"></a>8.2 它最强的地方是什么</h3><p>Qwen3.6-Plus 最大的变化不是“普通聊天更会聊”，而是：</p>
+<ul>
+<li>更会写代码</li>
+<li>更会改代码</li>
+<li>更会处理仓库级任务</li>
+<li>更会终端操作和工具调用</li>
+<li>更适合长链路、多步骤任务</li>
+</ul>
+<p>官方原话对应的方向大致可以概括为：</p>
+<ul>
+<li>reasoning</li>
+<li>memory</li>
+<li>execution</li>
+</ul>
+<p>这三个能力被整合得更紧了。</p>
+<h3 id="8-3-它的优点"><a href="#8-3-它的优点" class="headerlink" title="8.3 它的优点"></a>8.3 它的优点</h3><p>从实际使用角度看，Qwen3.6-Plus 的优点主要是：</p>
+<ul>
+<li>更强的 Agentic Coding</li>
+<li>更适合复杂仓库理解</li>
+<li>更适合前端开发和自动化任务</li>
+<li>更适合长任务规划</li>
+<li>更适合工具调用和多轮任务执行</li>
+<li>更适合多模态输入场景</li>
+</ul>
+<p>如果你要做的是：</p>
+<ul>
+<li>AI 编程助手</li>
+<li>自动化开发 Agent</li>
+<li>Repo 级代码分析</li>
+<li>多步工作流 Agent</li>
+</ul>
+<p>那 Qwen3.6-Plus 的定位已经明显高于 Qwen2.5。</p>
+<hr>
+<h2 id="9-Qwen3-6-35B-A3B：截至-2026-04-20-的最新开源主力"><a href="#9-Qwen3-6-35B-A3B：截至-2026-04-20-的最新开源主力" class="headerlink" title="9. Qwen3.6-35B-A3B：截至 2026-04-20 的最新开源主力"></a>9. Qwen3.6-35B-A3B：截至 2026-04-20 的最新开源主力</h2><p><code>Qwen3.6-35B-A3B</code> 发布于 <code>2026-04-17</code>。</p>
+<p>这是一款很值得关注的模型，因为它很能代表现在开源模型的方向：</p>
+<blockquote>
+<p>用更少的激活参数，做出更强的 Agent 和编码能力。</p>
+</blockquote>
+<h3 id="9-1-它的核心特点"><a href="#9-1-它的核心特点" class="headerlink" title="9.1 它的核心特点"></a>9.1 它的核心特点</h3><ul>
+<li><code>35B</code> 总参数</li>
+<li><code>3B</code> 激活参数</li>
+<li>MoE 架构</li>
+<li>原生多模态</li>
+<li>兼顾 <code>thinking</code> 和 <code>non-thinking</code></li>
+</ul>
+<h3 id="9-2-相比上一代的改进"><a href="#9-2-相比上一代的改进" class="headerlink" title="9.2 相比上一代的改进"></a>9.2 相比上一代的改进</h3><p>官方强调它：</p>
+<ul>
+<li>大幅超过 <code>Qwen3.5-35B-A3B</code></li>
+<li>在 agentic coding 上提升明显</li>
+<li>能与更大的 dense 模型竞争</li>
+</ul>
+<p>尤其适合：</p>
+<ul>
+<li>本地部署</li>
+<li>开源私有化</li>
+<li>成本敏感场景</li>
+<li>想要较强代码 Agent 能力，但又不想上超大模型</li>
+</ul>
+<h3 id="9-3-它的优点"><a href="#9-3-它的优点" class="headerlink" title="9.3 它的优点"></a>9.3 它的优点</h3><ul>
+<li>开源，适合自部署</li>
+<li>激活参数低，推理成本相对更友好</li>
+<li>代码 Agent 能力强</li>
+<li>多模态能力也不错</li>
+<li>能对接 <code>OpenClaw</code>、<code>Claude Code</code>、<code>Qwen Code</code></li>
+<li>支持 <code>preserve_thinking</code>，更适合连续 Agent 任务</li>
+</ul>
+<p>一句话概括：</p>
+<blockquote>
+<p>如果 Qwen3.6-Plus 是云端旗舰，那么 Qwen3.6-35B-A3B 更像是“开源部署里很有竞争力的一把刀”。</p>
+</blockquote>
+<hr>
+<h2 id="10-Qwen2-5-和最新模型怎么对比"><a href="#10-Qwen2-5-和最新模型怎么对比" class="headerlink" title="10. Qwen2.5 和最新模型怎么对比"></a>10. Qwen2.5 和最新模型怎么对比</h2><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Qwen2.5</th>
+<th>Qwen3.6-Plus &#x2F; Qwen3.6-35B-A3B</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>主要定位</td>
+<td>通用基础模型</td>
+<td>Agent 化、编程化、多模态化</td>
+</tr>
+<tr>
+<td>核心优势</td>
+<td>稳定、通用、结构化输出好</td>
+<td>会思考、会调用工具、会执行复杂任务</td>
+</tr>
+<tr>
+<td>上下文</td>
+<td>最高 <code>128K</code></td>
+<td>Hosted 版默认可到 <code>1M</code></td>
+</tr>
+<tr>
+<td>输出风格</td>
+<td>更适合问答、结构化响应</td>
+<td>更适合多步任务、复杂工作流</td>
+</tr>
+<tr>
+<td>代码能力</td>
+<td>强，尤其 <code>Qwen2.5-Coder</code></td>
+<td>更强调 Agentic Coding 和仓库级任务</td>
+</tr>
+<tr>
+<td>多模态</td>
+<td>不是这一代的核心重点</td>
+<td>已经是核心方向之一</td>
+</tr>
+<tr>
+<td>部署选择</td>
+<td>适合通用本地部署</td>
+<td>最新开源版更适合高级 Agent 部署</td>
+</tr>
+<tr>
+<td>成本效率</td>
+<td>dense 结构，直观易懂</td>
+<td>MoE 更强调“能力 &#x2F; 成本”比</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="11-怎么选"><a href="#11-怎么选" class="headerlink" title="11. 怎么选"></a>11. 怎么选</h2><p>如果你现在要选型，可以这样理解：</p>
+<h3 id="选-Qwen2-5-的场景"><a href="#选-Qwen2-5-的场景" class="headerlink" title="选 Qwen2.5 的场景"></a>选 Qwen2.5 的场景</h3><ul>
+<li>想找成熟稳定的通用开源模型</li>
+<li>更关注文本问答、RAG、结构化输出</li>
+<li>本地部署机器一般，希望模型链路简单</li>
+<li>需要一套通用模型 + coder&#x2F;math 专项模型组合</li>
+</ul>
+<h3 id="选-Qwen3-6-35B-A3B-的场景"><a href="#选-Qwen3-6-35B-A3B-的场景" class="headerlink" title="选 Qwen3.6-35B-A3B 的场景"></a>选 Qwen3.6-35B-A3B 的场景</h3><ul>
+<li>想自部署最新开源模型</li>
+<li>重点是代码 Agent、任务执行、复杂工作流</li>
+<li>希望性能强，但推理成本不要太夸张</li>
+<li>希望兼顾多模态能力</li>
+</ul>
+<h3 id="选-Qwen3-6-Plus-的场景"><a href="#选-Qwen3-6-Plus-的场景" class="headerlink" title="选 Qwen3.6-Plus 的场景"></a>选 Qwen3.6-Plus 的场景</h3><ul>
+<li>不执着于开源权重</li>
+<li>更看重当前最强云端能力</li>
+<li>想做编程 Agent、工具调用 Agent、长链路任务规划</li>
+<li>需要默认 <code>1M</code> 上下文和更强的实际执行能力</li>
+</ul>
+<hr>
+<h2 id="12-高频结论"><a href="#12-高频结论" class="headerlink" title="12. 高频结论"></a>12. 高频结论</h2><ul>
+<li><code>Qwen2.5</code> 的核心价值是“稳、全、好落地”。</li>
+<li><code>Qwen3</code> 开始，Qwen 明显往 reasoning + agent 方向转。</li>
+<li><code>Qwen3.5</code> 是“原生多模态 Agent”方向的重要节点。</li>
+<li><code>Qwen3.6-Plus</code> 是截至 <code>2026-04-20</code> 的最新 API 旗舰，更偏真实世界 Agent。</li>
+<li><code>Qwen3.6-35B-A3B</code> 是截至 <code>2026-04-20</code> 的最新开源主力，更适合自部署和高性价比 Agent 场景。</li>
+</ul>
+<hr>
+<h2 id="13-推荐阅读"><a href="#13-推荐阅读" class="headerlink" title="13. 推荐阅读"></a>13. 推荐阅读</h2><p>建议按下面顺序看：</p>
+<ol>
+<li><code>Qwen2.5</code>：先理解它为什么是一个成熟通用底座</li>
+<li><code>Qwen3</code>：看它如何把 thinking &#x2F; non-thinking 合到一起</li>
+<li><code>Qwen3.5</code>：看它怎么走向原生多模态 Agent</li>
+<li><code>Qwen3.6-Plus</code>：看最新 Agent 旗舰在“编码 + 工具 + 多模态”上怎么继续升级</li>
+<li><code>Qwen3.6-35B-A3B</code>：看开源版本如何在成本和能力之间做平衡</li>
+</ol>
+<p>官方文章：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://qwenlm.github.io/blog/qwen2.5/">Qwen2.5: A Party of Foundation Models!</a></li>
+<li><a target="_blank" rel="noopener" href="https://qwenlm.github.io/blog/qwen3/">Qwen3: Think Deeper, Act Faster</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.alibabacloud.com/blog/602894">Qwen3.5: Towards Native Multimodal Agents</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.alibabacloud.com/blog/603005">Qwen3.6-Plus: Towards Real World Agents</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.alibabacloud.com/blog/603043">Qwen3.6-35B-A3B: Agentic Coding Power, Now Open to All</a></li>
+</ul>
+<hr>
+<h2 id="14-一句话总结"><a href="#14-一句话总结" class="headerlink" title="14. 一句话总结"></a>14. 一句话总结</h2><p>Qwen2.5 的关键词是“强通用底座”，而最新的 Qwen3.6 系列关键词已经变成了：</p>
+<blockquote>
+<p>原生多模态、Agent、编程执行、长上下文、高效率 MoE。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>楚天
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/qwen%E6%A8%A1%E5%9E%8B%E6%BC%94%E8%BF%9B/" title="Qwen 模型演进笔记">https://chutianduan.github.io/notes/ai模型开发/知识点学习/大模型部署/qwen模型演进/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/llm/" rel="prev" title="LLM 部署学习笔记">
+                  <i class="fa fa-angle-left"></i> LLM 部署学习笔记
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/notes/%E9%A1%B9%E7%9B%AE%E5%88%86%E6%9E%90/fighting-netcode-%E9%A1%B9%E7%9B%AE%E7%9F%A5%E8%AF%86%E7%AC%94%E8%AE%B0/" rel="next" title="Fighting Netcode 项目知识笔记">
+                  Fighting Netcode 项目知识笔记 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-code"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">楚天</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

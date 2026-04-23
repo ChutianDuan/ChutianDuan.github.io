@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chutianduan.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":2,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="FAISS 学习笔记1. FAISS 是什么FAISS，全称 Facebook AI Similarity Search，是一个用于高效向量相似度搜索和聚类的库。 它最常见的用途是：  语义检索 图片检索 推荐系统召回 RAG 文档检索 大规模 embedding 向量查找  可以先这样理解：  Embedding 模型负责把文本变成向量，FAISS 负责在一堆向量里快速找到最相似的几个。  在">
+<meta property="og:type" content="article">
+<meta property="og:title" content="FAISS 学习笔记">
+<meta property="og:url" content="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/faiss/index.html">
+<meta property="og:site_name" content="楚天">
+<meta property="og:description" content="FAISS 学习笔记1. FAISS 是什么FAISS，全称 Facebook AI Similarity Search，是一个用于高效向量相似度搜索和聚类的库。 它最常见的用途是：  语义检索 图片检索 推荐系统召回 RAG 文档检索 大规模 embedding 向量查找  可以先这样理解：  Embedding 模型负责把文本变成向量，FAISS 负责在一堆向量里快速找到最相似的几个。  在">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-04-23T02:58:19.000Z">
+<meta property="article:modified_time" content="2026-04-23T02:58:19.000Z">
+<meta property="article:author" content="楚天">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="游戏网络">
+<meta property="article:tag" content="技术博客">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/faiss/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/faiss/","path":"/notes/ai模型开发/知识点学习/框架/faiss/","title":"FAISS 学习笔记"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>FAISS 学习笔记 | 楚天</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">楚天</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">惟楚有材，于斯为盛</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-友情链接"><a href="/link/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#FAISS-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0"><span class="nav-number">1.</span> <span class="nav-text">FAISS 学习笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-FAISS-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.1.</span> <span class="nav-text">1. FAISS 是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81-FAISS"><span class="nav-number">1.2.</span> <span class="nav-text">2. 为什么需要 FAISS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-FAISS-%E7%9A%84%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5"><span class="nav-number">1.3.</span> <span class="nav-text">3. FAISS 的核心概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E5%90%91%E9%87%8F"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 向量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-d"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 d</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-xb-%E5%92%8C-xq"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 xb 和 xq</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-Index"><span class="nav-number">1.3.4.</span> <span class="nav-text">3.4 Index</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-D-%E5%92%8C-I"><span class="nav-number">1.3.5.</span> <span class="nav-text">3.5 D 和 I</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%AE%89%E8%A3%85"><span class="nav-number">1.4.</span> <span class="nav-text">4. 安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E6%9C%80%E5%B0%8F%E5%8F%AF%E8%BF%90%E8%A1%8C%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.5.</span> <span class="nav-text">5. 最小可运行示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E8%A6%81%E6%B1%82"><span class="nav-number">1.6.</span> <span class="nav-text">6. 数据格式要求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-%E8%B7%9D%E7%A6%BB%E5%92%8C%E7%9B%B8%E4%BC%BC%E5%BA%A6"><span class="nav-number">1.7.</span> <span class="nav-text">7. 距离和相似度</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-L2-%E8%B7%9D%E7%A6%BB"><span class="nav-number">1.7.1.</span> <span class="nav-text">7.1 L2 距离</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-Inner-Product"><span class="nav-number">1.7.2.</span> <span class="nav-text">7.2 Inner Product</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-3-%E4%BD%99%E5%BC%A6%E7%9B%B8%E4%BC%BC%E5%BA%A6%E6%80%8E%E4%B9%88%E5%81%9A"><span class="nav-number">1.7.3.</span> <span class="nav-text">7.3 余弦相似度怎么做</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-%E5%B8%B8%E8%A7%81%E7%B4%A2%E5%BC%95%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.8.</span> <span class="nav-text">8. 常见索引类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-IndexFlatL2"><span class="nav-number">1.8.1.</span> <span class="nav-text">8.1 IndexFlatL2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-IndexFlatIP"><span class="nav-number">1.8.2.</span> <span class="nav-text">8.2 IndexFlatIP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-IndexHNSWFlat"><span class="nav-number">1.8.3.</span> <span class="nav-text">8.3 IndexHNSWFlat</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-4-IndexIVFFlat"><span class="nav-number">1.8.4.</span> <span class="nav-text">8.4 IndexIVFFlat</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-5-IndexIVFPQ"><span class="nav-number">1.8.5.</span> <span class="nav-text">8.5 IndexIVFPQ</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-index-factory"><span class="nav-number">1.9.</span> <span class="nav-text">9. index_factory</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-%E5%90%91%E9%87%8F-ID-%E5%92%8C%E4%B8%9A%E5%8A%A1-ID"><span class="nav-number">1.10.</span> <span class="nav-text">10. 向量 ID 和业务 ID</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#10-1-%E9%BB%98%E8%AE%A4-ID"><span class="nav-number">1.10.1.</span> <span class="nav-text">10.1 默认 ID</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-2-%E4%BD%BF%E7%94%A8-IndexIDMap"><span class="nav-number">1.10.2.</span> <span class="nav-text">10.2 使用 IndexIDMap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-3-RAG-%E9%A1%B9%E7%9B%AE%E9%87%8C%E7%9A%84-ID-%E8%AE%BE%E8%AE%A1"><span class="nav-number">1.10.3.</span> <span class="nav-text">10.3 RAG 项目里的 ID 设计</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-%E7%B4%A2%E5%BC%95%E4%BF%9D%E5%AD%98%E5%92%8C%E5%8A%A0%E8%BD%BD"><span class="nav-number">1.11.</span> <span class="nav-text">11. 索引保存和加载</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-RAG-%E9%A1%B9%E7%9B%AE%E4%B8%AD%E7%9A%84-FAISS-%E5%B0%81%E8%A3%85"><span class="nav-number">1.12.</span> <span class="nav-text">12. RAG 项目中的 FAISS 封装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-%E5%9C%A8-FastAPI-Celery-FAISS-%E4%B8%AD%E7%9A%84%E4%BD%8D%E7%BD%AE"><span class="nav-number">1.13.</span> <span class="nav-text">13. 在 FastAPI + Celery + FAISS 中的位置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-%E5%8D%95%E6%96%87%E6%A1%A3%E7%B4%A2%E5%BC%95%E5%92%8C%E7%9F%A5%E8%AF%86%E5%BA%93%E7%B4%A2%E5%BC%95"><span class="nav-number">1.14.</span> <span class="nav-text">14. 单文档索引和知识库索引</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#14-1-%E5%8D%95%E6%96%87%E6%A1%A3%E7%B4%A2%E5%BC%95"><span class="nav-number">1.14.1.</span> <span class="nav-text">14.1 单文档索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14-2-%E7%9F%A5%E8%AF%86%E5%BA%93%E7%B4%A2%E5%BC%95"><span class="nav-number">1.14.2.</span> <span class="nav-text">14.2 知识库索引</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#15-%E6%9B%B4%E6%96%B0%E5%92%8C%E5%88%A0%E9%99%A4"><span class="nav-number">1.15.</span> <span class="nav-text">15. 更新和删除</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#15-1-%E6%B7%BB%E5%8A%A0"><span class="nav-number">1.15.1.</span> <span class="nav-text">15.1 添加</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-2-%E5%88%A0%E9%99%A4"><span class="nav-number">1.15.2.</span> <span class="nav-text">15.2 删除</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-3-%E6%9B%B4%E6%96%B0"><span class="nav-number">1.15.3.</span> <span class="nav-text">15.3 更新</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#16-%E6%A3%80%E7%B4%A2%E5%8F%82%E6%95%B0%E6%80%8E%E4%B9%88%E9%80%89"><span class="nav-number">1.16.</span> <span class="nav-text">16. 检索参数怎么选</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#16-1-top-k"><span class="nav-number">1.16.1.</span> <span class="nav-text">16.1 top_k</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16-2-nprobe"><span class="nav-number">1.16.2.</span> <span class="nav-text">16.2 nprobe</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16-3-HNSW-%E5%8F%82%E6%95%B0"><span class="nav-number">1.16.3.</span> <span class="nav-text">16.3 HNSW 参数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#17-%E5%A6%82%E4%BD%95%E8%AF%84%E4%BC%B0-FAISS-%E6%A3%80%E7%B4%A2%E6%95%88%E6%9E%9C"><span class="nav-number">1.17.</span> <span class="nav-text">17. 如何评估 FAISS 检索效果</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#17-1-Recall-K"><span class="nav-number">1.17.1.</span> <span class="nav-text">17.1 Recall@K</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#17-2-MRR"><span class="nav-number">1.17.2.</span> <span class="nav-text">17.2 MRR</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#17-3-%E4%BA%BA%E5%B7%A5%E9%97%AE%E9%A2%98%E9%9B%86"><span class="nav-number">1.17.3.</span> <span class="nav-text">17.3 人工问题集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#17-4-%E6%A3%80%E7%B4%A2%E8%80%97%E6%97%B6"><span class="nav-number">1.17.4.</span> <span class="nav-text">17.4 检索耗时</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#18-FAISS-%E5%92%8C%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">1.18.</span> <span class="nav-text">18. FAISS 和向量数据库的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#19-%E5%B8%B8%E8%A7%81%E5%9D%91"><span class="nav-number">1.19.</span> <span class="nav-text">19. 常见坑</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#19-1-%E5%BF%98%E8%AE%B0%E8%BD%AC-float32"><span class="nav-number">1.19.1.</span> <span class="nav-text">19.1 忘记转 float32</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#19-2-%E5%90%91%E9%87%8F%E7%BB%B4%E5%BA%A6%E4%B8%8D%E4%B8%80%E8%87%B4"><span class="nav-number">1.19.2.</span> <span class="nav-text">19.2 向量维度不一致</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#19-3-%E5%81%9A%E4%BD%99%E5%BC%A6%E6%A3%80%E7%B4%A2%E4%BD%86%E5%BF%98%E8%AE%B0%E5%BD%92%E4%B8%80%E5%8C%96"><span class="nav-number">1.19.3.</span> <span class="nav-text">19.3 做余弦检索但忘记归一化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#19-4-IVF-%E5%BF%98%E8%AE%B0-train"><span class="nav-number">1.19.4.</span> <span class="nav-text">19.4 IVF 忘记 train()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#19-5-%E5%8F%AA%E4%BF%9D%E5%AD%98-FAISS%EF%BC%8C%E4%B8%8D%E4%BF%9D%E5%AD%98%E5%85%83%E6%95%B0%E6%8D%AE"><span class="nav-number">1.19.5.</span> <span class="nav-text">19.5 只保存 FAISS，不保存元数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#19-6-%E5%A4%9A%E8%BF%9B%E7%A8%8B%E5%90%8C%E6%97%B6%E5%86%99-index"><span class="nav-number">1.19.6.</span> <span class="nav-text">19.6 多进程同时写 index</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#19-7-%E6%8A%8A-FAISS-%E5%BD%93%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%A8"><span class="nav-number">1.19.7.</span> <span class="nav-text">19.7 把 FAISS 当数据库用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#20-RAG-%E9%A1%B9%E7%9B%AE%E9%87%8C%E7%9A%84%E6%8E%A8%E8%8D%90%E6%96%B9%E6%A1%88"><span class="nav-number">1.20.</span> <span class="nav-text">20. RAG 项目里的推荐方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#20-1-%E5%88%9D%E7%89%88"><span class="nav-number">1.20.1.</span> <span class="nav-text">20.1 初版</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#20-2-%E6%95%B0%E6%8D%AE%E9%87%8F%E5%8F%98%E5%A4%A7%E5%90%8E"><span class="nav-number">1.20.2.</span> <span class="nav-text">20.2 数据量变大后</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#20-3-%E7%AE%80%E5%8E%86%E9%87%8C%E5%8F%AF%E4%BB%A5%E6%80%8E%E4%B9%88%E8%AE%B2"><span class="nav-number">1.20.3.</span> <span class="nav-text">20.3 简历里可以怎么讲</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#21-%E4%B8%80%E4%B8%AA%E5%AE%8C%E6%95%B4%E7%9A%84-RAG-%E6%A3%80%E7%B4%A2%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.21.</span> <span class="nav-text">21. 一个完整的 RAG 检索示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#22-%E5%AD%A6%E4%B9%A0%E9%A1%BA%E5%BA%8F"><span class="nav-number">1.22.</span> <span class="nav-text">22. 学习顺序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#23-%E6%80%BB%E7%BB%93"><span class="nav-number">1.23.</span> <span class="nav-text">23. 总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#24-%E5%8F%82%E8%80%83"><span class="nav-number">1.24.</span> <span class="nav-text">24. 参考</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="楚天"
+      src="/img/me.jpg">
+  <p class="site-author-name" itemprop="name">楚天</p>
+  <div class="site-description" itemprop="description">记录深度学习、C++、游戏网络与生活旅行的学习笔记。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ChutianDuan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ChutianDuan" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:3383006954@qq.com" title="E-Mail → mailto:3383006954@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/faiss/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="FAISS 学习笔记 | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          FAISS 学习笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-04-23 10:58:19" itemprop="dateCreated datePublished" datetime="2026-04-23T10:58:19+08:00">2026-04-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/AI%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">AI模型开发</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/AI%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">知识点学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/AI%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/" itemprop="url" rel="index"><span itemprop="name">框架</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="FAISS-学习笔记"><a href="#FAISS-学习笔记" class="headerlink" title="FAISS 学习笔记"></a>FAISS 学习笔记</h1><h2 id="1-FAISS-是什么"><a href="#1-FAISS-是什么" class="headerlink" title="1. FAISS 是什么"></a>1. FAISS 是什么</h2><p>FAISS，全称 Facebook AI Similarity Search，是一个用于高效向量相似度搜索和聚类的库。</p>
+<p>它最常见的用途是：</p>
+<ul>
+<li>语义检索</li>
+<li>图片检索</li>
+<li>推荐系统召回</li>
+<li>RAG 文档检索</li>
+<li>大规模 embedding 向量查找</li>
+</ul>
+<p>可以先这样理解：</p>
+<blockquote>
+<p>Embedding 模型负责把文本变成向量，FAISS 负责在一堆向量里快速找到最相似的几个。</p>
+</blockquote>
+<p>在 RAG 里，FAISS 通常位于这条链路中：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">文档</span><br><span class="line">  -&gt; 切分 chunk</span><br><span class="line">  -&gt; embedding 模型生成向量</span><br><span class="line">  -&gt; FAISS 建索引</span><br><span class="line">  -&gt; 用户问题生成 query embedding</span><br><span class="line">  -&gt; FAISS Top-K 检索</span><br><span class="line">  -&gt; 把检索结果交给 LLM 生成回答</span><br></pre></td></tr></table></figure>
+
+<p>FAISS 本身不是完整数据库，它主要管理向量索引。文档标题、chunk 内容、文件路径、页码、用户 ID、权限等元数据，通常还要放在 MySQL、PostgreSQL、MongoDB 或其他业务数据库里。</p>
+<h2 id="2-为什么需要-FAISS"><a href="#2-为什么需要-FAISS" class="headerlink" title="2. 为什么需要 FAISS"></a>2. 为什么需要 FAISS</h2><p>如果有 10 个向量，直接遍历计算相似度就够了。</p>
+<p>但如果有：</p>
+<ul>
+<li>10 万个 chunk</li>
+<li>100 万个商品向量</li>
+<li>1000 万张图片特征</li>
+</ul>
+<p>每次查询都全量遍历会很慢。</p>
+<p>FAISS 解决的是：</p>
+<ul>
+<li>怎么快速找到最近邻</li>
+<li>怎么在速度、召回率、内存之间做取舍</li>
+<li>怎么支持百万级、千万级甚至更大规模的向量检索</li>
+</ul>
+<p>在小规模 RAG 项目里，<code>IndexFlat</code> 就能跑通完整链路；数据量上来后，再考虑 IVF、HNSW、PQ 等索引结构。</p>
+<h2 id="3-FAISS-的核心概念"><a href="#3-FAISS-的核心概念" class="headerlink" title="3. FAISS 的核心概念"></a>3. FAISS 的核心概念</h2><h3 id="3-1-向量"><a href="#3-1-向量" class="headerlink" title="3.1 向量"></a>3.1 向量</h3><p>FAISS 处理的是固定维度的向量。</p>
+<p>例如一个 embedding 模型输出 768 维向量：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[0.12, -0.03, 0.88, ..., 0.41]</span><br></pre></td></tr></table></figure>
+
+<p>那么 FAISS 里的所有向量都必须是 768 维。</p>
+<p>如果数据库向量是 768 维，而查询向量是 1024 维，就不能放在同一个 index 里检索。</p>
+<h3 id="3-2-d"><a href="#3-2-d" class="headerlink" title="3.2 d"></a>3.2 <code>d</code></h3><p><code>d</code> 表示向量维度。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">d = <span class="number">768</span></span><br><span class="line">index = faiss.IndexFlatL2(d)</span><br></pre></td></tr></table></figure>
+
+<p>这个 <code>d</code> 必须和 embedding 模型输出维度一致。</p>
+<h3 id="3-3-xb-和-xq"><a href="#3-3-xb-和-xq" class="headerlink" title="3.3 xb 和 xq"></a>3.3 <code>xb</code> 和 <code>xq</code></h3><p>FAISS 官方示例里经常用两个名字：</p>
+<ul>
+<li><code>xb</code>：database vectors，要被索引的向量集合</li>
+<li><code>xq</code>：query vectors，查询向量</li>
+</ul>
+<p>它们通常都是 NumPy 数组：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">xb.shape == (num_vectors, dimension)</span><br><span class="line">xq.shape == (num_queries, dimension)</span><br></pre></td></tr></table></figure>
+
+<p>例如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">xb: 10000 个文档 chunk 向量，每个 768 维</span><br><span class="line">xq: 1 个用户问题向量，每个 768 维</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-4-Index"><a href="#3-4-Index" class="headerlink" title="3.4 Index"></a>3.4 Index</h3><p>FAISS 的核心对象是 <code>Index</code>。</p>
+<p>Index 可以理解成：</p>
+<blockquote>
+<p>存放向量并支持相似度搜索的数据结构。</p>
+</blockquote>
+<p>常用操作：</p>
+<ul>
+<li><code>add()</code>：添加向量</li>
+<li><code>search()</code>：查询最近的 Top-K 向量</li>
+<li><code>train()</code>：训练索引，部分索引需要</li>
+<li><code>ntotal</code>：当前索引中有多少条向量</li>
+<li><code>is_trained</code>：索引是否已经训练完成</li>
+</ul>
+<h3 id="3-5-D-和-I"><a href="#3-5-D-和-I" class="headerlink" title="3.5 D 和 I"></a>3.5 <code>D</code> 和 <code>I</code></h3><p>FAISS 搜索结果通常返回两个数组：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">D, I = index.search(query_vectors, k)</span><br></pre></td></tr></table></figure>
+
+<p>含义：</p>
+<ul>
+<li><code>D</code>：距离或相似度分数</li>
+<li><code>I</code>：检索到的向量 ID 或内部下标</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">I = [[12, 88, 102]]</span><br><span class="line">D = [[0.13, 0.20, 0.35]]</span><br></pre></td></tr></table></figure>
+
+<p>表示当前查询最相关的 3 个结果分别是第 12、88、102 个向量。</p>
+<p>注意：</p>
+<ul>
+<li>L2 距离下，<code>D</code> 越小越相似。</li>
+<li>Inner Product 下，<code>D</code> 越大越相似。</li>
+</ul>
+<h2 id="4-安装"><a href="#4-安装" class="headerlink" title="4. 安装"></a>4. 安装</h2><p>CPU 版本：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install faiss-cpu</span><br></pre></td></tr></table></figure>
+
+<p>GPU 版本通常需要匹配 CUDA 环境，安装方式会和系统、CUDA、Python 版本有关。初学和普通 RAG 后端项目，先用 CPU 版本就够。</p>
+<h2 id="5-最小可运行示例"><a href="#5-最小可运行示例" class="headerlink" title="5. 最小可运行示例"></a>5. 最小可运行示例</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> faiss</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">d = <span class="number">4</span></span><br><span class="line">xb = np.array(</span><br><span class="line">    [</span><br><span class="line">        [<span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>],</span><br><span class="line">        [<span class="number">0.9</span>, <span class="number">0.1</span>, <span class="number">0.0</span>, <span class="number">0.0</span>],</span><br><span class="line">        [<span class="number">0.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>],</span><br><span class="line">        [<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>],</span><br><span class="line">    ],</span><br><span class="line">    dtype=<span class="string">&quot;float32&quot;</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">xq = np.array([[<span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>]], dtype=<span class="string">&quot;float32&quot;</span>)</span><br><span class="line"></span><br><span class="line">index = faiss.IndexFlatL2(d)</span><br><span class="line">index.add(xb)</span><br><span class="line"></span><br><span class="line">k = <span class="number">2</span></span><br><span class="line">D, I = index.search(xq, k)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(D)</span><br><span class="line"><span class="built_in">print</span>(I)</span><br></pre></td></tr></table></figure>
+
+<p>这段代码做了几件事：</p>
+<ol>
+<li>准备一批数据库向量 <code>xb</code></li>
+<li>准备查询向量 <code>xq</code></li>
+<li>创建 L2 距离索引 <code>IndexFlatL2</code></li>
+<li>把数据库向量加入索引</li>
+<li>查询最相近的 2 个向量</li>
+</ol>
+<h2 id="6-数据格式要求"><a href="#6-数据格式要求" class="headerlink" title="6. 数据格式要求"></a>6. 数据格式要求</h2><p>FAISS 对输入数据有几个常见要求：</p>
+<ul>
+<li>NumPy 数组通常要是 <code>float32</code></li>
+<li>shape 要是二维：<code>(n, d)</code></li>
+<li>数据最好是连续内存</li>
+<li>所有向量维度必须一致</li>
+</ul>
+<p>推荐这样处理：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vectors = np.asarray(vectors, dtype=<span class="string">&quot;float32&quot;</span>)</span><br><span class="line">vectors = np.ascontiguousarray(vectors)</span><br></pre></td></tr></table></figure>
+
+<p>如果只有一个查询向量，不要传一维数组：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 不推荐</span></span><br><span class="line">query.shape == (<span class="number">768</span>,)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 推荐</span></span><br><span class="line">query.shape == (<span class="number">1</span>, <span class="number">768</span>)</span><br></pre></td></tr></table></figure>
+
+<p>可以这样修正：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">query = np.asarray(query, dtype=<span class="string">&quot;float32&quot;</span>).reshape(<span class="number">1</span>, -<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="7-距离和相似度"><a href="#7-距离和相似度" class="headerlink" title="7. 距离和相似度"></a>7. 距离和相似度</h2><p>FAISS 里最常见的两种检索方式：</p>
+<ul>
+<li>L2 距离</li>
+<li>Inner Product 内积</li>
+</ul>
+<h3 id="7-1-L2-距离"><a href="#7-1-L2-距离" class="headerlink" title="7.1 L2 距离"></a>7.1 L2 距离</h3><p>L2 距离就是欧氏距离。</p>
+<p>FAISS 的 <code>METRIC_L2</code> 返回的是平方 L2 距离，不开根号。排序结果不受影响，因为平方距离和真实欧氏距离是单调一致的。</p>
+<p>使用方式：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">index = faiss.IndexFlatL2(d)</span><br></pre></td></tr></table></figure>
+
+<p>特点：</p>
+<ul>
+<li><code>D</code> 越小越相似</li>
+<li>适合直接按距离找最近邻</li>
+</ul>
+<h3 id="7-2-Inner-Product"><a href="#7-2-Inner-Product" class="headerlink" title="7.2 Inner Product"></a>7.2 Inner Product</h3><p>Inner Product 是内积，常用于最大内积搜索。</p>
+<p>使用方式：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">index = faiss.IndexFlatIP(d)</span><br></pre></td></tr></table></figure>
+
+<p>特点：</p>
+<ul>
+<li><code>D</code> 越大越相似</li>
+<li>常用于已经归一化的 embedding 检索</li>
+</ul>
+<h3 id="7-3-余弦相似度怎么做"><a href="#7-3-余弦相似度怎么做" class="headerlink" title="7.3 余弦相似度怎么做"></a>7.3 余弦相似度怎么做</h3><p>很多文本 embedding 检索习惯使用余弦相似度。</p>
+<p>FAISS 里常见做法是：</p>
+<ol>
+<li>使用 <code>IndexFlatIP</code></li>
+<li>添加向量前先做 L2 归一化</li>
+<li>查询向量也做 L2 归一化</li>
+</ol>
+<p>代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> faiss</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">d = <span class="number">768</span></span><br><span class="line">xb = np.asarray(xb, dtype=<span class="string">&quot;float32&quot;</span>)</span><br><span class="line">xq = np.asarray(xq, dtype=<span class="string">&quot;float32&quot;</span>)</span><br><span class="line"></span><br><span class="line">faiss.normalize_L2(xb)</span><br><span class="line">faiss.normalize_L2(xq)</span><br><span class="line"></span><br><span class="line">index = faiss.IndexFlatIP(d)</span><br><span class="line">index.add(xb)</span><br><span class="line"></span><br><span class="line">D, I = index.search(xq, k=<span class="number">5</span>)</span><br></pre></td></tr></table></figure>
+
+<p>注意：</p>
+<blockquote>
+<p>如果只归一化文档向量，不归一化查询向量，或者反过来，只归一化查询向量不归一化文档向量，结果都会不一致。</p>
+</blockquote>
+<h2 id="8-常见索引类型"><a href="#8-常见索引类型" class="headerlink" title="8. 常见索引类型"></a>8. 常见索引类型</h2><p>FAISS 有很多索引。初学阶段先掌握这几类就够。</p>
+<h3 id="8-1-IndexFlatL2"><a href="#8-1-IndexFlatL2" class="headerlink" title="8.1 IndexFlatL2"></a>8.1 <code>IndexFlatL2</code></h3><p>精确 L2 检索。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">index = faiss.IndexFlatL2(d)</span><br></pre></td></tr></table></figure>
+
+<p>特点：</p>
+<ul>
+<li>不需要训练</li>
+<li>暴力搜索，结果精确</li>
+<li>数据量小到中等时很好用</li>
+<li>内存占用约等于 <code>向量数量 * 维度 * 4 字节</code></li>
+</ul>
+<p>适合：</p>
+<ul>
+<li>本地 demo</li>
+<li>小规模 RAG</li>
+<li>先验证业务链路</li>
+<li>作为评测近似索引 recall 的 ground truth</li>
+</ul>
+<h3 id="8-2-IndexFlatIP"><a href="#8-2-IndexFlatIP" class="headerlink" title="8.2 IndexFlatIP"></a>8.2 <code>IndexFlatIP</code></h3><p>精确内积检索。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">index = faiss.IndexFlatIP(d)</span><br></pre></td></tr></table></figure>
+
+<p>特点：</p>
+<ul>
+<li>不需要训练</li>
+<li>暴力搜索，结果精确</li>
+<li>搭配向量归一化后，常用于余弦相似度检索</li>
+</ul>
+<p>适合：</p>
+<ul>
+<li>文本 embedding 语义检索</li>
+<li>RAG 原型</li>
+<li>中小规模知识库</li>
+</ul>
+<h3 id="8-3-IndexHNSWFlat"><a href="#8-3-IndexHNSWFlat" class="headerlink" title="8.3 IndexHNSWFlat"></a>8.3 <code>IndexHNSWFlat</code></h3><p>HNSW 是一种基于图的近似最近邻搜索方法。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">index = faiss.IndexHNSWFlat(d, <span class="number">32</span>)</span><br></pre></td></tr></table></figure>
+
+<p>第二个参数通常叫 <code>M</code>，可以理解成图里每个节点连接的邻居数量。</p>
+<p>特点：</p>
+<ul>
+<li>不需要像 IVF 那样单独训练</li>
+<li>搜索速度快</li>
+<li>召回率通常不错</li>
+<li>内存比 Flat 更高，因为要额外存图结构</li>
+</ul>
+<p>常见调参：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">index.hnsw.efSearch = <span class="number">64</span></span><br><span class="line">index.hnsw.efConstruction = <span class="number">200</span></span><br></pre></td></tr></table></figure>
+
+<p>简单理解：</p>
+<ul>
+<li><code>M</code> 越大，图更密，召回更好，内存更高。</li>
+<li><code>efSearch</code> 越大，搜索更认真，召回更好，速度更慢。</li>
+<li><code>efConstruction</code> 越大，建图更慢，但图质量可能更好。</li>
+</ul>
+<p>适合：</p>
+<ul>
+<li>希望查询快</li>
+<li>数据规模比 Flat 更大</li>
+<li>可以接受近似结果</li>
+</ul>
+<h3 id="8-4-IndexIVFFlat"><a href="#8-4-IndexIVFFlat" class="headerlink" title="8.4 IndexIVFFlat"></a>8.4 <code>IndexIVFFlat</code></h3><p>IVF，全称 Inverted File，可以理解成“先粗分类，再局部搜索”。</p>
+<p>基本思路：</p>
+<ol>
+<li>先把向量空间分成很多个簇</li>
+<li>添加向量时，把每个向量放进对应簇里</li>
+<li>查询时，只搜索最相关的几个簇</li>
+</ol>
+<p>代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> faiss</span><br><span class="line"></span><br><span class="line">d = <span class="number">768</span></span><br><span class="line">nlist = <span class="number">100</span></span><br><span class="line"></span><br><span class="line">quantizer = faiss.IndexFlatIP(d)</span><br><span class="line">index = faiss.IndexIVFFlat(</span><br><span class="line">    quantizer,</span><br><span class="line">    d,</span><br><span class="line">    nlist,</span><br><span class="line">    faiss.METRIC_INNER_PRODUCT,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">faiss.normalize_L2(train_vectors)</span><br><span class="line">faiss.normalize_L2(database_vectors)</span><br><span class="line">faiss.normalize_L2(query_vectors)</span><br><span class="line"></span><br><span class="line">index.train(train_vectors)</span><br><span class="line">index.add(database_vectors)</span><br><span class="line"></span><br><span class="line">index.nprobe = <span class="number">10</span></span><br><span class="line">D, I = index.search(query_vectors, k=<span class="number">5</span>)</span><br></pre></td></tr></table></figure>
+
+<p>关键参数：</p>
+<ul>
+<li><code>nlist</code>：聚类中心数量，也就是分多少个桶</li>
+<li><code>nprobe</code>：查询时搜索多少个桶</li>
+</ul>
+<p>简单理解：</p>
+<ul>
+<li><code>nlist</code> 越大，桶越多，每个桶里数据越少，但训练和管理更复杂。</li>
+<li><code>nprobe</code> 越大，搜的桶越多，召回更高，速度更慢。</li>
+</ul>
+<p>注意：</p>
+<blockquote>
+<p>IVF 类索引通常需要先 <code>train()</code>，再 <code>add()</code>。</p>
+</blockquote>
+<p>适合：</p>
+<ul>
+<li>数据量较大</li>
+<li>希望比 Flat 更快</li>
+<li>能接受近似检索</li>
+</ul>
+<h3 id="8-5-IndexIVFPQ"><a href="#8-5-IndexIVFPQ" class="headerlink" title="8.5 IndexIVFPQ"></a>8.5 <code>IndexIVFPQ</code></h3><p>PQ，全称 Product Quantization，核心目的是压缩向量。</p>
+<p><code>IndexIVFPQ</code> 可以理解成：</p>
+<blockquote>
+<p>IVF 负责缩小搜索范围，PQ 负责压缩每个向量，降低内存占用。</p>
+</blockquote>
+<p>特点：</p>
+<ul>
+<li>内存占用明显降低</li>
+<li>查询速度可以更快</li>
+<li>结果是近似的</li>
+<li>实现和调参比 Flat、HNSW、IVFFlat 更复杂</li>
+</ul>
+<p>适合：</p>
+<ul>
+<li>向量数量很大</li>
+<li>内存压力明显</li>
+<li>可以接受召回率下降</li>
+</ul>
+<p>对于普通 RAG 项目，不建议一开始就用 IVFPQ。先用 <code>IndexFlatIP</code> 或 <code>IndexHNSWFlat</code> 跑通业务，再根据数据量和性能瓶颈升级。</p>
+<h2 id="9-index-factory"><a href="#9-index-factory" class="headerlink" title="9. index_factory"></a>9. <code>index_factory</code></h2><p>FAISS 提供 <code>index_factory</code> 用字符串快速创建索引。</p>
+<p>例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">index = faiss.index_factory(d, <span class="string">&quot;Flat&quot;</span>, faiss.METRIC_INNER_PRODUCT)</span><br></pre></td></tr></table></figure>
+
+<p>HNSW：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">index = faiss.index_factory(d, <span class="string">&quot;HNSW32,Flat&quot;</span>, faiss.METRIC_INNER_PRODUCT)</span><br></pre></td></tr></table></figure>
+
+<p>IVF：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">index = faiss.index_factory(d, <span class="string">&quot;IVF100,Flat&quot;</span>, faiss.METRIC_INNER_PRODUCT)</span><br></pre></td></tr></table></figure>
+
+<p>IVFPQ：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">index = faiss.index_factory(d, <span class="string">&quot;IVF100,PQ16&quot;</span>, faiss.METRIC_INNER_PRODUCT)</span><br></pre></td></tr></table></figure>
+
+<p><code>index_factory</code> 的好处是：</p>
+<ul>
+<li>创建复合索引更方便</li>
+<li>配置可以字符串化</li>
+<li>适合写到配置文件里</li>
+</ul>
+<p>缺点是：</p>
+<ul>
+<li>初学时不如显式构造容易理解</li>
+<li>写错字符串时排查成本更高</li>
+</ul>
+<p>建议：</p>
+<ul>
+<li>学习阶段先显式构造</li>
+<li>熟悉索引类型后再用 <code>index_factory</code></li>
+</ul>
+<h2 id="10-向量-ID-和业务-ID"><a href="#10-向量-ID-和业务-ID" class="headerlink" title="10. 向量 ID 和业务 ID"></a>10. 向量 ID 和业务 ID</h2><h3 id="10-1-默认-ID"><a href="#10-1-默认-ID" class="headerlink" title="10.1 默认 ID"></a>10.1 默认 ID</h3><p>如果直接这样添加：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">index.add(vectors)</span><br></pre></td></tr></table></figure>
+
+<p>FAISS 会使用内部连续 ID：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0, 1, 2, 3, ...</span><br></pre></td></tr></table></figure>
+
+<p>这适合简单 demo，但真实项目里通常不够。</p>
+<p>因为 RAG 里你真正关心的是：</p>
+<ul>
+<li>这个向量属于哪个文档</li>
+<li>是第几个 chunk</li>
+<li>对应 MySQL 里的哪条记录</li>
+<li>原文内容是什么</li>
+<li>页码、标题、来源是什么</li>
+</ul>
+<h3 id="10-2-使用-IndexIDMap"><a href="#10-2-使用-IndexIDMap" class="headerlink" title="10.2 使用 IndexIDMap"></a>10.2 使用 <code>IndexIDMap</code></h3><p>可以给向量指定自己的 ID：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> faiss</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">base_index = faiss.IndexFlatIP(d)</span><br><span class="line">index = faiss.IndexIDMap(base_index)</span><br><span class="line"></span><br><span class="line">vectors = np.asarray(vectors, dtype=<span class="string">&quot;float32&quot;</span>)</span><br><span class="line">ids = np.asarray([<span class="number">101</span>, <span class="number">102</span>, <span class="number">103</span>], dtype=<span class="string">&quot;int64&quot;</span>)</span><br><span class="line"></span><br><span class="line">faiss.normalize_L2(vectors)</span><br><span class="line">index.add_with_ids(vectors, ids)</span><br><span class="line"></span><br><span class="line">D, I = index.search(query, k=<span class="number">3</span>)</span><br></pre></td></tr></table></figure>
+
+<p>这里返回的 <code>I</code> 就是你传入的业务 ID。</p>
+<h3 id="10-3-RAG-项目里的-ID-设计"><a href="#10-3-RAG-项目里的-ID-设计" class="headerlink" title="10.3 RAG 项目里的 ID 设计"></a>10.3 RAG 项目里的 ID 设计</h3><p>推荐做法：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">MySQL chunk 表：</span><br><span class="line">- id: chunk_id</span><br><span class="line">- document_id</span><br><span class="line">- chunk_index</span><br><span class="line">- content</span><br><span class="line">- page</span><br><span class="line">- metadata</span><br><span class="line">- embedding_model</span><br><span class="line">- created_at</span><br><span class="line"></span><br><span class="line">FAISS：</span><br><span class="line">- 向量 ID 使用 chunk_id</span><br></pre></td></tr></table></figure>
+
+<p>搜索后：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">FAISS 返回 chunk_id</span><br><span class="line">  -&gt; 用 chunk_id 查 MySQL</span><br><span class="line">  -&gt; 取 content、document_id、page、source</span><br><span class="line">  -&gt; 组装 prompt 和 citation</span><br></pre></td></tr></table></figure>
+
+<p>不要把大量元数据硬塞进 FAISS。FAISS 适合管向量，不适合替代业务数据库。</p>
+<h2 id="11-索引保存和加载"><a href="#11-索引保存和加载" class="headerlink" title="11. 索引保存和加载"></a>11. 索引保存和加载</h2><p>FAISS index 可以保存到磁盘。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">faiss.write_index(index, <span class="string">&quot;docs.index&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>加载：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">index = faiss.read_index(<span class="string">&quot;docs.index&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>RAG 项目里常见做法：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">data/</span><br><span class="line">└── indexes/</span><br><span class="line">    ├── kb_1.index</span><br><span class="line">    ├── kb_2.index</span><br><span class="line">    └── kb_3.index</span><br></pre></td></tr></table></figure>
+
+<p>同时在数据库里记录：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">knowledge_base_id</span><br><span class="line">index_path</span><br><span class="line">embedding_model</span><br><span class="line">embedding_dim</span><br><span class="line">metric_type</span><br><span class="line">index_type</span><br><span class="line">chunk_count</span><br><span class="line">version</span><br><span class="line">updated_at</span><br></pre></td></tr></table></figure>
+
+<p>这样做的好处：</p>
+<ul>
+<li>服务重启后可以直接加载 index</li>
+<li>可以知道 index 对应哪个 embedding 模型</li>
+<li>模型切换后能判断旧索引是否需要重建</li>
+</ul>
+<h2 id="12-RAG-项目中的-FAISS-封装"><a href="#12-RAG-项目中的-FAISS-封装" class="headerlink" title="12. RAG 项目中的 FAISS 封装"></a>12. RAG 项目中的 FAISS 封装</h2><p>在项目里不要把 FAISS 操作散落在 router 或 service 里，建议封装成 <code>VectorStore</code>。</p>
+<p>示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pathlib <span class="keyword">import</span> Path</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> faiss</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">FaissVectorStore</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, dim: <span class="built_in">int</span>, index_path: <span class="built_in">str</span> | <span class="literal">None</span> = <span class="literal">None</span></span>):</span><br><span class="line">        <span class="variable language_">self</span>.dim = dim</span><br><span class="line">        <span class="variable language_">self</span>.index_path = Path(index_path) <span class="keyword">if</span> index_path <span class="keyword">else</span> <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="variable language_">self</span>.index_path <span class="keyword">and</span> <span class="variable language_">self</span>.index_path.exists():</span><br><span class="line">            <span class="variable language_">self</span>.index = faiss.read_index(<span class="built_in">str</span>(<span class="variable language_">self</span>.index_path))</span><br><span class="line">            <span class="keyword">if</span> <span class="variable language_">self</span>.index.d != dim:</span><br><span class="line">                <span class="keyword">raise</span> ValueError(<span class="string">&quot;index dimension mismatch&quot;</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            base_index = faiss.IndexFlatIP(dim)</span><br><span class="line">            <span class="variable language_">self</span>.index = faiss.IndexIDMap(base_index)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">self, vectors: np.ndarray, ids: np.ndarray</span>) -&gt; <span class="literal">None</span>:</span><br><span class="line">        vectors = np.asarray(vectors, dtype=<span class="string">&quot;float32&quot;</span>)</span><br><span class="line">        vectors = np.ascontiguousarray(vectors)</span><br><span class="line">        ids = np.asarray(ids, dtype=<span class="string">&quot;int64&quot;</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> vectors.ndim != <span class="number">2</span> <span class="keyword">or</span> vectors.shape[<span class="number">1</span>] != <span class="variable language_">self</span>.dim:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&quot;invalid vector shape&quot;</span>)</span><br><span class="line"></span><br><span class="line">        faiss.normalize_L2(vectors)</span><br><span class="line">        <span class="variable language_">self</span>.index.add_with_ids(vectors, ids)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">search</span>(<span class="params">self, query: np.ndarray, top_k: <span class="built_in">int</span> = <span class="number">5</span></span>):</span><br><span class="line">        query = np.asarray(query, dtype=<span class="string">&quot;float32&quot;</span>).reshape(<span class="number">1</span>, -<span class="number">1</span>)</span><br><span class="line">        query = np.ascontiguousarray(query)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> query.shape[<span class="number">1</span>] != <span class="variable language_">self</span>.dim:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&quot;invalid query dimension&quot;</span>)</span><br><span class="line"></span><br><span class="line">        faiss.normalize_L2(query)</span><br><span class="line">        scores, ids = <span class="variable language_">self</span>.index.search(query, top_k)</span><br><span class="line">        <span class="keyword">return</span> scores[<span class="number">0</span>], ids[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">save</span>(<span class="params">self</span>) -&gt; <span class="literal">None</span>:</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> <span class="variable language_">self</span>.index_path:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&quot;index_path is required&quot;</span>)</span><br><span class="line">        <span class="variable language_">self</span>.index_path.parent.mkdir(parents=<span class="literal">True</span>, exist_ok=<span class="literal">True</span>)</span><br><span class="line">        faiss.write_index(<span class="variable language_">self</span>.index, <span class="built_in">str</span>(<span class="variable language_">self</span>.index_path))</span><br></pre></td></tr></table></figure>
+
+<p>这层封装负责：</p>
+<ul>
+<li>统一检查向量维度</li>
+<li>统一转 <code>float32</code></li>
+<li>统一做归一化</li>
+<li>统一保存和加载 index</li>
+<li>对上层隐藏 FAISS 细节</li>
+</ul>
+<h2 id="13-在-FastAPI-Celery-FAISS-中的位置"><a href="#13-在-FastAPI-Celery-FAISS-中的位置" class="headerlink" title="13. 在 FastAPI + Celery + FAISS 中的位置"></a>13. 在 FastAPI + Celery + FAISS 中的位置</h2><p>结合你的 RAG 项目，可以这样拆：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">FastAPI：</span><br><span class="line">- 接收上传请求</span><br><span class="line">- 创建 document 和 task 记录</span><br><span class="line">- 返回 task_id</span><br><span class="line"></span><br><span class="line">Celery：</span><br><span class="line">- 解析文档</span><br><span class="line">- chunk 切分</span><br><span class="line">- 调 embedding 模型</span><br><span class="line">- 调 VectorStore.add()</span><br><span class="line">- 保存 FAISS index</span><br><span class="line">- 更新任务状态</span><br><span class="line"></span><br><span class="line">FastAPI chat 接口：</span><br><span class="line">- 接收用户问题</span><br><span class="line">- 调 embedding 模型生成 query vector</span><br><span class="line">- 调 VectorStore.search()</span><br><span class="line">- 根据 chunk_id 查 MySQL</span><br><span class="line">- 拼接上下文</span><br><span class="line">- 调 LLM</span><br><span class="line">- 保存 message 和 citation</span><br></pre></td></tr></table></figure>
+
+<p>一个简化链路：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">upload document</span><br><span class="line">  -&gt; Celery ingest task</span><br><span class="line">  -&gt; chunks</span><br><span class="line">  -&gt; embeddings</span><br><span class="line">  -&gt; FAISS index</span><br><span class="line">  -&gt; MySQL chunk metadata</span><br><span class="line"></span><br><span class="line">chat question</span><br><span class="line">  -&gt; query embedding</span><br><span class="line">  -&gt; FAISS top-k chunk_id</span><br><span class="line">  -&gt; MySQL load chunk content</span><br><span class="line">  -&gt; LLM answer</span><br></pre></td></tr></table></figure>
+
+<h2 id="14-单文档索引和知识库索引"><a href="#14-单文档索引和知识库索引" class="headerlink" title="14. 单文档索引和知识库索引"></a>14. 单文档索引和知识库索引</h2><h3 id="14-1-单文档索引"><a href="#14-1-单文档索引" class="headerlink" title="14.1 单文档索引"></a>14.1 单文档索引</h3><p>每个文档一个 FAISS index。</p>
+<p>优点：</p>
+<ul>
+<li>实现简单</li>
+<li>删除文档方便</li>
+<li>文件和索引一一对应</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>多文档检索麻烦</li>
+<li>查询多个文档时要搜多个 index</li>
+<li>不适合知识库级检索</li>
+</ul>
+<h3 id="14-2-知识库索引"><a href="#14-2-知识库索引" class="headerlink" title="14.2 知识库索引"></a>14.2 知识库索引</h3><p>一个知识库一个 FAISS index，里面包含多个文档的 chunk。</p>
+<p>优点：</p>
+<ul>
+<li>支持多文档统一检索</li>
+<li>更接近真实 RAG 系统</li>
+<li>检索流程简单</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>删除单个文档更麻烦</li>
+<li>索引版本管理更重要</li>
+<li>需要维护 chunk_id 到文档元数据的映射</li>
+</ul>
+<p>推荐：</p>
+<ul>
+<li>demo 阶段可以单文档索引</li>
+<li>简历项目和真实项目更建议做知识库索引</li>
+</ul>
+<h2 id="15-更新和删除"><a href="#15-更新和删除" class="headerlink" title="15. 更新和删除"></a>15. 更新和删除</h2><p>FAISS 不是传统数据库，更新和删除要谨慎设计。</p>
+<h3 id="15-1-添加"><a href="#15-1-添加" class="headerlink" title="15.1 添加"></a>15.1 添加</h3><p>添加新 chunk 比较简单：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">index.add_with_ids(new_vectors, new_ids)</span><br><span class="line">faiss.write_index(index, index_path)</span><br></pre></td></tr></table></figure>
+
+<h3 id="15-2-删除"><a href="#15-2-删除" class="headerlink" title="15.2 删除"></a>15.2 删除</h3><p>部分索引支持 <code>remove_ids()</code>，但工程上仍然要考虑：</p>
+<ul>
+<li>删除后 MySQL 元数据是否同步</li>
+<li>index 文件是否需要重新保存</li>
+<li>删除大量数据后索引质量是否下降</li>
+<li>多进程读写是否冲突</li>
+</ul>
+<p>更稳妥的做法：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">少量删除：</span><br><span class="line">- 数据库标记 chunk/document 为 deleted</span><br><span class="line">- 检索后过滤 deleted 结果</span><br><span class="line"></span><br><span class="line">大量删除或周期整理：</span><br><span class="line">- 根据有效 chunk 重新构建 index</span><br><span class="line">- 原子替换旧 index 文件</span><br></pre></td></tr></table></figure>
+
+<h3 id="15-3-更新"><a href="#15-3-更新" class="headerlink" title="15.3 更新"></a>15.3 更新</h3><p>更新文档一般等价于：</p>
+<ol>
+<li>删除旧文档对应 chunk</li>
+<li>重新解析文档</li>
+<li>重新生成 embedding</li>
+<li>重新加入 index</li>
+</ol>
+<p>如果更新频率高，就要认真设计索引重建策略。</p>
+<h2 id="16-检索参数怎么选"><a href="#16-检索参数怎么选" class="headerlink" title="16. 检索参数怎么选"></a>16. 检索参数怎么选</h2><h3 id="16-1-top-k"><a href="#16-1-top-k" class="headerlink" title="16.1 top_k"></a>16.1 <code>top_k</code></h3><p><code>top_k</code> 表示返回几个候选 chunk。</p>
+<p>RAG 常见取值：</p>
+<ul>
+<li><code>top_k = 3</code></li>
+<li><code>top_k = 5</code></li>
+<li><code>top_k = 10</code></li>
+</ul>
+<p>取太小：</p>
+<ul>
+<li>可能漏掉关键信息</li>
+</ul>
+<p>取太大：</p>
+<ul>
+<li>prompt 变长</li>
+<li>噪声变多</li>
+<li>LLM 成本上升</li>
+</ul>
+<p>可以先用 <code>top_k=5</code>，后续根据实际效果调。</p>
+<h3 id="16-2-nprobe"><a href="#16-2-nprobe" class="headerlink" title="16.2 nprobe"></a>16.2 <code>nprobe</code></h3><p>IVF 索引里最重要的搜索参数是 <code>nprobe</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">index.nprobe = <span class="number">10</span></span><br></pre></td></tr></table></figure>
+
+<p>简单理解：</p>
+<ul>
+<li><code>nprobe</code> 小：速度快，可能漏结果</li>
+<li><code>nprobe</code> 大：召回高，速度慢</li>
+</ul>
+<p>调参时要看：</p>
+<ul>
+<li>查询耗时</li>
+<li>recall</li>
+<li>最终回答质量</li>
+</ul>
+<h3 id="16-3-HNSW-参数"><a href="#16-3-HNSW-参数" class="headerlink" title="16.3 HNSW 参数"></a>16.3 HNSW 参数</h3><p>HNSW 常看：</p>
+<ul>
+<li><code>M</code></li>
+<li><code>efConstruction</code></li>
+<li><code>efSearch</code></li>
+</ul>
+<p>经验理解：</p>
+<ul>
+<li><code>M</code> 控制图连接密度</li>
+<li><code>efConstruction</code> 控制建图质量</li>
+<li><code>efSearch</code> 控制查询时探索范围</li>
+</ul>
+<p>如果检索结果质量不够，先尝试调大 <code>efSearch</code>。</p>
+<h2 id="17-如何评估-FAISS-检索效果"><a href="#17-如何评估-FAISS-检索效果" class="headerlink" title="17. 如何评估 FAISS 检索效果"></a>17. 如何评估 FAISS 检索效果</h2><p>只看“能不能返回结果”是不够的。</p>
+<p>RAG 项目里至少可以做几个简单评估：</p>
+<h3 id="17-1-Recall-K"><a href="#17-1-Recall-K" class="headerlink" title="17.1 Recall@K"></a>17.1 Recall@K</h3><p>如果你有标准答案 chunk，可以看：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Recall@K = 正确 chunk 是否出现在 Top-K 结果里</span><br></pre></td></tr></table></figure>
+
+<p>例如：</p>
+<ul>
+<li><code>Recall@1</code></li>
+<li><code>Recall@3</code></li>
+<li><code>Recall@5</code></li>
+</ul>
+<h3 id="17-2-MRR"><a href="#17-2-MRR" class="headerlink" title="17.2 MRR"></a>17.2 MRR</h3><p>MRR 关注正确结果排在第几位。</p>
+<p>如果正确 chunk 总是排在第一名，效果就很好。</p>
+<h3 id="17-3-人工问题集"><a href="#17-3-人工问题集" class="headerlink" title="17.3 人工问题集"></a>17.3 人工问题集</h3><p>最实用的方式是为每份文档准备一批问题：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">问题：论文里使用的数据集是什么？</span><br><span class="line">期望命中的 chunk：chunk_id = 123</span><br></pre></td></tr></table></figure>
+
+<p>然后统计：</p>
+<ul>
+<li>是否命中</li>
+<li>排名第几</li>
+<li>分数是多少</li>
+<li>LLM 最终回答是否引用了正确片段</li>
+</ul>
+<h3 id="17-4-检索耗时"><a href="#17-4-检索耗时" class="headerlink" title="17.4 检索耗时"></a>17.4 检索耗时</h3><p>RAG 链路里建议记录：</p>
+<ul>
+<li>embedding 耗时</li>
+<li>FAISS search 耗时</li>
+<li>MySQL 查 chunk 耗时</li>
+<li>LLM 生成耗时</li>
+</ul>
+<p>这样才能知道瓶颈在哪里。</p>
+<h2 id="18-FAISS-和向量数据库的区别"><a href="#18-FAISS-和向量数据库的区别" class="headerlink" title="18. FAISS 和向量数据库的区别"></a>18. FAISS 和向量数据库的区别</h2><p>FAISS 更像一个向量检索引擎或向量索引库。</p>
+<p>向量数据库通常还提供：</p>
+<ul>
+<li>数据持久化管理</li>
+<li>元数据过滤</li>
+<li>分布式存储</li>
+<li>多租户</li>
+<li>权限管理</li>
+<li>在线增删改查</li>
+<li>服务化 API</li>
+</ul>
+<p>常见向量数据库：</p>
+<ul>
+<li>Milvus</li>
+<li>Qdrant</li>
+<li>Weaviate</li>
+<li>pgvector</li>
+</ul>
+<p>对比：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">FAISS：</span><br><span class="line">- 轻量</span><br><span class="line">- 本地库</span><br><span class="line">- 性能强</span><br><span class="line">- 灵活</span><br><span class="line">- 需要自己做元数据和服务封装</span><br><span class="line"></span><br><span class="line">向量数据库：</span><br><span class="line">- 功能完整</span><br><span class="line">- 更偏生产服务</span><br><span class="line">- 自带元数据过滤和管理能力</span><br><span class="line">- 部署和维护成本更高</span><br></pre></td></tr></table></figure>
+
+<p>你的 RAG 项目如果是学习和简历展示，用 FAISS 很合适。它能让你真正理解向量检索、索引、召回率、Top-K、元数据映射这些底层概念。</p>
+<h2 id="19-常见坑"><a href="#19-常见坑" class="headerlink" title="19. 常见坑"></a>19. 常见坑</h2><h3 id="19-1-忘记转-float32"><a href="#19-1-忘记转-float32" class="headerlink" title="19.1 忘记转 float32"></a>19.1 忘记转 <code>float32</code></h3><p>很多 embedding 模型或 Python 处理流程会给出 <code>float64</code>。</p>
+<p>FAISS 通常期望 <code>float32</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vectors = vectors.astype(<span class="string">&quot;float32&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="19-2-向量维度不一致"><a href="#19-2-向量维度不一致" class="headerlink" title="19.2 向量维度不一致"></a>19.2 向量维度不一致</h3><p>比如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">索引维度：768</span><br><span class="line">查询向量：1024</span><br></pre></td></tr></table></figure>
+
+<p>这通常是因为：</p>
+<ul>
+<li>embedding 模型换了</li>
+<li>文档向量和查询向量用了不同模型</li>
+<li>reshape 错了</li>
+</ul>
+<p>解决：</p>
+<ul>
+<li>数据库记录 <code>embedding_model</code> 和 <code>embedding_dim</code></li>
+<li>加载 index 时检查配置</li>
+<li>查询前检查 query shape</li>
+</ul>
+<h3 id="19-3-做余弦检索但忘记归一化"><a href="#19-3-做余弦检索但忘记归一化" class="headerlink" title="19.3 做余弦检索但忘记归一化"></a>19.3 做余弦检索但忘记归一化</h3><p>如果用 <code>IndexFlatIP</code> 模拟余弦相似度，一定要：</p>
+<ul>
+<li>入库向量归一化</li>
+<li>查询向量归一化</li>
+</ul>
+<p>否则内积会受到向量长度影响。</p>
+<h3 id="19-4-IVF-忘记-train"><a href="#19-4-IVF-忘记-train" class="headerlink" title="19.4 IVF 忘记 train()"></a>19.4 IVF 忘记 <code>train()</code></h3><p>IVF、PQ 这类索引通常需要训练。</p>
+<p>错误流程：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">index = faiss.IndexIVFFlat(...)</span><br><span class="line">index.add(vectors)</span><br></pre></td></tr></table></figure>
+
+<p>正确流程：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">index.train(train_vectors)</span><br><span class="line">index.add(vectors)</span><br></pre></td></tr></table></figure>
+
+<p>可以检查：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(index.is_trained)</span><br></pre></td></tr></table></figure>
+
+<h3 id="19-5-只保存-FAISS，不保存元数据"><a href="#19-5-只保存-FAISS，不保存元数据" class="headerlink" title="19.5 只保存 FAISS，不保存元数据"></a>19.5 只保存 FAISS，不保存元数据</h3><p>如果只保存 index 文件，不保存 chunk 元数据，搜索结果只会给你 ID，无法还原原文。</p>
+<p>正确做法：</p>
+<ul>
+<li>FAISS 存向量</li>
+<li>MySQL 存 chunk 内容和元数据</li>
+<li>FAISS ID 对应 MySQL chunk_id</li>
+</ul>
+<h3 id="19-6-多进程同时写-index"><a href="#19-6-多进程同时写-index" class="headerlink" title="19.6 多进程同时写 index"></a>19.6 多进程同时写 index</h3><p>如果 FastAPI 和多个 Celery worker 同时写同一个 index 文件，容易出问题。</p>
+<p>建议：</p>
+<ul>
+<li>写操作集中到单个任务队列</li>
+<li>使用文件锁或数据库状态锁</li>
+<li>写新文件后原子替换旧文件</li>
+<li>查询服务读取稳定版本</li>
+</ul>
+<h3 id="19-7-把-FAISS-当数据库用"><a href="#19-7-把-FAISS-当数据库用" class="headerlink" title="19.7 把 FAISS 当数据库用"></a>19.7 把 FAISS 当数据库用</h3><p>FAISS 适合相似度搜索，不适合做复杂业务查询。</p>
+<p>这些事情应该交给业务数据库：</p>
+<ul>
+<li>用户权限</li>
+<li>文档状态</li>
+<li>删除标记</li>
+<li>文件来源</li>
+<li>页码</li>
+<li>文本内容</li>
+<li>citation 信息</li>
+</ul>
+<h2 id="20-RAG-项目里的推荐方案"><a href="#20-RAG-项目里的推荐方案" class="headerlink" title="20. RAG 项目里的推荐方案"></a>20. RAG 项目里的推荐方案</h2><p>如果是你的当前 RAG 文档检索项目，我建议这样选：</p>
+<h3 id="20-1-初版"><a href="#20-1-初版" class="headerlink" title="20.1 初版"></a>20.1 初版</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">索引：IndexIDMap(IndexFlatIP)</span><br><span class="line">相似度：归一化向量 + Inner Product</span><br><span class="line">元数据：MySQL chunk 表</span><br><span class="line">持久化：faiss.write_index()</span><br><span class="line">任务：Celery 构建索引</span><br></pre></td></tr></table></figure>
+
+<p>优点：</p>
+<ul>
+<li>简单</li>
+<li>准确</li>
+<li>方便调试</li>
+<li>很适合简历项目说明</li>
+</ul>
+<h3 id="20-2-数据量变大后"><a href="#20-2-数据量变大后" class="headerlink" title="20.2 数据量变大后"></a>20.2 数据量变大后</h3><p>如果 Flat 查询变慢，可以升级：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">IndexHNSWFlat</span><br></pre></td></tr></table></figure>
+
+<p>或者：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">IndexIVFFlat</span><br></pre></td></tr></table></figure>
+
+<p>建议顺序：</p>
+<ol>
+<li>先用 Flat 建基准</li>
+<li>再上 HNSW 或 IVF</li>
+<li>用 Recall@K 对比召回损失</li>
+<li>记录查询耗时变化</li>
+</ol>
+<h3 id="20-3-简历里可以怎么讲"><a href="#20-3-简历里可以怎么讲" class="headerlink" title="20.3 简历里可以怎么讲"></a>20.3 简历里可以怎么讲</h3><p>可以写成：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">使用 FAISS 构建文档 chunk 向量索引，采用 chunk_id 作为向量 ID，并在 MySQL 中维护文档、chunk、索引版本和 citation 元数据；查询阶段对用户问题生成 embedding 后执行 Top-K 召回，再根据 chunk_id 回表获取原文内容并拼接上下文供 LLM 生成回答。</span><br></pre></td></tr></table></figure>
+
+<p>如果你做了评测，还可以加：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">基于人工问题集评估 Recall@K 和检索耗时，对比 IndexFlatIP、HNSW、IVFFlat 在召回率、延迟和内存占用上的差异。</span><br></pre></td></tr></table></figure>
+
+<h2 id="21-一个完整的-RAG-检索示例"><a href="#21-一个完整的-RAG-检索示例" class="headerlink" title="21. 一个完整的 RAG 检索示例"></a>21. 一个完整的 RAG 检索示例</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> faiss</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SimpleRagIndex</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, dim: <span class="built_in">int</span></span>):</span><br><span class="line">        <span class="variable language_">self</span>.dim = dim</span><br><span class="line">        <span class="variable language_">self</span>.index = faiss.IndexIDMap(faiss.IndexFlatIP(dim))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">add_chunks</span>(<span class="params">self, embeddings: <span class="built_in">list</span>[<span class="built_in">list</span>[<span class="built_in">float</span>]], chunk_ids: <span class="built_in">list</span>[<span class="built_in">int</span>]</span>) -&gt; <span class="literal">None</span>:</span><br><span class="line">        vectors = np.asarray(embeddings, dtype=<span class="string">&quot;float32&quot;</span>)</span><br><span class="line">        vectors = np.ascontiguousarray(vectors)</span><br><span class="line"></span><br><span class="line">        ids = np.asarray(chunk_ids, dtype=<span class="string">&quot;int64&quot;</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> vectors.ndim != <span class="number">2</span>:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&quot;embeddings must be 2D&quot;</span>)</span><br><span class="line">        <span class="keyword">if</span> vectors.shape[<span class="number">1</span>] != <span class="variable language_">self</span>.dim:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&quot;embedding dimension mismatch&quot;</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(ids) != <span class="built_in">len</span>(vectors):</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&quot;ids length mismatch&quot;</span>)</span><br><span class="line"></span><br><span class="line">        faiss.normalize_L2(vectors)</span><br><span class="line">        <span class="variable language_">self</span>.index.add_with_ids(vectors, ids)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">search</span>(<span class="params">self, query_embedding: <span class="built_in">list</span>[<span class="built_in">float</span>], top_k: <span class="built_in">int</span> = <span class="number">5</span></span>):</span><br><span class="line">        query = np.asarray(query_embedding, dtype=<span class="string">&quot;float32&quot;</span>).reshape(<span class="number">1</span>, -<span class="number">1</span>)</span><br><span class="line">        query = np.ascontiguousarray(query)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> query.shape[<span class="number">1</span>] != <span class="variable language_">self</span>.dim:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&quot;query dimension mismatch&quot;</span>)</span><br><span class="line"></span><br><span class="line">        faiss.normalize_L2(query)</span><br><span class="line">        scores, chunk_ids = <span class="variable language_">self</span>.index.search(query, top_k)</span><br><span class="line"></span><br><span class="line">        results = []</span><br><span class="line">        <span class="keyword">for</span> score, chunk_id <span class="keyword">in</span> <span class="built_in">zip</span>(scores[<span class="number">0</span>], chunk_ids[<span class="number">0</span>]):</span><br><span class="line">            <span class="keyword">if</span> chunk_id == -<span class="number">1</span>:</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            results.append(</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="string">&quot;chunk_id&quot;</span>: <span class="built_in">int</span>(chunk_id),</span><br><span class="line">                    <span class="string">&quot;score&quot;</span>: <span class="built_in">float</span>(score),</span><br><span class="line">                &#125;</span><br><span class="line">            )</span><br><span class="line">        <span class="keyword">return</span> results</span><br><span class="line"></span><br><span class="line">rag_index = SimpleRagIndex(dim=<span class="number">4</span>)</span><br><span class="line"></span><br><span class="line">rag_index.add_chunks(</span><br><span class="line">    embeddings=[</span><br><span class="line">        [<span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>],</span><br><span class="line">        [<span class="number">0.9</span>, <span class="number">0.1</span>, <span class="number">0.0</span>, <span class="number">0.0</span>],</span><br><span class="line">        [<span class="number">0.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>],</span><br><span class="line">    ],</span><br><span class="line">    chunk_ids=[<span class="number">1001</span>, <span class="number">1002</span>, <span class="number">1003</span>],</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">results = rag_index.search([<span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>], top_k=<span class="number">2</span>)</span><br><span class="line"><span class="built_in">print</span>(results)</span><br></pre></td></tr></table></figure>
+
+<p>真实项目里，拿到 <code>chunk_id</code> 后再去 MySQL 查：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chunk_id -&gt; chunk content -&gt; document metadata -&gt; citation</span><br></pre></td></tr></table></figure>
+
+<h2 id="22-学习顺序"><a href="#22-学习顺序" class="headerlink" title="22. 学习顺序"></a>22. 学习顺序</h2><p>建议按这个顺序学：</p>
+<ol>
+<li>理解 embedding 和向量相似度</li>
+<li>跑通 <code>IndexFlatL2</code></li>
+<li>跑通 <code>IndexFlatIP + normalize_L2</code></li>
+<li>学会 <code>add()</code>、<code>search()</code>、<code>D/I</code></li>
+<li>学会 <code>IndexIDMap</code> 绑定业务 ID</li>
+<li>学会 <code>write_index()</code> 和 <code>read_index()</code></li>
+<li>接入 RAG 项目：chunk_id 回表查 MySQL</li>
+<li>数据量变大后再学 HNSW、IVF、PQ</li>
+<li>用 Recall@K 和耗时评估索引效果</li>
+</ol>
+<h2 id="23-总结"><a href="#23-总结" class="headerlink" title="23. 总结"></a>23. 总结</h2><p>FAISS 的核心价值是：</p>
+<ul>
+<li>快速做向量相似度搜索</li>
+<li>支持精确检索和近似检索</li>
+<li>支持不同索引结构，在速度、内存、召回率之间取舍</li>
+<li>非常适合 RAG 项目里的 Top-K chunk 召回</li>
+</ul>
+<p>初学时先记住：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Embedding 负责把文本变成向量</span><br><span class="line">FAISS 负责从向量里找相似内容</span><br><span class="line">MySQL 负责保存 chunk 内容和元数据</span><br><span class="line">LLM 负责基于检索结果生成回答</span><br></pre></td></tr></table></figure>
+
+<p>对于你的 RAG 项目，最实用的起点是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">IndexIDMap(IndexFlatIP) + normalize_L2 + chunk_id 回表查 MySQL</span><br></pre></td></tr></table></figure>
+
+<p>等数据量、延迟和内存真的成为问题，再升级 HNSW、IVF 或 PQ。</p>
+<h2 id="24-参考"><a href="#24-参考" class="headerlink" title="24. 参考"></a>24. 参考</h2><ul>
+<li>FAISS GitHub: <a target="_blank" rel="noopener" href="https://github.com/facebookresearch/faiss">https://github.com/facebookresearch/faiss</a></li>
+<li>FAISS Wiki: <a target="_blank" rel="noopener" href="https://github.com/facebookresearch/faiss/wiki">https://github.com/facebookresearch/faiss/wiki</a></li>
+<li>FAISS Getting Started: <a target="_blank" rel="noopener" href="https://github.com/facebookresearch/faiss/wiki/Getting-started">https://github.com/facebookresearch/faiss/wiki/Getting-started</a></li>
+<li>FAISS Indexes: <a target="_blank" rel="noopener" href="https://github.com/facebookresearch/faiss/wiki/Faiss-indexes">https://github.com/facebookresearch/faiss/wiki/Faiss-indexes</a></li>
+<li>FAISS MetricType and distances: <a target="_blank" rel="noopener" href="https://github.com/facebookresearch/faiss/wiki/MetricType-and-distances">https://github.com/facebookresearch/faiss/wiki/MetricType-and-distances</a></li>
+<li>FAISS Index Factory: <a target="_blank" rel="noopener" href="https://github.com/facebookresearch/faiss/wiki/The-index-factory">https://github.com/facebookresearch/faiss/wiki/The-index-factory</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>楚天
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://chutianduan.github.io/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/faiss/" title="FAISS 学习笔记">https://chutianduan.github.io/notes/ai模型开发/知识点学习/框架/faiss/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/notes/ai%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%8F%91/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/%E6%A1%86%E6%9E%B6/fasthapi/" rel="prev" title="FastAPI 学习笔记">
+                  <i class="fa fa-angle-left"></i> FastAPI 学习笔记
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-code"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">楚天</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

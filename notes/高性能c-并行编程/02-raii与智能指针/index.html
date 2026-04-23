@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chutianduan.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":2,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="RAII 与智能指针笔记时间：2026&#x2F;04&#x2F;09  关键词：RAII、资源生命周期、异常安全、unique_ptr、shared_ptr、weak_ptr、自定义 deleter、锁管理核心目标：把“资源一定会被释放”这件事交给对象生命周期，而不是交给人脑记忆。   1. RAII 是什么RAII 全称：  Resource Acquisition Is Initializa">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RAII 与智能指针笔记">
+<meta property="og:url" content="https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/02-raii%E4%B8%8E%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/index.html">
+<meta property="og:site_name" content="楚天">
+<meta property="og:description" content="RAII 与智能指针笔记时间：2026&#x2F;04&#x2F;09  关键词：RAII、资源生命周期、异常安全、unique_ptr、shared_ptr、weak_ptr、自定义 deleter、锁管理核心目标：把“资源一定会被释放”这件事交给对象生命周期，而不是交给人脑记忆。   1. RAII 是什么RAII 全称：  Resource Acquisition Is Initializa">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-04-09T02:24:12.000Z">
+<meta property="article:modified_time" content="2026-04-09T02:24:12.000Z">
+<meta property="article:author" content="楚天">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="游戏网络">
+<meta property="article:tag" content="技术博客">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/02-raii%E4%B8%8E%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/02-raii%E4%B8%8E%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/","path":"/notes/高性能c-并行编程/02-raii与智能指针/","title":"RAII 与智能指针笔记"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>RAII 与智能指针笔记 | 楚天</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">楚天</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">惟楚有材，于斯为盛</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-友情链接"><a href="/link/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#RAII-%E4%B8%8E%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E7%AC%94%E8%AE%B0"><span class="nav-number">1.</span> <span class="nav-text">RAII 与智能指针笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-RAII-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.1.</span> <span class="nav-text">1. RAII 是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E4%B8%BA%E4%BB%80%E4%B9%88-RAII-%E5%9C%A8-C-%E9%87%8C%E7%89%B9%E5%88%AB%E9%87%8D%E8%A6%81"><span class="nav-number">1.2.</span> <span class="nav-text">2. 为什么 RAII 在 C++ 里特别重要</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%B2%A1%E6%9C%89-RAII-%E6%97%B6%E6%9C%80%E5%AE%B9%E6%98%93%E5%87%BA%E4%BB%80%E4%B9%88%E9%97%AE%E9%A2%98"><span class="nav-number">1.3.</span> <span class="nav-text">3. 没有 RAII 时最容易出什么问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E5%A4%9A%E8%BF%94%E5%9B%9E%E8%B7%AF%E5%BE%84%E6%BC%8F%E9%87%8A%E6%94%BE"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 多返回路径漏释放</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E5%BC%82%E5%B8%B8%E6%89%93%E6%96%AD%E6%8E%A7%E5%88%B6%E6%B5%81"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 异常打断控制流</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E9%94%81%E6%B2%A1%E6%9C%89%E9%87%8A%E6%94%BE"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 锁没有释放</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E6%9C%80%E5%B0%8F-RAII-%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.4.</span> <span class="nav-text">4. 最小 RAII 示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E5%B0%B1%E6%98%AF-RAII-%E7%9A%84%E6%A0%87%E5%87%86%E5%8C%96%E5%AE%9E%E8%B7%B5"><span class="nav-number">1.5.</span> <span class="nav-text">5. 智能指针就是 RAII 的标准化实践</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-std-unique-ptr%EF%BC%9A%E7%8B%AC%E5%8D%A0%E6%89%80%E6%9C%89%E6%9D%83"><span class="nav-number">1.6.</span> <span class="nav-text">6. std::unique_ptr：独占所有权</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-%E5%9F%BA%E6%9C%AC%E8%AF%AD%E4%B9%89"><span class="nav-number">1.6.1.</span> <span class="nav-text">6.1 基本语义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%98%E5%85%88%E6%8E%A8%E8%8D%90-make-unique"><span class="nav-number">1.6.2.</span> <span class="nav-text">6.2 为什么优先推荐 make_unique</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-%E7%A7%BB%E5%8A%A8%E6%89%80%E6%9C%89%E6%9D%83"><span class="nav-number">1.6.3.</span> <span class="nav-text">6.3 移动所有权</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-4-%E4%BD%9C%E4%B8%BA%E5%8F%82%E6%95%B0%E6%80%8E%E4%B9%88%E4%BC%A0"><span class="nav-number">1.6.4.</span> <span class="nav-text">6.4 作为参数怎么传</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-std-shared-ptr%EF%BC%9A%E5%85%B1%E4%BA%AB%E6%89%80%E6%9C%89%E6%9D%83"><span class="nav-number">1.7.</span> <span class="nav-text">7. std::shared_ptr：共享所有权</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-%E5%9F%BA%E6%9C%AC%E8%AF%AD%E4%B9%89"><span class="nav-number">1.7.1.</span> <span class="nav-text">7.1 基本语义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E7%94%A8-shared-ptr"><span class="nav-number">1.7.2.</span> <span class="nav-text">7.2 什么时候用 shared_ptr</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-3-%E6%88%90%E6%9C%AC%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.7.3.</span> <span class="nav-text">7.3 成本是什么</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-std-weak-ptr%EF%BC%9A%E6%89%93%E7%A0%B4%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8"><span class="nav-number">1.8.</span> <span class="nav-text">8. std::weak_ptr：打破循环引用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E5%AE%83"><span class="nav-number">1.8.1.</span> <span class="nav-text">8.1 为什么需要它</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-%E6%AD%A3%E7%A1%AE%E6%80%9D%E8%B7%AF"><span class="nav-number">1.8.2.</span> <span class="nav-text">8.2 正确思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F"><span class="nav-number">1.8.3.</span> <span class="nav-text">8.3 使用方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-%E8%87%AA%E5%AE%9A%E4%B9%89-deleter"><span class="nav-number">1.9.</span> <span class="nav-text">9. 自定义 deleter</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-make-shared-%E4%B8%8E-shared-ptr-new-T"><span class="nav-number">1.10.</span> <span class="nav-text">10. make_shared 与 shared_ptr(new T)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#10-1-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%9A%E5%B8%B8%E4%BC%98%E5%85%88-make-shared"><span class="nav-number">1.10.1.</span> <span class="nav-text">10.1 为什么通常优先 make_shared</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-2-%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E4%B8%8D%E8%83%BD%E7%94%A8-make-shared"><span class="nav-number">1.10.2.</span> <span class="nav-text">10.2 什么时候不能用 make_shared</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-RAII-%E4%B8%8D%E5%8F%AA%E7%94%A8%E4%BA%8E%E5%86%85%E5%AD%98"><span class="nav-number">1.11.</span> <span class="nav-text">11. RAII 不只用于内存</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#11-1-%E4%BA%92%E6%96%A5%E9%94%81"><span class="nav-number">1.11.1.</span> <span class="nav-text">11.1 互斥锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-2-%E6%9B%B4%E7%81%B5%E6%B4%BB%E7%9A%84-unique-lock"><span class="nav-number">1.11.2.</span> <span class="nav-text">11.2 更灵活的 unique_lock</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-3-%E5%A4%9A%E9%94%81%E5%9C%BA%E6%99%AF"><span class="nav-number">1.11.3.</span> <span class="nav-text">11.3 多锁场景</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-%E7%BA%BF%E7%A8%8B%E4%B9%9F%E5%BA%94%E8%AF%A5-RAII-%E5%8C%96"><span class="nav-number">1.12.</span> <span class="nav-text">12. 线程也应该 RAII 化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#12-1-std-thread-%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">1.12.1.</span> <span class="nav-text">12.1 std::thread 的问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-2-%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84-join-guard"><span class="nav-number">1.12.2.</span> <span class="nav-text">12.2 一个简单的 join guard</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-%E5%BC%82%E5%B8%B8%E5%AE%89%E5%85%A8%E4%B8%BA%E4%BB%80%E4%B9%88%E5%92%8C-RAII-%E7%BB%91%E5%AE%9A%E5%BE%97%E8%BF%99%E4%B9%88%E7%B4%A7"><span class="nav-number">1.13.</span> <span class="nav-text">13. 异常安全为什么和 RAII 绑定得这么紧</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-%E6%89%80%E6%9C%89%E6%9D%83%E8%AE%BE%E8%AE%A1%E6%AF%94%E9%80%89%E5%93%AA%E7%A7%8D%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E6%9B%B4%E9%87%8D%E8%A6%81"><span class="nav-number">1.14.</span> <span class="nav-text">14. 所有权设计比选哪种智能指针更重要</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#15-%E5%B8%B8%E8%A7%81%E8%AF%AF%E5%8C%BA"><span class="nav-number">1.15.</span> <span class="nav-text">15. 常见误区</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#15-1-%E8%A3%B8%E6%8C%87%E9%92%88%E4%B8%8D%E7%AD%89%E4%BA%8E%E6%8B%A5%E6%9C%89%E6%9D%83"><span class="nav-number">1.15.1.</span> <span class="nav-text">15.1 裸指针不等于拥有权</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-2-%E5%88%B0%E5%A4%84%E6%BB%A5%E7%94%A8-shared-ptr"><span class="nav-number">1.15.2.</span> <span class="nav-text">15.2 到处滥用 shared_ptr</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-3-%E4%BB%8E-unique-ptr-%E9%87%8C%E9%9A%8F%E6%89%8B-get-%E5%86%8D%E4%B9%B1%E4%BC%A0"><span class="nav-number">1.15.3.</span> <span class="nav-text">15.3 从 unique_ptr 里随手 get() 再乱传</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-4-shared-from-this-%E8%AF%AF%E7%94%A8"><span class="nav-number">1.15.4.</span> <span class="nav-text">15.4 shared_from_this() 误用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-5-%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E4%B8%8D%E6%98%AF%E6%80%A7%E8%83%BD%E4%B8%87%E8%83%BD%E8%A7%A3"><span class="nav-number">1.15.5.</span> <span class="nav-text">15.5 智能指针不是性能万能解</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#16-%E5%92%8C%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">1.16.</span> <span class="nav-text">16. 和并发编程的关系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#17-%E4%B8%80%E9%A1%B5%E6%80%BB%E7%BB%93"><span class="nav-number">1.17.</span> <span class="nav-text">17. 一页总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#18-%E5%BB%BA%E8%AE%AE%E7%BB%A7%E7%BB%AD%E8%A1%A5%E5%85%85%E7%9A%84%E7%9B%B8%E5%85%B3%E4%B8%BB%E9%A2%98"><span class="nav-number">1.18.</span> <span class="nav-text">18. 建议继续补充的相关主题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#19-%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.19.</span> <span class="nav-text">19. 参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="楚天"
+      src="/img/me.jpg">
+  <p class="site-author-name" itemprop="name">楚天</p>
+  <div class="site-description" itemprop="description">记录深度学习、C++、游戏网络与生活旅行的学习笔记。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ChutianDuan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ChutianDuan" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:3383006954@qq.com" title="E-Mail → mailto:3383006954@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/02-raii%E4%B8%8E%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/me.jpg">
+      <meta itemprop="name" content="楚天">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楚天">
+      <meta itemprop="description" content="记录深度学习、C++、游戏网络与生活旅行的学习笔记。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="RAII 与智能指针笔记 | 楚天">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          RAII 与智能指针笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-04-09 10:24:12" itemprop="dateCreated datePublished" datetime="2026-04-09T10:24:12+08:00">2026-04-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/%E9%AB%98%E6%80%A7%E8%83%BDC-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">高性能C++并行编程</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="RAII-与智能指针笔记"><a href="#RAII-与智能指针笔记" class="headerlink" title="RAII 与智能指针笔记"></a>RAII 与智能指针笔记</h1><p>时间：2026&#x2F;04&#x2F;09</p>
+<blockquote>
+<p>关键词：RAII、资源生命周期、异常安全、<code>unique_ptr</code>、<code>shared_ptr</code>、<code>weak_ptr</code>、自定义 deleter、锁管理<br>核心目标：把“资源一定会被释放”这件事交给对象生命周期，而不是交给人脑记忆。</p>
+</blockquote>
+<hr>
+<h2 id="1-RAII-是什么"><a href="#1-RAII-是什么" class="headerlink" title="1. RAII 是什么"></a>1. RAII 是什么</h2><p>RAII 全称：</p>
+<blockquote>
+<p>Resource Acquisition Is Initialization<br>资源获取即初始化</p>
+</blockquote>
+<p>核心思想：</p>
+<ul>
+<li>在对象构造时获取资源</li>
+<li>在对象析构时释放资源</li>
+</ul>
+<p>这样做的价值非常直接：</p>
+<ul>
+<li>不容易忘记释放</li>
+<li>遇到异常时也能自动回收</li>
+<li>生命周期更清晰</li>
+<li>接口更容易组合</li>
+</ul>
+<p>这里的“资源”不只指内存，还包括：</p>
+<ul>
+<li>动态内存</li>
+<li>文件句柄</li>
+<li>socket</li>
+<li>数据库连接</li>
+<li>互斥锁</li>
+<li>线程句柄</li>
+<li>GPU&#x2F;系统资源</li>
+</ul>
+<hr>
+<h2 id="2-为什么-RAII-在-C-里特别重要"><a href="#2-为什么-RAII-在-C-里特别重要" class="headerlink" title="2. 为什么 RAII 在 C++ 里特别重要"></a>2. 为什么 RAII 在 C++ 里特别重要</h2><p>C++ 有确定性析构：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">f</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    MyObj obj;</span><br><span class="line">    <span class="comment">// 离开作用域时 obj 一定析构</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这意味着“资源释放”可以天然绑定到作用域结束。</p>
+<p>相比手工写：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">open</span>();</span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line"><span class="built_in">close</span>();</span><br></pre></td></tr></table></figure>
+
+<p>RAII 更稳，因为它不依赖你记得在每一条返回路径都调用 <code>close()</code>。</p>
+<hr>
+<h2 id="3-没有-RAII-时最容易出什么问题"><a href="#3-没有-RAII-时最容易出什么问题" class="headerlink" title="3. 没有 RAII 时最容易出什么问题"></a>3. 没有 RAII 时最容易出什么问题</h2><h3 id="3-1-多返回路径漏释放"><a href="#3-1-多返回路径漏释放" class="headerlink" title="3.1 多返回路径漏释放"></a>3.1 多返回路径漏释放</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">FILE* fp = <span class="built_in">fopen</span>(<span class="string">&quot;data.txt&quot;</span>, <span class="string">&quot;r&quot;</span>);</span><br><span class="line"><span class="keyword">if</span> (!fp) <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (<span class="built_in">bad_input</span>()) &#123;</span><br><span class="line">    <span class="keyword">return</span>; <span class="comment">// 忘了 fclose(fp)</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">fclose</span>(fp);</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-异常打断控制流"><a href="#3-2-异常打断控制流" class="headerlink" title="3.2 异常打断控制流"></a>3.2 异常打断控制流</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">f</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span>* p = <span class="keyword">new</span> <span class="type">int</span>[<span class="number">100</span>];</span><br><span class="line">    <span class="built_in">g</span>(); <span class="comment">// 这里如果抛异常，delete[] 可能永远执行不到</span></span><br><span class="line">    <span class="keyword">delete</span>[] p;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-3-锁没有释放"><a href="#3-3-锁没有释放" class="headerlink" title="3.3 锁没有释放"></a>3.3 锁没有释放</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mtx.<span class="built_in">lock</span>();</span><br><span class="line"><span class="built_in">do_work</span>(); <span class="comment">// 中途 return/throw 都可能导致锁没解开</span></span><br><span class="line">mtx.<span class="built_in">unlock</span>();</span><br></pre></td></tr></table></figure>
+
+<p>这些问题都可以通过 RAII 化简。</p>
+<hr>
+<h2 id="4-最小-RAII-示例"><a href="#4-最小-RAII-示例" class="headerlink" title="4. 最小 RAII 示例"></a>4. 最小 RAII 示例</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstdio&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">FileGuard</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">explicit</span> <span class="title">FileGuard</span><span class="params">(<span class="type">const</span> <span class="type">char</span>* path)</span></span></span><br><span class="line"><span class="function">        : fp_(std::fopen(path, <span class="string">&quot;r&quot;</span>)) &#123;</span>&#125;</span><br><span class="line"></span><br><span class="line">    ~<span class="built_in">FileGuard</span>() &#123;</span><br><span class="line">        <span class="keyword">if</span> (fp_) std::<span class="built_in">fclose</span>(fp_);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">FILE* <span class="title">get</span><span class="params">()</span> <span class="type">const</span> </span>&#123; <span class="keyword">return</span> fp_; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">FileGuard</span>(<span class="type">const</span> FileGuard&amp;) = <span class="keyword">delete</span>;</span><br><span class="line">    FileGuard&amp; <span class="keyword">operator</span>=(<span class="type">const</span> FileGuard&amp;) = <span class="keyword">delete</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    FILE* fp_ = <span class="literal">nullptr</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>要点：</p>
+<ul>
+<li>构造函数负责获取资源</li>
+<li>析构函数负责释放资源</li>
+<li>禁止拷贝，避免多个对象同时认为自己拥有同一资源</li>
+</ul>
+<hr>
+<h2 id="5-智能指针就是-RAII-的标准化实践"><a href="#5-智能指针就是-RAII-的标准化实践" class="headerlink" title="5. 智能指针就是 RAII 的标准化实践"></a>5. 智能指针就是 RAII 的标准化实践</h2><p>最常见的智能指针有三类：</p>
+<ul>
+<li><code>std::unique_ptr</code></li>
+<li><code>std::shared_ptr</code></li>
+<li><code>std::weak_ptr</code></li>
+</ul>
+<p>它们的本质都是：</p>
+<ul>
+<li>用对象包装裸指针</li>
+<li>把释放逻辑放进析构函数</li>
+</ul>
+<hr>
+<h2 id="6-std-unique-ptr：独占所有权"><a href="#6-std-unique-ptr：独占所有权" class="headerlink" title="6. std::unique_ptr：独占所有权"></a>6. <code>std::unique_ptr</code>：独占所有权</h2><h3 id="6-1-基本语义"><a href="#6-1-基本语义" class="headerlink" title="6.1 基本语义"></a>6.1 基本语义</h3><p>一个资源在任意时刻只能有一个拥有者。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;memory&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">auto</span> p = std::<span class="built_in">make_unique</span>&lt;<span class="type">int</span>&gt;(<span class="number">42</span>);</span><br></pre></td></tr></table></figure>
+
+<p>特点：</p>
+<ul>
+<li>不可拷贝</li>
+<li>可以移动</li>
+<li>开销小</li>
+<li>语义最清晰</li>
+</ul>
+<h3 id="6-2-为什么优先推荐-make-unique"><a href="#6-2-为什么优先推荐-make-unique" class="headerlink" title="6.2 为什么优先推荐 make_unique"></a>6.2 为什么优先推荐 <code>make_unique</code></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> p = std::<span class="built_in">make_unique</span>&lt;std::string&gt;(<span class="string">&quot;hello&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>相比手写：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">std::unique_ptr&lt;std::string&gt; <span class="title">p</span><span class="params">(<span class="keyword">new</span> std::string(<span class="string">&quot;hello&quot;</span>))</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>更推荐 <code>make_unique</code>，因为：</p>
+<ul>
+<li>更简洁</li>
+<li>更不容易写出异常安全漏洞</li>
+<li>类型推导更清楚</li>
+</ul>
+<h3 id="6-3-移动所有权"><a href="#6-3-移动所有权" class="headerlink" title="6.3 移动所有权"></a>6.3 移动所有权</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">std::unique_ptr&lt;<span class="type">int</span>&gt; p1 = std::<span class="built_in">make_unique</span>&lt;<span class="type">int</span>&gt;(<span class="number">7</span>);</span><br><span class="line">std::unique_ptr&lt;<span class="type">int</span>&gt; p2 = std::<span class="built_in">move</span>(p1);</span><br></pre></td></tr></table></figure>
+
+<p>移动后：</p>
+<ul>
+<li><code>p2</code> 接管资源</li>
+<li><code>p1</code> 变为空</li>
+</ul>
+<h3 id="6-4-作为参数怎么传"><a href="#6-4-作为参数怎么传" class="headerlink" title="6.4 作为参数怎么传"></a>6.4 作为参数怎么传</h3><p>常见几种风格：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">use</span><span class="params">(<span class="type">const</span> std::unique_ptr&lt;Foo&gt;&amp; p)</span></span>; <span class="comment">// 只观察，不接管</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">take</span><span class="params">(std::unique_ptr&lt;Foo&gt; p)</span></span>;       <span class="comment">// 接管所有权</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">view</span><span class="params">(Foo* p)</span></span>;                       <span class="comment">// 只观察底层对象</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">ref</span><span class="params">(Foo&amp; x)</span></span>;                        <span class="comment">// 保证对象存在</span></span><br></pre></td></tr></table></figure>
+
+<p>经验上：</p>
+<ul>
+<li>要表达“接管所有权”，就按值接收 <code>unique_ptr</code></li>
+<li>只观察对象，不一定非要把参数写成智能指针类型</li>
+</ul>
+<hr>
+<h2 id="7-std-shared-ptr：共享所有权"><a href="#7-std-shared-ptr：共享所有权" class="headerlink" title="7. std::shared_ptr：共享所有权"></a>7. <code>std::shared_ptr</code>：共享所有权</h2><h3 id="7-1-基本语义"><a href="#7-1-基本语义" class="headerlink" title="7.1 基本语义"></a>7.1 基本语义</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;memory&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">auto</span> p1 = std::<span class="built_in">make_shared</span>&lt;<span class="type">int</span>&gt;(<span class="number">42</span>);</span><br><span class="line"><span class="keyword">auto</span> p2 = p1;</span><br></pre></td></tr></table></figure>
+
+<p>此时：</p>
+<ul>
+<li><code>p1</code> 和 <code>p2</code> 共同拥有同一个对象</li>
+<li>内部通过引用计数决定何时释放</li>
+</ul>
+<h3 id="7-2-什么时候用-shared-ptr"><a href="#7-2-什么时候用-shared-ptr" class="headerlink" title="7.2 什么时候用 shared_ptr"></a>7.2 什么时候用 <code>shared_ptr</code></h3><p>只有在“确实存在共享拥有关系”时才使用。</p>
+<p>典型场景：</p>
+<ul>
+<li>对象要被多个异步任务共同持有</li>
+<li>图结构&#x2F;对象系统中需要共享生命周期</li>
+<li>回调系统中对象可能跨作用域存活</li>
+</ul>
+<h3 id="7-3-成本是什么"><a href="#7-3-成本是什么" class="headerlink" title="7.3 成本是什么"></a>7.3 成本是什么</h3><p><code>shared_ptr</code> 比 <code>unique_ptr</code> 重得多，因为它通常涉及：</p>
+<ul>
+<li>控制块</li>
+<li>原子引用计数</li>
+<li>更复杂的生命周期管理</li>
+</ul>
+<p>所以不要把它当默认选择。</p>
+<hr>
+<h2 id="8-std-weak-ptr：打破循环引用"><a href="#8-std-weak-ptr：打破循环引用" class="headerlink" title="8. std::weak_ptr：打破循环引用"></a>8. <code>std::weak_ptr</code>：打破循环引用</h2><h3 id="8-1-为什么需要它"><a href="#8-1-为什么需要它" class="headerlink" title="8.1 为什么需要它"></a>8.1 为什么需要它</h3><p>如果两个 <code>shared_ptr</code> 互相持有，就会形成循环，导致引用计数永远不归零。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">B</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">A</span> &#123;</span><br><span class="line">    std::shared_ptr&lt;B&gt; b;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">B</span> &#123;</span><br><span class="line">    std::shared_ptr&lt;A&gt; a;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这会泄漏。</p>
+<h3 id="8-2-正确思路"><a href="#8-2-正确思路" class="headerlink" title="8.2 正确思路"></a>8.2 正确思路</h3><p>把“非拥有关系”的那一侧改成 <code>weak_ptr</code>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">B</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">A</span> &#123;</span><br><span class="line">    std::shared_ptr&lt;B&gt; b;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">B</span> &#123;</span><br><span class="line">    std::weak_ptr&lt;A&gt; a;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="8-3-使用方式"><a href="#8-3-使用方式" class="headerlink" title="8.3 使用方式"></a>8.3 使用方式</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="keyword">auto</span> sp = weak.<span class="built_in">lock</span>()) &#123;</span><br><span class="line">    <span class="comment">// 对象还活着</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>weak_ptr</code> 的语义是：</p>
+<ul>
+<li>我知道这个对象可能存在</li>
+<li>但我不参与拥有</li>
+</ul>
+<hr>
+<h2 id="9-自定义-deleter"><a href="#9-自定义-deleter" class="headerlink" title="9. 自定义 deleter"></a>9. 自定义 deleter</h2><p>有些资源不是 <code>delete</code> 释放的，例如：</p>
+<ul>
+<li><code>FILE*</code> 要 <code>fclose</code></li>
+<li><code>malloc</code> 对应 <code>free</code></li>
+<li>socket &#x2F; GPU handle &#x2F; 句柄各有自己的释放函数</li>
+</ul>
+<p>这时可以给智能指针指定自定义删除器。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;memory&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> FilePtr = std::unique_ptr&lt;FILE, <span class="built_in">int</span>(*)(FILE*)&gt;;</span><br><span class="line"></span><br><span class="line"><span class="function">FilePtr <span class="title">open_file</span><span class="params">(<span class="type">const</span> <span class="type">char</span>* path)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">FilePtr</span>(std::<span class="built_in">fopen</span>(path, <span class="string">&quot;r&quot;</span>), std::fclose);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样离开作用域时就会自动 <code>fclose</code>。</p>
+<hr>
+<h2 id="10-make-shared-与-shared-ptr-new-T"><a href="#10-make-shared-与-shared-ptr-new-T" class="headerlink" title="10. make_shared 与 shared_ptr(new T)"></a>10. <code>make_shared</code> 与 <code>shared_ptr(new T)</code></h2><h3 id="10-1-为什么通常优先-make-shared"><a href="#10-1-为什么通常优先-make-shared" class="headerlink" title="10.1 为什么通常优先 make_shared"></a>10.1 为什么通常优先 <code>make_shared</code></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> p = std::<span class="built_in">make_shared</span>&lt;MyType&gt;(args...);</span><br></pre></td></tr></table></figure>
+
+<p>优点通常包括：</p>
+<ul>
+<li>代码更简洁</li>
+<li>常见实现里对象和控制块可一次分配</li>
+<li>异常安全更直接</li>
+</ul>
+<h3 id="10-2-什么时候不能用-make-shared"><a href="#10-2-什么时候不能用-make-shared" class="headerlink" title="10.2 什么时候不能用 make_shared"></a>10.2 什么时候不能用 <code>make_shared</code></h3><p>比如你需要：</p>
+<ul>
+<li>自定义 deleter</li>
+<li>控制对象与控制块分离</li>
+<li>与某些特殊分配策略配合</li>
+</ul>
+<p>这时才考虑直接构造 <code>shared_ptr</code>。</p>
+<hr>
+<h2 id="11-RAII-不只用于内存"><a href="#11-RAII-不只用于内存" class="headerlink" title="11. RAII 不只用于内存"></a>11. RAII 不只用于内存</h2><h3 id="11-1-互斥锁"><a href="#11-1-互斥锁" class="headerlink" title="11.1 互斥锁"></a>11.1 互斥锁</h3><p>错误写法：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mtx.<span class="built_in">lock</span>();</span><br><span class="line"><span class="built_in">work</span>();</span><br><span class="line">mtx.<span class="built_in">unlock</span>();</span><br></pre></td></tr></table></figure>
+
+<p>推荐写法：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">std::lock_guard&lt;std::mutex&gt; <span class="title">lk</span><span class="params">(mtx)</span></span>;</span><br><span class="line"><span class="built_in">work</span>();</span><br></pre></td></tr></table></figure>
+
+<p><code>lock_guard</code> 就是典型 RAII：</p>
+<ul>
+<li>构造时加锁</li>
+<li>析构时解锁</li>
+</ul>
+<h3 id="11-2-更灵活的-unique-lock"><a href="#11-2-更灵活的-unique-lock" class="headerlink" title="11.2 更灵活的 unique_lock"></a>11.2 更灵活的 <code>unique_lock</code></h3><p>当你需要：</p>
+<ul>
+<li>延迟加锁</li>
+<li>手动 <code>unlock</code></li>
+<li>配合条件变量</li>
+</ul>
+<p>就用 <code>std::unique_lock</code>。</p>
+<h3 id="11-3-多锁场景"><a href="#11-3-多锁场景" class="headerlink" title="11.3 多锁场景"></a>11.3 多锁场景</h3><p>可以使用：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">std::scoped_lock <span class="title">lk</span><span class="params">(m1, m2)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>它也是 RAII，且能帮你规避一部分死锁风险。</p>
+<hr>
+<h2 id="12-线程也应该-RAII-化"><a href="#12-线程也应该-RAII-化" class="headerlink" title="12. 线程也应该 RAII 化"></a>12. 线程也应该 RAII 化</h2><h3 id="12-1-std-thread-的问题"><a href="#12-1-std-thread-的问题" class="headerlink" title="12.1 std::thread 的问题"></a>12.1 <code>std::thread</code> 的问题</h3><p><code>std::thread</code> 如果在析构前既没有 <code>join()</code> 也没有 <code>detach()</code>，程序会 <code>std::terminate</code>。</p>
+<p>所以线程句柄本身也需要生命周期管理。</p>
+<h3 id="12-2-一个简单的-join-guard"><a href="#12-2-一个简单的-join-guard" class="headerlink" title="12.2 一个简单的 join guard"></a>12.2 一个简单的 join guard</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;thread&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">JoiningThread</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">explicit</span> <span class="title">JoiningThread</span><span class="params">(std::thread t)</span> : t_(std::move(t)) &#123;</span>&#125;</span><br><span class="line"></span><br><span class="line">    ~<span class="built_in">JoiningThread</span>() &#123;</span><br><span class="line">        <span class="keyword">if</span> (t_.<span class="built_in">joinable</span>()) t_.<span class="built_in">join</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">JoiningThread</span>(<span class="type">const</span> JoiningThread&amp;) = <span class="keyword">delete</span>;</span><br><span class="line">    JoiningThread&amp; <span class="keyword">operator</span>=(<span class="type">const</span> JoiningThread&amp;) = <span class="keyword">delete</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    std::thread t_;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这也是典型 RAII：</p>
+<ul>
+<li>构造时接管线程对象</li>
+<li>析构时确保 <code>join</code></li>
+</ul>
+<p>如果是 C++20，可以直接优先考虑 <code>std::jthread</code>。</p>
+<hr>
+<h2 id="13-异常安全为什么和-RAII-绑定得这么紧"><a href="#13-异常安全为什么和-RAII-绑定得这么紧" class="headerlink" title="13. 异常安全为什么和 RAII 绑定得这么紧"></a>13. 异常安全为什么和 RAII 绑定得这么紧</h2><p>RAII 最强的地方不是“少写一行 <code>delete</code>”，而是它天然支持异常安全。</p>
+<p>看这段代码：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">f</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> p = std::<span class="built_in">make_unique</span>&lt;BigObject&gt;();</span><br><span class="line">    <span class="function">std::lock_guard&lt;std::mutex&gt; <span class="title">lk</span><span class="params">(mtx)</span></span>;</span><br><span class="line">    <span class="built_in">g</span>(); <span class="comment">// 这里如果抛异常</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>即使 <code>g()</code> 抛异常：</p>
+<ul>
+<li><code>lk</code> 会析构并解锁</li>
+<li><code>p</code> 会析构并释放对象</li>
+</ul>
+<p>这就是现代 C++ 推荐“资源对象化”的原因。</p>
+<hr>
+<h2 id="14-所有权设计比选哪种智能指针更重要"><a href="#14-所有权设计比选哪种智能指针更重要" class="headerlink" title="14. 所有权设计比选哪种智能指针更重要"></a>14. 所有权设计比选哪种智能指针更重要</h2><p>高质量 C++ 代码首先要明确：</p>
+<ul>
+<li>谁拥有对象</li>
+<li>谁只观察对象</li>
+<li>谁负责释放对象</li>
+</ul>
+<p>一个常见的经验顺序是：</p>
+<ol>
+<li>默认用对象值语义</li>
+<li>必须动态分配时，优先 <code>unique_ptr</code></li>
+<li>只有确实共享拥有时才用 <code>shared_ptr</code></li>
+<li>非拥有关系用裸指针、引用、<code>weak_ptr</code>、<code>std::span</code></li>
+</ol>
+<p>也就是说，智能指针不是“越多越高级”，而是要表达清晰语义。</p>
+<hr>
+<h2 id="15-常见误区"><a href="#15-常见误区" class="headerlink" title="15. 常见误区"></a>15. 常见误区</h2><h3 id="15-1-裸指针不等于拥有权"><a href="#15-1-裸指针不等于拥有权" class="headerlink" title="15.1 裸指针不等于拥有权"></a>15.1 裸指针不等于拥有权</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Foo* p = <span class="built_in">get</span>();</span><br></pre></td></tr></table></figure>
+
+<p>单看这一行，没人知道：</p>
+<ul>
+<li>你是不是要 <code>delete p</code></li>
+<li>这个对象是不是别人管理的</li>
+</ul>
+<p>所以裸指针更适合表达“观察”，不适合表达“拥有”。</p>
+<h3 id="15-2-到处滥用-shared-ptr"><a href="#15-2-到处滥用-shared-ptr" class="headerlink" title="15.2 到处滥用 shared_ptr"></a>15.2 到处滥用 <code>shared_ptr</code></h3><p>很多代码用 <code>shared_ptr</code> 只是为了“省心”，结果带来：</p>
+<ul>
+<li>生命周期更复杂</li>
+<li>隐式共享关系</li>
+<li>性能开销</li>
+<li>循环引用问题</li>
+</ul>
+<h3 id="15-3-从-unique-ptr-里随手-get-再乱传"><a href="#15-3-从-unique-ptr-里随手-get-再乱传" class="headerlink" title="15.3 从 unique_ptr 里随手 get() 再乱传"></a>15.3 从 <code>unique_ptr</code> 里随手 <code>get()</code> 再乱传</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> p = std::<span class="built_in">make_unique</span>&lt;Foo&gt;();</span><br><span class="line"><span class="built_in">take_raw</span>(p.<span class="built_in">get</span>());</span><br></pre></td></tr></table></figure>
+
+<p>这本身不一定错，但要非常清楚：</p>
+<ul>
+<li><code>get()</code> 只拿观察指针</li>
+<li>不会转移所有权</li>
+<li>不能让对方 <code>delete</code></li>
+</ul>
+<h3 id="15-4-shared-from-this-误用"><a href="#15-4-shared-from-this-误用" class="headerlink" title="15.4 shared_from_this() 误用"></a>15.4 <code>shared_from_this()</code> 误用</h3><p>如果对象不是由 <code>shared_ptr</code> 管理，直接 <code>shared_from_this()</code> 会出问题。<br>这类场景要配合 <code>std::enable_shared_from_this</code> 正确使用。</p>
+<h3 id="15-5-智能指针不是性能万能解"><a href="#15-5-智能指针不是性能万能解" class="headerlink" title="15.5 智能指针不是性能万能解"></a>15.5 智能指针不是性能万能解</h3><p>它们解决的是：</p>
+<ul>
+<li>资源释放正确性</li>
+<li>生命周期表达</li>
+</ul>
+<p>而不是自动让程序变快。<br>在极热路径里，真正重要的还是：</p>
+<ul>
+<li>数据布局</li>
+<li>分配次数</li>
+<li>缓存局部性</li>
+</ul>
+<hr>
+<h2 id="16-和并发编程的关系"><a href="#16-和并发编程的关系" class="headerlink" title="16. 和并发编程的关系"></a>16. 和并发编程的关系</h2><p>RAII 在并发里尤其重要，因为并发代码最怕“中途退出时资源没收干净”。</p>
+<p>最常见的 RAII 对象：</p>
+<ul>
+<li><code>std::lock_guard</code></li>
+<li><code>std::unique_lock</code></li>
+<li><code>std::scoped_lock</code></li>
+<li>线程 join guard</li>
+</ul>
+<p>并发里的基本原则可以记成一句：</p>
+<blockquote>
+<p>锁、线程、句柄这类资源，不要靠手动成对调用管理，优先对象化。</p>
+</blockquote>
+<hr>
+<h2 id="17-一页总结"><a href="#17-一页总结" class="headerlink" title="17. 一页总结"></a>17. 一页总结</h2><p>RAII 的本质不是某个库技巧，而是一种设计原则：</p>
+<ul>
+<li>资源由对象接管</li>
+<li>生命周期由作用域决定</li>
+<li>释放在析构中自动完成</li>
+</ul>
+<p>智能指针则是这条原则在内存管理上的标准化实现：</p>
+<ul>
+<li><code>unique_ptr</code>：独占所有权，默认首选</li>
+<li><code>shared_ptr</code>：共享所有权，按需使用</li>
+<li><code>weak_ptr</code>：非拥有观察，打破循环</li>
+</ul>
+<p>如果只记三条经验：</p>
+<ol>
+<li>能不用动态分配就不用</li>
+<li>动态分配优先 <code>unique_ptr</code></li>
+<li>共享拥有关系才用 <code>shared_ptr</code></li>
+</ol>
+<hr>
+<h2 id="18-建议继续补充的相关主题"><a href="#18-建议继续补充的相关主题" class="headerlink" title="18. 建议继续补充的相关主题"></a>18. 建议继续补充的相关主题</h2><p>和本篇衔接最紧密的内容：</p>
+<ol>
+<li>左右值、移动语义与 <code>std::move</code></li>
+<li>自定义 allocator 与内存池</li>
+<li><code>enable_shared_from_this</code></li>
+<li><code>scope_exit</code> &#x2F; defer 风格工具</li>
+<li>Rule of Five 与异常安全保证</li>
+</ol>
+<hr>
+<h2 id="19-参考资料"><a href="#19-参考资料" class="headerlink" title="19. 参考资料"></a>19. 参考资料</h2><ol>
+<li><p>cppreference: RAII<br><a target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/language/raii">https://en.cppreference.com/w/cpp/language/raii</a></p>
+</li>
+<li><p>cppreference: <code>std::unique_ptr</code><br><a target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/memory/unique_ptr">https://en.cppreference.com/w/cpp/memory/unique_ptr</a></p>
+</li>
+<li><p>cppreference: <code>std::shared_ptr</code><br><a target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/memory/shared_ptr">https://en.cppreference.com/w/cpp/memory/shared_ptr</a></p>
+</li>
+<li><p>cppreference: <code>std::weak_ptr</code><br><a target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/memory/weak_ptr">https://en.cppreference.com/w/cpp/memory/weak_ptr</a></p>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>楚天
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://chutianduan.github.io/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/02-raii%E4%B8%8E%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/" title="RAII 与智能指针笔记">https://chutianduan.github.io/notes/高性能c-并行编程/02-raii与智能指针/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/01-c%E6%8C%87%E9%92%88%E4%B8%8E%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/" rel="prev" title="从计算机原理探讨 C 指针">
+                  <i class="fa fa-angle-left"></i> 从计算机原理探讨 C 指针
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/notes/%E9%AB%98%E6%80%A7%E8%83%BDc-%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B/06-%E7%BC%96%E8%AF%91%E5%99%A8%E4%BC%98%E5%8C%96%E4%B8%8E%E6%B1%87%E7%BC%96%E8%A7%86%E8%A7%92/" rel="next" title="从汇编角度看编译器优化">
+                  从汇编角度看编译器优化 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2024 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-code"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">楚天</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
