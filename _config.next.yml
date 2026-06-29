@@ -5,12 +5,11 @@ scheme: Pisces
 darkmode: true
 
 menu:
-  home: / || fa fa-home
-  archives: /archives/ || fa fa-archive
-  categories: /categories/ || fa fa-th
-  tags: /tags/ || fa fa-tags
-  about: /about/ || fa fa-user
-  友情链接: /link/ || fa fa-link
+  首页: / || fa fa-home
+  项目: /projects/ || fa fa-code
+  技术文章: /archives/ || fa fa-book-open
+  "关于我 / 简历": /about/ || fa fa-user
+  GitHub: https://github.com/ChutianDuan || fab fa-github
 
 menu_settings:
   icons: true
@@ -127,3 +126,9 @@ local_search:
   top_n_per_article: 2
   unescape: false
   preload: false
+
+mermaid:
+  enable: true
+  theme:
+    light: default
+    dark: dark

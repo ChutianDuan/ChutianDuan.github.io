@@ -3,15 +3,16 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: 楚天
-subtitle: '惟楚有材，于斯为盛'
-description: '记录深度学习、C++、游戏网络与生活旅行的学习笔记。'
+title: Chutian Duan
+subtitle: 'AI Application & C++ Vision Deployment Engineer'
+description: 'Personal portfolio and technical blog for AI application, C++ backend, and computer vision deployment projects.'
 keywords:
-  - 深度学习
-  - C++
-  - 游戏网络
-  - 技术博客
-author: 楚天
+  - AI Application
+  - C++ Backend
+  - Computer Vision
+  - RAG
+  - ONNX Runtime
+author: Chutian Duan
 language: zh-CN
 timezone: Asia/Shanghai
 
@@ -64,7 +65,7 @@ prismjs:
 # per_page: Posts displayed per page. (0 = disable pagination)
 # order_by: Posts order. (Order by date descending by default)
 index_generator:
-  path: ''
+  path: blog
   per_page: 10
   order_by: -date
 

@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" role="img" aria-labelledby="title desc">
+  <title id="title">YOLO ONNX Tracking Service Flow</title>
+  <desc id="desc">原始视频经过检测框、Track ID、光流传播和性能统计的流程示意。</desc>
+  <rect width="960" height="540" fill="#f7f9fc"/>
+  <rect x="52" y="58" width="856" height="424" rx="8" fill="#ffffff" stroke="#d8dde4" stroke-width="2"/>
+  <text x="80" y="110" fill="#20242a" font-family="Arial, sans-serif" font-size="28" font-weight="700">YOLO ONNX Tracking Service</text>
+  <text x="80" y="145" fill="#5f6875" font-family="Arial, sans-serif" font-size="17">原始视频 -&gt; 检测框 -&gt; Track ID -&gt; 光流传播 -&gt; 性能统计</text>
+
+  <g font-family="Arial, sans-serif" font-size="18" font-weight="700">
+    <rect x="80" y="205" width="130" height="92" rx="8" fill="#e8f0ff" stroke="#2458d3"/>
+    <text x="114" y="256" fill="#2458d3">原始视频</text>
+
+    <path d="M230 251h58" stroke="#5f6875" stroke-width="3" marker-end="url(#arrow)"/>
+    <rect x="310" y="205" width="130" height="92" rx="8" fill="#eef8f3" stroke="#087f5b"/>
+    <rect x="333" y="226" width="70" height="44" fill="none" stroke="#087f5b" stroke-width="4"/>
+    <text x="342" y="288" fill="#087f5b">检测框</text>
+
+    <path d="M460 251h58" stroke="#5f6875" stroke-width="3" marker-end="url(#arrow)"/>
+    <rect x="540" y="205" width="130" height="92" rx="8" fill="#fff6e6" stroke="#b46a00"/>
+    <text x="570" y="246" fill="#b46a00">Track ID</text>
+    <text x="579" y="273" fill="#b46a00">#17</text>
+
+    <path d="M690 251h58" stroke="#5f6875" stroke-width="3" marker-end="url(#arrow)"/>
+    <rect x="770" y="205" width="110" height="92" rx="8" fill="#f1f3f5" stroke="#20242a"/>
+    <path d="M795 252c18-23 48-23 66 0" fill="none" stroke="#20242a" stroke-width="4"/>
+    <text x="792" y="288" fill="#20242a">光流传播</text>
+  </g>
+
+  <g font-family="Arial, sans-serif">
+    <rect x="165" y="360" width="630" height="74" rx="8" fill="#20242a"/>
+    <text x="200" y="391" fill="#ffffff" font-size="18" font-weight="700">性能统计</text>
+    <text x="200" y="420" fill="#d8dde4" font-size="17">Dynamic ONNX + Flow: 278 calls · 2.99x · F1 0.937</text>
+  </g>
+
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#5f6875"/>
+    </marker>
+  </defs>
+</svg>
