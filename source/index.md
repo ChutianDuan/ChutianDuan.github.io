@@ -5,6 +5,7 @@ comments: false
 sidebar: false
 ---
 
+{% raw %}
 <link rel="stylesheet" href="/assets/portfolio/portfolio.css">
 
 <section class="portfolio-page">
@@ -128,3 +129,4 @@ sidebar: false
     </div>
   </section>
 </section>
+{% endraw %}
