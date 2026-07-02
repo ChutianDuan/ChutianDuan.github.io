@@ -12,7 +12,7 @@ sidebar: false
   <section class="portfolio-section">
     <div class="portfolio-section-heading">
       <h1>核心项目</h1>
-      <p>围绕 AI 应用后端、视觉部署、C++ 网络服务和实时同步四条工程主线。</p>
+      <p>围绕 AI 应用后端、视觉部署、C++ 网络服务和权威服务器同步四条工程主线。</p>
     </div>
 
     <article id="rag-agent-platform" class="portfolio-project">
@@ -74,14 +74,15 @@ sidebar: false
       <div>
         <p class="portfolio-project-index">03</p>
         <h2>Libevent Chat Server</h2>
-        <p>基于 libevent 的聊天服务器，采用 1 个接入线程与 N 个 Worker。接入线程负责 accept，通过 UNIX socketpair 分发 fd；每个 Worker 拥有独立 event_base 并处理连接 I/O。</p>
+        <p>基于 libevent 的聊天服务器，采用 1 个 Acceptor 与 N 个 Worker 的线程模型。Acceptor 只负责监听和接受 TCP 连接，并通过 UNIX socketpair 把 fd 分发给 Worker；每个 Worker 拥有独立 event_base，负责自己名下连接的 read/write callback、业务解析和连接生命周期。</p>
         <ul class="portfolio-link-list">
-          <li>协议：一行一条 JSON，支持 nick、join、leave、msg 和 pm。</li>
-          <li>可靠性：per-connection 队列、低水位续写、慢连接截断和连接清理。</li>
-          <li>工程重点：锁内维护共享状态，锁外发送，减少长时间占锁。</li>
+          <li>协议层：line-delimited JSON，一行一条消息，支持 nick、join、leave、msg、pm 和错误回执。</li>
+          <li>并发模型：全局用户表、房间表、订阅表和发送队列受互斥锁保护；广播时先在锁内拍快照，再锁外写 bufferevent。</li>
+          <li>背压控制：根据输出缓冲长度切换直接写、入队等待、低水位续写和慢连接截断，避免单个慢客户端拖垮 Worker。</li>
+          <li>工程目标：把非阻塞 I/O、Reactor、多线程 fd 分发、连接清理和可测试 C++ 服务端结构串成一个最小闭环。</li>
         </ul>
         <div class="portfolio-tags">
-          <span>C++</span><span>libevent</span><span>TCP</span><span>Reactor</span><span>socketpair</span><span>CMake</span>
+          <span>C++</span><span>libevent</span><span>TCP</span><span>Reactor</span><span>socketpair</span><span>JSON</span><span>Backpressure</span><span>CMake</span>
         </div>
         <div class="portfolio-actions compact">
           <a class="portfolio-button primary" href="https://github.com/ChutianDuan/chat_server">GitHub 仓库</a>
@@ -90,13 +91,19 @@ sidebar: false
       </div>
     </article>
 
-    <article id="rollback-netcode-demo" class="portfolio-project secondary-project">
+    <article id="fighting-authoritative-server" class="portfolio-project secondary-project">
       <div>
-        <p class="portfolio-project-index">More</p>
-        <h2>Rollback Netcode Demo</h2>
-        <p>C++20 实时动作游戏网络同步 Demo，聚焦 server authoritative、client prediction、rollback/replay、UDP 输入冗余和确定性状态 hash。</p>
+        <p class="portfolio-project-index">04</p>
+        <h2>Fighting Authoritative Server</h2>
+        <p>基于 C++20 的实时动作游戏网络同步 Demo。项目核心不是完整游戏内容，而是把服务端权威、客户端预测、状态回滚、UDP 输入冗余和确定性状态校验做成可运行、可测试、可复盘的最小系统。</p>
+        <ul class="portfolio-link-list">
+          <li>权威服务端：<code>lab_server</code> 统一分配 player slot，以 60Hz tick 推进 <code>World::Step</code>，并周期性广播 Ack / State。</li>
+          <li>客户端预测：<code>lab_client</code> 本地先响应输入，收到权威 State 后从快照恢复，并重放本地输入历史追到当前 tick。</li>
+          <li>网络协议：UDP 包包含 magic、version、type、Input、Start、Ack 和 State，客户端每包携带最近 K 帧输入以降低丢包影响。</li>
+          <li>一致性验证：用网络量化后的 state hash 检测分叉，配合 <code>lab_tests</code> 与 <code>lab_stress</code> 覆盖编解码、延迟 State、预测偏差和大量回滚。</li>
+        </ul>
         <div class="portfolio-tags">
-          <span>C++20</span><span>UDP</span><span>libevent</span><span>SDL2</span><span>Rollback</span><span>CTest</span>
+          <span>C++20</span><span>UDP</span><span>libevent</span><span>SDL2</span><span>Rollback</span><span>Prediction</span><span>State Hash</span><span>CTest</span>
         </div>
         <div class="portfolio-actions compact">
           <a class="portfolio-button primary" href="https://github.com/ChutianDuan/Fighting">GitHub 仓库</a>

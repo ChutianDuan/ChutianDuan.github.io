@@ -72,14 +72,31 @@ sidebar: false
       <div>
         <p class="portfolio-project-index">03</p>
         <h3>Libevent Chat Server</h3>
-        <p>基于 libevent 的多线程 TCP 聊天服务，采用 Acceptor + N Worker、line-delimited JSON、房间/私信和背压控制。</p>
+        <p>基于 libevent 的多线程 TCP 聊天服务，采用 1 个 Acceptor 与 N 个 Worker。接入线程只负责 accept，并通过 UNIX socketpair 把 fd 分发给 Worker；每个 Worker 独立运行 event_base，负责连接读写、JSON 分帧、房间广播、私信和连接清理。</p>
+        <p>实现 per-connection 发送队列、输出缓冲高低水位、慢连接截断和锁外发送，重点验证 Reactor 模型、多线程连接分发与背压控制。</p>
         <div class="portfolio-tags">
-          <span>C++</span><span>libevent</span><span>TCP</span><span>Reactor</span><span>多线程</span><span>CMake</span>
+          <span>C++</span><span>libevent</span><span>TCP</span><span>Reactor</span><span>socketpair</span><span>Backpressure</span>
         </div>
         <div class="portfolio-actions compact">
           <a class="portfolio-button primary" href="/projects/#libevent-chat-server">查看项目</a>
           <a class="portfolio-button" href="https://github.com/ChutianDuan/chat_server">GitHub</a>
           <a class="portfolio-button" href="/notes/linux高性能服务器编程/1-libevent/">阅读笔记</a>
+        </div>
+      </div>
+    </article>
+
+    <article id="fighting-authoritative-server" class="portfolio-project">
+      <div>
+        <p class="portfolio-project-index">04</p>
+        <h3>Fighting Authoritative Server</h3>
+        <p>C++20 实时动作游戏同步 Demo，围绕 server authoritative、client prediction 和 rollback/replay 构建。服务端以 60Hz tick 推进权威世界，接收 UDP 冗余输入，广播 Ack / State，客户端收到权威快照后校验 hash 并回滚重放。</p>
+        <div class="portfolio-tags">
+          <span>C++20</span><span>UDP</span><span>libevent</span><span>SDL2</span><span>Rollback</span><span>State Hash</span>
+        </div>
+        <div class="portfolio-actions compact">
+          <a class="portfolio-button primary" href="/projects/#fighting-authoritative-server">查看项目</a>
+          <a class="portfolio-button" href="https://github.com/ChutianDuan/Fighting">GitHub</a>
+          <a class="portfolio-button" href="/notes/实时竞技游戏开发/fighting-netcode-项目知识笔记/">阅读笔记</a>
         </div>
       </div>
     </article>
