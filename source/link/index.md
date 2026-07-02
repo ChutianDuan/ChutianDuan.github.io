@@ -1,16 +1,47 @@
 ---
-title: 友情链接
+title: 链接
 date: 2024-08-24 15:44:50
 type: "link"
+comments: false
+sidebar: false
 ---
 
-这里先整理常用入口，后续再继续补充。
+{% raw %}
+<link rel="stylesheet" href="/assets/portfolio/portfolio.css">
 
-## 我的链接
+<section class="portfolio-page">
+  <section class="portfolio-section">
+    <div class="portfolio-section-heading">
+      <h1>链接</h1>
+      <p>项目、文章和联系方式集中在这里。</p>
+    </div>
 
-- GitHub: <https://github.com/ChutianDuan>
-- 博客首页: <https://chutianduan.github.io>
-
-## 说明
-
-如果以后要扩展成正式友链页，可以继续在这里追加站点名称、简介和地址。
+    <div class="portfolio-link-grid">
+      <a class="portfolio-link-card" href="https://github.com/ChutianDuan">
+        <strong>GitHub 主页</strong>
+        <span>公开仓库与代码更新。</span>
+      </a>
+      <a class="portfolio-link-card" href="https://github.com/ChutianDuan/Repo">
+        <strong>RAG Gateway Stack</strong>
+        <span>C++ Drogon + FastAPI + Celery 的 RAG / Agent 后端。</span>
+      </a>
+      <a class="portfolio-link-card" href="https://github.com/ChutianDuan/Yolo">
+        <strong>YOLO Tracking</strong>
+        <span>ONNX Runtime C++ 视频检测跟踪服务。</span>
+      </a>
+      <a class="portfolio-link-card" href="https://github.com/ChutianDuan/chat_server">
+        <strong>Chat Server</strong>
+        <span>libevent 多线程 TCP 聊天服务。</span>
+      </a>
+      <a class="portfolio-link-card" href="https://github.com/ChutianDuan/Fighting">
+        <strong>Fighting Netcode</strong>
+        <span>C++20 实时同步与回滚网络 Demo。</span>
+      </a>
+      <a class="portfolio-link-card" href="/archives/">
+        <strong>文章归档</strong>
+        <span>按时间查看全部技术笔记。</span>
+      </a>
+    </div>
+  </section>
+</section>
+{% endraw %}

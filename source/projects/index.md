@@ -11,29 +11,31 @@ sidebar: false
 <section class="portfolio-page">
   <section class="portfolio-section">
     <div class="portfolio-section-heading">
-      <p class="portfolio-eyebrow">Projects</p>
       <h1>核心项目</h1>
-      <p>这里集中展示与求职方向最相关的项目：AI 应用后端、C++ 网络服务和视觉部署。</p>
+      <p>围绕 AI 应用后端、视觉部署、C++ 网络服务和实时同步四条工程主线。</p>
     </div>
 
     <article id="rag-agent-platform" class="portfolio-project">
       <div>
         <p class="portfolio-project-index">01</p>
-        <h2>RAG / Agent 平台</h2>
-        <p>面向知识库问答与工具调用场景的 AI 应用平台。整体采用 C++ Drogon 网关 + Python RAG Service 的双服务结构，兼顾工程可控性与模型生态。</p>
-        <p>Drogon 负责对外 API、会话、状态治理和内部服务代理；FastAPI / Celery 负责文档解析、切块、索引构建和 RAG 推理任务；Redis / MySQL 负责任务状态、缓存、会话与元数据持久化。</p>
+        <h2>RAG Gateway Stack</h2>
+        <p>一个带循环工具调用编排、引用追踪和会话记忆的 RAG Agent 后端项目。外部请求进入 C++ Drogon Gateway，内部业务由 FastAPI、Celery、MySQL、Redis、LanceDB 和 OpenAI-compatible LLM / vLLM 协同完成。</p>
         <ul class="portfolio-link-list">
-          <li>检索链路：向量检索、BM25、重排序、引用返回。</li>
-          <li>输出链路：SSE 流式响应、任务状态查询、Agent Trace。</li>
-          <li>工程重点：可部署、可追踪、可回归评估的 AI 应用后端。</li>
+          <li>文档链路：上传、去重、解析、切片、向量化、索引构建和任务状态查询。</li>
+          <li>问答链路：向量召回、chunk 回表、CrossEncoder rerank、Prompt 组装、引用落库。</li>
+          <li>Agent 链路：只读工具调用、Trace、SSE 事件、会话记忆和 React Workbench 观测。</li>
         </ul>
         <div class="portfolio-tags">
-          <span>C++17</span><span>Drogon</span><span>FastAPI</span><span>Celery</span><span>Redis</span><span>MySQL</span><span>RAG</span><span>Agent</span>
+          <span>C++17</span><span>Drogon</span><span>FastAPI</span><span>Celery</span><span>MySQL</span><span>Redis</span><span>LanceDB</span><span>React</span><span>Agent</span>
+        </div>
+        <div class="portfolio-actions compact">
+          <a class="portfolio-button primary" href="https://github.com/ChutianDuan/Repo">GitHub 仓库</a>
+          <a class="portfolio-button" href="/notes/ai模型开发/开发进度记录/">开发记录</a>
         </div>
       </div>
       <figure class="portfolio-figure">
         <img src="/assets/rag/architecture.png" alt="RAG / Agent 平台架构图">
-        <figcaption>RAG / Agent 平台架构示意</figcaption>
+        <figcaption>C++ Gateway、FastAPI、Celery、数据库、向量索引和工作台分层</figcaption>
       </figure>
     </article>
 
@@ -58,10 +60,13 @@ sidebar: false
         <div class="portfolio-tags">
           <span>ONNX Runtime</span><span>OpenCV</span><span>ByteTrack</span><span>Optical Flow</span><span>HTTP Inference</span><span>Linux CPU</span>
         </div>
+        <div class="portfolio-actions compact">
+          <a class="portfolio-button primary" href="https://github.com/ChutianDuan/Yolo">GitHub 仓库</a>
+        </div>
       </div>
       <figure class="portfolio-figure">
         <img src="/assets/yolo/tracking-flow.svg" alt="YOLO 检测跟踪服务流程图">
-        <figcaption>真实检测演示 GIF 可后续替换到这个位置。</figcaption>
+        <figcaption>原始视频、检测框、Track ID、光流传播与性能统计</figcaption>
       </figure>
     </article>
 
@@ -69,13 +74,18 @@ sidebar: false
       <div>
         <p class="portfolio-project-index">03</p>
         <h2>Libevent Chat Server</h2>
-        <p>基于 libevent 的事件驱动 TCP 聊天服务，采用 Acceptor-Worker 架构、JSON 协议、连接管理与背压控制。</p>
-        <p>项目重点是理解并实现 Reactor 模型、非阻塞 I/O、多线程任务分发、连接生命周期管理和服务端可测试结构。</p>
+        <p>基于 libevent 的聊天服务器，采用 1 个接入线程与 N 个 Worker。接入线程负责 accept，通过 UNIX socketpair 分发 fd；每个 Worker 拥有独立 event_base 并处理连接 I/O。</p>
+        <ul class="portfolio-link-list">
+          <li>协议：一行一条 JSON，支持 nick、join、leave、msg 和 pm。</li>
+          <li>可靠性：per-connection 队列、低水位续写、慢连接截断和连接清理。</li>
+          <li>工程重点：锁内维护共享状态，锁外发送，减少长时间占锁。</li>
+        </ul>
         <div class="portfolio-tags">
-          <span>C++</span><span>libevent</span><span>TCP</span><span>Reactor</span><span>多线程</span><span>CMake</span>
+          <span>C++</span><span>libevent</span><span>TCP</span><span>Reactor</span><span>socketpair</span><span>CMake</span>
         </div>
         <div class="portfolio-actions compact">
-          <a class="portfolio-button primary" href="/notes/linux高性能服务器编程/1-libevent/">阅读 libevent 笔记</a>
+          <a class="portfolio-button primary" href="https://github.com/ChutianDuan/chat_server">GitHub 仓库</a>
+          <a class="portfolio-button" href="/notes/linux高性能服务器编程/1-libevent/">阅读 libevent 笔记</a>
         </div>
       </div>
     </article>
@@ -84,9 +94,12 @@ sidebar: false
       <div>
         <p class="portfolio-project-index">More</p>
         <h2>Rollback Netcode Demo</h2>
-        <p>服务端权威的多人同步系统，实现客户端预测、状态回滚、UDP 通信与状态哈希校验。</p>
-        <p>它不是首页主卡片，但能补充展示实时系统、状态一致性和 C++ 工程拆解能力。</p>
+        <p>C++20 实时动作游戏网络同步 Demo，聚焦 server authoritative、client prediction、rollback/replay、UDP 输入冗余和确定性状态 hash。</p>
+        <div class="portfolio-tags">
+          <span>C++20</span><span>UDP</span><span>libevent</span><span>SDL2</span><span>Rollback</span><span>CTest</span>
+        </div>
         <div class="portfolio-actions compact">
+          <a class="portfolio-button primary" href="https://github.com/ChutianDuan/Fighting">GitHub 仓库</a>
           <a class="portfolio-button" href="/notes/实时竞技游戏开发/fighting-netcode-项目知识笔记/">阅读项目笔记</a>
         </div>
       </div>

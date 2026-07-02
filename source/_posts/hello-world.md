@@ -1,39 +1,30 @@
 ---
-title: Hello World
+title: 博客建站记录
+date: 2024-08-24 15:20:00
+tags:
+- Hexo
+categories:
+- 杂七杂八
 thumbnail: /img/covers/cover2.jpg
 ---
-Welcome to [Hexo](https://hexo.io/)! This is your very first post. Check [documentation](https://hexo.io/docs/) for more info. If you get any problems when using Hexo, you can find the answer in [troubleshooting](https://hexo.io/docs/troubleshooting.html) or you can ask me on [GitHub](https://github.com/hexojs/hexo/issues).
 
-## Quick Start
+# 博客建站记录
 
-### Create a new post
+这篇文章用来记录博客最初搭建时的几个常用命令，避免保留 Hexo 默认示例文章。
 
-``` bash
-$ hexo new "My New Post"
+## 常用命令
+
+```bash
+hexo new "文章标题"
+hexo clean
+hexo generate
+hexo server
 ```
 
-More info: [Writing](https://hexo.io/docs/writing.html)
+## 维护流程
 
-### Run server
+1. 在 `source/_posts` 下写文章，补全标题、日期、分类和标签。
+2. 本地运行 `hexo generate` 检查静态页面是否能生成。
+3. 内容确认后再提交到 GitHub。
 
-``` bash
-$ hexo server
-```
-
-More info: [Server](https://hexo.io/docs/server.html)
-
-### Generate static files
-
-``` bash
-$ hexo generate
-```
-
-More info: [Generating](https://hexo.io/docs/generating.html)
-
-### Deploy to remote sites
-
-``` bash
-$ hexo deploy
-```
-
-More info: [Deployment](https://hexo.io/docs/one-command-deployment.html)
+博客的重点不是保留工具说明，而是把项目复盘、学习路径和工程实践整理清楚。

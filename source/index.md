@@ -13,37 +13,36 @@ sidebar: false
     <p class="portfolio-name">Chutian Duan</p>
     <h1>AI Application &amp; C++ Vision Deployment Engineer</h1>
     <p class="portfolio-stack">RAG / Agent · C++ Backend · Linux · ONNX Runtime · Computer Vision</p>
-    <p class="portfolio-summary">构建从模型训练、检索增强、异步任务到 Linux 服务部署的端到端 AI 系统。</p>
+    <p class="portfolio-summary">把 RAG、视觉推理和网络服务做成可运行、可观测、可部署的工程系统。</p>
     <div class="portfolio-actions">
       <a class="portfolio-button primary" href="#core-projects">查看核心项目</a>
+      <a class="portfolio-button" href="#blog-tracks">阅读技术文章</a>
       <a class="portfolio-button" href="https://github.com/ChutianDuan">GitHub 主页</a>
     </div>
   </section>
 
   <section id="core-projects" class="portfolio-section">
     <div class="portfolio-section-heading">
-      <p class="portfolio-eyebrow">Core Projects</p>
-      <h2>三个核心项目</h2>
+      <h2>核心项目</h2>
     </div>
 
     <article id="rag-agent-platform" class="portfolio-project">
       <div>
         <p class="portfolio-project-index">01</p>
-        <h3>RAG / Agent 平台</h3>
-        <p>面向知识库问答与工具调用场景的 AI 应用平台，采用 C++ Drogon 网关承接对外请求，FastAPI / Celery 负责任务编排，Redis / MySQL 管理状态、会话与元数据。</p>
-        <p>系统覆盖向量检索、BM25、重排序、SSE 流式输出与 Agent Trace，重点是把 RAG 链路做成可追踪、可评估、可部署的后端系统。</p>
+        <h3>RAG Gateway Stack</h3>
+        <p>C++ Drogon 网关、FastAPI、Celery、MySQL、Redis、LanceDB 与 React Workbench 组成的 RAG / Agent 后端项目，支持文档索引、引用追踪、会话记忆和工具调用 Trace。</p>
         <div class="portfolio-tags">
-          <span>C++17</span><span>Drogon</span><span>FastAPI</span><span>Redis</span><span>MySQL</span><span>Celery</span><span>RAG</span><span>Agent</span>
+          <span>C++17</span><span>Drogon</span><span>FastAPI</span><span>Celery</span><span>MySQL</span><span>Redis</span><span>LanceDB</span><span>Agent</span>
         </div>
         <div class="portfolio-actions compact">
           <a class="portfolio-button primary" href="/projects/#rag-agent-platform">查看项目</a>
-          <a class="portfolio-button" href="#rag-architecture">查看架构</a>
-          <a class="portfolio-button" href="https://github.com/ChutianDuan?tab=repositories">查看 GitHub</a>
+          <a class="portfolio-button" href="https://github.com/ChutianDuan/Repo">GitHub</a>
+          <a class="portfolio-button" href="/notes/ai模型开发/开发进度记录/">开发记录</a>
         </div>
       </div>
-      <figure id="rag-architecture" class="portfolio-figure">
+      <figure class="portfolio-figure">
         <img src="/assets/rag/architecture.png" alt="RAG / Agent 平台架构图">
-        <figcaption>RAG / Agent 平台架构示意</figcaption>
+        <figcaption>网关、任务、检索、存储与工作台分层</figcaption>
       </figure>
     </article>
 
@@ -51,27 +50,21 @@ sidebar: false
       <div>
         <p class="portfolio-project-index">02</p>
         <h3>YOLO ONNX Tracking Service</h3>
-        <p>基于 ONNX Runtime C++、OpenCV、ByteTrack 和 LK 光流的 Linux CPU 视频目标检测与跟踪服务。</p>
-        <p>实现动态抽帧检测、光流中间帧传播、轨迹管理与 HTTP 推理接口，在保证跟踪效果的同时降低 ONNX 推理次数。</p>
-        <div class="portfolio-tags">
-          <span>ONNX Runtime</span><span>OpenCV</span><span>ByteTrack</span><span>Optical Flow</span><span>Linux</span><span>C++</span>
+        <p>基于 ONNX Runtime C++、OpenCV、ByteTrack 和 LK 光流的视频检测跟踪服务，用动态抽帧和中间帧传播减少 CPU 推理次数。</p>
+        <div class="portfolio-metrics">
+          <span>2.99x 加速</span><span>F1 0.937</span><span>278 次 ONNX 调用</span>
         </div>
-        <div class="portfolio-table-wrap">
-          <table class="portfolio-table">
-            <thead>
-              <tr><th>模式</th><th>ONNX 调用次数</th><th>加速比</th><th>F1</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>Full ONNX</td><td>962</td><td>1.0x</td><td>1.000</td></tr>
-              <tr><td>Dynamic ONNX + Flow</td><td>278</td><td>2.99x</td><td>0.937</td></tr>
-              <tr><td>Fixed ONNX + Flow</td><td>161</td><td>4.59x</td><td>0.910</td></tr>
-            </tbody>
-          </table>
+        <div class="portfolio-tags">
+          <span>ONNX Runtime</span><span>OpenCV</span><span>ByteTrack</span><span>Optical Flow</span><span>Linux CPU</span>
+        </div>
+        <div class="portfolio-actions compact">
+          <a class="portfolio-button primary" href="/projects/#yolo-tracking-service">查看项目</a>
+          <a class="portfolio-button" href="https://github.com/ChutianDuan/Yolo">GitHub</a>
         </div>
       </div>
       <figure class="portfolio-figure">
         <img src="/assets/yolo/tracking-flow.svg" alt="YOLO 检测跟踪服务流程图">
-        <figcaption>原始视频 -> 检测框 -> Track ID -> 光流传播 -> 性能统计</figcaption>
+        <figcaption>检测框、Track ID、光流传播与性能统计链路</figcaption>
       </figure>
     </article>
 
@@ -79,52 +72,58 @@ sidebar: false
       <div>
         <p class="portfolio-project-index">03</p>
         <h3>Libevent Chat Server</h3>
-        <p>基于 libevent 的事件驱动 TCP 聊天服务，采用 Acceptor-Worker 架构、JSON 协议、连接管理与背压控制。</p>
-        <p>项目重点在非阻塞 I/O、Reactor 模型、多线程连接分发、缓冲区水位和可测试的 C++ 服务端结构。</p>
+        <p>基于 libevent 的多线程 TCP 聊天服务，采用 Acceptor + N Worker、line-delimited JSON、房间/私信和背压控制。</p>
         <div class="portfolio-tags">
           <span>C++</span><span>libevent</span><span>TCP</span><span>Reactor</span><span>多线程</span><span>CMake</span>
         </div>
         <div class="portfolio-actions compact">
           <a class="portfolio-button primary" href="/projects/#libevent-chat-server">查看项目</a>
+          <a class="portfolio-button" href="https://github.com/ChutianDuan/chat_server">GitHub</a>
           <a class="portfolio-button" href="/notes/linux高性能服务器编程/1-libevent/">阅读笔记</a>
         </div>
       </div>
     </article>
   </section>
 
-  <section class="portfolio-section">
+  <section id="blog-tracks" class="portfolio-section">
     <div class="portfolio-section-heading">
-      <p class="portfolio-eyebrow">Technical Focus</p>
-      <h2>技术能力地图</h2>
+      <h2>博客主线</h2>
     </div>
-    <div class="portfolio-focus-grid">
-      <div><h3>AI Application</h3><p>RAG · Agent · Retrieval · Rerank · SSE · vLLM</p></div>
-      <div><h3>C++ Backend</h3><p>Drogon · libevent · CMake · Redis · MySQL · Linux</p></div>
-      <div><h3>Vision Deployment</h3><p>YOLO · ONNX Runtime · OpenCV · ByteTrack · Optical Flow</p></div>
-      <div><h3>Engineering</h3><p>CTest · GoogleTest · CI · Benchmark · Docker Basics</p></div>
+    <div class="portfolio-link-grid">
+      <a class="portfolio-link-card" href="/notes/ai模型开发/开发进度记录/">
+        <strong>AI 应用后端</strong>
+        <span>RAG、Agent、FastAPI、Celery、Redis、检索与部署记录。</span>
+      </a>
+      <a class="portfolio-link-card" href="/notes/linux高性能服务器编程/">
+        <strong>Linux 服务端</strong>
+        <span>Socket、libevent、Reactor、线程模型与服务端调试。</span>
+      </a>
+      <a class="portfolio-link-card" href="/notes/现代c-实践/00-现代c-实践导读/">
+        <strong>现代 C++ 实践</strong>
+        <span>所有权、并发、协程、测试、CMake 和接口设计。</span>
+      </a>
+      <a class="portfolio-link-card" href="/notes/实时竞技游戏开发/fighting-netcode-项目知识笔记/">
+        <strong>实时系统</strong>
+        <span>UDP、客户端预测、回滚重放和状态一致性。</span>
+      </a>
     </div>
   </section>
 
   <section class="portfolio-section portfolio-split">
     <div>
-      <p class="portfolio-eyebrow">Writing</p>
-      <h2>技术文章入口</h2>
-      <p>博客仍然保留，但它的角色是证明项目理解：记录架构拆解、性能权衡、测试设计和部署经验。</p>
+      <h2>常用入口</h2>
       <ul class="portfolio-link-list">
         <li><a href="/archives/">全部技术文章</a></li>
-        <li><a href="/notes/ai模型开发/开发进度记录/">RAG 平台开发进度记录</a></li>
-        <li><a href="/notes/ai模型开发/知识点学习/框架/drogon/">Drogon 网关学习笔记</a></li>
-        <li><a href="/notes/linux高性能服务器编程/1-libevent/">libevent Reactor 与 TCP 服务端</a></li>
+        <li><a href="/projects/">核心项目</a></li>
+        <li><a href="/resume/">简历页</a></li>
+        <li><a href="/link/">链接页</a></li>
       </ul>
     </div>
     <div>
-      <p class="portfolio-eyebrow">Contact</p>
       <h2>联系方式</h2>
-      <p>欢迎通过 GitHub 查看项目与笔记，也可以通过邮件联系。</p>
       <ul class="portfolio-link-list">
         <li><a href="https://github.com/ChutianDuan">github.com/ChutianDuan</a></li>
         <li><a href="mailto:3383006954@qq.com">3383006954@qq.com</a></li>
-        <li><a href="/resume/">简历页</a></li>
       </ul>
     </div>
   </section>

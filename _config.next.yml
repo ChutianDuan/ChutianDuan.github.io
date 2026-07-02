@@ -8,7 +8,8 @@ menu:
   首页: / || fa fa-home
   项目: /projects/ || fa fa-code
   技术文章: /archives/ || fa fa-book-open
-  "关于我 / 简历": /about/ || fa fa-user
+  关于: /about/ || fa fa-user
+  简历: /resume/ || fa fa-id-card
   GitHub: https://github.com/ChutianDuan || fab fa-github
 
 menu_settings:
