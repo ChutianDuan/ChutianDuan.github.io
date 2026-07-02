@@ -99,6 +99,10 @@ sidebar: false
           <a class="portfolio-button" href="/notes/实时竞技游戏开发/fighting-netcode-项目知识笔记/">阅读笔记</a>
         </div>
       </div>
+      <figure class="portfolio-figure">
+        <img src="/assets/fighting/authoritative-server.png" alt="Fighting 权威服务器流程图">
+        <figcaption>权威服务端、输入同步、状态广播与客户端回滚链路</figcaption>
+      </figure>
     </article>
   </section>
 

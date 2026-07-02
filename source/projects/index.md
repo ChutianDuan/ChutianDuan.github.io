@@ -91,7 +91,7 @@ sidebar: false
       </div>
     </article>
 
-    <article id="fighting-authoritative-server" class="portfolio-project secondary-project">
+    <article id="fighting-authoritative-server" class="portfolio-project">
       <div>
         <p class="portfolio-project-index">04</p>
         <h2>Fighting Authoritative Server</h2>
@@ -110,6 +110,10 @@ sidebar: false
           <a class="portfolio-button" href="/notes/实时竞技游戏开发/fighting-netcode-项目知识笔记/">阅读项目笔记</a>
         </div>
       </div>
+      <figure class="portfolio-figure">
+        <img src="/assets/fighting/authoritative-server.png" alt="Fighting 权威服务器流程图">
+        <figcaption>权威服务器推进、客户端输入、Ack / State 广播与回滚重放</figcaption>
+      </figure>
     </article>
   </section>
 </section>
