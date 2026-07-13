@@ -809,6 +809,11 @@ body:has(.main-inner.page) .sidebar-toggle {
     padding-right: 0 !important;
   }
 
+  body:has(.main-inner.post) .column {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
   body:has(.main-inner.post) .sidebar {
     bottom: 0;
     max-height: calc(100vh - var(--header-height));
