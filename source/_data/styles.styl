@@ -805,18 +805,20 @@ body:has(.main-inner.page) .sidebar-toggle {
 }
 
 @media (min-width: 1200px) {
-  body.sidebar-active:has(.main-inner.post) {
+  body:has(.main-inner.post) {
     padding-right: 0 !important;
   }
 
   body:has(.main-inner.post) .sidebar {
     bottom: 0;
     max-height: calc(100vh - var(--header-height));
+    right: calc(50vw - 532px) !important;
     top: var(--header-height);
   }
 
-  body.sidebar-active:has(.main-inner.post) .sidebar {
-    right: calc(50vw - 532px);
+  body:has(.main-inner.post) .sidebar-dimmer,
+  body:has(.main-inner.post) .sidebar-toggle {
+    display: none !important;
   }
 }
 
