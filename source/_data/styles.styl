@@ -458,6 +458,20 @@ header.header {
   width: 100%;
 }
 
+body:has(.engineering-page) {
+  padding-right: 0 !important;
+}
+
+body:has(.engineering-page) .post-block:first-of-type {
+  padding-top: 0;
+}
+
+body:has(.engineering-page) .sidebar,
+body:has(.engineering-page) .sidebar-dimmer,
+body:has(.engineering-page) .sidebar-toggle {
+  display: none !important;
+}
+
 .engineering-page-header {
   align-items: end;
   display: flex;
