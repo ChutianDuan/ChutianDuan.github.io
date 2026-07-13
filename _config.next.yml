@@ -46,7 +46,7 @@ social_icons:
 
 toc:
   enable: true
-  number: true
+  number: false
   wrap: true
   expand_all: false
   max_depth: 4
