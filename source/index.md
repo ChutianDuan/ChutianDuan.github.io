@@ -1,10 +1,12 @@
 ---
 layout: page
 title: AI Application & C++ Engineer
-description: 段楚天的个人技术博客：AI 应用、C++ 后端与计算机视觉部署。
+description: 无名的个人技术博客：AI 应用、C++ 后端与计算机视觉部署。
 date: 2026-06-29 20:00:00
 comments: false
 sidebar: false
+toc:
+  enable: false
 header: false
 ---
 
@@ -16,7 +18,7 @@ header: false
     <div class="hero-copy reveal">
       <h1 id="hero-title">把智能系统，<br>做成可靠的软件。</h1>
       <p class="hero-intro">
-        我是段楚天，专注 AI 应用、C++ 后端与计算机视觉部署。<br>
+        我是无名，专注 AI 应用、C++ 后端与计算机视觉部署。<br>
         记录从 RAG、Agent 到实时系统的工程实践。
       </p>
       <div class="hero-actions">

@@ -3,7 +3,7 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: Chutian Duan
+title: 无名
 subtitle: 'AI Application & C++ Vision Deployment Engineer'
 description: 'Personal portfolio and technical blog for AI application, C++ backend, and computer vision deployment projects.'
 keywords:
@@ -12,7 +12,7 @@ keywords:
   - Computer Vision
   - RAG
   - ONNX Runtime
-author: Chutian Duan
+author: 无名
 language: zh-CN
 timezone: Asia/Shanghai
 

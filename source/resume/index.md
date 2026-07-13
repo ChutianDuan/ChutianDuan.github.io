@@ -3,6 +3,8 @@ title: 简历
 date: 2026-06-29 20:10:00
 comments: false
 sidebar: false
+toc:
+  enable: false
 header: false
 ---
 
@@ -12,7 +14,7 @@ header: false
 <section class="portfolio-page">
   <section class="portfolio-section">
     <div class="portfolio-section-heading">
-      <h1>Chutian Duan</h1>
+      <h1>无名</h1>
       <p>AI Application &amp; C++ Vision Deployment Engineer</p>
     </div>
 

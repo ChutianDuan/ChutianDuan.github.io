@@ -3,6 +3,8 @@ title: 关于
 date: 2026-01-24 11:00:00
 comments: false
 sidebar: false
+toc:
+  enable: false
 header: false
 ---
 
@@ -13,7 +15,7 @@ header: false
   <section class="portfolio-section">
     <div class="portfolio-section-heading">
       <h1>关于</h1>
-      <p>嗨，我是 Chutian Duan，当前聚焦 AI 应用后端、C++ 网络服务和计算机视觉部署。</p>
+      <p>嗨，我是无名，当前聚焦 AI 应用后端、C++ 网络服务和计算机视觉部署。</p>
     </div>
 
     <div class="portfolio-focus-grid">

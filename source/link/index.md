@@ -4,6 +4,8 @@ date: 2024-08-24 15:44:50
 type: "link"
 comments: false
 sidebar: false
+toc:
+  enable: false
 header: false
 ---
 

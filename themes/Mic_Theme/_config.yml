@@ -5,11 +5,11 @@
 # Head info
 head:
     favicon: "/img/favicon.png"
-    keywords: "Chutian Duan blog 深度学习 C++"
+    keywords: "无名 blog 深度学习 C++"
     backgroundpic : "img/bg.jpg"
 
 Intro:
-    name: Chutian Duan
+    name: 无名
     slogan: "Keep learning, keep building."
     HeadButton: Enter Blog
 
