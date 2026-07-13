@@ -218,12 +218,26 @@ hexo.extend.generator.register('engineering-notebook', locals => {
     {
       path: 'archives/index.html',
       layout: ['page'],
-      data: { title: '知识地图', header: false, sidebar: false, comments: false, content: knowledgeMap(groups) }
+      data: {
+        title: '知识地图',
+        header: false,
+        sidebar: false,
+        toc: { enable: false },
+        comments: false,
+        content: knowledgeMap(groups)
+      }
     },
     {
       path: 'articles/index.html',
       layout: ['page'],
-      data: { title: '全部文章', header: false, sidebar: false, comments: false, content: articleIndex(groups) }
+      data: {
+        title: '全部文章',
+        header: false,
+        sidebar: false,
+        toc: { enable: false },
+        comments: false,
+        content: articleIndex(groups)
+      }
     }
   ];
 });
