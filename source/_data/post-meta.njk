@@ -1,1 +1,3 @@
+{% if engineering_post_meta is defined %}
 {{ engineering_post_meta(post or page) | safe }}
+{% endif %}

@@ -25,15 +25,15 @@ header: false
       </div>
       <div>
         <h2>技术栈</h2>
-        <p>C++17 · Drogon · libevent · FastAPI · Celery · Redis · MySQL · ONNX Runtime · OpenCV · Linux</p>
+        <p>C++17/20 · Drogon · libevent · FastAPI · Celery · MySQL · LanceDB · ONNX Runtime / OpenVINO · OpenCV · Linux</p>
       </div>
       <div>
         <h2>项目</h2>
-        <p>RAG Gateway Stack、YOLO Tracking、Libevent Chat Server、Rollback Netcode Demo。</p>
+        <p>RAG Gateway Stack、YOLO Tracking 高低模型动态监测、Libevent Chat Server、Fighting Netcode。</p>
       </div>
       <div>
         <h2>工程能力</h2>
-        <p>接口设计、异步任务、流式响应、性能评估、CTest / GoogleTest、Linux 部署。</p>
+        <p>接口设计、异步任务、流式响应、质量感知调度、性能回归、CTest / GoogleTest 与 Linux 部署。</p>
       </div>
     </div>
 

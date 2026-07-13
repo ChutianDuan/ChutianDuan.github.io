@@ -16,10 +16,9 @@ header: false
 <div class="home-shell" id="top">
   <section class="home-hero section-shell" aria-labelledby="hero-title">
     <div class="hero-copy reveal">
-      <h1 id="hero-title">把智能系统，<br>做成可靠的软件。</h1>
+      <h1 id="hero-title"><span>把智能系统，</span><span>做成可靠的软件。</span></h1>
       <p class="hero-intro">
-        我是无名，专注 AI 应用、C++ 后端与计算机视觉部署。<br>
-        记录从 RAG、Agent 到实时系统的工程实践。
+        我是无名，专注 AI 应用、C++ 后端与计算机视觉部署。记录从 RAG、Agent 到实时系统的工程实践。
       </p>
       <div class="hero-actions">
         <a class="portfolio-button primary" href="#projects">
@@ -76,7 +75,7 @@ header: false
         <p class="section-index mono">01 / FEATURED WORK</p>
         <h2 id="projects-title">核心项目</h2>
       </div>
-      <p>从接口、并发到推理与观测，<br>做完整的工程闭环。</p>
+      <p>从接口、并发到推理与观测，做完整的工程闭环。</p>
     </div>
 
     <div class="project-grid">
@@ -87,10 +86,14 @@ header: false
         <div class="project-card-copy">
           <p class="project-type mono">AI APPLICATION BACKEND</p>
           <h3>RAG Gateway Stack</h3>
-          <p>C++ Drogon 网关与 FastAPI、Celery、Redis、LanceDB 协同的 RAG / Agent 后端，支持引用追踪、会话记忆与工具 Trace。</p>
+          <p>C++ Drogon 网关统一承载外部 API，FastAPI 与 Celery 处理检索、异步任务和模型编排。</p>
         </div>
+        <ul class="project-highlight-list">
+          <li>LanceDB 召回、MySQL chunk 回表与 CrossEncoder rerank</li>
+          <li>循环工具调用、三层记忆、citations 与 Agent Trace</li>
+        </ul>
         <div class="project-card-footer">
-          <span>C++17</span><span>Drogon</span><span>FastAPI</span><span>Redis</span><span>Agent</span>
+          <span>C++17</span><span>Drogon</span><span>Celery</span><span>Agent</span>
           <b aria-label="查看项目">↗</b>
         </div>
       </a>
@@ -101,11 +104,15 @@ header: false
         </div>
         <div class="project-card-copy">
           <p class="project-type mono">COMPUTER VISION</p>
-          <h3>YOLO Tracking Service</h3>
-          <p>ONNX Runtime C++ 视频检测跟踪服务，用动态抽帧与光流传播减少 CPU 推理开销。</p>
+          <h3>YOLO Tracking</h3>
+          <p>面向道路视频动态监测的 C++ 检测跟踪服务，以高低分辨率模型协同平衡检测质量与调用开销。</p>
         </div>
-        <div class="project-metrics"><span><b>2.99×</b>加速</span><span><b>0.937</b>F1</span></div>
-        <div class="project-card-footer"><span>ONNX</span><span>OpenCV</span><span>ByteTrack</span><b>↗</b></div>
+        <ul class="project-highlight-list">
+          <li>动态 stride 与质量退化驱动 low / high 紧急刷新</li>
+          <li>LK 光流、ByteTrack 与异步结果时间补偿维持连续轨迹</li>
+        </ul>
+        <div class="project-metrics" aria-label="YOLO 三场景回归通过指标"><span><b>0.7726</b>三场景 F1</span><span><b>-63.2%</b>误检数量</span></div>
+        <div class="project-card-footer"><span>YOLO26</span><span>ONNX</span><span>LK Flow</span><span>ByteTrack</span><b aria-label="查看项目">↗</b></div>
       </a>
 
       <a class="project-card reveal" href="/projects/#libevent-chat-server">
@@ -115,9 +122,13 @@ header: false
         <div class="project-card-copy">
           <p class="project-type mono">C++ NETWORK SERVICE</p>
           <h3>Libevent Chat Server</h3>
-          <p>Acceptor + Worker 多线程 Reactor 服务，实现连接分发、JSON 分帧、房间广播与背压控制。</p>
+          <p>基于 libevent 的多线程 TCP 聊天服务，在最小实现中完成连接、协议、并发状态和慢连接治理。</p>
         </div>
-        <div class="project-card-footer"><span>C++</span><span>libevent</span><span>TCP</span><span>Reactor</span><b>↗</b></div>
+        <ul class="project-highlight-list">
+          <li>1 个 Acceptor + N 个 Worker，socketpair 轮询分发 fd</li>
+          <li>line-delimited JSON、房间 / 私信与 per-connection 背压</li>
+        </ul>
+        <div class="project-card-footer"><span>C++</span><span>libevent</span><span>Reactor</span><span>Backpressure</span><b aria-label="查看项目">↗</b></div>
       </a>
 
       <a class="project-card project-card-wide reveal" href="/projects/#fighting-authoritative-server">
@@ -127,9 +138,13 @@ header: false
         <div class="project-card-copy">
           <p class="project-type mono">AUTHORITATIVE SERVER</p>
           <h3>Fighting Netcode</h3>
-          <p>60Hz 权威世界、UDP 冗余输入、客户端预测与 rollback / replay，通过 state hash 检测多端状态分叉。</p>
+          <p>C++20 实时动作游戏同步 Demo，以 60Hz 服务端权威模拟串起输入、预测、校正和一致性验证。</p>
         </div>
-        <div class="project-card-footer"><span>C++20</span><span>UDP</span><span>Rollback</span><span>State Hash</span><b>↗</b></div>
+        <ul class="project-highlight-list">
+          <li>UDP 每包携带最近 K 帧输入，降低丢包导致的缺输入</li>
+          <li>本地预测、rollback / replay 与量化 state hash 验证收敛</li>
+        </ul>
+        <div class="project-card-footer"><span>C++20</span><span>UDP</span><span>Rollback</span><span>State Hash</span><b aria-label="查看项目">↗</b></div>
       </a>
     </div>
 
@@ -145,7 +160,7 @@ header: false
           <p class="section-index mono">02 / ENGINEERING NOTES</p>
           <h2 id="writing-title">技术文章</h2>
         </div>
-        <p>记录选型、实现和调试中<br>真正有复用价值的部分。</p>
+        <p>记录选型、实现和调试中真正有复用价值的部分。</p>
       </div>
 
       <div class="writing-list">

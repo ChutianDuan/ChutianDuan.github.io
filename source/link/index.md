@@ -26,19 +26,19 @@ header: false
       </a>
       <a class="portfolio-link-card" href="https://github.com/ChutianDuan/Repo">
         <strong>RAG Gateway Stack</strong>
-        <span>C++ Drogon + FastAPI + Celery 的 RAG / Agent 后端。</span>
+        <span>C++ 网关、全局检索、异步任务与循环 Agent 组成的分层后端。</span>
       </a>
       <a class="portfolio-link-card" href="https://github.com/ChutianDuan/Yolo">
         <strong>YOLO Tracking</strong>
-        <span>ONNX Runtime C++ 视频检测跟踪服务。</span>
+        <span>高低分辨率模型、动态 stride、LK 光流与 ByteTrack 驱动的道路视频监测服务。</span>
       </a>
       <a class="portfolio-link-card" href="https://github.com/ChutianDuan/chat_server">
         <strong>Chat Server</strong>
-        <span>libevent 多线程 TCP 聊天服务。</span>
+        <span>Acceptor + N Worker、line-delimited JSON 与 per-connection 背压的 libevent TCP 服务。</span>
       </a>
       <a class="portfolio-link-card" href="https://github.com/ChutianDuan/Fighting">
         <strong>Fighting Netcode</strong>
-        <span>C++20 实时同步与回滚网络 Demo。</span>
+        <span>60Hz 服务端权威、UDP 冗余输入、客户端预测与 rollback / replay Demo。</span>
       </a>
       <a class="portfolio-link-card" href="/archives/">
         <strong>文章归档</strong>

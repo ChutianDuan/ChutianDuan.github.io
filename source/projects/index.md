@@ -22,11 +22,11 @@ header: false
       <div>
         <p class="portfolio-project-index">01</p>
         <h2>RAG Gateway Stack</h2>
-        <p>一个带循环工具调用编排、引用追踪和会话记忆的 RAG Agent 后端项目。外部请求进入 C++ Drogon Gateway，内部业务由 FastAPI、Celery、MySQL、Redis、LanceDB 和 OpenAI-compatible LLM / vLLM 协同完成。</p>
+        <p>面向全局文档知识库问答的分层式 RAG / Agent 后端。C++ Drogon Gateway 统一承载外部 API，FastAPI、Celery、MySQL、Redis、LanceDB 与 OpenAI-compatible LLM / vLLM 组成内部业务链路。</p>
         <ul class="portfolio-link-list">
-          <li>文档链路：上传、去重、解析、切片、向量化、索引构建和任务状态查询。</li>
-          <li>问答链路：向量召回、chunk 回表、CrossEncoder rerank、Prompt 组装、引用落库。</li>
-          <li>Agent 链路：只读工具调用、Trace、SSE 事件、会话记忆和 React Workbench 观测。</li>
+          <li>文档链路：上传、去重、解析、切片、向量化、全局索引构建和异步任务状态查询。</li>
+          <li>检索链路：LanceDB 召回 chunk id，MySQL 批量回表正文，再经 CrossEncoder rerank 组装 Prompt 与 citations。</li>
+          <li>Agent 链路：循环决策只读工具，注入用户长期记忆、会话摘要与近期对话，并记录 SSE、citations 和 Trace。</li>
         </ul>
         <div class="portfolio-tags">
           <span>C++17</span><span>Drogon</span><span>FastAPI</span><span>Celery</span><span>MySQL</span><span>Redis</span><span>LanceDB</span><span>React</span><span>Agent</span>
@@ -38,40 +38,38 @@ header: false
         </div>
       </div>
       <figure class="portfolio-figure">
-        <img src="/assets/rag/architecture.png" alt="RAG / Agent 平台架构图">
-        <figcaption>C++ Gateway、FastAPI、Celery、数据库、向量索引和工作台分层</figcaption>
+        <img src="/assets/rag/architecture-v2.svg" alt="RAG Gateway Stack 分层架构图">
+        <figcaption>C++ 网关、FastAPI 业务层、异步任务、全局检索与 Agent 观测链路</figcaption>
       </figure>
     </article>
 
     <article id="yolo-tracking-service" class="portfolio-project">
       <div>
         <p class="portfolio-project-index">02</p>
-        <h2>YOLO ONNX Tracking Service</h2>
-        <p>基于 ONNX Runtime C++、OpenCV、ByteTrack 和 LK 光流的 Linux CPU 视频目标检测与跟踪服务。</p>
-        <p>通过动态抽帧检测和光流中间帧传播减少 ONNX 推理次数，并用轨迹管理维持 Track ID 的连续性。</p>
-        <div class="portfolio-table-wrap">
-          <table class="portfolio-table">
-            <thead>
-              <tr><th>模式</th><th>ONNX 调用次数</th><th>加速比</th><th>F1</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>Full ONNX</td><td>962</td><td>1.0x</td><td>1.000</td></tr>
-              <tr><td>Dynamic ONNX + Flow</td><td>278</td><td>2.99x</td><td>0.937</td></tr>
-              <tr><td>Fixed ONNX + Flow</td><td>161</td><td>4.59x</td><td>0.910</td></tr>
-            </tbody>
-          </table>
+        <h2>YOLO Tracking</h2>
+        <p>面向 BDD100K 道路场景的 C++ 图片与视频检测跟踪服务，使用 ONNX Runtime / OpenVINO、OpenCV、ByteTrack 和 LK 光流交付可观测的动态监测结果。</p>
+        <ul class="portfolio-link-list">
+          <li>高低分辨率协同：高分辨率模型维护权威状态，低分辨率模型更频繁地进行轻量刷新。</li>
+          <li>质量感知调度：动态 stride 根据光流质量、尺度 / 速度突变、重复轨迹和类别冲突触发 low / high 紧急刷新。</li>
+          <li>时间连续性：LK 光流传播检测间隔的轨迹，ByteTrack 管理 ID 与生命周期，异步旧帧结果返回后先做时间补偿。</li>
+        </ul>
+        <div class="portfolio-metrics" aria-label="YOLO 三场景回归通过指标">
+          <span>三场景 F1 0.7726</span>
+          <span>FP -63.2%</span>
         </div>
+        <p class="portfolio-metric-note">指标口径为 IoU=0.5，以 full high-res 结果作为伪标签的三场景回归。</p>
         <div class="portfolio-tags">
-          <span>ONNX Runtime</span><span>OpenCV</span><span>ByteTrack</span><span>Optical Flow</span><span>HTTP Inference</span><span>Linux CPU</span>
+          <span>YOLO26</span><span>ONNX Runtime</span><span>OpenVINO</span><span>OpenCV</span><span>ByteTrack</span><span>LK Flow</span><span>Drogon</span><span>Linux CPU</span>
         </div>
         <div class="portfolio-actions compact">
           <a class="portfolio-button primary" href="https://github.com/ChutianDuan/Yolo">GitHub 仓库</a>
+          <a class="portfolio-button" href="https://github.com/ChutianDuan/Yolo/blob/main/docs/reports/%E4%BC%98%E5%8C%96%E8%AE%A1%E5%88%92.md">回归报告</a>
           <a class="portfolio-button" href="/notes/liunx-c-工程化/5-onnx模型导出与部署优化/">部署笔记</a>
         </div>
       </div>
       <figure class="portfolio-figure">
         <img src="/assets/yolo/tracking-flow.svg" alt="YOLO 检测跟踪服务流程图">
-        <figcaption>原始视频、检测框、Track ID、光流传播与性能统计</figcaption>
+        <figcaption>高低分辨率模型、质量感知调度、LK / ByteTrack 与权威轨迹管理</figcaption>
       </figure>
     </article>
 
@@ -100,7 +98,7 @@ header: false
     <article id="fighting-authoritative-server" class="portfolio-project">
       <div>
         <p class="portfolio-project-index">04</p>
-        <h2>Fighting Authoritative Server</h2>
+        <h2>Fighting Netcode</h2>
         <p>基于 C++20 的实时动作游戏网络同步 Demo。项目核心不是完整游戏内容，而是把服务端权威、客户端预测、状态回滚、UDP 输入冗余和确定性状态校验做成可运行、可测试、可复盘的最小系统。</p>
         <ul class="portfolio-link-list">
           <li>权威服务端：<code>lab_server</code> 统一分配 player slot，以 60Hz tick 推进 <code>World::Step</code>，并周期性广播 Ack / State。</li>

@@ -19,9 +19,9 @@ header: false
     </div>
 
     <div class="portfolio-focus-grid">
-      <div><h2>AI 应用</h2><p>RAG、Agent、检索、异步任务、引用追踪和工作台观测。</p></div>
+      <div><h2>AI 应用</h2><p>全局知识库检索、异步任务、循环 Agent、三层记忆、citations 和 Trace。</p></div>
       <div><h2>C++ 后端</h2><p>Drogon、libevent、TCP、Reactor、CMake 和测试。</p></div>
-      <div><h2>视觉部署</h2><p>ONNX Runtime、OpenCV、ByteTrack、光流和 Linux CPU 推理。</p></div>
+      <div><h2>视觉部署</h2><p>高低分辨率模型、动态 stride、LK 光流、ByteTrack 与 ONNX Runtime / OpenVINO 部署。</p></div>
       <div><h2>工程习惯</h2><p>把学习笔记落到可运行项目、性能记录和复盘文章里。</p></div>
     </div>
 
