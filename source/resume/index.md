@@ -3,6 +3,7 @@ title: 简历
 date: 2026-06-29 20:10:00
 comments: false
 sidebar: false
+header: false
 ---
 
 {% raw %}

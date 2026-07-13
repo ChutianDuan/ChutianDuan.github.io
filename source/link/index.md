@@ -4,6 +4,7 @@ date: 2024-08-24 15:44:50
 type: "link"
 comments: false
 sidebar: false
+header: false
 ---
 
 {% raw %}

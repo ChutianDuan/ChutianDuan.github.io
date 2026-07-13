@@ -3,6 +3,7 @@ title: 项目
 date: 2026-06-29 20:05:00
 comments: false
 sidebar: false
+header: false
 ---
 
 {% raw %}
@@ -30,7 +31,8 @@ sidebar: false
         </div>
         <div class="portfolio-actions compact">
           <a class="portfolio-button primary" href="https://github.com/ChutianDuan/Repo">GitHub 仓库</a>
-          <a class="portfolio-button" href="/notes/ai模型开发/开发进度记录/">开发记录</a>
+          <a class="portfolio-button" href="/notes/ai模型开发/开发进度记录/">项目复盘</a>
+          <a class="portfolio-button" href="/notes/ai模型开发/知识点学习/框架/faiss/">检索设计</a>
         </div>
       </div>
       <figure class="portfolio-figure">
@@ -62,6 +64,7 @@ sidebar: false
         </div>
         <div class="portfolio-actions compact">
           <a class="portfolio-button primary" href="https://github.com/ChutianDuan/Yolo">GitHub 仓库</a>
+          <a class="portfolio-button" href="/notes/liunx-c-工程化/5-onnx模型导出与部署优化/">部署笔记</a>
         </div>
       </div>
       <figure class="portfolio-figure">
@@ -87,6 +90,7 @@ sidebar: false
         <div class="portfolio-actions compact">
           <a class="portfolio-button primary" href="https://github.com/ChutianDuan/chat_server">GitHub 仓库</a>
           <a class="portfolio-button" href="/notes/linux高性能服务器编程/1-libevent/">阅读 libevent 笔记</a>
+          <a class="portfolio-button" href="/notes/linux高性能服务器编程/3-socket基础与tcp编程/">Socket 与 TCP</a>
         </div>
       </div>
     </article>
@@ -108,6 +112,7 @@ sidebar: false
         <div class="portfolio-actions compact">
           <a class="portfolio-button primary" href="https://github.com/ChutianDuan/Fighting">GitHub 仓库</a>
           <a class="portfolio-button" href="/notes/实时竞技游戏开发/fighting-netcode-项目知识笔记/">阅读项目笔记</a>
+          <a class="portfolio-button" href="/notes/实时竞技游戏开发/网络/">UDP 抗丢包设计</a>
         </div>
       </div>
       <figure class="portfolio-figure">

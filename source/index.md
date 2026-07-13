@@ -1,152 +1,206 @@
 ---
-title: Chutian Duan
+layout: page
+title: AI Application & C++ Engineer
+description: 段楚天的个人技术博客：AI 应用、C++ 后端与计算机视觉部署。
 date: 2026-06-29 20:00:00
 comments: false
 sidebar: false
+header: false
 ---
 
 {% raw %}
 <link rel="stylesheet" href="/assets/portfolio/portfolio.css">
 
-<section class="portfolio-page">
-  <section class="portfolio-hero">
-    <p class="portfolio-name">Chutian Duan</p>
-    <h1>AI Application &amp; C++ Vision Deployment Engineer</h1>
-    <p class="portfolio-stack">RAG / Agent · C++ Backend · Linux · ONNX Runtime · Computer Vision</p>
-    <p class="portfolio-summary">把 RAG、视觉推理和网络服务做成可运行、可观测、可部署的工程系统。</p>
-    <div class="portfolio-actions">
-      <a class="portfolio-button primary" href="#core-projects">查看核心项目</a>
-      <a class="portfolio-button" href="#blog-tracks">阅读技术文章</a>
-      <a class="portfolio-button" href="https://github.com/ChutianDuan">GitHub 主页</a>
+<div class="home-shell" id="top">
+  <section class="home-hero section-shell" aria-labelledby="hero-title">
+    <div class="hero-copy reveal">
+      <h1 id="hero-title">把智能系统，<br>做成可靠的软件。</h1>
+      <p class="hero-intro">
+        我是段楚天，专注 AI 应用、C++ 后端与计算机视觉部署。<br>
+        记录从 RAG、Agent 到实时系统的工程实践。
+      </p>
+      <div class="hero-actions">
+        <a class="portfolio-button primary" href="#projects">
+          查看项目
+          <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M4 10h12m-4-4 4 4-4 4"></path></svg>
+        </a>
+        <a class="portfolio-button" href="#writing">
+          阅读文章
+          <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M4 10h12m-4-4 4 4-4 4"></path></svg>
+        </a>
+      </div>
+      <p class="identity-line">AI APPLICATION <i></i> C++ BACKEND <i></i> COMPUTER VISION</p>
+    </div>
+
+    <div class="system-visual reveal" role="img" aria-label="RAG 与 Agent 服务架构示意图">
+      <div class="diagram-grid" aria-hidden="true"></div>
+      <div class="visual-heading">
+        <span class="visual-title mono">RAG / AGENT GATEWAY</span>
+      </div>
+      <div class="flow-row flow-row-main">
+        <div class="flow-node client-node">Client<span>Web / App</span></div>
+        <span class="flow-arrow" aria-hidden="true">→</span>
+        <div class="gateway-frame">
+          <span class="frame-label mono">GATEWAY</span>
+          <div class="flow-node">Query<span>Router</span></div>
+          <span class="flow-arrow" aria-hidden="true">→</span>
+          <div class="flow-node">Retriever<span>Vector / Rerank</span></div>
+          <span class="flow-arrow" aria-hidden="true">→</span>
+          <div class="flow-node">LLM<span>Agent Loop</span></div>
+        </div>
+      </div>
+      <div class="service-connector" aria-hidden="true"><span></span><span></span><span></span></div>
+      <div class="flow-row flow-row-services">
+        <div class="flow-node service-node">Redis<span>Cache / Session</span></div>
+        <div class="flow-node service-node">LanceDB<span>Vector Store</span></div>
+        <div class="flow-node service-node">Trace<span>Audit Log</span></div>
+      </div>
+      <div class="terminal" aria-hidden="true">
+        <div class="terminal-bar"><span></span><span></span><span></span><b class="mono">gateway.trace</b></div>
+        <div class="terminal-lines mono">
+          <span><i>01</i> route <b>/v1/chat/completions</b></span>
+          <span><i>02</i> retrieve <b>context + citations</b></span>
+          <span><i>03</i> execute <b>tool trace</b></span>
+          <span><i>04</i> status <em>ready</em><span class="cursor"></span></span>
+        </div>
+        <div class="terminal-mark mono">OBSERVABLE BY DESIGN</div>
+      </div>
     </div>
   </section>
 
-  <section id="core-projects" class="portfolio-section">
-    <div class="portfolio-section-heading">
-      <h2>核心项目</h2>
+  <section class="home-section section-shell" id="projects" aria-labelledby="projects-title">
+    <div class="section-heading reveal">
+      <div>
+        <p class="section-index mono">01 / FEATURED WORK</p>
+        <h2 id="projects-title">核心项目</h2>
+      </div>
+      <p>从接口、并发到推理与观测，<br>做完整的工程闭环。</p>
     </div>
 
-    <article id="rag-agent-platform" class="portfolio-project">
-      <div>
-        <p class="portfolio-project-index">01</p>
-        <h3>RAG Gateway Stack</h3>
-        <p>C++ Drogon 网关、FastAPI、Celery、MySQL、Redis、LanceDB 与 React Workbench 组成的 RAG / Agent 后端项目，支持文档索引、引用追踪、会话记忆和工具调用 Trace。</p>
-        <div class="portfolio-tags">
-          <span>C++17</span><span>Drogon</span><span>FastAPI</span><span>Celery</span><span>MySQL</span><span>Redis</span><span>LanceDB</span><span>Agent</span>
+    <div class="project-grid">
+      <a class="project-card project-card-featured reveal" href="/projects/#rag-agent-platform">
+        <div class="project-card-top">
+          <span class="project-number mono">01</span>
         </div>
-        <div class="portfolio-actions compact">
-          <a class="portfolio-button primary" href="/projects/#rag-agent-platform">查看项目</a>
-          <a class="portfolio-button" href="https://github.com/ChutianDuan/Repo">GitHub</a>
-          <a class="portfolio-button" href="/notes/ai模型开发/开发进度记录/">开发记录</a>
+        <div class="project-card-copy">
+          <p class="project-type mono">AI APPLICATION BACKEND</p>
+          <h3>RAG Gateway Stack</h3>
+          <p>C++ Drogon 网关与 FastAPI、Celery、Redis、LanceDB 协同的 RAG / Agent 后端，支持引用追踪、会话记忆与工具 Trace。</p>
         </div>
-      </div>
-      <figure class="portfolio-figure">
-        <img src="/assets/rag/architecture.png" alt="RAG / Agent 平台架构图">
-        <figcaption>网关、任务、检索、存储与工作台分层</figcaption>
-      </figure>
-    </article>
+        <div class="project-card-footer">
+          <span>C++17</span><span>Drogon</span><span>FastAPI</span><span>Redis</span><span>Agent</span>
+          <b aria-label="查看项目">↗</b>
+        </div>
+      </a>
 
-    <article id="yolo-tracking-service" class="portfolio-project">
-      <div>
-        <p class="portfolio-project-index">02</p>
-        <h3>YOLO ONNX Tracking Service</h3>
-        <p>基于 ONNX Runtime C++、OpenCV、ByteTrack 和 LK 光流的视频检测跟踪服务，用动态抽帧和中间帧传播减少 CPU 推理次数。</p>
-        <div class="portfolio-metrics">
-          <span>2.99x 加速</span><span>F1 0.937</span><span>278 次 ONNX 调用</span>
+      <a class="project-card reveal" href="/projects/#yolo-tracking-service">
+        <div class="project-card-top">
+          <span class="project-number mono">02</span>
         </div>
-        <div class="portfolio-tags">
-          <span>ONNX Runtime</span><span>OpenCV</span><span>ByteTrack</span><span>Optical Flow</span><span>Linux CPU</span>
+        <div class="project-card-copy">
+          <p class="project-type mono">COMPUTER VISION</p>
+          <h3>YOLO Tracking Service</h3>
+          <p>ONNX Runtime C++ 视频检测跟踪服务，用动态抽帧与光流传播减少 CPU 推理开销。</p>
         </div>
-        <div class="portfolio-actions compact">
-          <a class="portfolio-button primary" href="/projects/#yolo-tracking-service">查看项目</a>
-          <a class="portfolio-button" href="https://github.com/ChutianDuan/Yolo">GitHub</a>
-        </div>
-      </div>
-      <figure class="portfolio-figure">
-        <img src="/assets/yolo/tracking-flow.svg" alt="YOLO 检测跟踪服务流程图">
-        <figcaption>检测框、Track ID、光流传播与性能统计链路</figcaption>
-      </figure>
-    </article>
+        <div class="project-metrics"><span><b>2.99×</b>加速</span><span><b>0.937</b>F1</span></div>
+        <div class="project-card-footer"><span>ONNX</span><span>OpenCV</span><span>ByteTrack</span><b>↗</b></div>
+      </a>
 
-    <article id="libevent-chat-server" class="portfolio-project">
-      <div>
-        <p class="portfolio-project-index">03</p>
-        <h3>Libevent Chat Server</h3>
-        <p>基于 libevent 的多线程 TCP 聊天服务，采用 1 个 Acceptor 与 N 个 Worker。接入线程只负责 accept，并通过 UNIX socketpair 把 fd 分发给 Worker；每个 Worker 独立运行 event_base，负责连接读写、JSON 分帧、房间广播、私信和连接清理。</p>
-        <p>实现 per-connection 发送队列、输出缓冲高低水位、慢连接截断和锁外发送，重点验证 Reactor 模型、多线程连接分发与背压控制。</p>
-        <div class="portfolio-tags">
-          <span>C++</span><span>libevent</span><span>TCP</span><span>Reactor</span><span>socketpair</span><span>Backpressure</span>
+      <a class="project-card reveal" href="/projects/#libevent-chat-server">
+        <div class="project-card-top">
+          <span class="project-number mono">03</span>
         </div>
-        <div class="portfolio-actions compact">
-          <a class="portfolio-button primary" href="/projects/#libevent-chat-server">查看项目</a>
-          <a class="portfolio-button" href="https://github.com/ChutianDuan/chat_server">GitHub</a>
-          <a class="portfolio-button" href="/notes/linux高性能服务器编程/1-libevent/">阅读笔记</a>
+        <div class="project-card-copy">
+          <p class="project-type mono">C++ NETWORK SERVICE</p>
+          <h3>Libevent Chat Server</h3>
+          <p>Acceptor + Worker 多线程 Reactor 服务，实现连接分发、JSON 分帧、房间广播与背压控制。</p>
         </div>
-      </div>
-    </article>
+        <div class="project-card-footer"><span>C++</span><span>libevent</span><span>TCP</span><span>Reactor</span><b>↗</b></div>
+      </a>
 
-    <article id="fighting-authoritative-server" class="portfolio-project">
-      <div>
-        <p class="portfolio-project-index">04</p>
-        <h3>Fighting Authoritative Server</h3>
-        <p>C++20 实时动作游戏同步 Demo，围绕 server authoritative、client prediction 和 rollback/replay 构建。服务端以 60Hz tick 推进权威世界，接收 UDP 冗余输入，广播 Ack / State，客户端收到权威快照后校验 hash 并回滚重放。</p>
-        <div class="portfolio-tags">
-          <span>C++20</span><span>UDP</span><span>libevent</span><span>SDL2</span><span>Rollback</span><span>State Hash</span>
+      <a class="project-card project-card-wide reveal" href="/projects/#fighting-authoritative-server">
+        <div class="project-card-top">
+          <span class="project-number mono">04</span>
         </div>
-        <div class="portfolio-actions compact">
-          <a class="portfolio-button primary" href="/projects/#fighting-authoritative-server">查看项目</a>
-          <a class="portfolio-button" href="https://github.com/ChutianDuan/Fighting">GitHub</a>
-          <a class="portfolio-button" href="/notes/实时竞技游戏开发/fighting-netcode-项目知识笔记/">阅读笔记</a>
+        <div class="project-card-copy">
+          <p class="project-type mono">AUTHORITATIVE SERVER</p>
+          <h3>Fighting Netcode</h3>
+          <p>60Hz 权威世界、UDP 冗余输入、客户端预测与 rollback / replay，通过 state hash 检测多端状态分叉。</p>
         </div>
-      </div>
-      <figure class="portfolio-figure">
-        <img src="/assets/fighting/authoritative-server.png" alt="Fighting 权威服务器流程图">
-        <figcaption>权威服务端、输入同步、状态广播与客户端回滚链路</figcaption>
-      </figure>
-    </article>
-  </section>
-
-  <section id="blog-tracks" class="portfolio-section">
-    <div class="portfolio-section-heading">
-      <h2>博客主线</h2>
+        <div class="project-card-footer"><span>C++20</span><span>UDP</span><span>Rollback</span><span>State Hash</span><b>↗</b></div>
+      </a>
     </div>
-    <div class="portfolio-link-grid">
-      <a class="portfolio-link-card" href="/notes/ai模型开发/开发进度记录/">
-        <strong>AI 应用后端</strong>
-        <span>RAG、Agent、FastAPI、Celery、Redis、检索与部署记录。</span>
-      </a>
-      <a class="portfolio-link-card" href="/notes/linux高性能服务器编程/">
-        <strong>Linux 服务端</strong>
-        <span>Socket、libevent、Reactor、线程模型与服务端调试。</span>
-      </a>
-      <a class="portfolio-link-card" href="/notes/现代c-实践/00-现代c-实践导读/">
-        <strong>现代 C++ 实践</strong>
-        <span>所有权、并发、协程、测试、CMake 和接口设计。</span>
-      </a>
-      <a class="portfolio-link-card" href="/notes/实时竞技游戏开发/fighting-netcode-项目知识笔记/">
-        <strong>实时系统</strong>
-        <span>UDP、客户端预测、回滚重放和状态一致性。</span>
-      </a>
+
+    <div class="section-action reveal">
+      <a class="text-link" href="/projects/">查看全部项目 <span>→</span></a>
     </div>
   </section>
 
-  <section class="portfolio-section portfolio-split">
-    <div>
-      <h2>常用入口</h2>
-      <ul class="portfolio-link-list">
-        <li><a href="/archives/">全部技术文章</a></li>
-        <li><a href="/projects/">核心项目</a></li>
-        <li><a href="/resume/">简历页</a></li>
-        <li><a href="/link/">链接页</a></li>
-      </ul>
-    </div>
-    <div>
-      <h2>联系方式</h2>
-      <ul class="portfolio-link-list">
-        <li><a href="https://github.com/ChutianDuan">github.com/ChutianDuan</a></li>
-        <li><a href="mailto:3383006954@qq.com">3383006954@qq.com</a></li>
-      </ul>
+  <section class="home-section writing-section" id="writing" aria-labelledby="writing-title">
+    <div class="section-shell">
+      <div class="section-heading reveal">
+        <div>
+          <p class="section-index mono">02 / ENGINEERING NOTES</p>
+          <h2 id="writing-title">技术文章</h2>
+        </div>
+        <p>记录选型、实现和调试中<br>真正有复用价值的部分。</p>
+      </div>
+
+      <div class="writing-list">
+        <a class="writing-item reveal" href="/notes/ai模型开发/开发进度记录/">
+          <span class="writing-number mono">01</span>
+          <div><p>RAG / AGENT</p><h3>RAG Gateway Stack 工程复盘</h3></div>
+          <time datetime="2026-04-20">2026.04</time><b>↗</b>
+        </a>
+        <a class="writing-item reveal" href="/notes/linux高性能服务器编程/1-libevent/">
+          <span class="writing-number mono">02</span>
+          <div><p>LINUX SERVER</p><h3>libevent 服务端入门与 Reactor 模型</h3></div>
+          <time datetime="2026-05-05">2026.05</time><b>↗</b>
+        </a>
+        <a class="writing-item reveal" href="/notes/liunx-c-工程化/5-onnx模型导出与部署优化/">
+          <span class="writing-number mono">03</span>
+          <div><p>MODEL DEPLOYMENT</p><h3>PyTorch 模型导出 ONNX 与部署优化</h3></div>
+          <time datetime="2026-07-10">2026.07</time><b>↗</b>
+        </a>
+        <a class="writing-item reveal" href="/notes/实时竞技游戏开发/fighting-netcode-项目知识笔记/">
+          <span class="writing-number mono">04</span>
+          <div><p>REAL-TIME SYSTEM</p><h3>Fighting Netcode 项目知识笔记</h3></div>
+          <time datetime="2026-05-04">2026.05</time><b>↗</b>
+        </a>
+      </div>
+
+      <div class="section-action reveal">
+        <a class="text-link" href="/articles/">浏览全部文章 <span>→</span></a>
+      </div>
     </div>
   </section>
-</section>
+
+  <section class="home-section about-section section-shell" id="about" aria-labelledby="about-title">
+    <div class="about-layout reveal">
+      <div>
+        <p class="section-index mono">03 / ABOUT</p>
+        <h2 id="about-title">关于我</h2>
+      </div>
+      <div class="about-copy">
+        <p class="about-lead">我喜欢把“能跑”继续做到“可靠、可观测、可维护”。</p>
+        <p>目前的工作重心是 AI 应用后端、C++ 网络服务和视觉模型部署。这里放项目复盘，也放每次搞清楚的原理与工程细节。</p>
+        <div class="capability-list">
+          <span>RAG &amp; Agent</span><span>C++ Backend</span><span>Computer Vision</span><span>Linux Systems</span>
+        </div>
+        <div class="about-links">
+          <a class="portfolio-button primary" href="/about/">了解更多</a>
+          <a class="text-link" href="mailto:3383006954@qq.com">发送邮件 <span>↗</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-cta">
+    <div class="section-shell reveal">
+      <p class="mono">LET'S BUILD SOMETHING RELIABLE.</p>
+      <h2>有想法，就把它变成工程。</h2>
+      <a href="https://github.com/ChutianDuan" target="_blank" rel="noreferrer">GitHub <span>↗</span></a>
+    </div>
+  </section>
+</div>
 {% endraw %}

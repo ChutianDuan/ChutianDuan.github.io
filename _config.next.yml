@@ -1,30 +1,36 @@
 # NexT alternate theme config
 # Docs: https://theme-next.js.org/docs/getting-started/configuration.html
 
-scheme: Pisces
-darkmode: true
+scheme: Mist
+darkmode: false
+
+custom_file_path:
+  head: source/_data/head.njk
+  bodyEnd: source/_data/body-end.njk
+  postMeta: source/_data/post-meta.njk
+  postBodyEnd: source/_data/post-body-end.njk
+  style: source/_data/styles.styl
 
 menu:
   首页: / || fa fa-home
   项目: /projects/ || fa fa-code
-  技术文章: /archives/ || fa fa-book-open
+  知识地图: /archives/ || fa fa-book-open
   关于: /about/ || fa fa-user
-  简历: /resume/ || fa fa-id-card
   GitHub: https://github.com/ChutianDuan || fab fa-github
 
 menu_settings:
-  icons: true
+  icons: false
   badges: false
 
 sidebar:
-  position: left
-  display: always
+  position: right
+  display: post
   padding: 18
   offset: 12
 
 avatar:
   url: /img/me.jpg
-  rounded: true
+  rounded: false
   rotated: false
 
 site_state: true
@@ -48,7 +54,7 @@ toc:
 creative_commons:
   license: by-nc-sa
   size: small
-  post: true
+  post: false
   language: deed.zh
 
 footer:
@@ -56,8 +62,8 @@ footer:
   icon:
     name: fa fa-code
     animated: false
-    color: "#222"
-  powered: true
+    color: "#075cff"
+  powered: false
 
 post_meta:
   item_text: true
@@ -73,7 +79,7 @@ symbols_count_time:
   separated_meta: true
   item_text_total: false
 
-post_navigation: left
+post_navigation: false
 
 text_align:
   desktop: start
@@ -98,20 +104,24 @@ reading_progress:
   start_at: left
   position: top
   reversed: false
-  color: "#222"
+  color: "#075cff"
   height: 3px
 
 bookmark:
   enable: true
-  color: "#222"
+  color: "#075cff"
   save: auto
 
 mediumzoom: true
 
 motion:
-  enable: true
+  enable: false
   async: false
   duration: 200
+
+theme_color:
+  light: "#ffffff"
+  dark: "#ffffff"
 
 busuanzi_count:
   enable: true

@@ -3,6 +3,7 @@ title: 关于
 date: 2026-01-24 11:00:00
 comments: false
 sidebar: false
+header: false
 ---
 
 {% raw %}
