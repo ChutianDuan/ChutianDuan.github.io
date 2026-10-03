@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 660" role="img" aria-labelledby="title desc">
+  <title id="title">ScrewMetrology 图像测量流程</title>
+  <desc id="desc">离线 BGR 图像经过分割、候选筛选、主轴定位、局部坐标和亚像素细化；有效尺度与配方决定是否给出公差结论。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 10 5 0 10" fill="none" stroke="#075cff" stroke-width="1.5"/></marker>
+  </defs>
+  <rect width="520" height="660" fill="#ffffff"/>
+  <g font-family="system-ui, -apple-system, sans-serif" fill="#0b0e14">
+    <text x="26" y="34" font-size="23" font-weight="700">从图像到可解释的测量</text>
+    <text x="26" y="60" font-size="15" fill="#4f5968">C++17 / OpenCV · 离线图像处理链路</text>
+    <g fill="#ffffff" stroke="#dfe4ec">
+      <rect x="26" y="86" width="468" height="62"/>
+      <rect x="26" y="174" width="468" height="62"/>
+      <rect x="26" y="262" width="468" height="62"/>
+      <rect x="26" y="350" width="468" height="62"/>
+      <rect x="26" y="438" width="468" height="62"/>
+    </g>
+    <g stroke="#075cff" stroke-width="1.5" marker-end="url(#arrow)">
+      <path d="M260 148v24"/><path d="M260 236v24"/>
+      <path d="M260 324v24"/><path d="M260 412v24"/><path d="M260 500v24"/>
+    </g>
+    <g font-size="15" font-family="ui-monospace, monospace" fill="#075cff">
+      <text x="43" y="112">01</text><text x="43" y="200">02</text>
+      <text x="43" y="288">03</text><text x="43" y="376">04</text><text x="43" y="464">05</text>
+    </g>
+    <g font-size="20" font-weight="600">
+      <text x="85" y="112">BGR → 去噪 → 分割掩膜</text>
+      <text x="85" y="200">形态学 → 连通域与外轮廓</text>
+      <text x="85" y="288">质心与主轴 → 工件坐标系</text>
+      <text x="85" y="376">投影尺寸 → 头杆宽度剖面</text>
+      <text x="85" y="464">原始灰度 → 亚像素边缘细化</text>
+    </g>
+    <g font-size="15" fill="#4f5968">
+      <text x="85" y="135">Otsu / 自适应阈值 / Lab</text>
+      <text x="85" y="223">面积、凸包占比与候选筛选</text>
+      <text x="85" y="311">PCA / fitLine / 最小面积旋转框</text>
+      <text x="85" y="399">总长、最大宽度与可测头杆尺寸</text>
+      <text x="85" y="487">有效结果逐项优选，失败保留像素值</text>
+    </g>
+    <rect x="26" y="526" width="468" height="88" fill="#f4f7fb" stroke="#075cff"/>
+    <text x="43" y="552" font-size="15" font-family="ui-monospace, monospace" fill="#075cff">06</text>
+    <text x="85" y="552" font-size="20" font-weight="600">可选尺度与配方 → 公差判定</text>
+    <text x="85" y="577" font-size="15" fill="#4f5968">OK / NG / NOT_EVALUATED</text>
+    <text x="85" y="599" font-size="15" fill="#4f5968">掩膜 · 叠加图 · JSON · 评价报告</text>
+    <text x="26" y="643" font-size="15" fill="#4f5968">尺度适用性与几何质量决定是否允许判定。</text>
+  </g>
+</svg>

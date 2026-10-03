@@ -83,7 +83,7 @@ toc:
 - 7 个专题锚点为 `modern-cpp`、`parallel-cpp`、`linux-server`、`cpp-engineering`、`ai-model`、`network-services`、`fighting-netcode`，不得随意改名。
 - Redis 和代码练习文章保留直接访问和时间归档，但不进入 7 个主专题地图与完整索引。
 - 所有 `/notes/.../` 永久链接必须保持稳定，不因文件名、系列显示名或标题调整而改变。
-- 博客所有可见作者姓名、SEO 作者与站点名统一为“无名”，不得重新引入“段楚天”或 `Chutian Duan`。
+- 博客所有可见作者姓名、SEO 作者与站点名统一为“无名”，不得重新引入原作者的中文实名或对应英文姓名。
 - GitHub 用户名 `ChutianDuan` 只作为链接和部署仓库标识保留，不作为页面展示姓名，不得为了匿名化而破坏 GitHub URL。
 
 ## 7. 实现边界
@@ -106,8 +106,8 @@ toc:
 
 1. 运行 Node 24 下的 Hexo 全量构建，并搜索日志中的 `ERROR Asset render failed`、`CoercionError` 和模板错误。
 2. 确认生成的 `public/css/main.css` 非空，且实际包含新增的关键规则。
-3. 验证 100 篇文章与 100 个唯一永久链接，内部 `/notes/` 链接无缺失。
-4. 验证当前跟踪文件与生成 HTML 中不出现“段楚天”或 `Chutian Duan`，同时 GitHub URL 仍可用。
+3. 验证 107 篇文章与 107 个唯一永久链接，内部 `/notes/` 链接无缺失。
+4. 验证当前跟踪文件与生成 HTML 中不出现原作者的中文实名或对应英文姓名，同时 GitHub URL 仍可用。
 5. 运行 `git diff --check`，确认没有意外修改 `public/`、`db.json` 或主题源码。
 6. 使用浏览器检查至少以下路由：首页、`/archives/`、`/articles/` 和一篇有 H2/H3 的代表文章。
 7. 视觉验收至少包含 `1440×1000` 桌面端和 `390×844` 移动端，检查重点是侧栏错位、右侧空白、水平溢出、标题折行、按钮可点击性和代码块可读性。

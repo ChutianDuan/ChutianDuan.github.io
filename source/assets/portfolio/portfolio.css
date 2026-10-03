@@ -456,6 +456,10 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.project-grid > .project-card:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+
 .project-card {
   background: #ffffff;
   border: 1px solid var(--portfolio-line) !important;
@@ -485,7 +489,7 @@
 .project-card:hover {
   background: #f8faff;
   border-color: var(--portfolio-blue) !important;
-  transform: translateY(-4px);
+  transform: translateY(-2px);
   transition-delay: 0ms;
   z-index: 2;
 }
@@ -1074,6 +1078,8 @@ html.js .reveal.is-visible {
 
   .hero-actions { align-items: stretch; flex-direction: column; }
   .hero-actions .portfolio-button { width: 100%; }
+  #screw-metrology .portfolio-actions { align-items: stretch; flex-direction: column; }
+  #screw-metrology .portfolio-button { width: 100%; }
   .identity-line { line-height: 1.8; }
 
   .system-visual {

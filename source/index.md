@@ -145,6 +145,19 @@ header: false
         </ul>
         <div class="project-card-footer"><span>C++20</span><span>UDP</span><span>Rollback</span><span>State Hash</span><b aria-label="查看项目">↗</b></div>
       </a>
+      <a class="project-card reveal" href="/projects/#screw-metrology">
+        <div class="project-card-top"><span class="project-number mono">05</span></div>
+        <div class="project-card-copy">
+          <p class="project-type mono">VISION METROLOGY</p>
+          <h3>ScrewMetrology</h3>
+          <p>C++17 / OpenCV 螺钉定位与几何尺寸检测，从传统分割和工件坐标系到亚像素测量与公差判定。</p>
+        </div>
+        <ul class="project-highlight-list">
+          <li>Otsu / Lab 分割、PCA 主轴与头杆尺寸剖面</li>
+          <li>逐项亚像素优选、适用尺度与可解释的未判定原因</li>
+        </ul>
+        <div class="project-card-footer"><span>C++17</span><span>OpenCV</span><span>Subpixel</span><span>CTest</span><b aria-label="查看项目">↗</b></div>
+      </a>
     </div>
 
     <div class="section-action reveal">
@@ -182,6 +195,11 @@ header: false
           <span class="writing-number mono">04</span>
           <div><p>REAL-TIME SYSTEM</p><h3>Fighting Netcode 项目知识笔记</h3></div>
           <time datetime="2026-05-04">2026.05</time><b>↗</b>
+        </a>
+        <a class="writing-item reveal" href="/notes/liunx-c-工程化/12-opencv实战导读/">
+          <span class="writing-number mono">05</span>
+          <div><p>OPENCV / METROLOGY</p><h3>OpenCV 实战导读：从图像到螺钉测量结果</h3></div>
+          <time datetime="2026-10-03">2026.10</time><b>↗</b>
         </a>
       </div>
 

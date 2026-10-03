@@ -15,7 +15,7 @@ header: false
   <section class="portfolio-section">
     <div class="portfolio-section-heading">
       <h1>核心项目</h1>
-      <p>围绕 AI 应用后端、视觉部署、C++ 网络服务和权威服务器同步四条工程主线。</p>
+      <p>围绕 AI 应用后端、视觉部署与测量、C++ 网络服务和权威服务器同步展开工程实践。</p>
     </div>
 
     <article id="rag-agent-platform" class="portfolio-project">
@@ -124,6 +124,36 @@ header: false
       <figure class="portfolio-figure">
         <img src="/assets/fighting/authoritative-server.png" alt="Fighting 权威服务器流程图">
         <figcaption>权威服务器推进、客户端输入、Ack / State 广播与回滚重放</figcaption>
+      </figure>
+    </article>
+    <article id="screw-metrology" class="portfolio-project">
+      <div>
+        <p class="portfolio-project-index">05</p>
+        <h2>ScrewMetrology</h2>
+        <p>基于 C++17 / OpenCV 的离线螺钉定位与几何尺寸检测系统。从传统图像分割建立工件坐标系，再通过投影、头杆剖面和亚像素边缘得到尺寸，在尺度与配方有效时给出可解释的公差结论。</p>
+        <ul class="portfolio-link-list">
+          <li>分割与筛选：Otsu、自适应阈值、Lab、形态学、连通域与外轮廓，检查木纹误检、碎裂及粘连。</li>
+          <li>定位与测量：旋转框、PCA、fitLine 主轴对比；局部坐标投影与头杆剖面定义总长、头宽和杆宽。</li>
+          <li>边缘细化：在原始灰度图沿法线采样，使用梯度峰拟合；细化失败保留像素结果，不可测字段保持 null。</li>
+          <li>检验闭环：可选两点尺度与公差配方；几何或尺度不适用时保持未判定，掩膜、叠加图、JSON 和报告共同解释结果。</li>
+        </ul>
+        <div class="portfolio-metrics" aria-label="2026-10-03 MVTec 冻结配置定位评价">
+          <span>检出率 84.55%</span><span>精确率 83.31%</span>
+        </div>
+        <p class="portfolio-metric-note">2026-10-03 冻结配置：384 张 MVTec 图像，旋转框 IoU≥0.5 降序一对一匹配；调参代表样例包含在全量数据中，不属于独立测试集成绩。</p>
+        <p class="portfolio-metric-note">真实数据未验证实物毫米精度；合成图用于尺寸与重复性验证。当前不包含相机标定、透视校正或手眼标定。内容核对版本：6782dfd。</p>
+        <div class="portfolio-tags">
+          <span>C++17</span><span>OpenCV</span><span>PCA</span><span>Subpixel</span><span>Metrology</span><span>CMake</span><span>CTest</span>
+        </div>
+        <div class="portfolio-actions compact">
+          <a class="portfolio-button primary" href="https://github.com/ChutianDuan/ScrewMetrology">GitHub 仓库</a>
+          <a class="portfolio-button" href="/notes/liunx-c-工程化/12-opencv实战导读/">OpenCV 实战系列</a>
+          <a class="portfolio-button" href="https://github.com/ChutianDuan/ScrewMetrology/blob/6782dfd337169fb6c77dc7378b9eafd44ff530ce/docs/validation.md">验证记录</a>
+        </div>
+      </div>
+      <figure class="portfolio-figure">
+        <img src="/assets/screw-metrology/measurement-flow.svg" alt="ScrewMetrology 从分割、定位到亚像素测量与公差判定的流程图" loading="lazy">
+        <figcaption>先验证工件轮廓与测量方向，再解释尺寸及判定前提</figcaption>
       </figure>
     </article>
   </section>
