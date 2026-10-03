@@ -1,7 +1,7 @@
 ---
 title: "模型明明加载成功，推理结果为什么还是错的？从 ONNX 契约到双后端部署"
 date: 2026-07-13 16:22:02
-updated: 2026-07-13 16:22:02
+updated: 2026-10-03 12:00:00
 categories:
   - "学习"
   - "Linux 与 C++ 工程化"
@@ -942,36 +942,52 @@ struct ModelInput {
 
 服务端还要区分“已编译模型”和“单次请求状态”。OpenVINO 的 `InferRequest` 保存输入、输出和执行状态，并发请求不应无保护地共享上面那个 `ov_infer_request_`；应按并发度创建 request 池或使用异步队列。ONNX Runtime 侧也要避免多个请求共享可变输入/输出缓冲区。先把并发模型说明白，再决定 session、request 和张量分别由谁持有。
 
-## 8. 一组 Benchmark 结果应该怎样解读？
+## 8. VisionTrack 的同模型 CPU 基准与并发边界
 
-原笔记保留了下面一组同一 `best.onnx` 在 ONNX Runtime 和 OpenVINO CPU 后端上的测量结果。由于没有同时记录 CPU 型号、运行时版本、线程配置、样本数、预热次数和系统负载，它只能示范“怎样读一张性能表”，不能作为可复现的后端性能结论。正式报告必须把这些环境信息与原始样本一起保存。
+本节于 **2026-10-03** 对照 [已发布提交 d8688e3](https://github.com/ChutianDuan/Yolo/blob/d8688e3027afa88caeeb9e05eba195f16d655fd3/readme.md) 更新，采用有环境与原始样本记录的 [2026-09-03 合并报告](https://github.com/ChutianDuan/Yolo/blob/d8688e3027afa88caeeb9e05eba195f16d655fd3/docs/test-results/onnx_thread_benchmark/20260903_020914_utc/combined_report.md)，替换早期缺少测量条件的性能表。
 
-| 指标 | ONNX Runtime | OpenVINO | OpenVINO 相对变化 |
+### 8.1 测量对象与统计口径
+
+两个后端读取相同 ONNX 文件，输入首帧使用同一套 C++ OpenCV 预处理。每个模型、后端和线程数组合预热 10 次、测量 50 次，共 3 轮；每组 150 个样本，总计 3000 个样本。测试采用单实例、batch=1、同步 CPU 推理，加载和预热不计入正式结果。
+
+| 条件 | 值 |
+| --- | --- |
+| CPU | Xeon Gold 5218，32 个物理核心 / 64 个逻辑 CPU |
+| ONNX Runtime | 1.23.2 |
+| OpenVINO | 2026.1.0 |
+| 大模型输入 | `[1, 3, 736, 1280]` |
+| 小模型输入 | `[1, 3, 384, 640]` |
+
+`thread_num` 分别映射为 ORT 的 `SetIntraOpNumThreads` 和 OpenVINO 的 `ov::inference_num_threads`。纯后端统计 `Session::Run()` / `InferRequest::infer()`，完整 infer 另包含 Tensor 准备、输出 shape、decode 与 NMS。
+
+### 8.2 平均延迟与尾延迟分别比较
+
+| 模型 | ORT 最优均值，16 线程 | OpenVINO 最优均值，16 线程 | 比值 |
 | --- | ---: | ---: | ---: |
-| 视频整体 FPS | 3.123 | 5.181 | 1.659x |
-| 总处理耗时 | 9606.156 ms | 5799.160 ms | 降低 39.6% |
-| 模型推理总耗时 | 8915.298 ms | 4750.263 ms | 1.877x |
-| 模型推理 p50 | 297.331 ms | 157.688 ms | 1.886x |
-| 模型推理 p95 | 331.805 ms | 225.667 ms | 1.470x |
-| 模型推理 p99 | 346.464 ms | 261.163 ms | 1.327x |
-| 端到端 p50 | 315.151 ms | 183.540 ms | 1.717x |
+| 1280 × 736 | 137.38 ms | 91.98 ms | 1.49x |
+| 640 × 384 | 46.23 ms | 22.90 ms | 2.02x |
 
-解读：
+OpenVINO 大模型 8 线程的均值为 108.15 ms，P95 为 114.28 ms；16 线程均值更低，但 P95 为 146.99 ms。小模型 8 / 16 线程的 P95 分别为 32.91 / 34.48 ms。最低平均延迟不自动带来最稳定的响应。
 
-- 在这一次历史测量中，OpenVINO 更快，模型推理 p50 接近 1.9 倍提升；结论只适用于当时未完整记录的环境。
-- p95 / p99 的相对提升小于 p50，只能说明两组延迟分布并非等比例缩放。没有逐请求时间线和计时边界，不能进一步断言原因。
-- 总处理耗时下降 39.6%，但没有达到模型推理 1.877 倍的完整收益，说明端到端里还有预处理、后处理和视频读写成本。
-- 如果继续优化，应该先看耗时拆分，而不是只继续换后端。
+### 8.3 Session、请求池与多路调度
 
-下一步可测试：
+当前 VisionTrack 不只处理单张图片：上传视频进入有界任务池，多路实时流通过共享 `InferenceScheduler` 调度模型，LK 光流、ByteTrack 与历史回放校正维护轨迹。每个 OpenVINO InferRequest 的可变状态由请求池管理，模型加载对象和单次执行对象需要分开理解。
 
 ```text
-1. OpenVINO ONNX 直接加载 + cache
-2. OpenVINO IR 加载 + cache
-3. LATENCY / THROUGHPUT 两种 hint
-4. 固定线程数 vs 默认线程数
-5. FP32 / FP16 / BF16 / INT8 精度路径
+配置与模型加载
+  -> YoloEngine / 已编译模型
+  -> 共享 InferenceScheduler / 请求池
+  -> 各路视频解码、光流与状态
+  -> JSON 或实时 SSE 输出
 ```
+
+High/Low Session、请求池大小、模型线程数、解码和光流都会竞争 CPU；单实例最优线程数只是候选配置。多路报告还要检查实际模型刷新率、排队与过期、尾延迟、RSS、退出清理和业务质量，不能只看进程 CPU 较低。
+
+### 8.4 量化与就绪检查的边界
+
+2026-09-10 已留档的量化实验表明，旧 INT8 模型在 OpenVINO 和 ORT 上的精度与速度不同，u8s8 per-channel 调整后仍需保留精度回归。不能把模型能编译、INT8 文件更小或一次推理成功等同于上线完成。
+
+详细量化数值和接口分工见 [ONNX 导出与部署笔记](/notes/liunx-c-工程化/5-onnx模型导出与部署优化/)。`/health` 只证明存活，`/ready` 只检查流管理器；当前实时事件缓存不持久化，进程重启后不能续传，Web 工作台也尚未接入实时流管理。
 
 ## 9. 常见误区与排查方法
 

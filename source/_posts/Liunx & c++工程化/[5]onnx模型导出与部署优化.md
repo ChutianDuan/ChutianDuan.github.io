@@ -1,7 +1,7 @@
 ---
 title: "PyTorch 结果正常，导出 ONNX 后为什么又慢又不准？"
 date: 2026-07-13 15:55:45
-updated: 2026-07-13 15:55:45
+updated: 2026-10-03 12:00:00
 categories:
   - "学习"
   - "Linux 与 C++ 工程化"
@@ -950,7 +950,77 @@ platform/
 
 > 模型逻辑、预处理、后处理、跟踪逻辑尽量跨平台复用；平台差异集中在编译、依赖加载、摄像头输入、UI 和硬件 EP 配置。
 
-## 10. 回到开头：框为什么偏，INT8 为什么不快？
+## 10. VisionTrack 已发布实现的部署实践
+
+本节于 **2026-10-03** 对照 [Yolo 已发布提交 d8688e3](https://github.com/ChutianDuan/Yolo/blob/d8688e3027afa88caeeb9e05eba195f16d655fd3/readme.md) 核对。项目展示名称为 VisionTrack / YOLO Tracking；训练环境负责 YOLO26 训练与导出，线上 C++ 进程使用 ONNX Runtime 或 OpenVINO，不依赖 Python 推理运行时。
+
+### 10.1 模型契约与启动入口
+
+当前 YOLO26 导出输出为 `output0(1, 300, 6)`，每行按 `x1, y1, x2, y2, score, class_id` 解析；C++ 解码器还保留旧式候选输出的兼容分支，端到端输出后仍执行兼容 NMS。是否跳过 NMS，需要拥挤道路场景的 A/B 回归。
+
+导出尺寸按高、宽传入，高模型使用 `--imgsz 736 1280`。当前导出脚本默认 opset 13 并进行 INT8 校准；仅导出 FP32 时加 `--skip-int8`。输出使用新目录，脚本拒绝覆盖已有导出文件。
+
+Linux 构建入口如下，前提是按仓库说明准备 GCC15、vcpkg 依赖和本地模型文件；这些路径不适用于未经配置的任意机器。
+
+```bash
+cd yolo_onnx_cpp
+cmake --preset vcpkg-gcc15-release
+cmake --build --preset vcpkg-gcc15-release
+../build/yolo_api config.yaml
+```
+
+模型权重不会由服务自动下载。前端在另一个终端进入 `front/` 执行 `npm ci` 和 `npm run dev`，默认代理到 `127.0.0.1:8080`。
+
+### 10.2 上传与多路实时流的资源边界
+
+```text
+上传视频 -> 临时文件 -> 有界 VideoJobExecutor -> 检测 / 跟踪 -> 完整 JSON
+实时流   -> /streams 注册 -> 共享 InferenceScheduler -> 跟踪 / 回放校正 -> SSE
+```
+
+上传视频通过 `/infer_video` 或 `/infer_video_high_low` 进入有界任务池，对调用方仍等待完整响应；池满返回 503。实时流创建后独立运行，多路共享模型调度资源，每路维护跟踪与结果状态。异步模式需要配置及共享调度器支持；本地文件、关闭异步或调度器不可用时走同步回退。
+
+| 接口 | 当前含义 |
+| --- | --- |
+| `POST /infer` | 图片检测，multipart 字段为 `image` |
+| `POST /infer_video`、`/infer_video_high_low` | 上传视频，字段为 `video`，一次性返回 JSON |
+| `POST /streams` | JSON 提交 `stream_id` 和 `source`，成功返回 201 |
+| `GET /streams`、`/streams/{id}` | 流列表与状态 |
+| `DELETE /streams/{id}` | 停止流并释放注册名额 |
+| `GET /streams/{id}/events` | `detection` / `end` SSE，支持 Last-Event-ID 补发 |
+| `GET /metrics` | Prometheus 流、调度器、队列与门禁指标 |
+
+每路最多缓存 256 条事件，游标过旧或超前时发送 error 并关闭连接；状态不会在进程重启后恢复。上传结果也没有持久化 job API，响应分页参数只裁剪序列化范围，不减少已经完成的推理工作。
+
+Web 工作台当前只调用 `/infer` 和 `/infer_video`，High/Low 与实时流管理尚未接入。`/health` 检查存活，`/ready` 只检查流管理器是否存在，均不能证明摄像头连通、检测质量或吞吐达标。
+
+### 10.3 CPU 后端基准需要保留测试条件
+
+[2026-09-03 C++ 合并报告](https://github.com/ChutianDuan/Yolo/blob/d8688e3027afa88caeeb9e05eba195f16d655fd3/docs/test-results/onnx_thread_benchmark/20260903_020914_utc/combined_report.md) 使用同一套 C++ 预处理和相同 ONNX 模型，比较 ONNX Runtime 1.23.2 与 OpenVINO 2026.1.0。主机为 Xeon Gold 5218，32 个物理核心；单实例、batch=1、同步 CPU 推理，每个组合 150 个正式样本，总计 3000 个样本。
+
+| 模型输入尺寸 | ORT 最优均值 | OpenVINO 最优均值 | 各自最优配置的比值 |
+| --- | ---: | ---: | ---: |
+| 1280 × 736 | 137.38 ms，16 线程 | 91.98 ms，16 线程 | 1.49x |
+| 640 × 384 | 46.23 ms，16 线程 | 22.90 ms，16 线程 | 2.02x |
+
+表中是纯后端推理耗时，完整 infer 与端到端成本另行统计。大模型 OpenVINO 8 线程 P95 为 114.28 ms，低于 16 线程的 146.99 ms；最低均值和稳定尾延迟会导向不同配置。双模型、多路流和上传并发要重新压测，不能把单实例结果直接换算成当前系统吞吐。
+
+### 10.4 INT8 验证已经暴露过运行时差异
+
+[2026-09-10 量化对比](https://github.com/ChutianDuan/Yolo/blob/d8688e3027afa88caeeb9e05eba195f16d655fd3/docs/test-results/bdd100k_openvino_ptq/canonical_matched_crowd_stride6_20260910/quantization_evaluation.md) 使用 C++ 对齐的 BGR letterbox、RGB NCHW float32 输入，CPU 8 线程，IoU=0.5，并对同类 crowd 重叠预测使用统一忽略规则。
+
+| 模型与后端 | 低阈值候选 mAP50 | 均值推理耗时 |
+| --- | ---: | ---: |
+| FP32 / OpenVINO | 0.471531 | 38.522 ms |
+| legacy INT8 / OpenVINO | 0.020518 | 23.071 ms |
+| legacy INT8 / ONNX Runtime | 0.437558 | 100.053 ms |
+| u8s8 per-channel / OpenVINO | 0.450545 | 23.005 ms |
+
+mAP50 对应报告中 score=0.001 的候选下限，其他阈值是运行点；耗时不包含解码、预处理、decode 与 NMS。旧 INT8 在 OpenVINO 中的精度下降，以及相同旧模型在 ORT 中更慢的结果，都说明“INT8”标签不能替代具体后端验证。调整量化表示后也仍有精度差异，需要按业务接受标准评估。
+
+这组人工标注评估与 2026-07-10 的三场景 full high-res 伪标签回归不同。后者 F1=0.7726、FP 降低约 63%，不能与本表拼成同一个质量结论。多路长测的成功和失败记录见 [实时监测实施记录](https://github.com/ChutianDuan/Yolo/blob/d8688e3027afa88caeeb9e05eba195f16d655fd3/docs/reports/多路实时监测实施记录_20260905.md)，真实 RTSP 与生产业务闭环仍需单独验收。
+
+## 11. 回到开头：框为什么偏，INT8 为什么不快？
 
 检测框整体偏移时，最先比较的应是 Python 与 C++ 的输入 Tensor、letterbox 参数和原始输出，而不是怀疑 ONNX “改变了模型”。INT8 不加速时，则应确认量化节点是否形成连续子图、目标 EP 是否真正接管、硬件是否有高效整数指令，以及端到端瓶颈是否根本不在模型推理。
 
@@ -1011,7 +1081,7 @@ INT8 是否真正使用高效 kernel 可验证
 7. ROI、光流、动态关键帧等系统级加速
 ```
 
-## 11. 参考资料与延伸阅读
+## 12. 参考资料与延伸阅读
 
 下面这些资料适合作为后续学习和博客补充参考。官方文档用于确认事实，社区文章用于参考工程写法和常见坑位。由于 YOLO 和 ONNX Runtime 更新很快，具体参数和默认行为要以自己安装版本的文档、`yolo export --help`、Netron 图结构和实际输出 shape 为准。
 

@@ -24,17 +24,19 @@ header: false
         <h2>RAG Gateway Stack</h2>
         <p>面向全局文档知识库问答的分层式 RAG / Agent 后端。C++ Drogon Gateway 统一承载外部 API，FastAPI、Celery、MySQL、Redis、LanceDB 与 OpenAI-compatible LLM / vLLM 组成内部业务链路。</p>
         <ul class="portfolio-link-list">
-          <li>文档链路：上传、去重、解析、切片、向量化、全局索引构建和异步任务状态查询。</li>
+          <li>文档链路：文件上传与网页正文导入，共用解析、切片、向量化和 LanceDB 索引流程；Celery 任务阶段可查询。</li>
           <li>检索链路：LanceDB 召回 chunk id，MySQL 批量回表正文，再经 CrossEncoder rerank 组装 Prompt 与 citations。</li>
-          <li>Agent 链路：循环决策只读工具，注入用户长期记忆、会话摘要与近期对话，并记录 SSE、citations 和 Trace。</li>
+          <li>Agent 链路：只读工具循环结合用户记忆、会话摘要与近期消息；工作台展示执行流程、引用与 Agent Trace。</li>
+          <li>流式传输：普通 RAG 和 Agent 支持 Last-Event-ID 续传，回答与引用落库后再发送 done。</li>
         </ul>
+        <p class="portfolio-metric-note">面向本地开发与工程验证；SSE 续传依赖进程内状态，尚未提供多租户隔离和逐句引用映射。内容核对：2026-10-03。</p>
         <div class="portfolio-tags">
           <span>C++17</span><span>Drogon</span><span>FastAPI</span><span>Celery</span><span>MySQL</span><span>Redis</span><span>LanceDB</span><span>React</span><span>Agent</span>
         </div>
         <div class="portfolio-actions compact">
           <a class="portfolio-button primary" href="https://github.com/ChutianDuan/Repo">GitHub 仓库</a>
           <a class="portfolio-button" href="/notes/ai模型开发/开发进度记录/">项目复盘</a>
-          <a class="portfolio-button" href="/notes/ai模型开发/知识点学习/框架/faiss/">检索设计</a>
+          <a class="portfolio-button" href="/notes/ai模型开发/deep-research-report/">运行与验收</a>
         </div>
       </div>
       <figure class="portfolio-figure">
@@ -46,30 +48,34 @@ header: false
     <article id="yolo-tracking-service" class="portfolio-project">
       <div>
         <p class="portfolio-project-index">02</p>
-        <h2>YOLO Tracking</h2>
-        <p>面向 BDD100K 道路场景的 C++ 图片与视频检测跟踪服务，使用 ONNX Runtime / OpenVINO、OpenCV、ByteTrack 和 LK 光流交付可观测的动态监测结果。</p>
+        <h2>VisionTrack / YOLO Tracking</h2>
+        <p>面向 BDD100K 道路场景的 C++ 检测跟踪服务。ONNX Runtime / OpenVINO 提供 CPU 推理，Drogon 统一交付图片、上传视频和多路实时流接口。</p>
         <ul class="portfolio-link-list">
+          <li>资源调度：多路实时流共享推理调度器；上传视频进入有界任务池，仍等待完整 JSON 响应。</li>
           <li>高低分辨率协同：高分辨率模型维护权威状态，低分辨率模型更频繁地进行轻量刷新。</li>
           <li>质量感知调度：动态 stride 根据光流质量、尺度 / 速度突变、重复轨迹和类别冲突触发 low / high 紧急刷新。</li>
-          <li>时间连续性：LK 光流传播检测间隔的轨迹，ByteTrack 管理 ID 与生命周期，异步旧帧结果返回后先做时间补偿。</li>
+          <li>时间连续性：LK 光流、ByteTrack 与异步历史回放校正维持轨迹；实时流通过 SSE 持续输出。</li>
+          <li>运行观测：流状态查询、最多 256 条 SSE 事件补发、健康入口与 Prometheus 调度 / 队列指标。</li>
         </ul>
-        <div class="portfolio-metrics" aria-label="YOLO 三场景回归通过指标">
-          <span>三场景 F1 0.7726</span>
+        <div class="portfolio-metrics" aria-label="2026-07-10 YOLO 历史三场景伪标签回归指标">
+          <span>历史回归 F1 0.7726</span>
           <span>FP -63.2%</span>
         </div>
-        <p class="portfolio-metric-note">指标口径为 IoU=0.5，以 full high-res 结果作为伪标签的三场景回归。</p>
+        <p class="portfolio-metric-note">2026-07-10 三场景回归：IoU=0.5，以 full high-res 结果为伪标签；上述指标不代表人工标注精度或当前多路版本吞吐。</p>
+        <p class="portfolio-metric-note">上传任务与实时流状态均不持久化，SSE 仅支持有限内存缓存补发；Web 工作台尚未接入 High/Low 和实时流管理。内容核对：2026-10-03。</p>
         <div class="portfolio-tags">
-          <span>YOLO26</span><span>ONNX Runtime</span><span>OpenVINO</span><span>OpenCV</span><span>ByteTrack</span><span>LK Flow</span><span>Drogon</span><span>Linux CPU</span>
+          <span>YOLO26</span><span>ONNX Runtime</span><span>OpenVINO</span><span>OpenCV</span><span>ByteTrack</span><span>LK Flow</span><span>Drogon</span><span>SSE</span><span>Prometheus</span><span>Linux CPU</span>
         </div>
         <div class="portfolio-actions compact">
           <a class="portfolio-button primary" href="https://github.com/ChutianDuan/Yolo">GitHub 仓库</a>
-          <a class="portfolio-button" href="https://github.com/ChutianDuan/Yolo/blob/main/docs/reports/%E4%BC%98%E5%8C%96%E8%AE%A1%E5%88%92.md">回归报告</a>
+          <a class="portfolio-button" href="https://github.com/ChutianDuan/Yolo/blob/d8688e3027afa88caeeb9e05eba195f16d655fd3/docs/reports/%E4%BC%98%E5%8C%96%E8%AE%A1%E5%88%92.md">回归报告</a>
+          <a class="portfolio-button" href="https://github.com/ChutianDuan/Yolo/blob/d8688e3027afa88caeeb9e05eba195f16d655fd3/docs/reports/初始化到多IP任务提交完整流程.md">实时流调用链</a>
           <a class="portfolio-button" href="/notes/liunx-c-工程化/5-onnx模型导出与部署优化/">部署笔记</a>
         </div>
       </div>
       <figure class="portfolio-figure">
         <img src="/assets/yolo/tracking-flow.svg" alt="YOLO 检测跟踪服务流程图">
-        <figcaption>高低分辨率模型、质量感知调度、LK / ByteTrack 与权威轨迹管理</figcaption>
+        <figcaption>共享推理调度、高低分辨率检测与跟踪；上传返回 JSON，实时流输出 SSE</figcaption>
       </figure>
     </article>
 

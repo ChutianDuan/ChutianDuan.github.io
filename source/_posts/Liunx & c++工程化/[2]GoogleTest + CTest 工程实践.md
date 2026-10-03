@@ -1,7 +1,7 @@
 ---
 title: "`TEST()` 明明写了，为什么 CTest 却说没有测试？"
 date: 2026-07-13 15:29:05
-updated: 2026-07-13 15:29:05
+updated: 2026-10-03 12:00:00
 categories:
   - "学习"
   - "Linux 与 C++ 工程化"
@@ -1617,33 +1617,19 @@ CI 中至少验证：
 
 ## 20. 项目中的测试清单
 
-### 20.1 RAG Gateway
+### 20.1 RAG Gateway Stack
 
-第一批，纯逻辑和低依赖模块：
+2026-10-03 核对的已发布实现包含 Python 检索、网页导入、Agent 工具、记忆、Trace、普通 Chat 与 Agent 续传测试；C++ Gateway 的构建和实际传输行为还需结合 smoke 与 E2E 检查。下面的教学 GoogleTest 工程不是当前仓库的测试框架声明。
 
-- SSE 编码，多行 `data` 的处理；
-- 路径重写；
-- hop-by-hop header 过滤；
-- API key 格式校验；
-- request id 格式；
-- 限流 key 生成；
-- 错误码到 HTTP status 的映射；
-- 上传文件扩展名和大小边界；
-- 配置文本解析。
+```bash
+python -m pytest
+bash scripts/ci_smoke.sh
+bash scripts/e2e_all.sh ./day7_demo.md
+```
 
-第二批，使用 Fake 或 Mock：
+主要验收行为：LanceDB 召回与正文回表、工具失败的数据处理、答案及 citations 持久化后终止、复用标识续传不重复生成、过期状态明确失败。E2E 需要真实依赖与模型，单元测试通过不能替代完整用户路径。
 
-- Redis 返回允许、拒绝、超时；
-- 上游 HTTP 返回 200、4xx、5xx、超时；
-- LLM Client 返回正常流、空流、中途失败；
-- Repository 查询成功、未找到、异常；
-- Clock 固定在限流窗口边界。
-
-少量集成测试：
-
-- 启动真实 Gateway，发出一个 HTTP 请求；
-- SSE 响应头和事件流格式；
-- 测试环境中的 Redis 或数据库交互。
+测试与入口见 [固定提交](https://github.com/ChutianDuan/Repo/blob/0771a82d698eb155b110653dc5e97831ef3ca46e/README.md)，本文更新没有运行这些项目测试。
 
 ### 20.2 权威同步服务器
 
@@ -1673,26 +1659,20 @@ CI 中至少验证：
 - 并发队列配合 TSan；
 - 字节解析入口配合 libFuzzer。
 
-### 20.3 YOLO / ByteTrack / 推理服务
+### 20.3 VisionTrack / YOLO Tracking
 
-不用 Mock 的部分：
+已发布 CMake 通过 `add_test()` 注册 C++ 与相关 Python 工具检查，覆盖配置、图片处理、AuthorityTracker、视频对比、响应 JSON、Gateway 契约、共享推理调度、实时流生命周期、异步回放、SSE 补发、日志、门禁和上传任务池；不要把所有 CTest 用例都等同于 GoogleTest 用例。
 
-- IoU；
-- NMS；
-- bbox 坐标变换；
-- letterbox 前后映射；
-- 模型输出后处理；
-- Tracker 状态转换；
-- 配置字段校验。
+```bash
+cd yolo_onnx_cpp
+cmake --preset vcpkg-gcc15-release
+cmake --build --preset vcpkg-gcc15-release
+ctest --preset vcpkg-gcc15-release
+```
 
-适合 Fake 或 Mock 的部分：
+纯逻辑覆盖坐标变换、调度、队列、状态转换及失败路径。加载真实模型的检查与多路长测单独保存条件和输出；SSE 应覆盖正常补发、游标超出缓存、终态和清理，任务池要验证容量和关闭行为。
 
-- 模型推理器返回固定 tensor；
-- 文件读取器返回固定配置；
-- Repository 返回固定检测记录；
-- HTTP Client 返回固定响应。
-
-真实模型推理更适合作为少量集成测试，不要让所有单元测试都加载大型模型文件。
+服务没有数据库或检测记录 Repository。真实 RTSP、业务质量和长期多路稳定性仍需要专项验收；历史报告中的一次 PASS 不代替其他失败窗口。入口见 [项目说明](https://github.com/ChutianDuan/Yolo/blob/d8688e3027afa88caeeb9e05eba195f16d655fd3/readme.md) 和 [已注册测试](https://github.com/ChutianDuan/Yolo/blob/d8688e3027afa88caeeb9e05eba195f16d655fd3/yolo_onnx_cpp/CMakeLists.txt)。本次文章更新没有执行 C++ 推理测试。
 
 ---
 

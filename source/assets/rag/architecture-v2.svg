@@ -13,7 +13,7 @@
 
   <g font-family="Arial, 'PingFang SC', sans-serif">
     <text x="60" y="76" fill="#0b0e14" font-size="31" font-weight="700">RAG Gateway Stack</text>
-    <text x="60" y="104" fill="#667085" font-size="16">全局知识库检索 · 异步任务 · 循环 Agent · 可追溯回答</text>
+    <text x="60" y="104" fill="#667085" font-size="16">文件 / 网页入库 · LanceDB 检索 · Agent Trace · SSE 续传</text>
 
     <g text-anchor="middle">
       <rect x="80" y="132" width="800" height="52" fill="#f4f7fb" stroke="#aeb9c8" stroke-width="2"/>
@@ -23,7 +23,7 @@
       <path d="M480 184V210" stroke="#075cff" stroke-width="2" marker-end="url(#arrow)"/>
       <rect x="80" y="218" width="800" height="70" fill="#eef4ff" stroke="#075cff" stroke-width="2"/>
       <text x="480" y="246" fill="#0b0e14" font-size="21" font-weight="700">C++ Drogon Gateway</text>
-      <text x="480" y="271" fill="#4f5968" font-size="14">Public API · Upload Validation · CORS · Health Aggregation · SSE Proxy</text>
+      <text x="480" y="271" fill="#4f5968" font-size="14">Public API · File / Web Ingest · Auth / Rate Limit · SSE Proxy</text>
 
       <path d="M480 288V314" stroke="#075cff" stroke-width="2" marker-end="url(#arrow)"/>
       <rect x="80" y="322" width="800" height="92" fill="#ffffff" stroke="#075cff" stroke-width="2"/>
@@ -60,6 +60,6 @@
     </g>
 
     <rect x="80" y="540" width="800" height="28" fill="#0b0e14"/>
-    <text x="480" y="559" fill="#ffffff" font-size="12" text-anchor="middle">INGEST: upload → parse → embed → index  |  CHAT: recall → rerank → answer + citations</text>
+    <text x="480" y="559" fill="#ffffff" font-size="12" text-anchor="middle">INGEST: file / web → parse → embed → index  |  CHAT: answer + citations → done</text>
   </g>
 </svg>

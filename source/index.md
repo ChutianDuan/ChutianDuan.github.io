@@ -86,14 +86,14 @@ header: false
         <div class="project-card-copy">
           <p class="project-type mono">AI APPLICATION BACKEND</p>
           <h3>RAG Gateway Stack</h3>
-          <p>C++ Drogon 网关统一承载外部 API，FastAPI 与 Celery 处理检索、异步任务和模型编排。</p>
+          <p>C++ Drogon、FastAPI 与 Celery 串起文件 / 网页入库、知识库问答和可观测的 Agent 工作台。</p>
         </div>
         <ul class="project-highlight-list">
           <li>LanceDB 召回、MySQL chunk 回表与 CrossEncoder rerank</li>
-          <li>循环工具调用、三层记忆、citations 与 Agent Trace</li>
+          <li>只读 Agent 工具、三层记忆、引用回查与 SSE 续传</li>
         </ul>
         <div class="project-card-footer">
-          <span>C++17</span><span>Drogon</span><span>Celery</span><span>Agent</span>
+          <span>Drogon</span><span>FastAPI</span><span>LanceDB</span><span>Agent</span>
           <b aria-label="查看项目">↗</b>
         </div>
       </a>
@@ -104,15 +104,14 @@ header: false
         </div>
         <div class="project-card-copy">
           <p class="project-type mono">COMPUTER VISION</p>
-          <h3>YOLO Tracking</h3>
-          <p>面向道路视频动态监测的 C++ 检测跟踪服务，以高低分辨率模型协同平衡检测质量与调用开销。</p>
+          <h3>VisionTrack / YOLO Tracking</h3>
+          <p>面向 BDD100K 道路场景的 C++ 检测跟踪服务，支持图片、上传视频与多路实时流。</p>
         </div>
         <ul class="project-highlight-list">
-          <li>动态 stride 与质量退化驱动 low / high 紧急刷新</li>
-          <li>LK 光流、ByteTrack 与异步结果时间补偿维持连续轨迹</li>
+          <li>共享推理调度、高低分辨率协同与有界上传任务池</li>
+          <li>LK / ByteTrack 续轨、SSE 缓存补发与 Prometheus 指标</li>
         </ul>
-        <div class="project-metrics" aria-label="YOLO 三场景回归通过指标"><span><b>0.7726</b>三场景 F1</span><span><b>-63.2%</b>误检数量</span></div>
-        <div class="project-card-footer"><span>YOLO26</span><span>ONNX</span><span>LK Flow</span><span>ByteTrack</span><b aria-label="查看项目">↗</b></div>
+        <div class="project-card-footer"><span>YOLO26</span><span>OpenVINO</span><span>ByteTrack</span><span>SSE</span><b aria-label="查看项目">↗</b></div>
       </a>
 
       <a class="project-card reveal" href="/projects/#libevent-chat-server">
@@ -166,8 +165,8 @@ header: false
       <div class="writing-list">
         <a class="writing-item reveal" href="/notes/ai模型开发/开发进度记录/">
           <span class="writing-number mono">01</span>
-          <div><p>RAG / AGENT</p><h3>RAG Gateway Stack 工程复盘</h3></div>
-          <time datetime="2026-04-20">2026.04</time><b>↗</b>
+          <div><p>RAG / AGENT</p><h3>RAG Gateway Stack：从入库到可追溯回答</h3></div>
+          <time datetime="2026-10-03">2026.10</time><b>↗</b>
         </a>
         <a class="writing-item reveal" href="/notes/linux高性能服务器编程/1-libevent/">
           <span class="writing-number mono">02</span>

@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 620" role="img" aria-labelledby="title desc">
-  <title id="title">YOLO Tracking 高低分辨率动态跟踪流程</title>
-  <desc id="desc">道路视频经过质量感知动态调度，由高低分辨率 YOLO 模型、LK 光流、ByteTrack 和 AuthorityTracker 协同输出连续轨迹。</desc>
+  <title id="title">VisionTrack 上传视频与多路实时流流程</title>
+  <desc id="desc">图片、上传视频和实时流经共享模型调度、高低分辨率检测、LK 光流与 ByteTrack 处理；上传一次性返回 JSON，实时流通过 SSE 输出并支持有限缓存补发。</desc>
   <defs>
     <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
       <path d="M0 0L9 3L0 6Z" fill="#075cff"/>
@@ -12,22 +12,22 @@
   <path d="M30 66V30H66" fill="none" stroke="#075cff" stroke-width="8"/>
 
   <g font-family="Arial, 'PingFang SC', sans-serif">
-    <text x="60" y="76" fill="#0b0e14" font-size="31" font-weight="700">YOLO Tracking</text>
-    <text x="60" y="104" fill="#667085" font-size="16">高低分辨率协同 · 质量感知调度 · LK / ByteTrack · 异步时间补偿</text>
+    <text x="60" y="76" fill="#0b0e14" font-size="31" font-weight="700">VisionTrack / YOLO Tracking</text>
+    <text x="60" y="104" fill="#667085" font-size="16">共享模型调度 · 高低分辨率检测 · LK / ByteTrack · SSE</text>
 
     <g text-anchor="middle">
       <rect x="60" y="164" width="150" height="82" fill="#f4f7fb" stroke="#aeb9c8" stroke-width="2"/>
-      <text x="135" y="197" fill="#0b0e14" font-size="18" font-weight="700">道路视频</text>
-      <text x="135" y="224" fill="#667085" font-size="13">BDD100K 场景</text>
+      <text x="135" y="197" fill="#0b0e14" font-size="18" font-weight="700">图片 / 视频 / 流</text>
+      <text x="135" y="224" fill="#667085" font-size="13">BDD100K 道路场景</text>
 
       <path d="M210 205H254" stroke="#075cff" stroke-width="2" marker-end="url(#arrow)"/>
       <rect x="266" y="144" width="190" height="122" fill="#eef4ff" stroke="#075cff" stroke-width="2"/>
-      <text x="361" y="177" fill="#0b0e14" font-size="18" font-weight="700">动态调度器</text>
+      <text x="361" y="177" fill="#0b0e14" font-size="18" font-weight="700">调度 / 质量门控</text>
       <text x="361" y="202" fill="#075cff" font-size="13" font-weight="700">QUALITY-AWARE STRIDE</text>
       <text x="361" y="228" fill="#667085" font-size="12">光流质量 · 尺度 / 速度突变</text>
       <text x="361" y="248" fill="#667085" font-size="12">重复轨迹 · 类别冲突 · flow age</text>
 
-      <path d="M456 205H500" stroke="#075cff" stroke-width="2" marker-end="url(#arrow)"/>
+      <path d="M456 205H492V163H500M492 205V247H500" fill="none" stroke="#075cff" stroke-width="2" marker-end="url(#arrow)"/>
       <rect x="512" y="128" width="188" height="70" fill="#ffffff" stroke="#075cff" stroke-width="2"/>
       <text x="606" y="157" fill="#0b0e14" font-size="17" font-weight="700">High-res YOLO</text>
       <text x="606" y="181" fill="#667085" font-size="12">权威确认 / urgent refresh</text>
@@ -35,7 +35,7 @@
       <text x="606" y="241" fill="#0b0e14" font-size="17" font-weight="700">Low-res YOLO</text>
       <text x="606" y="265" fill="#667085" font-size="12">频繁轻量刷新</text>
 
-      <path d="M700 205H744" stroke="#075cff" stroke-width="2" marker-end="url(#arrow)"/>
+      <path d="M700 163H730V205H744M700 247H730V205" fill="none" stroke="#075cff" stroke-width="2" marker-end="url(#arrow)"/>
       <rect x="756" y="144" width="144" height="122" fill="#0b0e14" stroke="#0b0e14" stroke-width="2"/>
       <text x="828" y="184" fill="#ffffff" font-size="17" font-weight="700">Authority</text>
       <text x="828" y="207" fill="#ffffff" font-size="17" font-weight="700">Tracker</text>
@@ -53,9 +53,9 @@
       <text x="162" y="416" fill="#667085" font-size="12">逐轨迹质量门控</text>
 
       <rect x="278" y="338" width="192" height="94" fill="#f4f7fb" stroke="#c7d0dc"/>
-      <text x="374" y="371" fill="#0b0e14" font-size="17" font-weight="700">Async Worker</text>
-      <text x="374" y="397" fill="#667085" font-size="12">强检测并行执行</text>
-      <text x="374" y="416" fill="#667085" font-size="12">旧帧结果时间补偿</text>
+      <text x="374" y="371" fill="#0b0e14" font-size="17" font-weight="700">Shared Scheduler</text>
+      <text x="374" y="397" fill="#667085" font-size="12">共享推理资源 / 请求池</text>
+      <text x="374" y="416" fill="#667085" font-size="12">异步回放校正</text>
 
       <rect x="490" y="338" width="192" height="94" fill="#f4f7fb" stroke="#c7d0dc"/>
       <text x="586" y="371" fill="#0b0e14" font-size="17" font-weight="700">ByteTrack</text>
@@ -63,19 +63,18 @@
       <text x="586" y="416" fill="#667085" font-size="12">检测 / 跟踪状态衔接</text>
 
       <rect x="702" y="338" width="192" height="94" fill="#f4f7fb" stroke="#c7d0dc"/>
-      <text x="798" y="371" fill="#0b0e14" font-size="17" font-weight="700">Diagnostics</text>
-      <text x="798" y="397" fill="#667085" font-size="12">source · timing · queue</text>
-      <text x="798" y="416" fill="#667085" font-size="12">urgent refresh · rejection</text>
+      <text x="798" y="371" fill="#0b0e14" font-size="17" font-weight="700">Observability</text>
+      <text x="798" y="397" fill="#667085" font-size="12">timing · queue · /metrics</text>
+      <text x="798" y="416" fill="#667085" font-size="12">门禁 / 健康 / 流状态</text>
     </g>
 
-    <rect x="66" y="466" width="828" height="82" fill="#0b0e14"/>
-    <text x="92" y="497" fill="#7ea7ff" font-size="13" font-weight="700">3-SCENE REGRESSION</text>
-    <line x1="310" y1="484" x2="310" y2="531" stroke="#344157"/>
-    <line x1="610" y1="484" x2="610" y2="531" stroke="#344157"/>
-    <text x="460" y="505" fill="#ffffff" font-size="25" font-weight="700" text-anchor="middle">F1 0.7726</text>
-    <text x="752" y="505" fill="#ffffff" font-size="25" font-weight="700" text-anchor="middle">FP -63.2%</text>
-    <text x="92" y="526" fill="#9da9ba" font-size="12">IoU=0.5 · full high-res pseudo-label baseline</text>
-    <text x="460" y="528" fill="#9da9ba" font-size="12" text-anchor="middle">通过项</text>
-    <text x="752" y="528" fill="#9da9ba" font-size="12" text-anchor="middle">误检数量改善</text>
+    <rect x="66" y="466" width="828" height="82" fill="#f4f7fb" stroke="#c7d0dc"/>
+    <line x1="480" y1="478" x2="480" y2="536" stroke="#dfe4ec"/>
+    <text x="86" y="491" fill="#075cff" font-size="14" font-weight="700">UPLOAD VIDEO</text>
+    <text x="86" y="514" fill="#0b0e14" font-size="15">有界任务池 → 完整 JSON</text>
+    <text x="86" y="536" fill="#667085" font-size="12">请求结束后不保留可查询任务</text>
+    <text x="500" y="491" fill="#075cff" font-size="14" font-weight="700">REALTIME STREAMS</text>
+    <text x="500" y="514" fill="#0b0e14" font-size="15">/streams → detection / end SSE</text>
+    <text x="500" y="536" fill="#667085" font-size="12">最多 256 条缓存补发 · 进程重启不恢复</text>
   </g>
 </svg>

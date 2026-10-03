@@ -237,12 +237,14 @@ header.header {
   padding-top: 0;
 }
 
-.post-header {
+.post-header,
+.main-inner.post .post-header {
   margin-bottom: 36px;
   text-align: left;
 }
 
 .post-title,
+.main-inner.post .post-title,
 .post-title-link {
   color: var(--ink);
   font-weight: 760;
@@ -250,8 +252,10 @@ header.header {
   line-height: 1.2;
 }
 
-.post-title {
+.post-title,
+.main-inner.post .post-title {
   font-size: clamp(2rem, 5vw, 3.35rem);
+  text-wrap: balance;
 }
 
 .index .post-block {
@@ -272,6 +276,15 @@ header.header {
   font-size: 0.8rem;
 }
 
+.main-inner.post .post-meta > .post-meta-item,
+.main-inner.post .post-description {
+  display: none;
+}
+
+.main-inner.post .post-meta {
+  display: block;
+}
+
 .engineering-post-meta {
   align-items: center;
   color: #7b8492;
@@ -280,6 +293,7 @@ header.header {
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
   font-size: 0.72rem;
   gap: 8px 0;
+  justify-content: flex-start;
   letter-spacing: 0;
   margin-top: 16px;
 }
@@ -330,13 +344,121 @@ header.header {
 .post-body :not(pre) > code {
   background: #eef3ff;
   border: 0;
+  border-radius: 0;
   color: #0048d8;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
-.highlight {
-  border: 1px solid #d8dee9;
+.post-body pre,
+.post-body figure.highlight {
+  background: var(--soft);
+  border: 1px solid var(--line);
   border-radius: 0;
   box-shadow: none;
+  font-size: 14px;
+  line-height: 1.6;
+  max-width: 100%;
+}
+
+.post-body pre {
+  overflow: auto;
+  padding: 12px;
+  white-space: pre;
+  word-break: normal;
+  overflow-wrap: normal;
+}
+
+.post-body pre code {
+  font-size: inherit;
+  line-height: inherit;
+  white-space: inherit;
+}
+
+.post-body figure.highlight {
+  overflow: hidden;
+}
+
+// NexT wraps its line-number table; keep the toolbar outside that scroll area.
+.post-body figure.highlight .code-container {
+  padding-top: 32px;
+}
+
+.post-body figure.highlight .code-container::before {
+  background: #edf1f7;
+  border-bottom: 1px solid var(--line);
+  content: "";
+  height: 32px;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.post-body figure.highlight .table-container {
+  max-width: 100%;
+  overflow: auto;
+  overscroll-behavior-x: contain;
+}
+
+.post-body figure.highlight table {
+  border: 0;
+  font-size: inherit;
+  margin: 0;
+  width: auto;
+}
+
+.post-body figure.highlight tr,
+.post-body figure.highlight tr:hover,
+.post-body figure.highlight td {
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+
+.post-body figure.highlight pre {
+  border: 0;
+  margin: 0;
+  overflow: visible;
+  padding: 12px 0;
+}
+
+.post-body figure.highlight .gutter pre {
+  background: #edf1f7;
+  border-right: 1px solid var(--line);
+  color: var(--muted);
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+.post-body figure.highlight .code pre {
+  padding-left: 14px;
+  padding-right: 14px;
+}
+
+.post-body .code-lang {
+  color: var(--muted);
+  font-size: 12px;
+  left: 12px;
+  line-height: 16px;
+  opacity: 1;
+  right: auto;
+  top: 8px;
+}
+
+.post-body .copy-btn {
+  background: transparent;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 22px;
+  opacity: 1;
+  padding: 4px 10px;
+  right: 0;
+  top: 0;
+}
+
+.post-body .copy-btn:hover {
+  color: var(--blue);
 }
 
 .highlight figcaption,
@@ -346,18 +468,18 @@ header.header {
   color: #667085;
 }
 
-.post-body table {
+.post-body table:not(figure.highlight table) {
   border: 1px solid var(--line);
   font-size: 0.92rem;
 }
 
-.post-body th {
+.post-body table:not(figure.highlight table) th {
   background: #f5f8ff;
   color: var(--ink);
 }
 
-.post-body th,
-.post-body td {
+.post-body table:not(figure.highlight table) th,
+.post-body table:not(figure.highlight table) td {
   border-color: var(--line);
 }
 
@@ -866,7 +988,24 @@ body:has(.main-inner.page) .sidebar-toggle {
   }
 
   .site-meta {
+    flex: 1;
+    min-width: 0;
     text-align: center;
+    width: auto;
+  }
+
+  .site-nav-toggle {
+    flex: none;
+  }
+
+  .site-nav-toggle .toggle {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    height: 40px;
+    justify-content: center;
+    padding: 10px;
+    width: 40px;
   }
 
   .site-title {
@@ -918,7 +1057,8 @@ body:has(.main-inner.page) .sidebar-toggle {
     padding-right: 20px;
   }
 
-  .post-header {
+  .post-header,
+  .main-inner.post .post-header {
     margin-bottom: 28px;
   }
 
