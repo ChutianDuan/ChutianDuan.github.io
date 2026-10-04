@@ -8,6 +8,7 @@ custom_file_path:
   head: source/_data/head.njk
   bodyEnd: source/_data/body-end.njk
   postMeta: source/_data/post-meta.njk
+  postBodyStart: source/_data/post-body-start.njk
   postBodyEnd: source/_data/post-body-end.njk
   style: source/_data/styles.styl
 

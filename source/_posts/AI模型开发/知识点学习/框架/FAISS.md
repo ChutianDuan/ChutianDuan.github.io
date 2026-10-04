@@ -9,6 +9,7 @@ categories:
   - "框架"
 permalink: /notes/ai模型开发/知识点学习/框架/faiss/
 series: "AI 模型开发"
+series_order: 7
 ---
 
 很多 RAG 项目第一次接入 FAISS 时，都能很快得到一组 Top-K：文档被切成 chunk，embedding 被写进索引，用户问题也能在几毫秒内返回结果。但真正上线后，问题才开始出现：

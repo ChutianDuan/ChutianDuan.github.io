@@ -9,6 +9,7 @@ categories:
   - "句子嵌入模型"
 permalink: /notes/ai模型开发/知识点学习/句子嵌入模型/chunk学习笔记/
 series: "AI 模型开发"
+series_order: 2
 ---
 
 做 RAG 时，一个很常见的调参思路是：召回不准，就把文档切得更小。

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import math
 import os
 import re
 import shutil
@@ -150,7 +151,7 @@ def render_front_matter(
     permalink: str,
     mermaid: bool,
     series: str | None,
-    series_order: int | None,
+    series_order: int | float | None,
 ) -> str:
     lines = [
         "---",
@@ -248,6 +249,7 @@ def sync_notes(
     notes: list[Path],
     note_link_map: dict[Path, str],
     asset_link_map: dict[Path, str],
+    existing_series_orders: dict[str, int | float] | None = None,
 ) -> int:
     count = 0
     for note in notes:
@@ -265,11 +267,15 @@ def sync_notes(
         if parent_parts and series:
             parent_parts[0] = series
         categories = ["学习", *parent_parts]
-        order_match = re.match(r"^\[(\d+)]", note.stem)
-        series_order = int(order_match.group(1)) if order_match and series else None
+        order_match = re.match(r"^\[(\d+(?:\.\d+)?)\]", note.stem)
+        series_order = float(order_match.group(1)) if order_match and series else None
+        if series_order is not None and series_order.is_integer():
+            series_order = int(series_order)
         if series and note.stem.upper() == "README":
             series_order = 0
         permalink = note_link_map[note.resolve()]
+        if series and existing_series_orders and permalink in existing_series_orders:
+            series_order = existing_series_orders[permalink]
         front_matter = render_front_matter(
             title,
             date_text,
@@ -287,6 +293,27 @@ def sync_notes(
     return count
 
 
+def read_series_orders(post_root: Path) -> dict[str, int | float]:
+    """Snapshot editorial orders before the sync replaces its output directory."""
+    orders: dict[str, int | float] = {}
+    for post in post_root.rglob("*.md"):
+        text = post.read_text(encoding="utf-8")
+        if not text.startswith("---\n"):
+            continue
+        front_matter = text.split("\n---\n", 1)[0]
+        permalink = re.search(r"^permalink:\s*(.+)$", front_matter, re.MULTILINE)
+        order = re.search(r"^series_order:\s*(.+)$", front_matter, re.MULTILINE)
+        if not permalink or not order:
+            continue
+        try:
+            value = float(order.group(1).strip().strip("\"'"))
+        except ValueError:
+            continue
+        if math.isfinite(value):
+            orders[permalink.group(1).strip().strip("\"'")] = int(value) if value.is_integer() else value
+    return orders
+
+
 def main() -> int:
     args = parse_args()
     source_root = Path(args.source).expanduser().resolve()
@@ -296,6 +323,7 @@ def main() -> int:
     if not source_root.exists():
         raise FileNotFoundError(f"Source notes root does not exist: {source_root}")
 
+    existing_series_orders = read_series_orders(post_root)
     if post_root.exists():
         shutil.rmtree(post_root)
     if asset_root.exists():
@@ -307,7 +335,7 @@ def main() -> int:
         for note in notes
     }
     asset_link_map = sync_assets(source_root, asset_root, assets)
-    note_count = sync_notes(source_root, post_root, notes, note_link_map, asset_link_map)
+    note_count = sync_notes(source_root, post_root, notes, note_link_map, asset_link_map, existing_series_orders)
 
     print(
         f"Synced {note_count} notes and {len(assets)} assets "

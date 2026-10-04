@@ -9,6 +9,7 @@ categories:
   - "VLLM"
 permalink: /notes/ai模型开发/详细分析纪录/vllm/qwen3_14b/
 series: "AI 模型开发"
+series_order: 19
 ---
 
 一轮压测跑出 `100/100` 成功、平均首 Token 时间（TTFT）`0.10 s`、平均生成速度 `36.43 tok/s`，是不是说明服务已经稳定，可以直接接入 RAG 或 Agent？

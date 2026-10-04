@@ -9,6 +9,7 @@ categories:
   - "框架"
 permalink: /notes/ai模型开发/知识点学习/框架/ray/
 series: "AI 模型开发"
+series_order: 14
 ---
 
 把普通函数加上 `@ray.remote`，再一次提交几万个任务，看起来就完成了“分布式改造”。实际运行后却可能出现：

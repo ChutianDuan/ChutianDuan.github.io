@@ -9,6 +9,7 @@ categories:
   - "框架"
 permalink: /notes/ai模型开发/知识点学习/框架/mysql/
 series: "AI 模型开发"
+series_order: 9
 ---
 
 AI 项目里很容易把 MySQL 当成“保存用户、文档和任务的地方”，把 FAISS 当成“保存向量的地方”。两个组件单独看都工作正常，组合后却可能出现一种危险故障：

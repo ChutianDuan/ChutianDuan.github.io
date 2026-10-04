@@ -7,6 +7,7 @@ categories:
   - "实时竞技游戏开发"
 permalink: /notes/实时竞技游戏开发/fighting-netcode-项目知识笔记/
 series: "实时竞技游戏开发"
+series_order: 1
 ---
 
 假设玩家按下向右键，网络往返时延（round-trip time，RTT）是 100 ms。如果客户端必须等服务器确认后才移动，操作流程会变成：

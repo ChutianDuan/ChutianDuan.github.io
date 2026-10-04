@@ -9,6 +9,7 @@ categories:
   - "框架"
 permalink: /notes/ai模型开发/知识点学习/框架/embedding/
 series: "AI 模型开发"
+series_order: 5
 ---
 
 很多系统把 embedding 兼容性简化成一句话：新旧模型输出都是 768 维，所以可以直接替换。上线后服务没有报维度错误，FAISS 也能正常搜索，召回结果却像随机的一样。

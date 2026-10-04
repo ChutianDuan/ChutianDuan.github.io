@@ -9,6 +9,7 @@ categories:
   - "框架"
 permalink: /notes/ai模型开发/知识点学习/框架/celery/
 series: "AI 模型开发"
+series_order: 13
 ---
 
 把耗时操作改成 `task.delay()` 很容易：HTTP 接口立即返回 task ID，worker 在后台处理文件、发送通知或生成 embedding。

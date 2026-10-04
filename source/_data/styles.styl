@@ -573,6 +573,257 @@ header.header {
   margin: 22px 0 0;
 }
 
+.engineering-breadcrumb {
+  color: var(--muted);
+  font-size: 0.76rem;
+  margin: -12px 0 28px;
+}
+
+.engineering-breadcrumb ol {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 6px 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.engineering-breadcrumb li {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.engineering-breadcrumb li + li::before {
+  color: #9199a5;
+  content: "/";
+  margin: 0 8px;
+}
+
+.engineering-breadcrumb a {
+  border: 0;
+}
+
+.series-progress {
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.series-current {
+  color: var(--ink);
+  font-size: 0.92rem;
+  margin: 14px 0 24px;
+}
+
+.engineering-related ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.related-label {
+  color: var(--muted);
+  font-size: 0.78rem;
+  margin: 0 0 10px;
+}
+
+.engineering-related li a {
+  align-items: center;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  font-size: 0.88rem;
+  gap: 14px;
+  justify-content: space-between;
+  line-height: 1.6;
+  padding: 12px 0;
+}
+
+.engineering-related svg {
+  fill: none;
+  flex: 0 0 24px;
+  height: 20px;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  width: 24px;
+}
+
+.engineering-page-header > div {
+  min-width: 0;
+}
+
+.engineering-page-header nav {
+  flex-shrink: 0;
+}
+
+.engineering-page-header .engineering-statistics {
+  color: var(--muted);
+  font-size: 0.76rem;
+  margin: 12px 0 0;
+}
+
+.knowledge-description p {
+  margin: 0;
+}
+
+.knowledge-topic h2 a {
+  border: 0;
+  color: inherit;
+}
+
+.knowledge-row > * {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.knowledge-learning-path {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 6px 0;
+  list-style: none;
+  margin: 12px 0 0 !important;
+  padding: 0 !important;
+}
+
+.knowledge-learning-path li {
+  margin: 0;
+}
+
+.knowledge-learning-path li + li::before {
+  color: #9199a5;
+  content: "→";
+  margin: 0 6px;
+}
+
+.knowledge-learning-path a {
+  border: 0;
+  font-size: 0.76rem;
+}
+
+.engineering-search-button {
+  align-items: center;
+  background: var(--blue);
+  border: 1px solid var(--blue);
+  border-radius: 0;
+  color: #ffffff;
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  gap: 16px;
+  justify-content: space-between;
+  margin: 0 0 24px;
+  min-height: 52px;
+  padding: 12px 18px;
+  width: 100%;
+}
+
+.engineering-search-button:hover {
+  background: var(--blue-dark);
+}
+
+.engineering-search-button kbd,
+.search-shortcut {
+  font-family: "SFMono-Regular", Consolas, Menlo, monospace;
+  font-size: 0.7rem;
+  white-space: nowrap;
+}
+
+.search-shortcut {
+  margin-left: 8px;
+}
+
+.post-body h2 > .headerlink,
+.post-body h3 > .headerlink {
+  align-items: center;
+  display: inline-flex;
+  font-family: "SFMono-Regular", Consolas, Menlo, monospace;
+  justify-content: center;
+  min-height: 32px;
+  min-width: 32px;
+}
+
+.post-body .headerlink::before {
+  content: none !important;
+}
+
+.post-body .headerlink:focus-visible {
+  opacity: 1;
+}
+
+a:focus-visible,
+button:focus-visible,
+[role="button"]:focus-visible,
+.search-input:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+}
+
+.engineering-copy-feedback {
+  background: #ffffff;
+  border: 1px solid var(--line);
+  bottom: 24px;
+  color: var(--ink);
+  font-size: 0.85rem;
+  left: 50%;
+  max-width: calc(100vw - 40px);
+  padding: 12px 18px;
+  position: fixed;
+  transform: translateX(-50%);
+  width: max-content;
+  z-index: 1500;
+}
+
+.engineering-copy-feedback:empty {
+  display: none;
+}
+
+.search-popup {
+  display: flex;
+  flex-direction: column;
+  transition-duration: 200ms;
+}
+
+.search-pop-overlay {
+  transition-duration: 200ms;
+  z-index: 2000;
+}
+
+// NexT places the fixed search overlay inside the sticky navigation column.
+// A backdrop filter there would confine the dialog to the header's height.
+.search-active .column {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.search-popup .search-header {
+  background: var(--soft);
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  min-height: 52px;
+}
+
+.search-popup .search-result-container {
+  flex: 1;
+  height: auto;
+  min-height: 0;
+}
+
+.engineering-search-status {
+  color: var(--muted);
+  font-size: 0.8rem;
+  margin: 12px 25px;
+}
+
+.engineering-search-status:empty {
+  display: none;
+}
+
+mark.search-keyword {
+  border-color: var(--blue);
+  color: var(--blue-dark);
+}
+
 .engineering-page {
   color: #3f4857;
   margin: 0 auto;
@@ -886,8 +1137,22 @@ body:has(.main-inner.page) .sidebar-toggle {
 }
 
 .post-toc .nav .active > a,
-.post-toc .nav .active-current > a {
+.post-toc .nav .active-current > a,
+.post-toc .nav .active-current > a:hover {
+  border-bottom-color: var(--blue);
   border-left-color: var(--blue);
+  color: var(--blue);
+}
+
+.sidebar-toc-active .sidebar-nav-toc,
+.sidebar-overview-active .sidebar-nav-overview {
+  border-bottom-color: var(--blue);
+  color: var(--blue);
+}
+
+.sidebar-nav li:hover,
+.sidebar-toc-active .sidebar-nav-toc:hover,
+.sidebar-overview-active .sidebar-nav-overview:hover {
   color: var(--blue);
 }
 
@@ -963,6 +1228,19 @@ body:has(.main-inner.page) .sidebar-toggle {
 }
 
 @media (max-width: 767px) {
+  .post-body h2 > .headerlink,
+  .post-body h3 > .headerlink {
+    min-height: 44px;
+    min-width: 44px;
+    opacity: 0.7;
+  }
+
+  .engineering-search-button {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+
   :root {
     --header-height: 64px;
   }

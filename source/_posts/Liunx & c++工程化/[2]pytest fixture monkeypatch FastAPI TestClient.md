@@ -7,7 +7,7 @@ categories:
   - "Linux 与 C++ 工程化"
 permalink: /notes/liunx-c-工程化/2-pytest-fixture-monkeypatch-fastapi-testclient/
 series: "Linux 与 C++ 工程化"
-series_order: 2
+series_order: 2.5
 ---
 
 时间：2026/05/12

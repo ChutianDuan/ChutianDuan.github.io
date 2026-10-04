@@ -7,6 +7,7 @@ categories:
   - "实时竞技游戏开发"
 permalink: /notes/实时竞技游戏开发/client/
 series: "实时竞技游戏开发"
+series_order: 5
 ---
 
 客户端已经预测到 tick 104，画面中的玩家也连续向右移动了几帧。这时，服务端 tick 101 的权威状态才到达。最直接的写法是：

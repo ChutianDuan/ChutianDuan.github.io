@@ -7,6 +7,7 @@ categories:
   - "AI 模型开发"
 permalink: /notes/ai模型开发/deep-research-report/
 series: "AI 模型开发"
+series_order: 22
 description: "以已发布实现为准，说明 RAG 服务依赖、启动入口、外部 API、引用回查、续传与关键失败路径。"
 ---
 

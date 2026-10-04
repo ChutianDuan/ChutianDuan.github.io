@@ -9,6 +9,7 @@ categories:
   - "框架"
 permalink: /notes/ai模型开发/知识点学习/框架/pytest/
 series: "AI 模型开发"
+series_order: 20
 ---
 
 测试数量很多、覆盖率超过 90%、CI 里一片绿色，并不代表系统真的可靠。最常见的情况是：测试只证明 mock 按预期被调用，却没有证明用户看到的行为正确。

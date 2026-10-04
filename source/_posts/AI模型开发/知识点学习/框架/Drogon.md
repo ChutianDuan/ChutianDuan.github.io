@@ -9,6 +9,7 @@ categories:
   - "框架"
 permalink: /notes/ai模型开发/知识点学习/框架/drogon/
 series: "AI 模型开发"
+series_order: 15
 ---
 
 Drogon 是支持 C++14/17/20 的异步 Web 框架，提供 HTTP、WebSocket、数据库、Redis、过滤器、中间件、文件处理与协程等能力。它能用少量 I/O 线程承载大量连接，但“使用高性能框架”不等于业务代码自动非阻塞。

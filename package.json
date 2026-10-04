@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "test": "node --test tests/engineering-notebook.test.js && python3 -m unittest discover -s tests -p 'test_*.py'",
     "build": "hexo generate",
     "clean": "hexo clean",
     "deploy": "hexo deploy",

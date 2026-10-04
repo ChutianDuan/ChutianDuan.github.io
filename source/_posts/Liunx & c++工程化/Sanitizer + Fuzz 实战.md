@@ -7,6 +7,7 @@ categories:
   - "Linux 与 C++ 工程化"
 permalink: /notes/liunx-c-工程化/sanitizer-fuzz-实战/
 series: "Linux 与 C++ 工程化"
+series_order: 2.6
 ---
 
 一个 UDP 解码器通过了所有手写测试：合法包能解析，版本错误会拒绝，空包也处理了。上线后，它却被下面 7 个字节打崩：

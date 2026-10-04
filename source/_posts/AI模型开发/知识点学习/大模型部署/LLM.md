@@ -9,6 +9,7 @@ categories:
   - "大模型部署"
 permalink: /notes/ai模型开发/知识点学习/大模型部署/llm/
 series: "AI 模型开发"
+series_order: 17
 ---
 
 本地执行一次 `generate()` 成功，只能说明模型在这组输入下能推理。线上服务还要同时面对长短不一的 prompt、持续增长的 KV Cache、并发排队、流式输出、取消请求和多卡通信。

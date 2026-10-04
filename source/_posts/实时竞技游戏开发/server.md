@@ -7,6 +7,7 @@ categories:
   - "实时竞技游戏开发"
 permalink: /notes/实时竞技游戏开发/server/
 series: "实时竞技游戏开发"
+series_order: 4
 ---
 
 服务端准备推进 tick 500，但玩家 2 的输入包还没到。此时有三种直觉选择：

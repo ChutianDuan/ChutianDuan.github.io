@@ -9,6 +9,7 @@ categories:
   - "句子嵌入模型"
 permalink: /notes/ai模型开发/知识点学习/句子嵌入模型/lora微调训练/
 series: "AI 模型开发"
+series_order: 6
 ---
 
 显存不足时，LoRA 往往是微调 embedding 模型的第一选择。它只训练少量增量参数，checkpoint 也比完整模型小得多。

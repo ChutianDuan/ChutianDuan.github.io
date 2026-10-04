@@ -9,6 +9,7 @@ categories:
   - "VLLM"
 permalink: /notes/ai模型开发/详细分析纪录/vllm/embedding/
 series: "AI 模型开发"
+series_order: 8
 ---
 
 Embedding 服务最危险的验收方式，是看到 `/health` 返回成功、`/v1/embeddings` 返回一串浮点数，就直接开始构建索引。

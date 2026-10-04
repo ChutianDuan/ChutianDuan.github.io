@@ -9,6 +9,7 @@ categories:
   - "框架"
 permalink: /notes/ai模型开发/知识点学习/框架/langchain/
 series: "AI 模型开发"
+series_order: 16
 ---
 
 用 LangChain 搭一个 RAG demo 很快：Retriever 找文档，Prompt 填上下文，ChatModel 生成答案，OutputParser 输出字符串。几十行代码就能回答问题。

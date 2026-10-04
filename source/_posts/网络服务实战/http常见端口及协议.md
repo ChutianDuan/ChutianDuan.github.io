@@ -7,6 +7,7 @@ categories:
   - "网络服务实战"
 permalink: /notes/网络服务实战/http常见端口及协议/
 series: "网络服务实战"
+series_order: 1
 ---
 
 线上接口访问失败时，经常能看到这样的排查过程：

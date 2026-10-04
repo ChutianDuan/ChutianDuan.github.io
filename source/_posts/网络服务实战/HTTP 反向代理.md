@@ -7,6 +7,7 @@ categories:
   - "网络服务实战"
 permalink: /notes/网络服务实战/http-反向代理/
 series: "网络服务实战"
+series_order: 2
 ---
 
 一个 Gateway 收到：

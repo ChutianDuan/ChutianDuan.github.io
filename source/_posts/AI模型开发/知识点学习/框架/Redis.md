@@ -9,6 +9,7 @@ categories:
   - "框架"
 permalink: /notes/ai模型开发/知识点学习/框架/redis/
 series: "AI 模型开发"
+series_order: 10
 ---
 
 缓存命中通常被当成好消息：不用查数据库，不用重新检索，接口更快。但如果 key 只写成：

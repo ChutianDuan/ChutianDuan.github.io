@@ -9,6 +9,7 @@ categories:
   - "大模型部署"
 permalink: /notes/ai模型开发/知识点学习/大模型部署/qwen模型演进/
 series: "AI 模型开发"
+series_order: 18
 ---
 
 看到 `Qwen2.5`、`Qwen3`、`Qwen3.5`、`Qwen3.6` 和 `Qwen3.7`，最自然的问题是：“最新、最大的那个是不是最好？”

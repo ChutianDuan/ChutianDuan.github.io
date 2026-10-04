@@ -9,6 +9,7 @@ categories:
   - "框架"
 permalink: /notes/ai模型开发/知识点学习/框架/fasthapi/
 series: "AI 模型开发"
+series_order: 12
 ---
 
 FastAPI 很容易给人一种错觉：只要把接口写成 `async def`，服务就自动拥有了高并发能力。开发环境中只有一个请求时，这个错觉尤其牢固；等到线上同时出现文件上传、数据库查询、向量检索和模型推理，接口延迟才突然从几十毫秒变成数秒。
