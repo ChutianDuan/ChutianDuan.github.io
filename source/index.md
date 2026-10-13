@@ -1,7 +1,7 @@
 ---
 layout: page
-title: AI Application & C++ Engineer
-description: 无名的个人技术博客：AI 应用、C++ 后端与计算机视觉部署。
+title: 项目与技术笔记
+description: 无名的个人技术笔记，记录 C++、计算机视觉和 AI 应用项目的实现与调试。
 date: 2026-06-29 20:00:00
 comments: false
 sidebar: false
@@ -16,9 +16,9 @@ header: false
 <div class="home-shell" id="top">
   <section class="home-hero section-shell" aria-labelledby="hero-title">
     <div class="hero-copy reveal">
-      <h1 id="hero-title"><span>把智能系统，</span><span>做成可靠的软件。</span></h1>
+      <h1 id="hero-title"><span>我的项目</span><span>和技术笔记</span></h1>
       <p class="hero-intro">
-        我是无名，专注 AI 应用、C++ 后端与计算机视觉部署。记录从 RAG、Agent 到实时系统的工程实践。
+        我是无名，这里记录我做过的项目，以及学习 C++、计算机视觉和 AI 应用时的实现与调试笔记。
       </p>
       <div class="hero-actions">
         <a class="portfolio-button primary" href="#projects">
@@ -30,7 +30,7 @@ header: false
           <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M4 10h12m-4-4 4 4-4 4"></path></svg>
         </a>
       </div>
-      <p class="identity-line">AI APPLICATION <i></i> C++ BACKEND <i></i> COMPUTER VISION</p>
+      <p class="identity-line">C++ 后端 <i></i> 计算机视觉 <i></i> AI 应用</p>
     </div>
 
     <div class="system-visual reveal" role="img" aria-label="RAG 与 Agent 服务架构示意图">
@@ -64,7 +64,7 @@ header: false
           <span><i>03</i> execute <b>tool trace</b></span>
           <span><i>04</i> status <em>ready</em><span class="cursor"></span></span>
         </div>
-        <div class="terminal-mark mono">OBSERVABLE BY DESIGN</div>
+        <div class="terminal-mark mono">请求处理示例</div>
       </div>
     </div>
   </section>
@@ -72,10 +72,10 @@ header: false
   <section class="home-section section-shell" id="projects" aria-labelledby="projects-title">
     <div class="section-heading reveal">
       <div>
-        <p class="section-index mono">01 / FEATURED WORK</p>
-        <h2 id="projects-title">核心项目</h2>
+        <p class="section-index mono">01 / 项目</p>
+        <h2 id="projects-title">项目</h2>
       </div>
-      <p>从接口、并发到推理与观测，做完整的工程闭环。</p>
+      <p>最近做的几个项目，代码和实现笔记都在这里。</p>
     </div>
 
     <div class="project-grid">
@@ -84,13 +84,13 @@ header: false
           <span class="project-number mono">01</span>
         </div>
         <div class="project-card-copy">
-          <p class="project-type mono">AI APPLICATION BACKEND</p>
+          <p class="project-type mono">知识库问答</p>
           <h3>RAG Gateway Stack</h3>
-          <p>C++ Drogon、FastAPI 与 Celery 串起文件 / 网页入库、知识库问答和可观测的 Agent 工作台。</p>
+          <p>导入文件和网页后，可以检索文档、提问，并查看回答引用和工具调用记录。</p>
         </div>
         <ul class="project-highlight-list">
-          <li>LanceDB 召回、MySQL chunk 回表与 CrossEncoder rerank</li>
-          <li>只读 Agent 工具、三层记忆、引用回查与 SSE 续传</li>
+          <li>C++ 网关接入 Python 服务，异步处理文档和索引</li>
+          <li>检索结果重排、Agent 工具调用和流式回答</li>
         </ul>
         <div class="project-card-footer">
           <span>Drogon</span><span>FastAPI</span><span>LanceDB</span><span>Agent</span>
@@ -103,13 +103,13 @@ header: false
           <span class="project-number mono">02</span>
         </div>
         <div class="project-card-copy">
-          <p class="project-type mono">COMPUTER VISION</p>
+          <p class="project-type mono">目标检测与跟踪</p>
           <h3>VisionTrack / YOLO Tracking</h3>
-          <p>面向 BDD100K 道路场景的 C++ 检测跟踪服务，支持图片、上传视频与多路实时流。</p>
+          <p>用 C++ 处理道路图片、上传视频和多路实时流中的目标检测与跟踪。</p>
         </div>
         <ul class="project-highlight-list">
-          <li>共享推理调度、高低分辨率协同与有界上传任务池</li>
-          <li>LK / ByteTrack 续轨、SSE 缓存补发与 Prometheus 指标</li>
+          <li>多路视频共享推理，高低分辨率模型配合检测</li>
+          <li>LK 光流与 ByteTrack 跟踪，SSE 输出实时结果</li>
         </ul>
         <div class="project-card-footer"><span>YOLO26</span><span>OpenVINO</span><span>ByteTrack</span><span>SSE</span><b aria-label="查看项目">↗</b></div>
       </a>
@@ -119,13 +119,13 @@ header: false
           <span class="project-number mono">03</span>
         </div>
         <div class="project-card-copy">
-          <p class="project-type mono">C++ NETWORK SERVICE</p>
+          <p class="project-type mono">TCP 聊天服务</p>
           <h3>Libevent Chat Server</h3>
-          <p>基于 libevent 的多线程 TCP 聊天服务，在最小实现中完成连接、协议、并发状态和慢连接治理。</p>
+          <p>用 libevent 写的 TCP 聊天服务器，支持房间消息和私信，处理多线程连接分发与慢客户端积压。</p>
         </div>
         <ul class="project-highlight-list">
-          <li>1 个 Acceptor + N 个 Worker，socketpair 轮询分发 fd</li>
-          <li>line-delimited JSON、房间 / 私信与 per-connection 背压</li>
+          <li>一个线程接受连接，多个 Worker 分别处理读写</li>
+          <li>按行传输 JSON，限制每个连接的发送缓冲</li>
         </ul>
         <div class="project-card-footer"><span>C++</span><span>libevent</span><span>Reactor</span><span>Backpressure</span><b aria-label="查看项目">↗</b></div>
       </a>
@@ -135,26 +135,26 @@ header: false
           <span class="project-number mono">04</span>
         </div>
         <div class="project-card-copy">
-          <p class="project-type mono">AUTHORITATIVE SERVER</p>
+          <p class="project-type mono">动作游戏同步</p>
           <h3>Fighting Netcode</h3>
-          <p>C++20 实时动作游戏同步 Demo，以 60Hz 服务端权威模拟串起输入、预测、校正和一致性验证。</p>
+          <p>C++20 动作游戏同步 Demo，客户端先响应输入，再根据服务器状态修正预测。</p>
         </div>
         <ul class="project-highlight-list">
-          <li>UDP 每包携带最近 K 帧输入，降低丢包导致的缺输入</li>
-          <li>本地预测、rollback / replay 与量化 state hash 验证收敛</li>
+          <li>服务器以 60Hz 推进模拟，UDP 重复携带近期输入</li>
+          <li>客户端回滚并重放输入，用状态哈希检查一致性</li>
         </ul>
         <div class="project-card-footer"><span>C++20</span><span>UDP</span><span>Rollback</span><span>State Hash</span><b aria-label="查看项目">↗</b></div>
       </a>
       <a class="project-card reveal" href="/projects/#screw-metrology">
         <div class="project-card-top"><span class="project-number mono">05</span></div>
         <div class="project-card-copy">
-          <p class="project-type mono">VISION METROLOGY</p>
+          <p class="project-type mono">图像尺寸测量</p>
           <h3>ScrewMetrology</h3>
-          <p>C++17 / OpenCV 螺钉定位与几何尺寸检测，从传统分割和工件坐标系到亚像素测量与公差判定。</p>
+          <p>用 OpenCV 定位离线图片中的螺钉，测量长度、头宽和杆宽。</p>
         </div>
         <ul class="project-highlight-list">
-          <li>Otsu / Lab 分割、PCA 主轴与头杆尺寸剖面</li>
-          <li>逐项亚像素优选、适用尺度与可解释的未判定原因</li>
+          <li>分割工件轮廓，确定主轴和测量方向</li>
+          <li>亚像素边缘测量，输出叠加图、尺寸与公差结果</li>
         </ul>
         <div class="project-card-footer"><span>C++17</span><span>OpenCV</span><span>Subpixel</span><span>CTest</span><b aria-label="查看项目">↗</b></div>
       </a>
@@ -169,36 +169,36 @@ header: false
     <div class="section-shell">
       <div class="section-heading reveal">
         <div>
-          <p class="section-index mono">02 / ENGINEERING NOTES</p>
+          <p class="section-index mono">02 / 笔记</p>
           <h2 id="writing-title">技术文章</h2>
         </div>
-        <p>记录选型、实现和调试中真正有复用价值的部分。</p>
+        <p>学习笔记、项目记录，以及实现和调试时遇到的问题。</p>
       </div>
 
       <div class="writing-list">
         <a class="writing-item reveal" href="/notes/ai模型开发/开发进度记录/">
           <span class="writing-number mono">01</span>
-          <div><p>RAG / AGENT</p><h3>RAG Gateway Stack：从入库到可追溯回答</h3></div>
+          <div><p>知识库问答</p><h3>RAG Gateway Stack：文档导入、问答与引用</h3></div>
           <time datetime="2026-10-03">2026.10</time><b>↗</b>
         </a>
         <a class="writing-item reveal" href="/notes/linux高性能服务器编程/1-libevent/">
           <span class="writing-number mono">02</span>
-          <div><p>LINUX SERVER</p><h3>libevent 服务端入门与 Reactor 模型</h3></div>
+          <div><p>Linux 服务器</p><h3>libevent 服务端入门与 Reactor 模型</h3></div>
           <time datetime="2026-05-05">2026.05</time><b>↗</b>
         </a>
         <a class="writing-item reveal" href="/notes/liunx-c-工程化/5-onnx模型导出与部署优化/">
           <span class="writing-number mono">03</span>
-          <div><p>MODEL DEPLOYMENT</p><h3>PyTorch 模型导出 ONNX 与部署优化</h3></div>
+          <div><p>模型部署</p><h3>PyTorch 模型导出 ONNX 与部署优化</h3></div>
           <time datetime="2026-07-10">2026.07</time><b>↗</b>
         </a>
         <a class="writing-item reveal" href="/notes/实时竞技游戏开发/fighting-netcode-项目知识笔记/">
           <span class="writing-number mono">04</span>
-          <div><p>REAL-TIME SYSTEM</p><h3>Fighting Netcode 项目知识笔记</h3></div>
+          <div><p>游戏同步</p><h3>Fighting Netcode 项目知识笔记</h3></div>
           <time datetime="2026-05-04">2026.05</time><b>↗</b>
         </a>
         <a class="writing-item reveal" href="/notes/liunx-c-工程化/12-opencv实战导读/">
           <span class="writing-number mono">05</span>
-          <div><p>OPENCV / METROLOGY</p><h3>OpenCV 实战导读：从图像到螺钉测量结果</h3></div>
+          <div><p>OpenCV 测量</p><h3>OpenCV 实战导读：从图像到螺钉测量结果</h3></div>
           <time datetime="2026-10-03">2026.10</time><b>↗</b>
         </a>
       </div>
@@ -212,14 +212,14 @@ header: false
   <section class="home-section about-section section-shell" id="about" aria-labelledby="about-title">
     <div class="about-layout reveal">
       <div>
-        <p class="section-index mono">03 / ABOUT</p>
+        <p class="section-index mono">03 / 关于</p>
         <h2 id="about-title">关于我</h2>
       </div>
       <div class="about-copy">
-        <p class="about-lead">我喜欢把“能跑”继续做到“可靠、可观测、可维护”。</p>
-        <p>目前的工作重心是 AI 应用后端、C++ 网络服务和视觉模型部署。这里放项目复盘，也放每次搞清楚的原理与工程细节。</p>
+        <p class="about-lead">最近在做 C++ 服务端、视觉模型部署和知识库问答。</p>
+        <p>这里放项目代码的实现记录，也记下学习过程中遇到的问题和解决办法。</p>
         <div class="capability-list">
-          <span>RAG &amp; Agent</span><span>C++ Backend</span><span>Computer Vision</span><span>Linux Systems</span>
+          <span>RAG 与 Agent</span><span>C++ 后端</span><span>计算机视觉</span><span>Linux</span>
         </div>
         <div class="about-links">
           <a class="portfolio-button primary" href="/about/">了解更多</a>
@@ -231,8 +231,8 @@ header: false
 
   <section class="home-cta">
     <div class="section-shell reveal">
-      <p class="mono">LET'S BUILD SOMETHING RELIABLE.</p>
-      <h2>有想法，就把它变成工程。</h2>
+      <p class="mono">代码仓库</p>
+      <h2>项目代码在 GitHub</h2>
       <a href="https://github.com/ChutianDuan" target="_blank" rel="noreferrer">GitHub <span>↗</span></a>
     </div>
   </section>

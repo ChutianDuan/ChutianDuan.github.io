@@ -4,8 +4,8 @@
 
 # Site
 title: 无名
-subtitle: 'AI Application & C++ Vision Deployment Engineer'
-description: 'Personal portfolio and technical blog for AI application, C++ backend, and computer vision deployment projects.'
+subtitle: '项目与技术笔记'
+description: '无名的个人技术笔记，记录 C++、计算机视觉和 AI 应用项目的实现与调试。'
 keywords:
   - AI Application
   - C++ Backend

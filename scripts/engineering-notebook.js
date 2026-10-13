@@ -5,43 +5,43 @@ const SERIES = [
     key: '现代C++实践',
     label: '现代 C++ 实践',
     anchor: 'modern-cpp',
-    description: '聚焦现代 C++ 语言特性与工程实践，提升代码质量与可维护性。'
+    description: '对象生命周期、移动语义、智能指针、模板与并发队列的学习笔记。'
   },
   {
     key: '高性能C++并行编程',
     label: '高性能 C++ 并行编程',
     anchor: 'parallel-cpp',
-    description: '系统讲解并发与并行编程模型，打造高性能、多核友好的 C++ 程序。'
+    description: '多线程、原子操作、内存序、访存优化与性能测试。'
   },
   {
     key: 'Linux高性能服务器编程',
     label: 'Linux 服务器编程',
     anchor: 'linux-server',
-    description: '深入 Linux 系统调用与 I/O 模型，掌握高并发服务器开发核心技术。'
+    description: 'Socket、TCP、epoll、libevent，以及线程池和服务器调试。'
   },
   {
     key: 'Liunx & c++工程化',
     label: 'Linux 与 C++ 工程化',
     anchor: 'cpp-engineering',
-    description: '构建稳定可靠的 C++ 工程体系，覆盖构建、测试、部署与工具链。'
+    description: 'CMake 构建、测试与调试、Linux 部署、模型推理和 OpenCV 图像测量。'
   },
   {
     key: 'AI模型开发',
     label: 'AI 模型开发',
     anchor: 'ai-model',
-    description: '从数据处理到模型训练、推理与 RAG 系统，记录 AI 应用开发实践。'
+    description: '数据处理、Embedding、模型训练与部署，以及 RAG / Agent 项目记录。'
   },
   {
     key: '网络服务实战',
     label: '网络服务实战',
     anchor: 'network-services',
-    description: '围绕网络协议、异步接口与服务架构，整理可复用的工程方法。'
+    description: 'HTTP 协议、反向代理、异步接口与 SSE 流式传输。'
   },
   {
     key: '实时竞技游戏开发',
     label: '实时竞技游戏开发',
     anchor: 'fighting-netcode',
-    description: '从架构、同步到反作弊，构建稳定流畅的实时对战体验。'
+    description: '游戏模拟、UDP 输入传输、客户端预测、回滚校正与渲染。'
   }
 ];
 
@@ -329,7 +329,7 @@ function knowledgeMap(catalog) {
     <header class="engineering-page-header">
       <div>
         <h1>知识地图</h1>
-        <p>围绕 AI 应用、C++ 后端与系统工程整理的学习路径。</p>
+        <p>笔记按七个专题整理，每个专题附有阅读顺序和相关文章。</p>
         ${statistics(catalog)}
       </div>
       <nav aria-label="知识地图辅助导航">
@@ -364,7 +364,7 @@ function articleIndex(catalog) {
     <header class="engineering-page-header">
       <div>
         <h1>全部文章</h1>
-        <p>搜索具体问题，或按专题查找文章。</p>
+        <p>按专题列出笔记，也可以搜索标题和正文。</p>
         ${statistics(catalog)}
       </div>
       <nav aria-label="文章索引辅助导航">

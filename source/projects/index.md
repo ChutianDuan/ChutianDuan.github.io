@@ -14,22 +14,21 @@ header: false
 <section class="portfolio-page">
   <section class="portfolio-section">
     <div class="portfolio-section-heading">
-      <h1>核心项目</h1>
-      <p>围绕 AI 应用后端、视觉部署与测量、C++ 网络服务和权威服务器同步展开工程实践。</p>
+      <h1>项目</h1>
+      <p>这里放项目介绍、代码仓库和相关笔记。</p>
     </div>
 
     <article id="rag-agent-platform" class="portfolio-project">
       <div>
         <p class="portfolio-project-index">01</p>
         <h2>RAG Gateway Stack</h2>
-        <p>面向全局文档知识库问答的分层式 RAG / Agent 后端。C++ Drogon Gateway 统一承载外部 API，FastAPI、Celery、MySQL、Redis、LanceDB 与 OpenAI-compatible LLM / vLLM 组成内部业务链路。</p>
+        <p>导入文件和网页后，可以检索文档、提问，并查看回答引用和工具调用记录。C++ 网关负责对外接口，Python 服务处理文档、检索和回答生成。</p>
         <ul class="portfolio-link-list">
-          <li>文档链路：文件上传与网页正文导入，共用解析、切片、向量化和 LanceDB 索引流程；Celery 任务阶段可查询。</li>
-          <li>检索链路：LanceDB 召回 chunk id，MySQL 批量回表正文，再经 CrossEncoder rerank 组装 Prompt 与 citations。</li>
-          <li>Agent 链路：只读工具循环结合用户记忆、会话摘要与近期消息；工作台展示执行流程、引用与 Agent Trace。</li>
-          <li>流式传输：普通 RAG 和 Agent 支持 Last-Event-ID 续传，回答与引用落库后再发送 done。</li>
+          <li>文件和网页共用文档解析与索引流程，Celery 后台处理任务，前端可以查看进度。</li>
+          <li>LanceDB 检索相关片段，MySQL 提供正文，CrossEncoder 对结果重排后交给模型回答。</li>
+          <li>Agent 结合用户记忆、会话摘要和近期消息调用只读工具，工作台展示调用记录与引用。</li>
+          <li>SSE 逐步返回回答，支持断线续传；回答与引用保存到数据库，方便之后回查。</li>
         </ul>
-        <p class="portfolio-metric-note">面向本地开发与工程验证；SSE 续传依赖进程内状态，尚未提供多租户隔离和逐句引用映射。内容核对：2026-10-03。</p>
         <div class="portfolio-tags">
           <span>C++17</span><span>Drogon</span><span>FastAPI</span><span>Celery</span><span>MySQL</span><span>Redis</span><span>LanceDB</span><span>React</span><span>Agent</span>
         </div>
@@ -41,7 +40,7 @@ header: false
       </div>
       <figure class="portfolio-figure">
         <img src="/assets/rag/architecture-v2.svg" alt="RAG Gateway Stack 分层架构图">
-        <figcaption>C++ 网关、FastAPI 业务层、异步任务、全局检索与 Agent 观测链路</figcaption>
+        <figcaption>文档经过网关和后台任务入库，检索结果用于问答与 Agent 工具调用</figcaption>
       </figure>
     </article>
 
@@ -49,20 +48,18 @@ header: false
       <div>
         <p class="portfolio-project-index">02</p>
         <h2>VisionTrack / YOLO Tracking</h2>
-        <p>面向 BDD100K 道路场景的 C++ 检测跟踪服务。ONNX Runtime / OpenVINO 提供 CPU 推理，Drogon 统一交付图片、上传视频和多路实时流接口。</p>
+        <p>用 C++ 处理道路图片、上传视频和多路实时流中的目标检测与跟踪。模型针对 BDD100K 道路场景，使用 ONNX Runtime / OpenVINO 在 CPU 上推理，Drogon 提供服务接口。</p>
         <ul class="portfolio-link-list">
-          <li>资源调度：多路实时流共享推理调度器；上传视频进入有界任务池，仍等待完整 JSON 响应。</li>
-          <li>高低分辨率协同：高分辨率模型维护权威状态，低分辨率模型更频繁地进行轻量刷新。</li>
-          <li>质量感知调度：动态 stride 根据光流质量、尺度 / 速度突变、重复轨迹和类别冲突触发 low / high 紧急刷新。</li>
-          <li>时间连续性：LK 光流、ByteTrack 与异步历史回放校正维持轨迹；实时流通过 SSE 持续输出。</li>
-          <li>运行观测：流状态查询、最多 256 条 SSE 事件补发、健康入口与 Prometheus 调度 / 队列指标。</li>
+          <li>多路实时流共享推理调度器，上传视频使用有容量上限的任务池处理。</li>
+          <li>高低分辨率模型配合检测，根据光流质量、目标尺度和速度变化调整检测间隔。</li>
+          <li>LK 光流和 ByteTrack 跟踪目标，通过回放历史帧校正轨迹。</li>
+          <li>SSE 持续输出实时结果并缓存近期事件；提供流状态查询和 Prometheus 调度、队列指标。</li>
         </ul>
         <div class="portfolio-metrics" aria-label="2026-07-10 YOLO 历史三场景伪标签回归指标">
-          <span>历史回归 F1 0.7726</span>
-          <span>FP -63.2%</span>
+          <span>伪标签回归 F1 0.7726</span>
+          <span>误检数降低 63.2%</span>
         </div>
-        <p class="portfolio-metric-note">2026-07-10 三场景回归：IoU=0.5，以 full high-res 结果为伪标签；上述指标不代表人工标注精度或当前多路版本吞吐。</p>
-        <p class="portfolio-metric-note">上传任务与实时流状态均不持久化，SSE 仅支持有限内存缓存补发；Web 工作台尚未接入 High/Low 和实时流管理。内容核对：2026-10-03。</p>
+        <p class="portfolio-metric-note">2026-07-10 三场景伪标签回归：以全高分辨率推理结果为参照，IoU=0.5。</p>
         <div class="portfolio-tags">
           <span>YOLO26</span><span>ONNX Runtime</span><span>OpenVINO</span><span>OpenCV</span><span>ByteTrack</span><span>LK Flow</span><span>Drogon</span><span>SSE</span><span>Prometheus</span><span>Linux CPU</span>
         </div>
@@ -75,7 +72,7 @@ header: false
       </div>
       <figure class="portfolio-figure">
         <img src="/assets/yolo/tracking-flow.svg" alt="YOLO 检测跟踪服务流程图">
-        <figcaption>共享推理调度、高低分辨率检测与跟踪；上传返回 JSON，实时流输出 SSE</figcaption>
+        <figcaption>多路视频共用推理调度，检测与跟踪结果通过 JSON 或 SSE 返回</figcaption>
       </figure>
     </article>
 
@@ -83,12 +80,12 @@ header: false
       <div>
         <p class="portfolio-project-index">03</p>
         <h2>Libevent Chat Server</h2>
-        <p>基于 libevent 的聊天服务器，采用 1 个 Acceptor 与 N 个 Worker 的线程模型。Acceptor 只负责监听和接受 TCP 连接，并通过 UNIX socketpair 把 fd 分发给 Worker；每个 Worker 拥有独立 event_base，负责自己名下连接的 read/write callback、业务解析和连接生命周期。</p>
+        <p>用 libevent 写的 TCP 聊天服务器，支持房间消息和私信，处理多线程连接分发与慢客户端积压。一个 Acceptor 接受连接，再把连接分给多个 Worker 处理。</p>
         <ul class="portfolio-link-list">
-          <li>协议层：line-delimited JSON，一行一条消息，支持 nick、join、leave、msg、pm 和错误回执。</li>
-          <li>并发模型：全局用户表、房间表、订阅表和发送队列受互斥锁保护；广播时先在锁内拍快照，再锁外写 bufferevent。</li>
-          <li>背压控制：根据输出缓冲长度切换直接写、入队等待、低水位续写和慢连接截断，避免单个慢客户端拖垮 Worker。</li>
-          <li>工程目标：把非阻塞 I/O、Reactor、多线程 fd 分发、连接清理和可测试 C++ 服务端结构串成一个最小闭环。</li>
+          <li>通过 socketpair 分发连接，每个 Worker 使用独立的 event_base 处理读写和连接清理。</li>
+          <li>一行 JSON 对应一条消息，支持设置昵称、加入或离开房间、广播和私信。</li>
+          <li>共享用户和房间数据使用互斥锁，广播时先取快照，再释放锁发送消息。</li>
+          <li>发送缓冲超过上限时暂停写入并排队，缓冲回落后继续发送，持续积压的慢连接会被断开。</li>
         </ul>
         <div class="portfolio-tags">
           <span>C++</span><span>libevent</span><span>TCP</span><span>Reactor</span><span>socketpair</span><span>JSON</span><span>Backpressure</span><span>CMake</span>
@@ -105,12 +102,12 @@ header: false
       <div>
         <p class="portfolio-project-index">04</p>
         <h2>Fighting Netcode</h2>
-        <p>基于 C++20 的实时动作游戏网络同步 Demo。项目核心不是完整游戏内容，而是把服务端权威、客户端预测、状态回滚、UDP 输入冗余和确定性状态校验做成可运行、可测试、可复盘的最小系统。</p>
+        <p>C++20 动作游戏同步 Demo，客户端先响应输入，再根据服务器状态修正预测。用它查看网络延迟、丢包和预测偏差怎样影响游戏状态。</p>
         <ul class="portfolio-link-list">
-          <li>权威服务端：<code>lab_server</code> 统一分配 player slot，以 60Hz tick 推进 <code>World::Step</code>，并周期性广播 Ack / State。</li>
-          <li>客户端预测：<code>lab_client</code> 本地先响应输入，收到权威 State 后从快照恢复，并重放本地输入历史追到当前 tick。</li>
-          <li>网络协议：UDP 包包含 magic、version、type、Input、Start、Ack 和 State，客户端每包携带最近 K 帧输入以降低丢包影响。</li>
-          <li>一致性验证：用网络量化后的 state hash 检测分叉，配合 <code>lab_tests</code> 与 <code>lab_stress</code> 覆盖编解码、延迟 State、预测偏差和大量回滚。</li>
+          <li>服务器以 60Hz 推进模拟，并定期广播输入确认和游戏状态。</li>
+          <li>客户端收到服务器状态后恢复快照，重放本地输入，追到当前逻辑帧。</li>
+          <li>使用 UDP 传输，每个包重复携带最近几帧输入，减少丢包带来的输入缺失。</li>
+          <li>用量化后的状态哈希检查客户端与服务器是否一致，测试覆盖编解码、延迟状态和大量回滚。</li>
         </ul>
         <div class="portfolio-tags">
           <span>C++20</span><span>UDP</span><span>libevent</span><span>SDL2</span><span>Rollback</span><span>Prediction</span><span>State Hash</span><span>CTest</span>
@@ -123,25 +120,24 @@ header: false
       </div>
       <figure class="portfolio-figure">
         <img src="/assets/fighting/authoritative-server.png" alt="Fighting 权威服务器流程图">
-        <figcaption>权威服务器推进、客户端输入、Ack / State 广播与回滚重放</figcaption>
+        <figcaption>服务器推进模拟，客户端发送输入，并根据收到的状态回滚和重放</figcaption>
       </figure>
     </article>
     <article id="screw-metrology" class="portfolio-project">
       <div>
         <p class="portfolio-project-index">05</p>
         <h2>ScrewMetrology</h2>
-        <p>基于 C++17 / OpenCV 的离线螺钉定位与几何尺寸检测系统。从传统图像分割建立工件坐标系，再通过投影、头杆剖面和亚像素边缘得到尺寸，在尺度与配方有效时给出可解释的公差结论。</p>
+        <p>用 OpenCV 定位离线图片中的螺钉，测量长度、头宽和杆宽。使用 C++17 实现，结果包括工件轮廓、测量叠加图和尺寸记录。</p>
         <ul class="portfolio-link-list">
-          <li>分割与筛选：Otsu、自适应阈值、Lab、形态学、连通域与外轮廓，检查木纹误检、碎裂及粘连。</li>
-          <li>定位与测量：旋转框、PCA、fitLine 主轴对比；局部坐标投影与头杆剖面定义总长、头宽和杆宽。</li>
-          <li>边缘细化：在原始灰度图沿法线采样，使用梯度峰拟合；细化失败保留像素结果，不可测字段保持 null。</li>
-          <li>检验闭环：可选两点尺度与公差配方；几何或尺度不适用时保持未判定，掩膜、叠加图、JSON 和报告共同解释结果。</li>
+          <li>用阈值、Lab 颜色和形态学处理分割工件，筛选轮廓并检查粘连、碎裂与背景误检。</li>
+          <li>比较旋转框、PCA 和拟合直线得到的主轴，沿工件方向测量长度、头宽和杆宽。</li>
+          <li>在原始灰度图上采样边缘，通过梯度峰拟合细化尺寸，保留像素与亚像素测量结果。</li>
+          <li>按配置的尺度和公差配方进行判定，输出掩膜、叠加图、JSON 与报告。</li>
         </ul>
         <div class="portfolio-metrics" aria-label="2026-10-03 MVTec 冻结配置定位评价">
           <span>检出率 84.55%</span><span>精确率 83.31%</span>
         </div>
-        <p class="portfolio-metric-note">2026-10-03 冻结配置：384 张 MVTec 图像，旋转框 IoU≥0.5 降序一对一匹配；调参代表样例包含在全量数据中，不属于独立测试集成绩。</p>
-        <p class="portfolio-metric-note">真实数据未验证实物毫米精度；合成图用于尺寸与重复性验证。当前不包含相机标定、透视校正或手眼标定。内容核对版本：6782dfd。</p>
+        <p class="portfolio-metric-note">2026-10-03 固定配置评估：384 张 MVTec 图像（含调参样例），按旋转框 IoU≥0.5 一对一匹配。</p>
         <div class="portfolio-tags">
           <span>C++17</span><span>OpenCV</span><span>PCA</span><span>Subpixel</span><span>Metrology</span><span>CMake</span><span>CTest</span>
         </div>
@@ -153,7 +149,7 @@ header: false
       </div>
       <figure class="portfolio-figure">
         <img src="/assets/screw-metrology/measurement-flow.svg" alt="ScrewMetrology 从分割、定位到亚像素测量与公差判定的流程图" loading="lazy">
-        <figcaption>先验证工件轮廓与测量方向，再解释尺寸及判定前提</figcaption>
+        <figcaption>分割螺钉轮廓、确定测量方向，再输出尺寸与公差结果</figcaption>
       </figure>
     </article>
   </section>

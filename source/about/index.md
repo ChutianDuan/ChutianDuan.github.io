@@ -15,22 +15,22 @@ header: false
   <section class="portfolio-section">
     <div class="portfolio-section-heading">
       <h1>关于</h1>
-      <p>嗨，我是无名，当前聚焦 AI 应用后端、C++ 网络服务和计算机视觉部署。</p>
+      <p>我是无名，最近在做 C++ 服务端、视觉模型部署和知识库问答。这里记录项目实现和学习笔记。</p>
     </div>
 
     <div class="portfolio-focus-grid">
-      <div><h2>AI 应用</h2><p>全局知识库检索、异步任务、循环 Agent、三层记忆、citations 和 Trace。</p></div>
-      <div><h2>C++ 后端</h2><p>Drogon、libevent、TCP、Reactor、CMake 和测试。</p></div>
-      <div><h2>视觉部署</h2><p>高低分辨率模型、动态 stride、LK 光流、ByteTrack 与 ONNX Runtime / OpenVINO 部署。</p></div>
-      <div><h2>工程习惯</h2><p>把学习笔记落到可运行项目、性能记录和复盘文章里。</p></div>
+      <div><h2>AI 应用</h2><p>做文档检索和问答，处理后台任务、流式回答，以及 Agent 的工具调用和引用记录。</p></div>
+      <div><h2>C++ 后端</h2><p>用 Drogon 和 libevent 写服务，处理 TCP 连接、线程间分发和发送缓冲。</p></div>
+      <div><h2>计算机视觉</h2><p>把检测模型部署到 C++ 服务里，做视频目标跟踪，也用 OpenCV 测量图片中的螺钉。</p></div>
+      <div><h2>笔记</h2><p>记下实现步骤、测试结果和调试过程，方便回头查代码和问题原因。</p></div>
     </div>
 
     <div class="portfolio-actions">
-      <a class="portfolio-button primary" href="/projects/">核心项目</a>
+      <a class="portfolio-button primary" href="/projects/">查看项目</a>
       <a class="portfolio-button" href="/archives/">技术文章</a>
       <a class="portfolio-button" href="/resume/">简历</a>
       <a class="portfolio-button" href="https://github.com/ChutianDuan">GitHub</a>
-      <a class="portfolio-button" href="mailto:3383006954@qq.com">Email</a>
+      <a class="portfolio-button" href="mailto:3383006954@qq.com">邮件</a>
     </div>
   </section>
 </section>
