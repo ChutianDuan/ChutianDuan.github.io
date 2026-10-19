@@ -18,41 +18,15 @@ header: false
       <p>这里放项目介绍、代码仓库和相关笔记。</p>
     </div>
 
-    <article id="rag-agent-platform" class="portfolio-project">
-      <div>
-        <p class="portfolio-project-index">01</p>
-        <h2>RAG Gateway Stack</h2>
-        <p>导入文件和网页后，可以检索文档、提问，并查看回答引用和工具调用记录。C++ 网关负责对外接口，Python 服务处理文档、检索和回答生成。</p>
-        <ul class="portfolio-link-list">
-          <li>文件和网页共用文档解析与索引流程，Celery 后台处理任务，前端可以查看进度。</li>
-          <li>LanceDB 检索相关片段，MySQL 提供正文，CrossEncoder 对结果重排后交给模型回答。</li>
-          <li>Agent 结合用户记忆、会话摘要和近期消息调用只读工具，工作台展示调用记录与引用。</li>
-          <li>SSE 逐步返回回答，支持断线续传；回答与引用保存到数据库，方便之后回查。</li>
-        </ul>
-        <div class="portfolio-tags">
-          <span>C++17</span><span>Drogon</span><span>FastAPI</span><span>Celery</span><span>MySQL</span><span>Redis</span><span>LanceDB</span><span>React</span><span>Agent</span>
-        </div>
-        <div class="portfolio-actions compact">
-          <a class="portfolio-button primary" href="https://github.com/ChutianDuan/Repo">GitHub 仓库</a>
-          <a class="portfolio-button" href="/notes/ai模型开发/开发进度记录/">项目复盘</a>
-          <a class="portfolio-button" href="/notes/ai模型开发/deep-research-report/">运行与验收</a>
-        </div>
-      </div>
-      <figure class="portfolio-figure">
-        <img src="/assets/rag/architecture-v2.svg" alt="RAG Gateway Stack 分层架构图">
-        <figcaption>文档经过网关和后台任务入库，检索结果用于问答与 Agent 工具调用</figcaption>
-      </figure>
-    </article>
-
     <article id="yolo-tracking-service" class="portfolio-project">
       <div>
-        <p class="portfolio-project-index">02</p>
+        <p class="portfolio-project-index">01</p>
         <h2>VisionTrack / YOLO Tracking</h2>
         <p>将 YOLO26 道路目标检测与 ByteTrack 跟踪部署到视美泰 RK3588。用 PTQ 混合精度缩小模型，通过 DMA-BUF 在采集、硬件解码、图像预处理和 NPU 之间共享缓冲，完成摄像头到轨迹输出的 C++ 流水线。</p>
         <ul class="portfolio-link-list">
           <li><strong>PTQ INT8 + 部分 FP16：</strong>先建立 INT8 基线，再按逐层分析将敏感位置保留为 FP16，使用 RKNN-Toolkit2 导出固定混合精度模型。</li>
           <li><strong>DMA-BUF 零拷贝路径：</strong>YUYV 采集直接交给 RGA / RKNN，稳态应用层上传为 0 字节；MJPEG 保留一次压缩包复制，解码后由 MPP / RGA / RKNN 共享图像缓冲。帧租约与 RAII 管理缓冲归还和资源释放。</li>
-          <li><strong>RK3588 部署：</strong>MPP 硬件解码、RGA 颜色转换与 letterbox，三个独立 RKNN Context 分别绑定 NPU Core0 / 1 / 2，对单路视频的不同帧并发推理。</li>
+          <li><strong>3 个 Worker 并发：</strong>启动时初始化三个推理 Worker，各自持有独立的 RKNN Context、RGA 预处理目标和输入输出缓冲，分别绑定 NPU Core0 / 1 / 2，并发处理单路视频的不同帧。</li>
           <li>采集、推理与输出使用有界队列，等待槽保留最新帧；ByteTrack 校正轨迹，按序号和时间水位拒绝迟到结果，JSONL 记录检测、轨迹和运行资源。</li>
         </ul>
         <div class="portfolio-metrics" aria-label="RK3588 混合精度模型运行指标">
@@ -77,11 +51,20 @@ header: false
           </a>
           <figcaption>视美泰 RK3588 · ARM64 Linux 部署平台</figcaption>
         </figure>
-        <ol class="yolo-pipeline" aria-label="RK3588 摄像头处理流程">
-          <li><span>01 / 采集与解码</span><strong>V4L2 / MPP</strong><small>YUYV 直通 / MJPEG 硬件解码</small></li>
-          <li><span>02 / 共享缓冲与预处理</span><strong>DMA-BUF → RGA</strong><small>颜色转换 · RGB 800×608 · letterbox</small></li>
-          <li><span>03 / 推理与跟踪</span><strong>RKNN → ByteTrack</strong><small>INT8 + 部分 FP16 · 三核分帧并发</small></li>
-        </ol>
+        <figure class="yolo-zero-copy" aria-labelledby="yolo-zero-copy-title">
+          <h3 id="yolo-zero-copy-title">零拷贝与三 Worker 并发</h3>
+          <div class="yolo-buffer-input">
+            <strong>YUYV 采集</strong><span aria-hidden="true">→</span><strong>DMA-BUF</strong>
+          </div>
+          <p class="yolo-flow-dispatch"><span aria-hidden="true">↓</span> 分发不同帧 · 3 Worker 并发</p>
+          <ol class="yolo-worker-grid" aria-label="三个并行推理 Worker">
+            <li><strong>Worker 0</strong><span class="yolo-flow-arrow" aria-hidden="true">↓</span><span>RGA</span><span class="yolo-flow-arrow" aria-hidden="true">↓</span><span>RKNN</span><small>Context 0<br>NPU Core0</small></li>
+            <li><strong>Worker 1</strong><span class="yolo-flow-arrow" aria-hidden="true">↓</span><span>RGA</span><span class="yolo-flow-arrow" aria-hidden="true">↓</span><span>RKNN</span><small>Context 1<br>NPU Core1</small></li>
+            <li><strong>Worker 2</strong><span class="yolo-flow-arrow" aria-hidden="true">↓</span><span>RGA</span><span class="yolo-flow-arrow" aria-hidden="true">↓</span><span>RKNN</span><small>Context 2<br>NPU Core2</small></li>
+          </ol>
+          <div class="yolo-buffer-release"><span aria-hidden="true">↓</span><strong>释放本帧租约 → 缓冲归还池中复用</strong></div>
+          <figcaption>RGA 读完后归还采集帧；RGB 目标帧在 RKNN 推理与后处理结束后归还。三个 Worker 各自复用独立的预处理目标与输入输出缓冲。</figcaption>
+        </figure>
         <div class="yolo-calibration-tool">
           <h3>摄像头标定板</h3>
           <p>可调整内角点数量、全屏显示、锁定方格大小并导出 SVG。下载单个 HTML 即可离线使用。</p>
@@ -91,6 +74,32 @@ header: false
           </div>
         </div>
       </div>
+    </article>
+
+    <article id="rag-agent-platform" class="portfolio-project">
+      <div>
+        <p class="portfolio-project-index">02</p>
+        <h2>RAG Gateway Stack</h2>
+        <p>导入文件和网页后，可以检索文档、提问，并查看回答引用和工具调用记录。C++ 网关负责对外接口，Python 服务处理文档、检索和回答生成。</p>
+        <ul class="portfolio-link-list">
+          <li>文件和网页共用文档解析与索引流程，Celery 后台处理任务，前端可以查看进度。</li>
+          <li>LanceDB 检索相关片段，MySQL 提供正文，CrossEncoder 对结果重排后交给模型回答。</li>
+          <li>Agent 结合用户记忆、会话摘要和近期消息调用只读工具，工作台展示调用记录与引用。</li>
+          <li>SSE 逐步返回回答，支持断线续传；回答与引用保存到数据库，方便之后回查。</li>
+        </ul>
+        <div class="portfolio-tags">
+          <span>C++17</span><span>Drogon</span><span>FastAPI</span><span>Celery</span><span>MySQL</span><span>Redis</span><span>LanceDB</span><span>React</span><span>Agent</span>
+        </div>
+        <div class="portfolio-actions compact">
+          <a class="portfolio-button primary" href="https://github.com/ChutianDuan/Repo">GitHub 仓库</a>
+          <a class="portfolio-button" href="/notes/ai模型开发/开发进度记录/">项目复盘</a>
+          <a class="portfolio-button" href="/notes/ai模型开发/deep-research-report/">运行与验收</a>
+        </div>
+      </div>
+      <figure class="portfolio-figure">
+        <img src="/assets/rag/architecture-v2.svg" alt="RAG Gateway Stack 分层架构图">
+        <figcaption>文档经过网关和后台任务入库，检索结果用于问答与 Agent 工具调用</figcaption>
+      </figure>
     </article>
 
     <article id="libevent-chat-server" class="portfolio-project">
