@@ -105,13 +105,13 @@ header: false
         <div class="project-card-copy">
           <p class="project-type mono">目标检测与跟踪</p>
           <h3>VisionTrack / YOLO Tracking</h3>
-          <p>用 C++ 处理道路图片、上传视频和多路实时流中的目标检测与跟踪。</p>
+          <p>将 YOLO 检测与跟踪部署到 RK3588，结合混合精度量化和设备间共享缓冲处理摄像头视频。</p>
         </div>
         <ul class="project-highlight-list">
-          <li>多路视频共享推理，高低分辨率模型配合检测</li>
-          <li>LK 光流与 ByteTrack 跟踪，SSE 输出实时结果</li>
+          <li>PTQ INT8 + 部分 FP16，缩小模型与运行内存占用</li>
+          <li>DMA-BUF 零拷贝路径，MPP / RGA / NPU 协同处理</li>
         </ul>
-        <div class="project-card-footer"><span>YOLO26</span><span>OpenVINO</span><span>ByteTrack</span><span>SSE</span><b aria-label="查看项目">↗</b></div>
+        <div class="project-card-footer"><span>RK3588</span><span>INT8 / FP16</span><span>DMA-BUF</span><span>RKNN</span><b aria-label="查看项目">↗</b></div>
       </a>
 
       <a class="project-card reveal" href="/projects/#libevent-chat-server">

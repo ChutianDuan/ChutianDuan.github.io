@@ -970,6 +970,49 @@ html.js .reveal.is-visible {
   margin-top: 8px;
 }
 
+.yolo-project-visual {
+  display: grid;
+  gap: 24px;
+  align-self: start;
+  min-width: 0;
+}
+
+.yolo-pipeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.yolo-pipeline li {
+  border-top: 1px solid var(--portfolio-line);
+  padding: 13px 0;
+}
+
+.yolo-pipeline span,
+.yolo-pipeline strong,
+.yolo-pipeline small {
+  display: block;
+}
+
+.yolo-pipeline span {
+  color: var(--portfolio-blue);
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 0.68rem;
+}
+
+.yolo-pipeline strong { font-size: 0.95rem; margin: 4px 0; }
+.yolo-pipeline small { color: var(--portfolio-muted); font-size: 0.72rem; }
+
+.yolo-calibration-tool {
+  border-top: 1px solid var(--portfolio-line);
+  padding-top: 20px;
+}
+
+.yolo-calibration-tool h3 { font-size: 1.1rem; margin-bottom: 8px; }
+.yolo-calibration-tool p { font-size: 0.82rem; }
+.yolo-calibration-tool .portfolio-actions { gap: 10px; }
+.yolo-calibration-tool .portfolio-button { font-size: 0.75rem; padding: 10px 14px; }
+
 .portfolio-table-wrap { overflow-x: auto; }
 
 .portfolio-table {
@@ -1049,6 +1092,8 @@ html.js .reveal.is-visible {
 .portfolio-link-card span { color: var(--portfolio-muted); display: block; line-height: 1.7; }
 
 @media (max-width: 1020px) {
+  #yolo-tracking-service { grid-template-columns: 1fr; }
+
   .home-hero {
     gap: 55px;
     grid-template-columns: 1fr;
@@ -1080,6 +1125,8 @@ html.js .reveal.is-visible {
   .hero-actions .portfolio-button { width: 100%; }
   #screw-metrology .portfolio-actions { align-items: stretch; flex-direction: column; }
   #screw-metrology .portfolio-button { width: 100%; }
+  #yolo-tracking-service .portfolio-actions { align-items: stretch; flex-direction: column; }
+  #yolo-tracking-service .portfolio-button { width: 100%; }
   .identity-line { line-height: 1.8; }
 
   .system-visual {

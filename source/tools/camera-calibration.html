@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>摄像头标定板</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2 2'%3E%3Cpath fill='white' d='M0 0h2v2H0z'/%3E%3Cpath d='M0 0h1v1H0zM1 1h1v1H1z'/%3E%3C/svg%3E">
+  <style>
+    :root { color-scheme: light; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif; color: #0b0e14; background: #fff; }
+    * { box-sizing: border-box; }
+    body { margin: 0; height: 100vh; height: 100dvh; min-height: 480px; display: flex; flex-direction: column; }
+    header { padding: 24px 28px 18px; border-bottom: 1px solid #dfe4ec; }
+    .heading, .actions, .settings { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .heading { justify-content: space-between; gap: 16px 24px; }
+    h1 { margin: 0; font-size: 23px; font-weight: 650; letter-spacing: -.5px; line-height: 1.35; }
+    .description { margin: 5px 0 0; font-size: 13px; color: #667085; line-height: 1.6; }
+    button, input { font: inherit; }
+    button { border: 1px solid #dfe4ec; border-radius: 0; background: #fff; color: #0b0e14; padding: 9px 14px; font-size: 13px; font-weight: 550; cursor: pointer; line-height: 1.4; }
+    button:hover { background: #f4f7fb; }
+    button.primary { color: #fff; background: #075cff; border-color: #075cff; }
+    button.primary:hover { background: #0048d8; }
+    :focus-visible { outline: 3px solid #91b5ff; outline-offset: 3px; }
+    .settings { margin-top: 19px; gap: 12px 20px; font-size: 13px; }
+    .field { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+    input[type="number"] { width: 68px; min-height: 34px; padding: 5px 8px; border: 1px solid #dfe4ec; border-radius: 0; color: #0b0e14; background: #fff; }
+    input[type="checkbox"] { width: 16px; height: 16px; margin: 0; accent-color: #075cff; }
+    .lock { cursor: pointer; }
+    .summary { color: #667085; font-variant-numeric: tabular-nums; }
+    main { flex: 1 1 auto; position: relative; min-height: 140px; overflow: hidden; background: #fff; }
+    #board { position: absolute; display: block; background: #fff; }
+    #empty { position: absolute; inset: 20px; display: grid; place-items: center; text-align: center; line-height: 1.8; font-size: 14px; color: #7b4313; }
+    [hidden] { display: none !important; }
+    footer { border-top: 1px solid #dfe4ec; padding: 12px 28px 16px; font-size: 12px; line-height: 1.7; color: #667085; }
+    footer p { margin: 0; }
+    #dimensions { font-variant-numeric: tabular-nums; color: #0b0e14; margin-bottom: 3px; }
+    kbd, code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 11px; }
+    .presenting { min-height: 0; }
+    .presenting header, .presenting footer { display: none; }
+    .presenting main { min-height: 0; cursor: none; }
+    @media (max-width: 600px) {
+      header { padding: 16px 16px 13px; }
+      h1 { font-size: 21px; }
+      .actions { gap: 8px; }
+      button { padding: 8px 12px; }
+      .settings { margin-top: 14px; gap: 10px 16px; }
+      .summary { flex-basis: 100%; }
+      footer { padding: 10px 16px 13px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="heading">
+      <div>
+        <h1>摄像头标定板</h1>
+        <p class="description">等大正方形棋盘，自动适配当前窗口。全屏后即可拍摄。</p>
+      </div>
+      <div class="actions">
+        <button id="download" type="button">导出 SVG</button>
+        <button id="present" class="primary" type="button">全屏标定</button>
+      </div>
+    </div>
+    <form class="settings" id="settings">
+      <label class="field" for="columns">内角点列数 <input id="columns" name="columns" type="number" min="2" max="30" step="1" value="9" required></label>
+      <label class="field" for="rows">内角点行数 <input id="rows" name="rows" type="number" min="2" max="30" step="1" value="6" required></label>
+      <label class="field lock" for="lock"><input id="lock" type="checkbox">锁定方格大小</label>
+      <span class="summary" id="summary">10 × 7 个方格 · 四周保留一格白边</span>
+    </form>
+  </header>
+  <main id="stage" aria-label="标定棋盘显示区域">
+    <svg id="board" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="9 列 6 行内角点的黑白标定棋盘" shape-rendering="crispEdges"></svg>
+    <div id="empty" role="status" hidden></div>
+  </main>
+  <footer>
+    <p id="dimensions" aria-live="polite"></p>
+    <p>先全屏，再用尺子实测方格边长；同一组标定保持棋盘尺寸不变，可勾选「锁定方格大小」。屏幕像素不能直接当作毫米。</p>
+    <p><kbd>F</kbd> 全屏标定 · <kbd>Esc</kbd> 或双击棋盘返回设置 · OpenCV 参数：<code id="pattern">patternSize = (9, 6)</code></p>
+  </footer>
+  <script>
+    'use strict';
+    const stage = document.getElementById('stage');
+    const board = document.getElementById('board');
+    const columnsInput = document.getElementById('columns');
+    const rowsInput = document.getElementById('rows');
+    const lockInput = document.getElementById('lock');
+    const empty = document.getElementById('empty');
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const state = { columns: 9, rows: 6, square: 0, lockedSize: null };
+    let renderRequest = 0;
+
+    function rectangle(x, y, width, height, fill) {
+      const rect = document.createElementNS(svgNS, 'rect');
+      for (const [key, value] of Object.entries({ x, y, width, height, fill })) {
+        rect.setAttribute(key, String(value));
+      }
+      return rect;
+    }
+
+    function buildPattern() {
+      const columns = state.columns + 1;
+      const rows = state.rows + 1;
+      board.setAttribute('viewBox', `0 0 ${columns + 2} ${rows + 2}`);
+      board.setAttribute('aria-label', `${state.columns} 列 ${state.rows} 行内角点的黑白标定棋盘`);
+      const title = document.createElementNS(svgNS, 'title');
+      title.textContent = `标定棋盘：${state.columns} × ${state.rows} 内角点，${columns} × ${rows} 方格`;
+      const fragment = document.createDocumentFragment();
+      fragment.append(title, rectangle(0, 0, columns + 2, rows + 2, '#fff'));
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < columns; x++) {
+          if ((x + y) % 2 === 0) fragment.append(rectangle(x + 1, y + 1, 1, 1, '#000'));
+        }
+      }
+      board.replaceChildren(fragment);
+      document.getElementById('summary').textContent = `${columns} × ${rows} 个方格 · 四周保留一格白边`;
+      document.getElementById('pattern').textContent = `patternSize = (${state.columns}, ${state.rows})`;
+      render();
+    }
+
+    function render() {
+      const width = stage.clientWidth;
+      const height = stage.clientHeight;
+      const dpr = window.devicePixelRatio || 1;
+      const columns = state.columns + 3; // Squares plus one square of white border on each side.
+      const rows = state.rows + 3;
+      const fit = Math.floor(Math.min((width - 16) / columns, (height - 16) / rows) * dpr) / dpr;
+      const square = state.lockedSize === null ? fit : state.lockedSize;
+      const fits = square >= 1 / dpr && square * columns <= width && square * rows <= height;
+      board.toggleAttribute('hidden', !fits);
+      empty.hidden = fits;
+      if (!fits) {
+        empty.textContent = state.lockedSize === null
+          ? '窗口太小，请增大窗口或减少内角点数量。'
+          : '当前窗口放不下已锁定的棋盘。请增大窗口，或返回设置取消锁定。';
+        document.getElementById('dimensions').textContent = empty.textContent;
+        return;
+      }
+      state.square = square;
+      const boardWidth = columns * square;
+      const boardHeight = rows * square;
+      board.setAttribute('width', boardWidth);
+      board.setAttribute('height', boardHeight);
+      board.style.left = `${Math.floor((width - boardWidth) / 2 * dpr) / dpr}px`;
+      board.style.top = `${Math.floor((height - boardHeight) / 2 * dpr) / dpr}px`;
+      document.getElementById('dimensions').textContent =
+        `窗口 ${window.innerWidth} × ${window.innerHeight} · 方格边长 ${Number(square.toFixed(2))} CSS px · ${state.lockedSize === null ? '自动适配' : '方格大小已锁定'}`;
+    }
+
+    function scheduleRender() {
+      cancelAnimationFrame(renderRequest);
+      renderRequest = requestAnimationFrame(render);
+    }
+
+    document.getElementById('settings').addEventListener('submit', event => event.preventDefault());
+    for (const input of [columnsInput, rowsInput]) {
+      input.addEventListener('input', () => {
+        if (!columnsInput.validity.valid || !rowsInput.validity.valid) return;
+        state.columns = columnsInput.valueAsNumber;
+        state.rows = rowsInput.valueAsNumber;
+        buildPattern();
+      });
+      input.addEventListener('change', () => {
+        if (!input.validity.valid) {
+          input.value = String(input === columnsInput ? state.columns : state.rows);
+        }
+      });
+    }
+    lockInput.addEventListener('change', () => {
+      state.lockedSize = lockInput.checked && state.square > 0 ? state.square : null;
+      lockInput.checked = state.lockedSize !== null;
+      render();
+    });
+
+    async function enterPresentation() {
+      if (document.body.classList.contains('presenting')) return;
+      document.body.classList.add('presenting');
+      scheduleRender();
+      try {
+        if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
+          await document.documentElement.requestFullscreen();
+        }
+      } catch {
+        // A browser may refuse native fullscreen for a local file; pure-board mode still works.
+      }
+      scheduleRender();
+    }
+
+    async function exitPresentation() {
+      document.body.classList.remove('presenting');
+      if (document.fullscreenElement && document.exitFullscreen) {
+        try { await document.exitFullscreen(); } catch { /* Settings are already visible. */ }
+      }
+      scheduleRender();
+    }
+
+    document.getElementById('present').addEventListener('click', enterPresentation);
+    stage.addEventListener('dblclick', () => {
+      if (document.body.classList.contains('presenting')) exitPresentation();
+    });
+    document.addEventListener('fullscreenchange', () => {
+      if (!document.fullscreenElement) document.body.classList.remove('presenting');
+      scheduleRender();
+    });
+    document.addEventListener('keydown', event => {
+      if (event.target instanceof HTMLInputElement || event.metaKey || event.ctrlKey || event.altKey) return;
+      if (event.key === 'Escape') exitPresentation();
+      if (event.key.toLowerCase() === 'f') {
+        event.preventDefault();
+        enterPresentation();
+      }
+    });
+    document.getElementById('download').addEventListener('click', () => {
+      const copy = board.cloneNode(true);
+      copy.removeAttribute('style');
+      copy.removeAttribute('hidden');
+      // The export has a stable viewBox and a white margin, even when a locked board cannot fit.
+      copy.setAttribute('width', (state.columns + 3) * 100);
+      copy.setAttribute('height', (state.rows + 3) * 100);
+      const blob = new Blob([new XMLSerializer().serializeToString(copy)], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = `标定棋盘_内角点${state.columns}x${state.rows}.svg`;
+      document.body.append(anchor);
+      anchor.click();
+      anchor.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    });
+    new ResizeObserver(scheduleRender).observe(stage);
+    window.addEventListener('resize', scheduleRender);
+    window.visualViewport?.addEventListener('resize', scheduleRender);
+    buildPattern();
+  </script>
+</body>
+</html>

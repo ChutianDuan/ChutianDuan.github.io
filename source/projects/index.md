@@ -48,32 +48,49 @@ header: false
       <div>
         <p class="portfolio-project-index">02</p>
         <h2>VisionTrack / YOLO Tracking</h2>
-        <p>用 C++ 处理道路图片、上传视频和多路实时流中的目标检测与跟踪。模型针对 BDD100K 道路场景，使用 ONNX Runtime / OpenVINO 在 CPU 上推理，Drogon 提供服务接口。</p>
+        <p>将 YOLO26 道路目标检测与 ByteTrack 跟踪部署到视美泰 RK3588。用 PTQ 混合精度缩小模型，通过 DMA-BUF 在采集、硬件解码、图像预处理和 NPU 之间共享缓冲，完成摄像头到轨迹输出的 C++ 流水线。</p>
         <ul class="portfolio-link-list">
-          <li>多路实时流共享推理调度器，上传视频使用有容量上限的任务池处理。</li>
-          <li>高低分辨率模型配合检测，根据光流质量、目标尺度和速度变化调整检测间隔。</li>
-          <li>LK 光流和 ByteTrack 跟踪目标，通过回放历史帧校正轨迹。</li>
-          <li>SSE 持续输出实时结果并缓存近期事件；提供流状态查询和 Prometheus 调度、队列指标。</li>
+          <li><strong>PTQ INT8 + 部分 FP16：</strong>先建立 INT8 基线，再按逐层分析将敏感位置保留为 FP16，使用 RKNN-Toolkit2 导出固定混合精度模型。</li>
+          <li><strong>DMA-BUF 零拷贝路径：</strong>YUYV 采集直接交给 RGA / RKNN，稳态应用层上传为 0 字节；MJPEG 保留一次压缩包复制，解码后由 MPP / RGA / RKNN 共享图像缓冲。帧租约与 RAII 管理缓冲归还和资源释放。</li>
+          <li><strong>RK3588 部署：</strong>MPP 硬件解码、RGA 颜色转换与 letterbox，三个独立 RKNN Context 分别绑定 NPU Core0 / 1 / 2，对单路视频的不同帧并发推理。</li>
+          <li>采集、推理与输出使用有界队列，等待槽保留最新帧；ByteTrack 校正轨迹，按序号和时间水位拒绝迟到结果，JSONL 记录检测、轨迹和运行资源。</li>
         </ul>
-        <div class="portfolio-metrics" aria-label="2026-07-10 YOLO 历史三场景伪标签回归指标">
-          <span>伪标签回归 F1 0.7726</span>
-          <span>误检数降低 63.2%</span>
+        <div class="portfolio-metrics" aria-label="RK3588 混合精度模型运行指标">
+          <span>有效检测 30.11 FPS</span>
+          <span>模型 12.17 MiB</span>
+          <span>平均 RSS 146.17 MiB</span>
         </div>
-        <p class="portfolio-metric-note">2026-07-10 三场景伪标签回归：以全高分辨率推理结果为参照，IoU=0.5。</p>
+        <p class="portfolio-metric-note">2026-10-19，Hybrid 模型、单路交通 JPEG 回放、800×608 输入、三 Context split、关闭预览并保留画框与跟踪，连续运行 10 分钟，完成 18,066 / 18,066 帧检测。FPS 与 RSS 排除前 30 秒及末尾 30 帧；检测速度受约 30 FPS 的输入速率限制。模型比 FP16 缩小 42.62%。</p>
         <div class="portfolio-tags">
-          <span>YOLO26</span><span>ONNX Runtime</span><span>OpenVINO</span><span>OpenCV</span><span>ByteTrack</span><span>LK Flow</span><span>Drogon</span><span>SSE</span><span>Prometheus</span><span>Linux CPU</span>
+          <span>C++17</span><span>RK3588</span><span>PTQ INT8 / FP16</span><span>V4L2</span><span>DMA-BUF</span><span>MPP</span><span>RGA</span><span>RKNN</span><span>ByteTrack</span>
         </div>
         <div class="portfolio-actions compact">
           <a class="portfolio-button primary" href="https://github.com/ChutianDuan/Yolo">GitHub 仓库</a>
-          <a class="portfolio-button" href="https://github.com/ChutianDuan/Yolo/blob/d8688e3027afa88caeeb9e05eba195f16d655fd3/docs/reports/%E4%BC%98%E5%8C%96%E8%AE%A1%E5%88%92.md">回归报告</a>
-          <a class="portfolio-button" href="https://github.com/ChutianDuan/Yolo/blob/d8688e3027afa88caeeb9e05eba195f16d655fd3/docs/reports/初始化到多IP任务提交完整流程.md">实时流调用链</a>
+          <a class="portfolio-button" href="https://github.com/ChutianDuan/Yolo/blob/d527fd2ac416e52dbd37e10bbbfaf4ef3f268ab7/README_RK3588.md">板端部署与实测</a>
           <a class="portfolio-button" href="/notes/liunx-c-工程化/5-onnx模型导出与部署优化/">部署笔记</a>
         </div>
       </div>
-      <figure class="portfolio-figure">
-        <img src="/assets/yolo/tracking-flow.svg" alt="YOLO 检测跟踪服务流程图">
-        <figcaption>多路视频共用推理调度，检测与跟踪结果通过 JSON 或 SSE 返回</figcaption>
-      </figure>
+      <div class="yolo-project-visual">
+        <figure class="portfolio-figure">
+          <a href="/assets/yolo/shimeta-rk3588.png" aria-label="查看视美泰 RK3588 开发板原图">
+            <img src="/assets/yolo/shimeta-rk3588.png" width="1402" height="1122" loading="lazy" alt="用于 YOLO 部署的视美泰 RK3588 开发板，展示散热器、摄像头与外设接口">
+          </a>
+          <figcaption>视美泰 RK3588 · ARM64 Linux 部署平台</figcaption>
+        </figure>
+        <ol class="yolo-pipeline" aria-label="RK3588 摄像头处理流程">
+          <li><span>01 / 采集与解码</span><strong>V4L2 / MPP</strong><small>YUYV 直通 / MJPEG 硬件解码</small></li>
+          <li><span>02 / 共享缓冲与预处理</span><strong>DMA-BUF → RGA</strong><small>颜色转换 · RGB 800×608 · letterbox</small></li>
+          <li><span>03 / 推理与跟踪</span><strong>RKNN → ByteTrack</strong><small>INT8 + 部分 FP16 · 三核分帧并发</small></li>
+        </ol>
+        <div class="yolo-calibration-tool">
+          <h3>摄像头标定板</h3>
+          <p>可调整内角点数量、全屏显示、锁定方格大小并导出 SVG。下载单个 HTML 即可离线使用。</p>
+          <div class="portfolio-actions compact">
+            <a class="portfolio-button primary" href="/tools/camera-calibration.html">打开标定板</a>
+            <a class="portfolio-button" href="/tools/camera-calibration.html" download="摄像头标定板.html">下载 HTML</a>
+          </div>
+        </div>
+      </div>
     </article>
 
     <article id="libevent-chat-server" class="portfolio-project">
