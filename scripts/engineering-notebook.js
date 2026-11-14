@@ -107,6 +107,16 @@ const LEARNING_PATHS = {
   'fighting-netcode': [['系统总览', 'netcode'], ['模拟', 'simulation'], ['网络', 'network'], ['客户端校正', 'client'], ['渲染', 'rendering']]
 };
 
+const SERIES_PROJECTS = {
+  'modern-cpp': ['Libevent Chat Server', 'libevent-chat-server'],
+  'parallel-cpp': ['VisionTrack', 'yolo-tracking-service'],
+  'linux-server': ['Libevent Chat Server', 'libevent-chat-server'],
+  'cpp-engineering': ['VisionTrack', 'yolo-tracking-service'],
+  'ai-model': ['RAG Gateway Stack', 'rag-agent-platform'],
+  'network-services': ['RAG Gateway Stack', 'rag-agent-platform'],
+  'fighting-netcode': ['Fighting Netcode', 'fighting-authoritative-server']
+};
+
 const CURATED_RELATED = {
   ctest: ['sanitizer', 'cmake', 'logging', 'testing'],
   rag: ['database', 'chunk', 'sse'],
@@ -310,6 +320,7 @@ function knowledgeMap(catalog) {
     const posts = groups.get(series.key);
     const guide = guidePost(posts, series, catalog);
     const featured = posts.filter(post => post !== guide).slice(0, 3);
+    const [projectName, projectAnchor] = SERIES_PROJECTS[series.anchor];
     return `
       <section class="knowledge-row" id="${series.anchor}">
         <div class="knowledge-topic">
@@ -319,6 +330,7 @@ function knowledgeMap(catalog) {
         </div>
         <div class="knowledge-description"><p>${escapeHtml(series.description)}</p>
           <ol class="knowledge-learning-path" aria-label="${escapeHtml(series.label)}学习路线">${LEARNING_PATHS[series.anchor].map(([label, key]) => `<li><a href="${postHref(catalog.references.get(key))}">${escapeHtml(label)}</a></li>`).join('')}</ol>
+          <a class="knowledge-project" href="/projects/#${projectAnchor}">项目实践：${escapeHtml(projectName)} ${arrowIcon()}</a>
         </div>
         <a class="knowledge-guide" href="${postHref(guide)}">${escapeHtml(shortTitle(guide, series))} ${arrowIcon()}</a>
         <div class="knowledge-featured">${featured.map(post => `<a href="${postHref(post)}">${escapeHtml(shortTitle(post, series))}</a>`).join('')}</div>
@@ -423,6 +435,13 @@ hexo.extend.helper.register('engineering_breadcrumb', function(post) {
     ${series ? `<li><a href="/articles/#${series.anchor}">${escapeHtml(series.label)}</a></li>` : ''}
     <li aria-current="page">${escapeHtml(shortTitle(post))}</li>
   </ol></nav>`;
+});
+
+hexo.extend.helper.register('engineering_mobile_toc', function(post) {
+  if (!this.is_post() || post.toc?.enable === false) return '';
+  const contents = this.toc(post.content || '', { min_depth: 2, max_depth: 3, list_number: false });
+  if (!contents) return '';
+  return `<details class="engineering-mobile-toc"><summary>本篇目录</summary><nav aria-label="本篇目录">${contents}</nav></details>`;
 });
 
 function seriesNavigation(post, catalog) {

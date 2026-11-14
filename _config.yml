@@ -4,8 +4,8 @@
 
 # Site
 title: 无名
-subtitle: '项目与技术笔记'
-description: '无名的个人技术笔记，记录 C++、计算机视觉和 AI 应用项目的实现与调试。'
+subtitle: '视觉部署与 C++ 系统实践'
+description: '无名的视觉部署与 C++ 系统工程笔记，记录 RK3588 推理优化、Linux 网络服务和 RAG / Agent 应用的实现、调试与性能验证。'
 keywords:
   - AI Application
   - C++ Backend

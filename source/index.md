@@ -1,7 +1,7 @@
 ---
 layout: page
-title: 项目与技术笔记
-description: 无名的个人技术笔记，记录 C++、计算机视觉和 AI 应用项目的实现与调试。
+title: 视觉部署与 C++ 系统实践
+description: 无名的工程笔记，记录 RK3588 视觉模型部署、C++ 网络服务与 AI 应用的实现、调试和性能验证。
 date: 2026-06-29 20:00:00
 comments: false
 sidebar: false
@@ -16,57 +16,45 @@ header: false
 <div class="home-shell" id="top">
   <section class="home-hero section-shell" aria-labelledby="hero-title">
     <div class="hero-copy reveal">
-      <h1 id="hero-title"><span>我的项目</span><span>和技术笔记</span></h1>
-      <p class="hero-intro">
-        我是无名，这里记录我做过的项目，以及学习 C++、计算机视觉和 AI 应用时的实现与调试笔记。
-      </p>
+      <h1 id="hero-title"><span>视觉部署与</span><span>C++ 系统实践</span></h1>
+      <p class="hero-intro">我是无名，记录视觉模型部署与 C++ 网络服务的实现、调试和性能验证，也整理 RAG / Agent 应用的工程笔记。</p>
+      <div class="project-metrics hero-metrics" aria-label="RK3588 混合精度模型实测">
+        <span><b>30.11 <small>FPS</small></b>有效检测速率</span>
+        <span><b>12.17 <small>MiB</small></b>混合精度模型</span>
+      </div>
+      <p class="hero-evidence-note">2026-10-19 · Hybrid · 800×608 · 单路 JPEG 回放 10 分钟，检测速率受约 30 FPS 输入限制。<a href="https://github.com/ChutianDuan/Yolo/blob/d527fd2ac416e52dbd37e10bbbfaf4ef3f268ab7/README_RK3588.md">查看实测记录 ↗</a></p>
       <div class="hero-actions">
-        <a class="portfolio-button primary" href="#projects">
-          查看项目
+        <a class="portfolio-button primary" href="/projects/#yolo-tracking-service">
+          查看视觉部署项目
           <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M4 10h12m-4-4 4 4-4 4"></path></svg>
         </a>
-        <a class="portfolio-button" href="#writing">
-          阅读文章
+        <a class="portfolio-button" href="/articles/">
+          阅读技术笔记
           <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M4 10h12m-4-4 4 4-4 4"></path></svg>
         </a>
       </div>
-      <p class="identity-line">C++ 后端 <i></i> 计算机视觉 <i></i> AI 应用</p>
     </div>
 
-    <div class="system-visual reveal" role="img" aria-label="RAG 与 Agent 服务架构示意图">
-      <div class="diagram-grid" aria-hidden="true"></div>
+    <figure class="system-visual reveal" aria-labelledby="vision-flow-title">
       <div class="visual-heading">
-        <span class="visual-title mono">RAG / AGENT GATEWAY</span>
+        <span class="visual-title mono" id="vision-flow-title">RK3588 / VISIONTRACK</span>
+        <span class="visual-subtitle">摄像头到轨迹输出</span>
       </div>
-      <div class="flow-row flow-row-main">
-        <div class="flow-node client-node">Client<span>Web / App</span></div>
-        <span class="flow-arrow" aria-hidden="true">→</span>
-        <div class="gateway-frame">
-          <span class="frame-label mono">GATEWAY</span>
-          <div class="flow-node">Query<span>Router</span></div>
-          <span class="flow-arrow" aria-hidden="true">→</span>
-          <div class="flow-node">Retriever<span>Vector / Rerank</span></div>
-          <span class="flow-arrow" aria-hidden="true">→</span>
-          <div class="flow-node">LLM<span>Agent Loop</span></div>
-        </div>
+      <div class="vision-input">
+        <div><strong>YUYV 采集</strong><span>V4L2</span></div>
+        <span class="vision-arrow" aria-hidden="true">→</span>
+        <div><strong>共享图像缓冲</strong><span>DMA-BUF</span></div>
       </div>
-      <div class="service-connector" aria-hidden="true"><span></span><span></span><span></span></div>
-      <div class="flow-row flow-row-services">
-        <div class="flow-node service-node">Redis<span>Cache / Session</span></div>
-        <div class="flow-node service-node">LanceDB<span>Vector Store</span></div>
-        <div class="flow-node service-node">Trace<span>Audit Log</span></div>
-      </div>
-      <div class="terminal" aria-hidden="true">
-        <div class="terminal-bar"><span></span><span></span><span></span><b class="mono">gateway.trace</b></div>
-        <div class="terminal-lines mono">
-          <span><i>01</i> route <b>/v1/chat/completions</b></span>
-          <span><i>02</i> retrieve <b>context + citations</b></span>
-          <span><i>03</i> execute <b>tool trace</b></span>
-          <span><i>04</i> status <em>ready</em><span class="cursor"></span></span>
-        </div>
-        <div class="terminal-mark mono">请求处理示例</div>
-      </div>
-    </div>
+      <p class="vision-dispatch"><span aria-hidden="true">↓</span> 不同帧分发至 3 个 Worker</p>
+      <ol class="vision-workers" aria-label="三个并行推理 Worker">
+        <li><strong>Worker 0</strong><span>RGA → RKNN</span><small>Context 0<br>NPU Core0</small></li>
+        <li><strong>Worker 1</strong><span>RGA → RKNN</span><small>Context 1<br>NPU Core1</small></li>
+        <li><strong>Worker 2</strong><span>RGA → RKNN</span><small>Context 2<br>NPU Core2</small></li>
+      </ol>
+      <p class="vision-dispatch"><span aria-hidden="true">↓</span> 按序汇合 · 拒绝迟到结果</p>
+      <div class="vision-output"><strong>ByteTrack</strong><span>目标跟踪 → 轨迹 / JSONL</span></div>
+      <figcaption>YUYV 共享缓冲路径；Worker 各自复用预处理与推理缓冲。</figcaption>
+    </figure>
   </section>
 
   <section class="home-section section-shell" id="projects" aria-labelledby="projects-title">
@@ -79,9 +67,25 @@ header: false
     </div>
 
     <div class="project-grid">
-      <a class="project-card project-card-featured reveal" href="/projects/#rag-agent-platform">
+      <a class="project-card project-card-featured reveal" href="/projects/#yolo-tracking-service">
         <div class="project-card-top">
           <span class="project-number mono">01</span>
+        </div>
+        <div class="project-card-copy">
+          <p class="project-type mono">目标检测与跟踪</p>
+          <h3>VisionTrack / YOLO Tracking</h3>
+          <p>将 YOLO 检测与跟踪部署到 RK3588，结合混合精度量化和设备间共享缓冲处理摄像头视频。</p>
+        </div>
+        <ul class="project-highlight-list">
+          <li>PTQ INT8 + 部分 FP16，缩小模型与运行内存占用</li>
+          <li>DMA-BUF 零拷贝路径，MPP / RGA / NPU 协同处理</li>
+        </ul>
+        <div class="project-card-footer"><span>RK3588</span><span>INT8 / FP16</span><span>DMA-BUF</span><span>RKNN</span><b aria-label="查看项目">↗</b></div>
+      </a>
+
+      <a class="project-card reveal" href="/projects/#rag-agent-platform">
+        <div class="project-card-top">
+          <span class="project-number mono">02</span>
         </div>
         <div class="project-card-copy">
           <p class="project-type mono">知识库问答</p>
@@ -96,22 +100,6 @@ header: false
           <span>Drogon</span><span>FastAPI</span><span>LanceDB</span><span>Agent</span>
           <b aria-label="查看项目">↗</b>
         </div>
-      </a>
-
-      <a class="project-card reveal" href="/projects/#yolo-tracking-service">
-        <div class="project-card-top">
-          <span class="project-number mono">02</span>
-        </div>
-        <div class="project-card-copy">
-          <p class="project-type mono">目标检测与跟踪</p>
-          <h3>VisionTrack / YOLO Tracking</h3>
-          <p>将 YOLO 检测与跟踪部署到 RK3588，结合混合精度量化和设备间共享缓冲处理摄像头视频。</p>
-        </div>
-        <ul class="project-highlight-list">
-          <li>PTQ INT8 + 部分 FP16，缩小模型与运行内存占用</li>
-          <li>DMA-BUF 零拷贝路径，MPP / RGA / NPU 协同处理</li>
-        </ul>
-        <div class="project-card-footer"><span>RK3588</span><span>INT8 / FP16</span><span>DMA-BUF</span><span>RKNN</span><b aria-label="查看项目">↗</b></div>
       </a>
 
       <a class="project-card reveal" href="/projects/#libevent-chat-server">
@@ -216,10 +204,10 @@ header: false
         <h2 id="about-title">关于我</h2>
       </div>
       <div class="about-copy">
-        <p class="about-lead">最近在做 C++ 服务端、视觉模型部署和知识库问答。</p>
-        <p>这里放项目代码的实现记录，也记下学习过程中遇到的问题和解决办法。</p>
+        <p class="about-lead">从视觉模型部署到 C++ 网络服务，关注具体实现与验证。</p>
+        <p>这里整理 RK3588 推理、Linux 网络编程和 AI 应用的实践，保留调试过程、测试条件与可以回查的代码。</p>
         <div class="capability-list">
-          <span>RAG 与 Agent</span><span>C++ 后端</span><span>计算机视觉</span><span>Linux</span>
+          <span>视觉部署</span><span>C++ 系统</span><span>Linux</span><span>RAG 与 Agent</span>
         </div>
         <div class="about-links">
           <a class="portfolio-button primary" href="/about/">了解更多</a>

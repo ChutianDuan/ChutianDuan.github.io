@@ -15,6 +15,7 @@ custom_file_path:
 menu:
   首页: / || fa fa-home
   项目: /projects/ || fa fa-code
+  文章: /articles/ || fa fa-file-lines
   知识地图: /archives/ || fa fa-book-open
   关于: /about/ || fa fa-user
   GitHub: https://github.com/ChutianDuan || fab fa-github

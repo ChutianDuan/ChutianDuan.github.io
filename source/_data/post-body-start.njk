@@ -1,3 +1,6 @@
 {% if engineering_breadcrumb is defined %}
 {{ engineering_breadcrumb(page) | safe }}
 {% endif %}
+{% if engineering_mobile_toc is defined %}
+{{ engineering_mobile_toc(page) | safe }}
+{% endif %}

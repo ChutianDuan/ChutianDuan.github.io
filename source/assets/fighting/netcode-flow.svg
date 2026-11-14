@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 600" role="img" aria-labelledby="title desc">
+  <title id="title">Fighting Netcode 预测与回滚流程</title>
+  <desc id="desc">客户端采集输入并立即预测，通过 UDP 重复携带近期输入。服务器以 60Hz 推进权威模拟，返回输入确认与状态。客户端对照权威状态，必要时回滚并重放输入。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M1 1 9 5 1 9" fill="none" stroke="#075cff" stroke-width="1.5"/>
+    </marker>
+  </defs>
+  <rect width="480" height="600" fill="#ffffff"/>
+  <g font-family="system-ui, -apple-system, 'PingFang SC', sans-serif" fill="#0b0e14">
+    <text x="24" y="42" font-size="28" font-weight="700">预测、确认与回滚</text>
+    <text x="24" y="72" font-size="19" fill="#4f5968">Fighting Netcode · C++20 / UDP</text>
+
+    <rect x="24" y="102" width="432" height="100" fill="#ffffff" stroke="#dfe4ec"/>
+    <text x="44" y="137" font-size="20" fill="#075cff">01 / 客户端</text>
+    <text x="44" y="174" font-size="26" font-weight="650">采集输入，立即预测</text>
+
+    <path d="M62 202V258" fill="none" stroke="#075cff" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="88" y="239" font-size="21" fill="#075cff">UDP 发送近期输入，冗余抗丢包</text>
+
+    <rect x="24" y="260" width="432" height="100" fill="#f4f7fb" stroke="#075cff"/>
+    <text x="44" y="295" font-size="20" fill="#075cff">02 / 权威服务器</text>
+    <text x="44" y="332" font-size="26" font-weight="650">以 60Hz 推进逻辑模拟</text>
+
+    <path d="M62 360V416" fill="none" stroke="#075cff" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="88" y="397" font-size="21" fill="#075cff">返回输入确认与权威状态</text>
+
+    <rect x="24" y="418" width="432" height="122" fill="#ffffff" stroke="#dfe4ec"/>
+    <text x="44" y="453" font-size="20" fill="#075cff">03 / 客户端</text>
+    <text x="44" y="490" font-size="26" font-weight="650">对照状态，必要时回滚</text>
+    <text x="44" y="519" font-size="20" fill="#4f5968">恢复快照，重放输入追到当前帧</text>
+
+    <path d="M24 562H456" fill="none" stroke="#dfe4ec"/>
+    <text x="24" y="587" font-size="19" fill="#4f5968">保留输入与状态历史 · 状态哈希检查一致性</text>
+  </g>
+</svg>

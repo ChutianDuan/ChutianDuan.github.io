@@ -166,7 +166,7 @@ header.header {
 .menu .menu-item-active a {
   background: transparent;
   border: 0;
-  color: var(--ink);
+  color: var(--blue);
 }
 
 .menu .menu-item a:hover::after,
@@ -381,14 +381,14 @@ header.header {
 
 // NexT wraps its line-number table; keep the toolbar outside that scroll area.
 .post-body figure.highlight .code-container {
-  padding-top: 32px;
+  padding-top: 44px;
 }
 
 .post-body figure.highlight .code-container::before {
   background: #edf1f7;
   border-bottom: 1px solid var(--line);
   content: "";
-  height: 32px;
+  height: 44px;
   left: 0;
   position: absolute;
   right: 0;
@@ -443,22 +443,84 @@ header.header {
   line-height: 16px;
   opacity: 1;
   right: auto;
-  top: 8px;
+  top: 14px;
 }
 
-.post-body .copy-btn {
+.post-body .copy-btn,
+.post-body .engineering-code-toggle {
   background: transparent;
+  border: 0;
+  border-left: 1px solid var(--line);
+  border-radius: 0;
   color: var(--muted);
-  font-size: 14px;
-  line-height: 22px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  height: 44px;
+  line-height: 1;
+  min-width: 68px;
   opacity: 1;
-  padding: 4px 10px;
+  padding: 0 12px;
+  position: absolute;
   right: 0;
   top: 0;
+  transition: color 200ms ease, background-color 200ms ease;
 }
 
-.post-body .copy-btn:hover {
+.post-body .engineering-code-toggle {
+  right: 68px;
+}
+
+.post-body .copy-btn:hover,
+.post-body .engineering-code-toggle:hover {
+  background: #e5ecf7;
   color: var(--blue);
+}
+
+.post-body figure.engineering-code-collapsed .table-container {
+  max-height: calc(19.2em + 12px);
+  overflow-y: hidden;
+}
+
+.engineering-mobile-toc {
+  border-bottom: 1px solid var(--line);
+  border-top: 1px solid var(--line);
+  display: none;
+  margin: 0 0 28px;
+}
+
+.engineering-mobile-toc summary {
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 650;
+  min-height: 48px;
+  padding: 12px 0;
+}
+
+.engineering-mobile-toc nav {
+  padding: 0 0 12px;
+}
+
+.engineering-mobile-toc .toc,
+.engineering-mobile-toc .toc-child {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.engineering-mobile-toc .toc-child {
+  padding-left: 18px;
+}
+
+.engineering-mobile-toc .toc-link {
+  align-items: center;
+  border: 0;
+  display: flex;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  min-height: 44px;
+  padding: 8px 0;
 }
 
 .highlight figcaption,
@@ -753,6 +815,7 @@ header.header {
 
 a:focus-visible,
 button:focus-visible,
+summary:focus-visible,
 [role="button"]:focus-visible,
 .search-input:focus-visible {
   outline: 2px solid var(--blue);
@@ -809,6 +872,30 @@ button:focus-visible,
   min-height: 0;
 }
 
+.search-result-list > li {
+  border-left: 2px solid transparent;
+  padding: 12px;
+}
+
+.search-result-list > li:focus-within {
+  background: var(--soft);
+  border-left-color: var(--blue);
+}
+
+.search-popup .search-result-title {
+  align-items: center;
+  display: inline-flex;
+  min-height: 44px;
+}
+
+.search-popup .popup-btn-close {
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 44px;
+}
+
 .engineering-search-status {
   color: var(--muted);
   font-size: 0.8rem;
@@ -854,10 +941,10 @@ body:has(.main-inner.page) .sidebar-toggle {
 
 .engineering-page-header h1 {
   color: var(--ink);
-  font-size: clamp(2.6rem, 5vw, 4.25rem);
-  font-weight: 780;
+  font-size: clamp(2.25rem, 4vw, 3rem);
+  font-weight: 760;
   letter-spacing: -0.06em;
-  line-height: 1;
+  line-height: 1.08;
   margin: 0;
 }
 
@@ -958,6 +1045,26 @@ body:has(.main-inner.page) .sidebar-toggle {
   font-size: 0.8rem;
   gap: 6px;
   line-height: 1.45;
+}
+
+.knowledge-project {
+  align-items: center;
+  border: 0 !important;
+  color: var(--blue) !important;
+  display: inline-flex;
+  font-size: 0.78rem;
+  gap: 5px;
+  line-height: 1.5;
+  min-height: 44px;
+}
+
+.knowledge-project svg {
+  fill: none;
+  flex: none;
+  height: 18px;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  width: 20px;
 }
 
 .knowledge-featured {
@@ -1215,6 +1322,36 @@ body:has(.main-inner.page) .sidebar-toggle {
 }
 
 @media (max-width: 1199px) {
+  .engineering-mobile-toc {
+    display: block;
+  }
+
+  .knowledge-columns {
+    display: none;
+  }
+
+  .knowledge-row {
+    display: block;
+    min-height: 0;
+    padding: 24px 0;
+  }
+
+  .knowledge-topic {
+    grid-template-columns: 62px minmax(0, 1fr) auto;
+  }
+
+  .knowledge-number {
+    font-size: 1.9rem;
+  }
+
+  .knowledge-description {
+    margin: 14px 0;
+  }
+
+  .knowledge-featured {
+    margin-top: 12px;
+  }
+
   .main-inner.post {
     max-width: 846px;
     padding-right: 28px;
@@ -1276,14 +1413,15 @@ body:has(.main-inner.page) .sidebar-toggle {
     flex: none;
   }
 
-  .site-nav-toggle .toggle {
+  .site-nav-toggle .toggle,
+  .site-nav-right .toggle {
     align-items: center;
     display: flex;
     flex-direction: column;
-    height: 40px;
+    height: 44px;
     justify-content: center;
     padding: 10px;
-    width: 40px;
+    width: 44px;
   }
 
   .site-title {
@@ -1297,6 +1435,7 @@ body:has(.main-inner.page) .sidebar-toggle {
     margin: 0;
     position: absolute;
     top: var(--header-height);
+    transition: none;
     width: 100%;
   }
 
@@ -1355,32 +1494,6 @@ body:has(.main-inner.page) .sidebar-toggle {
 
   .engineering-page-header nav a:first-child {
     padding-left: 0;
-  }
-
-  .knowledge-columns {
-    display: none;
-  }
-
-  .knowledge-row {
-    display: block;
-    min-height: 0;
-    padding: 24px 0;
-  }
-
-  .knowledge-topic {
-    grid-template-columns: 62px 1fr auto;
-  }
-
-  .knowledge-number {
-    font-size: 1.9rem;
-  }
-
-  .knowledge-description {
-    margin: 14px 0;
-  }
-
-  .knowledge-featured {
-    margin-top: 12px;
   }
 
   .article-index-jumps {

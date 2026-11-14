@@ -5,8 +5,15 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const yaml = require('js-yaml');
+const toc = require('hexo/dist/plugins/helper/toc');
 
-global.hexo = { extend: { filter: { register() {} }, generator: { register() {} }, helper: { register() {} } } };
+const generators = new Map();
+const helpers = new Map();
+global.hexo = { extend: {
+  filter: { register() {} },
+  generator: { register(name, generate) { generators.set(name, generate); } },
+  helper: { register(name, helper) { helpers.set(name, helper); } }
+} };
 const notebook = require('../scripts/engineering-notebook');
 delete global.hexo;
 
@@ -91,4 +98,50 @@ test('unrelated articles receive no filler recommendation', () => {
   const unrelated = { source: '_posts/现代C++实践/unrelated.md', path: 'unrelated/', title: '无共同知识点', content: '' };
   const extended = notebook.buildCatalog([...posts, unrelated]);
   assert.deepEqual(notebook.recommendedPosts(unrelated, extended), []);
+});
+
+test('knowledge-map topics link to their existing project practices', () => {
+  const pages = generators.get('engineering-notebook')({ posts: { toArray: () => posts } });
+  const map = pages.find(page => page.path === 'archives/index.html').data.content;
+  const projectSource = fs.readFileSync(path.join(__dirname, '../source/projects/index.md'), 'utf8');
+  const expected = {
+    'modern-cpp': 'libevent-chat-server',
+    'parallel-cpp': 'yolo-tracking-service',
+    'linux-server': 'libevent-chat-server',
+    'cpp-engineering': 'yolo-tracking-service',
+    'ai-model': 'rag-agent-platform',
+    'network-services': 'rag-agent-platform',
+    'fighting-netcode': 'fighting-authoritative-server'
+  };
+  assert.equal((map.match(/class="knowledge-project"/g) || []).length, 7);
+  for (const [topic, project] of Object.entries(expected)) {
+    const row = map.match(new RegExp(`<section class="knowledge-row" id="${topic}">([\\s\\S]*?)</section>`));
+    assert.ok(row, topic);
+    assert.match(row[1], new RegExp(`class="knowledge-project" href="/projects/#${project}"`));
+    assert.match(projectSource, new RegExp(`id="${project}"`));
+  }
+});
+
+test('mobile article contents reuse H2/H3 IDs without numbering or auto-expansion', () => {
+  const render = helpers.get('engineering_mobile_toc');
+  const post = { content: '<h1 id="title">文章</h1><h2 id="queue">1. 队列</h2><h3 id="队列-退出">1.1 退出 &amp; 回收</h3><h4 id="detail">细节</h4>' };
+  const output = render.call({ is_post: () => true, toc }, post);
+  assert.match(output, /^<details class="engineering-mobile-toc"><summary>本篇目录<\/summary>/);
+  assert.match(output, /class="toc-item toc-level-2"/);
+  assert.match(output, /class="toc-item toc-level-3"/);
+  assert.match(output, /退出 &amp; 回收/);
+  assert.doesNotMatch(output, / open|toc-number|href="#title"|href="#detail"/);
+  for (const [, encodedId] of output.matchAll(/href="#([^"]+)"/g)) {
+    assert.ok(post.content.includes(`id="${decodeURIComponent(encodedId)}"`), encodedId);
+  }
+  assert.equal((output.match(/class="toc-link"/g) || []).length, 2);
+});
+
+test('mobile article contents are absent on pages and articles without eligible headings', () => {
+  const render = helpers.get('engineering_mobile_toc');
+  const context = { is_post: () => true, toc };
+  assert.equal(render.call({ ...context, is_post: () => false }, { content: '<h2 id="page">页面</h2>' }), '');
+  assert.equal(render.call(context, { toc: { enable: false }, content: '<h2 id="disabled">关闭目录</h2>' }), '');
+  assert.equal(render.call(context, { content: '<h1 id="title">文章</h1><p>正文</p>' }), '');
+  assert.equal(render.call(context, {}), '');
 });
