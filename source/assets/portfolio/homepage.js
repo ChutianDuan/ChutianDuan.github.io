@@ -12,10 +12,10 @@
     const next = root.querySelector('.showcase-next');
     const status = root.querySelector('.showcase-status');
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const coverPreparation = new WeakMap();
     let selectedIndex = 0;
-    let requestedIndex = 0;
-    let requestVersion = 0;
-    let programmaticScroll = false;
+    let scrollTarget = null;
+    let lastSelectionAt = -Infinity;
     let resizing = false;
     let scrollTimer;
     let resizeTimer;
@@ -38,7 +38,6 @@
 
     const synchronize = index => {
       selectedIndex = index;
-      requestedIndex = index;
       tabs.forEach((tab, tabIndex) => {
         const selected = tabIndex === index;
         tab.setAttribute('aria-selected', String(selected));
@@ -55,8 +54,10 @@
       clearTimeout(scrollTimer);
       if (pointer?.dragging || resizing) return;
       // A requested alignment must not be mistaken for a new swipe selection.
-      if (programmaticScroll) {
-        programmaticScroll = false;
+      if (scrollTarget !== null) {
+        // A cancelled earlier smooth scroll can also emit scrollend. Keep the
+        // latest target until it arrives, or a real pointer gesture takes over.
+        if (Math.abs(rail.scrollLeft - scrollTarget) < 1) scrollTarget = null;
         return;
       }
       // When every card fits, the leftmost card does not imply a new selection.
@@ -65,7 +66,7 @@
       const nearest = tabs.reduce((best, tab, index) => (
         Math.abs(tab.getBoundingClientRect().left - left) < Math.abs(tabs[best].getBoundingClientRect().left - left) ? index : best
       ), 0);
-      if (nearest !== requestedIndex) select(nearest, { align: false });
+      if (nearest !== selectedIndex) select(nearest, { align: false });
     };
 
     const scheduleScrollEnd = () => {
@@ -77,51 +78,49 @@
       const left = rail.scrollLeft + tabs[selectedIndex].getBoundingClientRect().left
         - rail.getBoundingClientRect().left - rail.clientLeft - railInset();
       const target = Math.max(0, Math.min(left, rail.scrollWidth - rail.clientWidth));
-      programmaticScroll = true;
+      scrollTarget = target;
       rail.scrollTo({ left: target, behavior: smooth && !reducedMotion.matches ? 'smooth' : 'instant' });
       scheduleScrollEnd();
     };
 
-    const decodeCover = async panel => {
+    const prepareCover = (panel, priority = 'low') => {
       const image = panel.querySelector('.showcase-cover-image, .showcase-cover img, img');
       if (!image) return;
-      // Hidden lazy images need an explicit request before their panel is revealed.
+      image.fetchPriority = priority;
       image.loading = 'eager';
-      try {
-        if (typeof image.decode === 'function') {
-          await image.decode();
-        } else if (!image.complete) {
-          await new Promise(resolve => {
-            const settle = () => {
-              image.removeEventListener('load', settle);
-              image.removeEventListener('error', settle);
-              resolve();
-            };
-            image.addEventListener('load', settle);
-            image.addEventListener('error', settle);
-          });
-        }
-      } catch {
-        // A missing cover keeps its useful alt text; the project remains reachable.
-      }
+      const source = image.currentSrc || image.src;
+      const cached = coverPreparation.get(image);
+      if (cached?.pending || (cached?.ready && cached.source === source)) return;
+      const preparation = { source, pending: true, ready: false };
+      coverPreparation.set(image, preparation);
+      Promise.resolve().then(() => image.decode?.()).then(() => {
+        preparation.ready = image.complete && image.naturalWidth > 0;
+      }).catch(() => {
+        // Loading never blocks selection; the thumbnail remains underneath.
+      }).finally(() => {
+        preparation.pending = false;
+        preparation.source = image.currentSrc || image.src;
+      });
     };
 
-    const select = async (index, { focus = false, align = true, animate = true } = {}) => {
+    const select = (index, { focus = false, align = true, animate = true } = {}) => {
       index = wrap(index);
-      const version = ++requestVersion;
-      requestedIndex = index;
       if (focus) tabs[index].focus({ preventScroll: true });
-      if (index !== selectedIndex) await decodeCover(panels[index]);
-      // Cover decoding may finish in a different order from rapid user requests.
-      if (version !== requestVersion) return;
-      const changed = index !== selectedIndex;
+      if (index === selectedIndex) {
+        if (align) alignSelected(animate);
+        return;
+      }
+      const now = performance.now();
+      const rapid = now - lastSelectionAt < 300;
+      lastSelectionAt = now;
       finishEntrance();
       synchronize(index);
-      if (changed && animate && !reducedMotion.matches) {
+      if (animate && !rapid && !reducedMotion.matches) {
         panels[index].classList.add('is-entering');
         entranceTimer = setTimeout(finishEntrance, 320);
       }
-      if (align) alignSelected(animate);
+      if (align) alignSelected(animate && !rapid);
+      prepareCover(panels[index], 'high');
     };
 
     tabs.forEach((tab, index) => {
@@ -142,8 +141,8 @@
         select(target, { focus: true });
       });
     });
-    previous?.addEventListener('click', () => select(requestedIndex - 1));
-    next?.addEventListener('click', () => select(requestedIndex + 1));
+    previous?.addEventListener('click', () => select(selectedIndex - 1));
+    next?.addEventListener('click', () => select(selectedIndex + 1));
 
     rail.addEventListener('scroll', scheduleScrollEnd, { passive: true });
     rail.addEventListener('scrollend', finishScroll);
@@ -157,9 +156,7 @@
     }, true);
     rail.addEventListener('pointerdown', event => {
       if (event.button !== 0) return;
-      ++requestVersion;
-      requestedIndex = selectedIndex;
-      programmaticScroll = false;
+      scrollTarget = null;
       if (event.pointerType !== 'mouse') return;
       pointer = { id: event.pointerId, x: event.clientX, y: event.clientY, scroll: rail.scrollLeft, dragging: false };
     });
@@ -203,7 +200,6 @@
     });
     window.addEventListener('pageshow', event => {
       if (!event.persisted) return;
-      ++requestVersion;
       finishEntrance();
       synchronize(0);
       alignSelected(false);
@@ -214,6 +210,23 @@
     synchronize(0);
     alignSelected(false);
     root.classList.add('is-ready');
+
+    panels.forEach((panel, index) => {
+      const picture = panel.querySelector('.showcase-cover');
+      const image = panel.querySelector('.showcase-cover-image');
+      const thumbnail = tabs[index].querySelector('img');
+      if (!picture || !image || !thumbnail) return;
+      // Reuse the small card image while its larger responsive source loads.
+      // The native image paints over this same-aspect preview when it is ready.
+      thumbnail.loading = 'eager';
+      picture.style.backgroundImage = `url(${JSON.stringify(thumbnail.src)})`;
+      image.addEventListener('error', () => image.classList.add('has-cover-error'));
+      image.addEventListener('load', () => image.classList.remove('has-cover-error'));
+      if (image.complete && !image.naturalWidth) image.classList.add('has-cover-error');
+    });
+    const warmCovers = () => panels.forEach((panel, index) => prepareCover(panel, index === selectedIndex ? 'high' : 'low'));
+    if ('requestIdleCallback' in window) window.requestIdleCallback(warmCovers, { timeout: 1200 });
+    else setTimeout(warmCovers, 100);
   };
 
   const initialize = () => {

@@ -24,7 +24,7 @@ test('homepage is one NexT page with a single heading and no article TOC', () =>
   assert.equal(output.data.sidebar, false);
   assert.equal(output.data.toc.enable, false);
   assert.equal((output.data.content.match(/<h1\b/g) || []).length, 1);
-  assert.equal((output.data.content.match(/src="\/assets\/portfolio\/homepage.js"/g) || []).length, 1);
+  assert.equal((output.data.content.match(/src="\/assets\/portfolio\/homepage\.js(?:\?[^\"]+)?"/g) || []).length, 1);
 });
 
 test('five projects keep their exact slogans, anchors, sources and tab-panel relationships', () => {
