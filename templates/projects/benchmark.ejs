@@ -1,0 +1,60 @@
+<%
+const heading = pageKind === 'detail' ? 'h2' : 'h3';
+const subheading = pageKind === 'detail' ? 'h3' : 'h4';
+const fp16 = rk.benchmarks.find(run => run.id === 'fp16');
+const charts = [
+  { key: 'fps', title: '有效检测速率', unit: 'FPS', note: '受约 30 FPS 的回放输入限制' },
+  { key: 'modelMib', title: '模型大小', unit: 'MiB', note: 'RKNN 模型文件大小' },
+  { key: 'rssMib', title: '平均 RSS', unit: 'MiB', note: '进程常驻内存，按相同统计窗口' }
+];
+const format = value => Number.isFinite(value) ? value.toFixed(2) : '未测试';
+%>
+<section class="rk-section rk-benchmark" id="rk-benchmark" aria-labelledby="rk-benchmark-title">
+  <header class="rk-section-heading"><<%= heading %> class="rk-section-title" id="rk-benchmark-title">性能实验室 / Benchmark Explorer</<%= heading %>></header>
+  <div class="rk-prose"><p><%= rk.replay.date %>，三组模型回放同一段交通 JPEG 序列：每组 <%= rk.replay.durationSeconds.toFixed(2) %> 秒、<%= rk.replay.inputFrames.toLocaleString('en-US') %> 个输入帧。<%= rk.replay.throughputNote %></p></div>
+  <dl class="rk-benchmark-conditions">
+    <div><dt>输入路径</dt><dd><%= rk.replay.pipeline %></dd></div>
+    <div><dt>推理配置</dt><dd><%= rk.replay.workers %>；conf=<%= rk.replay.confidence %>，detect-fps=<%= rk.replay.detectFps %></dd></div>
+    <div><dt>运行与统计</dt><dd><%= rk.replay.display %>；<%= rk.replay.statistics %></dd></div>
+  </dl>
+  <div class="rk-benchmark-controls" data-benchmark-controls hidden role="group" aria-label="高亮模型数据"><span>对照模型</span><% rk.benchmarks.forEach(run => { %><button type="button" data-benchmark-select="<%= run.id %>" aria-pressed="<%= run.id === rk.defaultBenchmark %>"<% if (run.id === rk.defaultBenchmark) { %> class="is-selected"<% } %>><%= run.label %></button><% }); %></div>
+  <div class="rk-benchmark-charts"><% charts.forEach(metric => { const measured = rk.benchmarks.map(run => run[metric.key]).filter(Number.isFinite); const maximum = Math.max(0, ...measured); const titleId = `rk-chart-${pageKind}-${metric.key}-title`; %>
+    <figure class="rk-benchmark-chart">
+      <figcaption><strong><%= metric.title %></strong><span><%= metric.unit %></span></figcaption>
+      <svg viewBox="0 0 360 200" role="img" aria-labelledby="<%= titleId %>">
+        <title id="<%= titleId %>"><%= metric.title %>：<%= rk.benchmarks.map(run => `${run.label} ${format(run[metric.key])}${Number.isFinite(run[metric.key]) ? ` ${metric.unit}` : ''}`).join('；') %></title>
+        <line class="rk-chart-baseline" x1="72" y1="17" x2="72" y2="170"></line>
+        <% rk.benchmarks.forEach((run, index) => { const y = 30 + index * 48; const measured = Number.isFinite(run[metric.key]); const width = measured && maximum > 0 ? run[metric.key] / maximum * 192 : 0; %>
+        <g data-benchmark-id="<%= run.id %>" class="rk-chart-row<%= run.id === rk.defaultBenchmark ? ' is-selected' : '' %>">
+          <text class="rk-chart-label" x="62" y="<%= y + 15 %>" text-anchor="end"><%= run.label %></text>
+          <% if (measured && width > 0) { %><rect class="rk-chart-bar" x="73" y="<%= y %>" width="<%= width.toFixed(2) %>" height="24"></rect><% } %>
+          <text class="rk-chart-value" x="<%= 82 + width %>" y="<%= y + 16 %>"><%= format(run[metric.key]) %></text>
+        </g>
+        <% }); %>
+        <text class="rk-chart-axis" x="72" y="187">0</text><text class="rk-chart-axis" x="265" y="187" text-anchor="end"><%= measured.length ? `${format(maximum)} ${metric.unit}` : '暂无实测数据' %></text>
+      </svg>
+      <p><%= metric.note %></p>
+    </figure>
+  <% }); %></div>
+  <div class="rk-table-wrap" tabindex="0" role="region" aria-label="JPEG 回放完整实测数据，可横向滚动">
+    <table class="rk-benchmark-table">
+      <caption>JPEG 回放 · 三组均输出 <%= rk.replay.outputFrames.toLocaleString('en-US') %> 帧</caption>
+      <thead><tr><th scope="col">模型</th><th scope="col">有效检测 / FPS</th><th scope="col">模型 / MiB</th><th scope="col">平均 RSS / MiB</th><th scope="col">平均 CPU / %</th><th scope="col">完成检测 / 输入帧</th></tr></thead>
+      <tbody><% rk.benchmarks.forEach(run => { %><tr data-benchmark-id="<%= run.id %>"<% if (run.id === rk.defaultBenchmark) { %> class="is-selected"<% } %>><th scope="row"><%= run.label %></th><td><%= format(run.fps) %></td><td><%= format(run.modelMib) %></td><td><%= format(run.rssMib) %></td><td><%= format(run.cpuPercent) %></td><td><%= run.inferredFrames.toLocaleString('en-US') %> / <%= run.inputFrames.toLocaleString('en-US') %></td></tr><% }); %></tbody>
+    </table>
+  </div>
+  <p class="rk-test-note">FP16 完成 <%= fp16.inferredFrames.toLocaleString('en-US') %> 次检测，接纳 <%= fp16.acceptedFrames.toLocaleString('en-US') %> 个结果，另有 <%= fp16.lateFrames %> 个迟到结果。Hybrid 相对 FP16 模型体积缩小 <%= rk.modelReductionPercent.toFixed(2) %>%，比例来自原始字节数。</p>
+  <section class="rk-accuracy" aria-labelledby="rk-accuracy-title">
+    <<%= subheading %> class="rk-subsection-title" id="rk-accuracy-title">独立精度评估</<%= subheading %>>
+    <p class="rk-prose"><%= rk.accuracy.images %> 张 <%= rk.accuracy.dataset %> 图像，覆盖 <%= rk.accuracy.classes %> 类目标。F1 使用 conf=<%= rk.accuracy.confidence %>、IoU=<%= rk.accuracy.iou %>；数值单位为百分比。</p>
+    <div class="rk-table-wrap" tabindex="0" role="region" aria-label="独立精度评估数据，可横向滚动"><table class="rk-accuracy-table"><thead><tr><th scope="col">模型</th><th scope="col">mAP50 / %</th><th scope="col">mAP50–95 / %</th><th scope="col">F1 / %</th></tr></thead><tbody><% rk.benchmarks.forEach(run => { %><tr data-benchmark-id="<%= run.id %>"<% if (run.id === rk.defaultBenchmark) { %> class="is-selected"<% } %>><th scope="row"><%= run.label %></th><td><%= format(run.map50) %></td><td><%= format(run.map5095) %></td><td><%= format(run.f1) %></td></tr><% }); %></tbody></table></div>
+    <p class="rk-test-note"><%= rk.accuracy.note %></p>
+  </section>
+  <section class="rk-camera-runs" aria-labelledby="rk-camera-title">
+    <<%= subheading %> class="rk-subsection-title" id="rk-camera-title">摄像头路径的历史记录</<%= subheading %>>
+    <p class="rk-prose"><%= rk.cameraRuns[0].date %>，各记录 <%= rk.cameraRuns[0].frames.toLocaleString('en-US') %> 帧。以下记录的延迟定义不同，分别保留原始口径，不用于直接对比。</p>
+    <div class="rk-table-wrap" tabindex="0" role="region" aria-label="摄像头历史测试记录，可横向滚动"><table class="rk-camera-table"><thead><tr><th scope="col">输入</th><th scope="col">处理路径</th><th scope="col">输出 / 检测 FPS</th><th scope="col">延迟指标</th></tr></thead><tbody><% rk.cameraRuns.forEach(run => { %><tr><th scope="row"><%= run.label %><span class="rk-table-detail"><%= run.capture %></span></th><td><%= run.pipeline %></td><td><%= run.outputFps.toFixed(run.id === 'yuyv' ? 3 : 2) %> / <%= run.detectFps.toFixed(run.id === 'yuyv' ? 3 : 2) %></td><td><%= run.latencyLabel %> <%= run.latencyMs %> ms<% if (run.ageP95Ms != null) { %><span class="rk-table-detail">校正数据年龄 P95 <%= run.ageP95Ms %> ms</span><% } %></td></tr><% }); %></tbody></table></div>
+  </section>
+  <p class="rk-benchmark-status" data-benchmark-status role="status" aria-live="polite"></p>
+  <p class="rk-test-note"><a href="<%= rk.sources.deployment %>">查看固定版本部署与实测记录 ↗</a></p>
+</section>

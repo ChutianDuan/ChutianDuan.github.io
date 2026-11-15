@@ -1,0 +1,103 @@
+title: RK3588 Edge Vision
+subtitle: Real-Time AI Inference System
+summary: 基于 C++17、Linux、V4L2、RGA、DMA-BUF 和 RKNN 的边缘实时视觉推理系统，实现目标检测与跟踪。
+tags: [C++17, RK3588, INT8 / FP16, DMA-BUF, RKNN, ByteTrack]
+defaultBenchmark: hybrid
+modelReductionPercent: 42.62
+sources:
+  repository: https://github.com/ChutianDuan/Yolo
+  deployment: https://github.com/ChutianDuan/Yolo/blob/d527fd2ac416e52dbd37e10bbbfaf4ef3f268ab7/README_RK3588.md
+  note: /notes/liunx-c-工程化/5-onnx模型导出与部署优化/
+  fixesRoot: https://github.com/ChutianDuan/shimeta-rk3588-linux-fixes/tree/10c760515b1e0a3eb90badba7e3193ff1ad495c1
+  fixesIssues: https://github.com/ChutianDuan/shimeta-rk3588-linux-fixes/blob/10c760515b1e0a3eb90badba7e3193ff1ad495c1/docs/porting-issues.md
+  fixesValidation: https://github.com/ChutianDuan/shimeta-rk3588-linux-fixes/blob/10c760515b1e0a3eb90badba7e3193ff1ad495c1/docs/validation.md
+implementation:
+  - title: 混合精度量化
+    text: 先建立 PTQ INT8 基线，再通过逐层分析将敏感位置保留为 FP16，用 RKNN-Toolkit2 导出固定混合精度模型。
+  - title: DMA-BUF 与帧租约
+    text: YUYV 采集直接共享给 RGA / RKNN，稳态应用层上传为 0 字节；MJPEG 保留一次压缩包复制，解码后由 MPP / RGA / RKNN 共享图像缓冲。帧租约与 RAII 负责资源归还。
+  - title: 三个独立 Worker
+    text: 每个 Worker 持有独立的 RKNN Context、RGA 预处理目标和输入输出缓冲，分别绑定 NPU Core0 / 1 / 2，并发处理单路视频的不同帧。
+  - title: 有界队列与跟踪输出
+    text: 等待槽保留最新帧；YOLO26 检测结合 ByteTrack 校正轨迹，按帧序号和时间水位拒绝迟到结果，JSONL 记录检测、轨迹和运行资源。
+replay:
+  date: '2026-10-19'
+  input: 单路交通 JPEG 序列回放
+  durationSeconds: 600.03
+  inputFrames: 18066
+  inputFps: 30.107
+  outputFrames: 18066
+  inputSize: 800×608
+  pipeline: MPP NV12 → RGA RGB 800×608 → RKNN
+  workers: 三 Context split，分别绑定 NPU Core0 / 1 / 2
+  confidence: 0.25
+  detectFps: 0
+  display: 关闭预览，保留画框与跟踪
+  statistics: FPS 与 RSS 排除前 30 秒及末尾 30 帧
+  throughputNote: 输入约 30.107 FPS，检测速率受输入限制；该结果不是 NPU 的最大吞吐量。
+accuracy:
+  images: 202
+  dataset: BDD100K training 同一序列
+  classes: 6
+  confidence: 0.25
+  iou: 0.5
+  note: 独立精度评估；Hybrid 尚未测试，不用 FP16 或 INT8 的结果代填。
+benchmarks:
+  - id: fp16
+    label: FP16
+    fps: 14.42
+    modelMib: 21.20
+    rssMib: 252.21
+    cpuPercent: 193.89
+    inferredFrames: 8658
+    inputFrames: 18066
+    acceptedFrames: 8655
+    lateFrames: 3
+    map50: 49.91
+    map5095: 24.37
+    f1: 58.04
+  - id: int8
+    label: INT8
+    fps: 30.11
+    modelMib: 11.62
+    rssMib: 128.48
+    cpuPercent: 30.53
+    inferredFrames: 18066
+    inputFrames: 18066
+    map50: 29.04
+    map5095: 8.41
+    f1: 35.85
+  - id: hybrid
+    label: Hybrid
+    fps: 30.11
+    modelMib: 12.17
+    rssMib: 146.17
+    cpuPercent: 37.93
+    inferredFrames: 18066
+    inputFrames: 18066
+    map50: null
+    map5095: null
+    f1: null
+cameraRuns:
+  - id: yuyv
+    label: YUYV 摄像头
+    date: '2026-10-18'
+    frames: 3000
+    capture: 800×600 / 15 FPS
+    pipeline: YUYV → RGA → RKNN
+    outputFps: 14.998
+    detectFps: 14.998
+    latencyLabel: 采集到结果 P95
+    latencyMs: 110.076
+    ageP95Ms: null
+  - id: mjpeg
+    label: MJPEG 摄像头
+    date: '2026-10-18'
+    frames: 3000
+    capture: 800×600 / 30 FPS
+    pipeline: MJPEG → MPP → RGA → RKNN split
+    outputFps: 30.00
+    detectFps: 30.00
+    latencyLabel: 输出 P95
+    latencyMs: 36
+    ageP95Ms: 104

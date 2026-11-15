@@ -52,7 +52,7 @@ header: false
       <p>主要实现与对应的工程证据。</p>
     </div>
     <ul class="portfolio-link-list">
-      <li><a href="/projects/#yolo-tracking-service">VisionTrack / RK3588</a>：混合精度量化、DMA-BUF 共享缓冲与三 Worker 并发，附板端 10 分钟长测和部署记录。</li>
+      <li><a href="/projects/#yolo-tracking-service">RK3588 Edge Vision / VisionTrack</a>：混合精度量化、DMA-BUF 共享缓冲与三 Worker 并发，附板端 10 分钟长测和部署记录。<a href="/projects/rk3588/">阅读工程专题</a></li>
       <li><a href="/projects/#rag-agent-platform">RAG Gateway Stack</a>：C++ 网关与 Python 文档服务，包含任务处理、检索重排、流式回答及引用追踪。</li>
       <li><a href="/projects/#libevent-chat-server">Libevent Chat Server</a>：Acceptor / Worker 连接分发、房间消息与慢连接背压。</li>
       <li><a href="/projects/#fighting-authoritative-server">Fighting Netcode</a>：60Hz 权威模拟、UDP 输入冗余、客户端预测与回滚重放。</li>

@@ -1,0 +1,68 @@
+<% const heading = pageKind === 'detail' ? 'h2' : 'h3'; const prefix = `rk-arch-${pageKind}`; %>
+<section class="rk-section rk-architecture" id="rk-architecture" aria-labelledby="rk-architecture-title">
+  <header class="rk-section-heading">
+    <<%= heading %> class="rk-section-title" id="rk-architecture-title">系统架构与数据通路</<%= heading %>>
+    <p class="rk-prose">两种采集格式进入不同的设备路径，再把不同帧交给三个独立 Worker。DMA-BUF 共享底层分配，帧租约控制每次读取与归还。</p>
+  </header>
+  <figure class="rk-architecture-figure">
+    <svg class="rk-architecture-svg rk-architecture-wide" viewBox="0 0 1200 850" role="img" aria-labelledby="<%= prefix %>-wide-title <%= prefix %>-wide-desc">
+      <title id="<%= prefix %>-wide-title">YUYV 与 MJPEG 输入、三个独立 Worker 和检测跟踪输出</title>
+      <desc id="<%= prefix %>-wide-desc">YUYV 经 V4L2 DMA-BUF 直通。MJPEG 经 V4L2 MMAP、一次压缩包复制、MPP 解码为 NV12。不同帧分发给三个分别绑定 NPU Core0、Core1、Core2 的 Worker，各自执行 RGA 预处理并持有独立 RGB 目标和 RKNN Context。检测后进行 Top-K、坐标恢复、ByteTrack 和 JSONL 输出。MPP 的 NV12 另供画框预览路径读取。源帧读取结束后归还，RGB 在推理和后处理结束后回收。</desc>
+      <defs><marker id="<%= prefix %>-wide-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1 9 5 1 9" fill="none" stroke="#075cff" stroke-width="1.5"/></marker></defs>
+      <g font-size="17" fill="#0b0e14">
+        <g fill="#ffffff" stroke="#dfe4ec"><rect x="24" y="30" width="220" height="70"/><rect x="280" y="30" width="260" height="70"/><rect x="24" y="145" width="220" height="70"/><rect x="280" y="145" width="190" height="70"/><rect x="505" y="145" width="220" height="70"/><rect x="760" y="145" width="350" height="70"/></g>
+        <g text-anchor="middle"><text x="134" y="61" font-weight="650">YUYV 摄像头</text><text x="134" y="85" fill="#667085">原始图像</text><text x="410" y="61" font-weight="650">V4L2 DMA-BUF 帧池</text><text x="410" y="85" fill="#667085">直接共享采集缓冲</text><text x="134" y="176" font-weight="650">MJPEG 摄像头</text><text x="134" y="200" fill="#667085">压缩图像</text><text x="375" y="176" font-weight="650">V4L2 MMAP</text><text x="375" y="200" fill="#667085">压缩包 bytesused</text><text x="615" y="176" font-weight="650">一次压缩包复制</text><text x="615" y="200" fill="#667085">输入 DMA-BUF</text><text x="935" y="176" font-weight="650">MPP 硬件解码</text><text x="935" y="200" fill="#667085">NV12 DMA-BUF · 检测 / 输出共享</text></g>
+        <g fill="none" stroke="#075cff" stroke-width="1.7" marker-end="url(#<%= prefix %>-wide-arrow)"><path d="M244 65H280"/><path d="M244 180H280"/><path d="M470 180H505"/><path d="M725 180H760"/><path d="M540 65H1137V253H820"/><path d="M935 215V253H820"/></g>
+        <rect x="380" y="227" width="440" height="52" fill="#f4f7fb" stroke="#dfe4ec"/>
+        <text x="600" y="250" text-anchor="middle" font-weight="650">有界等待槽 · 分发不同帧</text><text x="600" y="271" text-anchor="middle" fill="#667085" font-size="15">最新帧优先 · 帧序号与时间戳随帧传递</text>
+        <g fill="none" stroke="#075cff" stroke-width="1.7" marker-end="url(#<%= prefix %>-wide-arrow)"><path d="M600 279V300H200V326"/><path d="M600 279V326"/><path d="M600 279V300H1000V326"/></g>
+        <% [0, 1, 2].forEach(worker => { const x = 24 + worker * 400; %>
+        <g><rect x="<%= x %>" y="326" width="352" height="244" fill="#ffffff" stroke="#dfe4ec"/>
+          <text x="<%= x + 176 %>" y="355" text-anchor="middle" font-weight="650" fill="#075cff">Worker<%= worker %> / Context<%= worker %> / Core<%= worker %></text>
+          <rect x="<%= x + 20 %>" y="373" width="312" height="42" fill="#f4f7fb" stroke="#dfe4ec"/><text x="<%= x + 176 %>" y="400" text-anchor="middle">RGA · 颜色转换 / letterbox</text>
+          <path d="M<%= x + 176 %> 415V431" stroke="#075cff" fill="none" marker-end="url(#<%= prefix %>-wide-arrow)"/>
+          <rect x="<%= x + 20 %>" y="432" width="312" height="42" fill="#ffffff" stroke="#dfe4ec"/><text x="<%= x + 176 %>" y="459" text-anchor="middle">独立 RGB DMA-BUF · 800×608</text>
+          <path d="M<%= x + 176 %> 474V490" stroke="#075cff" fill="none" marker-end="url(#<%= prefix %>-wide-arrow)"/>
+          <rect x="<%= x + 20 %>" y="491" width="312" height="42" fill="#f4f7fb" stroke="#075cff"/><text x="<%= x + 176 %>" y="518" text-anchor="middle" font-weight="650">RKNN / YOLO26 · NPU Core<%= worker %></text>
+          <text x="<%= x + 176 %>" y="555" text-anchor="middle" fill="#667085" font-size="15">复用本 Worker 的目标与输入输出缓冲</text>
+        </g>
+        <% }); %>
+        <g fill="none" stroke="#075cff" stroke-width="1.7" marker-end="url(#<%= prefix %>-wide-arrow)"><path d="M200 570V597H600V622"/><path d="M600 570V622"/><path d="M1000 570V597H600V622"/></g>
+        <rect x="240" y="622" width="720" height="70" fill="#f4f7fb" stroke="#dfe4ec"/>
+        <text x="600" y="650" text-anchor="middle" font-weight="650">Top-K / 坐标恢复 → ByteTrack → JSONL</text><text x="600" y="677" text-anchor="middle" fill="#667085">轨迹与资源统计 · 按帧序号和时间水位拒绝迟到结果</text>
+        <path d="M1110 180H1175V717H1110" fill="none" stroke="#667085" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#<%= prefix %>-wide-arrow)"/>
+        <path d="M960 657H1020V695" fill="none" stroke="#075cff" stroke-width="1.7" marker-end="url(#<%= prefix %>-wide-arrow)"/>
+        <rect x="850" y="695" width="260" height="54" fill="#ffffff" stroke="#dfe4ec"/><text x="980" y="718" text-anchor="middle">输出侧 RGA 转 BGR / CPU 画框</text><text x="980" y="739" text-anchor="middle" fill="#667085" font-size="15">读取 NV12 · 可选预览</text>
+        <path d="M24 772H1176" stroke="#dfe4ec"/>
+        <text x="24" y="802" fill="#4f5968" font-size="16">源租约：相关 RGA 读取结束后归还；NV12 的检测与输出读取分别持有租约。</text>
+        <text x="24" y="829" fill="#4f5968" font-size="16">RGB 租约：当前 Worker 推理与后处理完成后回收。底层 allocation 与设备注册由 RAII 管理。</text>
+      </g>
+    </svg>
+    <svg class="rk-architecture-svg rk-architecture-compact" viewBox="0 0 400 1570" role="img" aria-labelledby="<%= prefix %>-compact-title <%= prefix %>-compact-desc">
+      <title id="<%= prefix %>-compact-title">窄屏数据通路：两路输入、三个并行 Worker 与输出</title>
+      <desc id="<%= prefix %>-compact-desc">YUYV 直接共享 V4L2 DMA-BUF。MJPEG 经过 MMAP、一次压缩包复制和 MPP，得到 NV12。等待槽向三个独立 Worker 分发不同帧，每个 Worker 依次执行 RGA、独立 RGB 缓冲和绑定对应 NPU 核的 RKNN。结果进入坐标恢复、ByteTrack 和 JSONL。源图像与 RGB 目标按各自使用完成时点归还。</desc>
+      <defs><marker id="<%= prefix %>-compact-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1 9 5 1 9" fill="none" stroke="#075cff" stroke-width="1.5"/></marker></defs>
+      <g font-size="18" fill="#0b0e14">
+        <rect x="24" y="20" width="352" height="82" fill="#ffffff" stroke="#dfe4ec"/><text x="200" y="52" text-anchor="middle" font-weight="650">YUYV → V4L2 DMA-BUF</text><text x="200" y="82" text-anchor="middle" fill="#667085">直接共享采集缓冲</text>
+        <rect x="24" y="137" width="352" height="92" fill="#ffffff" stroke="#dfe4ec"/><text x="200" y="169" text-anchor="middle" font-weight="650">MJPEG → V4L2 MMAP</text><text x="200" y="199" text-anchor="middle" fill="#667085">一次 bytesused 压缩包复制</text><text x="200" y="221" text-anchor="middle" fill="#667085" font-size="16">交给输入 DMA-BUF</text>
+        <path d="M200 229V259" fill="none" stroke="#075cff" stroke-width="1.7" marker-end="url(#<%= prefix %>-compact-arrow)"/>
+        <rect x="24" y="260" width="352" height="76" fill="#ffffff" stroke="#dfe4ec"/><text x="200" y="291" text-anchor="middle" font-weight="650">MPP → NV12 DMA-BUF</text><text x="200" y="319" text-anchor="middle" fill="#667085">检测与输出共享源图像</text>
+        <path d="M200 336V376M24 61H8V414H24" fill="none" stroke="#075cff" stroke-width="1.7" marker-end="url(#<%= prefix %>-compact-arrow)"/>
+        <rect x="24" y="377" width="352" height="82" fill="#f4f7fb" stroke="#dfe4ec"/><text x="200" y="408" text-anchor="middle" font-weight="650">最新帧等待槽 · 分发不同帧</text><text x="200" y="439" text-anchor="middle" fill="#667085">携带帧序号与时间戳</text>
+        <path d="M200 459V480H386V1008" fill="none" stroke="#075cff" stroke-width="1.7"/>
+        <% [0, 1, 2].forEach(worker => { const y = 500 + worker * 204; %>
+        <path d="M386 <%= y + 80 %>H376" fill="none" stroke="#075cff" stroke-width="1.7" marker-end="url(#<%= prefix %>-compact-arrow)"/>
+        <rect x="24" y="<%= y %>" width="352" height="172" fill="#ffffff" stroke="#dfe4ec"/>
+        <text x="200" y="<%= y + 30 %>" text-anchor="middle" fill="#075cff" font-weight="650">Worker<%= worker %> / Context<%= worker %> / Core<%= worker %></text>
+        <text x="200" y="<%= y + 68 %>" text-anchor="middle">RGA 预处理与颜色转换</text><text x="200" y="<%= y + 101 %>" text-anchor="middle">↓ 独立 RGB DMA-BUF · 800×608</text><text x="200" y="<%= y + 135 %>" text-anchor="middle" font-weight="650">↓ RKNN / YOLO26 · NPU Core<%= worker %></text>
+        <path d="M200 <%= y + 172 %>V<%= y + 188 %>H16V1140H200V1160" fill="none" stroke="#075cff" stroke-width="1.5" marker-end="url(#<%= prefix %>-compact-arrow)"/>
+        <% }); %>
+        <rect x="24" y="1160" width="352" height="106" fill="#f4f7fb" stroke="#dfe4ec"/><text x="200" y="1192" text-anchor="middle" font-weight="650">Top-K / 坐标恢复 → ByteTrack</text><text x="200" y="1223" text-anchor="middle">JSONL · 检测、轨迹与资源统计</text><text x="200" y="1252" text-anchor="middle" fill="#667085" font-size="16">按帧序号与时间水位拒绝迟到结果</text>
+        <path d="M200 1266V1295" fill="none" stroke="#075cff" stroke-width="1.7" marker-end="url(#<%= prefix %>-compact-arrow)"/><path d="M376 298H396V1338H376" fill="none" stroke="#667085" stroke-width="1.4" stroke-dasharray="5 5" marker-end="url(#<%= prefix %>-compact-arrow)"/>
+        <rect x="24" y="1296" width="352" height="86" fill="#ffffff" stroke="#dfe4ec"/><text x="200" y="1327" text-anchor="middle">输出侧 RGA 转 BGR / CPU 画框</text><text x="200" y="1358" text-anchor="middle" fill="#667085">读取 NV12 · 可选预览</text>
+        <path d="M24 1410H376" stroke="#dfe4ec"/><text x="24" y="1442" fill="#4f5968" font-size="17">源帧：相关 RGA 读取完成后归还。</text><text x="24" y="1470" fill="#4f5968" font-size="17">RGB：推理与后处理完成后回收。</text><text x="24" y="1506" fill="#4f5968" font-size="17">三个 Worker 并行处理不同帧，</text><text x="24" y="1534" fill="#4f5968" font-size="17">不是将一个帧拆给三个 Context。</text>
+      </g>
+    </svg>
+    <figcaption>实线为主要数据通路，虚线为输出侧读取 NV12 的分支。各 Worker 独立持有目标缓冲与 Context；图中的 RGA 阶段表示调用共享硬件，不代表三套独立 RGA 设备。</figcaption>
+  </figure>
+</section>

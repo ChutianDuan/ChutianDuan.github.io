@@ -1,0 +1,60 @@
+<% const standalone = pageKind === 'detail'; const sectionHeading = standalone ? 'h2' : 'h3'; const fp16 = rk.benchmarks.find(run => run.id === 'fp16'); %>
+<% if (standalone) { %>
+<link rel="stylesheet" href="/assets/portfolio/portfolio.css">
+<section class="portfolio-page projects-page projects-page--detail">
+  <nav class="rk-breadcrumb" aria-label="当前位置"><a href="/">首页</a><span aria-hidden="true">/</span><a href="/projects/">项目</a><span aria-hidden="true">/</span><span aria-current="page">RK3588 视觉部署</span></nav>
+<% } %>
+  <article class="rk3588-showcase" id="<%= standalone ? 'rk3588-project' : 'yolo-tracking-service' %>">
+    <%- include('overview', { rk, pageKind }) %>
+    <nav class="rk-topic-nav" aria-label="RK3588 项目章节">
+      <a href="#rk-overview">项目概览</a><a href="#rk-architecture">系统架构</a><a href="#rk-scheduling">NPU 调度</a><a href="#rk-benchmark">实测对比</a><a href="#rk-journal">工程记录</a><a href="#rk-tools">工具</a><a href="#rk-sources">源码与证据</a>
+    </nav>
+    <%- include('architecture', { rk, pageKind }) %>
+    <ul class="rk-implementation-list"><% rk.implementation.forEach(item => { %><li><strong><%= item.title %></strong><p><%= item.text %></p></li><% }); %></ul>
+    <% if (standalone) { %>
+    <section class="rk-section rk-input-contract" aria-labelledby="rk-input-contract-title">
+      <header class="rk-section-heading"><h2 class="rk-section-title" id="rk-input-contract-title">输入契约与缓冲生命周期</h2></header>
+      <div class="rk-prose">
+        <p>采集格式决定进入流水线的路径。YUYV 原始帧由 V4L2 提供，再交给 RGA 做颜色转换与尺寸调整；MJPEG 先经过 MPP 解码，再将 NV12 图像交给 RGA。两个路径最终向 RKNN 提供 RGB 输入。</p>
+        <p>宽高、格式、stride 与可导入的 DMA-BUF 必须在各阶段保持一致。YUYV 稳态路径的应用层上传为 0 字节；MJPEG 仍保留一次压缩包复制，不能将整条链路都称为零拷贝。</p>
+        <p>采集图像为 800×600，模型输入为 800×608：上下各补 4 行、填充值为 114，后处理将检测坐标恢复到采集图像空间，避免将 padding 当成有效图像内容。</p>
+        <p>RGA 读完后归还采集帧；RGB 目标帧在 RKNN 推理与后处理结束后归还。三个 Worker 分别复用各自的预处理目标和输入输出缓冲，帧租约与 RAII 确保资源在成功、失败或退出路径都能归还。</p>
+      </div>
+    </section>
+    <% } %>
+    <%- include('scheduling', { rk, pageKind }) %>
+    <%- include('benchmark', { rk, pageKind }) %>
+    <% if (standalone) { %>
+    <section class="rk-section rk-metric-explanation" aria-labelledby="rk-metric-explanation-title">
+      <header class="rk-section-heading"><h2 class="rk-section-title" id="rk-metric-explanation-title">怎样读这些指标</h2></header>
+      <div class="rk-prose">
+        <p>输出帧数与完成检测的帧数不同：三组回放各输出 <%= rk.replay.outputFrames.toLocaleString('en-US') %> 帧，但 FP16 只完成 <%= fp16.inferredFrames.toLocaleString('en-US') %> 次检测，其中 <%= fp16.lateFrames %> 个结果迟到，实际接纳 <%= fp16.acceptedFrames.toLocaleString('en-US') %> 个。不能用输出速率代替检测能力。</p>
+        <p>INT8 和 Hybrid 的有效检测均达到输入速率。比较它们时，模型体积、内存与独立精度记录比相同的有效检测速率更有区分度。Hybrid 相对 FP16 的模型体积缩小 <%= rk.modelReductionPercent.toFixed(2) %>%，该比例来自原始字节数，不从表格中的舍入值重算。</p>
+        <p>平均 CPU 使用率按多核累计，可能高于 100%；平均 RSS 表示进程常驻内存。摄像头历史记录与 JPEG 回放的输入和延迟定义不同，分别列出。</p>
+      </div>
+    </section>
+    <% } %>
+    <%- include('journal', { rk, pageKind }) %>
+    <section class="rk-section rk-tools" id="rk-tools" aria-labelledby="rk-tools-title">
+      <header class="rk-section-heading"><<%= sectionHeading %> class="rk-section-title" id="rk-tools-title">摄像头标定板</<%= sectionHeading %>></header>
+      <p class="rk-prose">可调整内角点数量、全屏显示、锁定方格大小并导出 SVG。下载单个 HTML 即可离线使用。</p>
+      <div class="portfolio-actions rk-actions"><a class="portfolio-button primary" href="/tools/camera-calibration.html">打开标定板</a><a class="portfolio-button" href="/tools/camera-calibration.html" download="摄像头标定板.html">下载 HTML</a></div>
+    </section>
+    <section class="rk-section rk-sources" id="rk-sources" aria-labelledby="rk-sources-title">
+      <header class="rk-section-heading"><<%= sectionHeading %> class="rk-section-title" id="rk-sources-title">源码、部署与验证记录</<%= sectionHeading %>></header>
+      <ul class="rk-source-list">
+        <li><a href="<%= rk.sources.repository %>">VisionTrack 代码仓库 ↗</a><span>项目入口与当前实现</span></li>
+        <li><a href="<%= rk.sources.deployment %>">RK3588 板端部署与实测 ↗</a><span>固定版本的回放、精度与摄像头结果</span></li>
+        <li><a href="<%= rk.sources.note %>">模型导出与部署笔记</a><span>输入输出契约与推理优化</span></li>
+        <li><a href="<%= rk.sources.fixesRoot %>">Linux 移植与修复仓库 ↗</a><span>视美泰 RK3588 的工程修复记录</span></li>
+        <li><a href="<%= rk.sources.fixesIssues %>">移植问题与排查 ↗</a><span>问题背景、原因与处理过程</span></li>
+        <li><a href="<%= rk.sources.fixesValidation %>">修复验证记录 ↗</a><span>已完成的验证与对应证据</span></li>
+      </ul>
+      <p class="rk-test-note">页面数据整理自上述固定版本文档；原始板端日志、模型文件与完整板端源码未公开。</p>
+    </section>
+  </article>
+<% if (standalone) { %>
+  <p class="rk-back-link"><a href="/projects/">← 返回全部项目</a></p>
+</section>
+<script src="/assets/portfolio/rk3588.js" defer></script>
+<% } %>

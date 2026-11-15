@@ -109,9 +109,9 @@ const LEARNING_PATHS = {
 
 const SERIES_PROJECTS = {
   'modern-cpp': ['Libevent Chat Server', 'libevent-chat-server'],
-  'parallel-cpp': ['VisionTrack', 'yolo-tracking-service'],
+  'parallel-cpp': ['RK3588 Edge Vision', 'yolo-tracking-service'],
   'linux-server': ['Libevent Chat Server', 'libevent-chat-server'],
-  'cpp-engineering': ['VisionTrack', 'yolo-tracking-service'],
+  'cpp-engineering': ['RK3588 Edge Vision', 'yolo-tracking-service'],
   'ai-model': ['RAG Gateway Stack', 'rag-agent-platform'],
   'network-services': ['RAG Gateway Stack', 'rag-agent-platform'],
   'fighting-netcode': ['Fighting Netcode', 'fighting-authoritative-server']

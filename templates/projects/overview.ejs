@@ -1,0 +1,27 @@
+<% const featured = rk.benchmarks.find(run => run.id === rk.defaultBenchmark); const titleTag = pageKind === 'detail' ? 'h1' : 'h2'; const format = value => Number.isFinite(value) ? value.toFixed(2) : '未测试'; %>
+<section class="rk-overview" id="rk-overview" aria-labelledby="rk-project-title">
+  <div class="rk-hero">
+    <div class="rk-hero-copy">
+      <<%= titleTag %> class="rk-project-title" id="rk-project-title"><%= rk.title %></<%= titleTag %>>
+      <p class="rk-project-subtitle"><%= rk.subtitle %></p>
+      <p class="rk-intro"><%= rk.summary %></p>
+      <dl class="rk-key-metrics">
+        <div><dt>有效检测速率</dt><dd><%= format(featured.fps) %><% if (Number.isFinite(featured.fps)) { %> <small>FPS</small><% } %></dd></div>
+        <div><dt>混合精度模型</dt><dd><%= format(featured.modelMib) %><% if (Number.isFinite(featured.modelMib)) { %> <small>MiB</small><% } %></dd></div>
+        <div><dt>平均 RSS</dt><dd><%= format(featured.rssMib) %><% if (Number.isFinite(featured.rssMib)) { %> <small>MiB</small><% } %></dd></div>
+      </dl>
+      <p class="rk-test-note"><%= rk.replay.date %> · <%= featured.label %> · <%= rk.replay.inputSize %> · 单路交通 JPEG 回放 <%= Math.round(rk.replay.durationSeconds / 60) %> 分钟 · <%= rk.replay.workers %>。检测速率受约 <%= Math.round(rk.replay.inputFps) %> FPS 输入限制。</p>
+      <div class="portfolio-tags rk-tags"><% rk.tags.forEach(tag => { %><span><%= tag %></span><% }); %></div>
+      <div class="portfolio-actions rk-actions">
+        <a class="portfolio-button primary" href="<%= rk.sources.repository %>">GitHub 仓库</a>
+        <a class="portfolio-button" href="<%= rk.sources.deployment %>">部署与实测记录</a>
+        <a class="portfolio-button" href="<%= rk.sources.note %>">技术笔记</a>
+        <% if (pageKind === 'index') { %><a class="portfolio-button" href="/projects/rk3588/">深入专题</a><% } %>
+      </div>
+    </div>
+    <figure class="rk-hero-media">
+      <a href="/assets/yolo/shimeta-rk3588.png" aria-label="查看视美泰 RK3588 开发板原图"><img src="/assets/yolo/shimeta-rk3588-1080.jpg" srcset="/assets/yolo/shimeta-rk3588-720.jpg 720w, /assets/yolo/shimeta-rk3588-1080.jpg 1080w" sizes="(max-width: 1024px) calc(100vw - 40px), 464px" width="1402" height="1122" loading="eager" decoding="async" alt="用于视觉模型部署的视美泰 RK3588 开发板，展示散热器和外设接口"></a>
+      <figcaption>视美泰 RK3588 · ARM64 Linux 部署平台</figcaption>
+    </figure>
+  </div>
+</section>

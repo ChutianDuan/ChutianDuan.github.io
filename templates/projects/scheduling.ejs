@@ -1,0 +1,39 @@
+<% const heading = pageKind === 'detail' ? 'h2' : 'h3'; const prefix = `rk-schedule-${pageKind}`; %>
+<section class="rk-section rk-scheduling" id="rk-scheduling" aria-labelledby="rk-scheduling-title">
+  <header class="rk-section-heading">
+    <<%= heading %> class="rk-section-title" id="rk-scheduling-title">三核并发调度</<%= heading %>>
+    <p class="rk-prose">原理示意，非实测时间轨迹。三个独立 Context 处理不同帧；轨道表示 Worker 的生命周期，只有 RKNN 推理阶段占用对应 NPU 核。</p>
+  </header>
+  <div class="rk-schedule-legend"><span>□ RGA：预处理</span><span>■ RKNN：推理</span><span>▧ 回收：完成与资源归还</span></div>
+  <div class="rk-schedule-scroll" tabindex="0" role="region" aria-label="三个 Worker 的调度原理图，可横向滚动">
+    <svg class="rk-schedule-svg" viewBox="0 0 1200 342" role="img" aria-labelledby="<%= prefix %>-title <%= prefix %>-desc">
+      <title id="<%= prefix %>-title">F001 至 F009 在三个 Worker 上交错处理的原理示意</title>
+      <desc id="<%= prefix %>-desc">Worker0 对应 Core0，依次处理 F001、F004、F007；Worker1 对应 Core1，处理 F002、F005、F008；Worker2 对应 Core2，处理 F003、F006、F009。每帧经历 RGA 预处理、RKNN 推理、完成与回收。三个 Worker 交错推进，横轴仅为逻辑步骤，不表示真实毫秒。</desc>
+      <g font-size="17" fill="#0b0e14">
+        <% [0, 1, 2].forEach(worker => { const y = 24 + worker * 92; %>
+        <rect x="0" y="<%= y %>" width="163" height="72" fill="#f4f7fb"/>
+        <text x="16" y="<%= y + 28 %>" font-weight="650">NPU Core<%= worker %></text><text x="16" y="<%= y + 53 %>">Worker<%= worker %></text>
+        <path d="M174 <%= y + 78 %>H1190" stroke="#dfe4ec"/>
+        <% [0, 1, 2].forEach(batch => { const index = worker + batch * 3; const label = `F${String(index + 1).padStart(3, '0')}`; const x = 184 + batch * 318 + worker * 28; %>
+        <g data-schedule-frame="<%= index %>" aria-label="<%= label %>：Worker<%= worker %>，RGA 预处理、Core<%= worker %> RKNN 推理、完成与回收">
+          <rect x="<%= x %>" y="<%= y + 6 %>" width="74" height="58" fill="#ffffff" stroke="#075cff"/>
+          <rect x="<%= x + 74 %>" y="<%= y + 6 %>" width="100" height="58" fill="#075cff" stroke="#075cff"/>
+          <rect x="<%= x + 174 %>" y="<%= y + 6 %>" width="65" height="58" fill="#edf1f7" stroke="#dfe4ec"/>
+          <text x="<%= x + 37 %>" y="<%= y + 29 %>" text-anchor="middle" font-size="15"><%= label %></text><text x="<%= x + 37 %>" y="<%= y + 51 %>" text-anchor="middle" font-size="15">RGA</text>
+          <text x="<%= x + 124 %>" y="<%= y + 29 %>" text-anchor="middle" fill="#ffffff" font-size="15"><%= label %></text><text x="<%= x + 124 %>" y="<%= y + 51 %>" text-anchor="middle" fill="#ffffff" font-size="15">RKNN</text>
+          <text x="<%= x + 206 %>" y="<%= y + 29 %>" text-anchor="middle" font-size="15"><%= label %></text><text x="<%= x + 206 %>" y="<%= y + 51 %>" text-anchor="middle" font-size="15">回收</text>
+        </g>
+        <% }); }); %>
+        <text x="0" y="325" fill="#667085">逻辑步骤 →</text><path d="M174 314H1190" stroke="#dfe4ec"/><% [0,1,2,3,4,5,6,7,8,9].forEach(step => { %><path d="M<%= 184 + step * 110 %> 308V320" stroke="#dfe4ec"/><% }); %>
+      </g>
+    </svg>
+  </div>
+  <p class="rk-scroll-hint">窄屏可横向滚动查看后续帧；单步会定位到当前帧。</p>
+  <div class="rk-schedule-controls" hidden role="group" aria-label="调度原理演示控制">
+    <button type="button" data-schedule-action="play">播放</button>
+    <button type="button" data-schedule-action="pause" disabled>暂停</button>
+    <button type="button" data-schedule-action="step">单步</button>
+    <button type="button" data-schedule-action="reset">重置</button>
+  </div>
+  <p class="rk-schedule-status" role="status" aria-live="polite">静态原理图：所有帧与阶段均已展开，横轴不表示实测耗时。</p>
+</section>

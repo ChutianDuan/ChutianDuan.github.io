@@ -73,7 +73,7 @@ header: false
         </div>
         <div class="project-card-copy">
           <p class="project-type mono">目标检测与跟踪</p>
-          <h3>VisionTrack / YOLO Tracking</h3>
+          <h3>RK3588 Edge Vision</h3>
           <p>将 YOLO 检测与跟踪部署到 RK3588，结合混合精度量化和设备间共享缓冲处理摄像头视频。</p>
         </div>
         <ul class="project-highlight-list">

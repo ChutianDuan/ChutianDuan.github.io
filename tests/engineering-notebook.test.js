@@ -6,6 +6,7 @@ const path = require('node:path');
 const test = require('node:test');
 const yaml = require('js-yaml');
 const toc = require('hexo/dist/plugins/helper/toc');
+const ejsRenderer = require('hexo-renderer-ejs/lib/renderer');
 
 const generators = new Map();
 const helpers = new Map();
@@ -15,6 +16,7 @@ global.hexo = { extend: {
   helper: { register(name, helper) { helpers.set(name, helper); } }
 } };
 const notebook = require('../scripts/engineering-notebook');
+const { projectPages } = require('../scripts/project-pages');
 delete global.hexo;
 
 function loadPosts(directory = path.join(__dirname, '../source/_posts')) {
@@ -103,7 +105,10 @@ test('unrelated articles receive no filler recommendation', () => {
 test('knowledge-map topics link to their existing project practices', () => {
   const pages = generators.get('engineering-notebook')({ posts: { toArray: () => posts } });
   const map = pages.find(page => page.path === 'archives/index.html').data.content;
-  const projectSource = fs.readFileSync(path.join(__dirname, '../source/projects/index.md'), 'utf8');
+  const rk = yaml.load(fs.readFileSync(path.join(__dirname, '../source/_data/rk3588.yml'), 'utf8'));
+  const projectSource = projectPages(rk, (template, data) => ejsRenderer({
+    ...template, text: fs.readFileSync(template.path, 'utf8')
+  }, data)).find(page => page.path === 'projects/index.html').data.content;
   const expected = {
     'modern-cpp': 'libevent-chat-server',
     'parallel-cpp': 'yolo-tracking-service',

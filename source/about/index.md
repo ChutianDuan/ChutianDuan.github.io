@@ -20,7 +20,7 @@ header: false
     </div>
 
     <div class="portfolio-focus-grid">
-      <div><h2>视觉模型部署</h2><p>把检测与跟踪放到 RK3588 上运行，处理混合精度量化、DMA-BUF 缓冲共享和 NPU 并发。也用 OpenCV 做离线图像定位与尺寸测量。</p></div>
+      <div><h2>视觉模型部署</h2><p>在 <a href="/projects/rk3588/">RK3588 Edge Vision</a> 中处理混合精度量化、DMA-BUF 缓冲共享和 NPU 并发，将检测与跟踪接到摄像头链路。也用 OpenCV 做离线图像定位与尺寸测量。</p></div>
       <div><h2>C++ 系统开发</h2><p>用 Drogon 和 libevent 写网络服务，处理连接分发、线程协作和慢客户端积压；通过游戏同步 Demo 理解预测、回滚与状态一致性。</p></div>
       <div><h2>AI 应用</h2><p>将文档解析、检索与回答生成接成服务，处理后台任务、流式回答，以及 Agent 的工具调用和引用记录。</p></div>
       <div><h2>实现与验证</h2><p>笔记从具体问题出发，记录可运行的实现、测试条件和排查过程。项目页链接到代码与验证记录，文章按专题整理，方便沿着问题继续查阅。</p></div>

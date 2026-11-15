@@ -1,0 +1,86 @@
+<%
+const heading = pageKind === 'detail' ? 'h2' : 'h3';
+const entryHeading = pageKind === 'detail' ? 'h3' : 'h4';
+const hybrid = rk.benchmarks.find(run => run.id === 'hybrid');
+const journal = [
+  {
+    title: 'DMA-BUF：把分配、注册与本帧占用分开',
+    steps: [
+      ['问题', '采集、预处理和推理共享缓冲时，需要避免源帧过早归还，以及设备尚未读完就复用图像。'],
+      ['分析', '长期 allocation、设备注册和本帧租约承担不同职责。FD、映射和 RGA handle 的生存期不能简单等同于一次推理。'],
+      ['方案', '使用 RAII 管理长期资源，用租约管理本帧占用。源帧在相关 RGA 读取完成后归还，独立 RGB 目标在推理与后处理完成后复用。'],
+      ['验证', '固定部署记录中的三组 10 分钟回放，FD 中位数均为 46；记录同时保留资源统计和租约回收条件。']
+    ],
+    source: rk.sources.deployment,
+    sourceLabel: '帧生命周期与运行资源记录'
+  },
+  {
+    title: '三 Context：并发处理不同帧',
+    steps: [
+      ['问题', '单路视频需要在有界资源内持续处理，检测耗时和完成顺序不能阻塞采集或污染较新的跟踪状态。'],
+      ['分析', '三个 Worker 处理的是不同帧，各自持有独立 RKNN Context、RGA 预处理目标和输入输出缓冲。'],
+      ['方案', 'Context 分别绑定 NPU Core0 / 1 / 2；等待槽保留最新帧，以帧序号和时间水位拒绝迟到结果，再由 ByteTrack 校正轨迹。'],
+      ['验证', `Hybrid 在同场景长测中完成 ${hybrid.inferredFrames.toLocaleString('en-US')} / ${hybrid.inputFrames.toLocaleString('en-US')} 帧检测，结果全部接受；该速率受约 30 FPS 的输入限制。`]
+    ],
+    source: rk.sources.deployment,
+    sourceLabel: '多 Context 调度与接纳计数'
+  },
+  {
+    title: 'PTQ：固定混合精度，分别评价速度与精度',
+    steps: [
+      ['问题', 'INT8 可以减少模型和运行资源占用，但模型体积与运行速度不能代替检测精度评价。'],
+      ['分析', '先建立 INT8 基线，按逐层分析选择需要保留 FP16 的敏感位置；精度配置在模型转换时确定，与运行时 Worker 分配独立。'],
+      ['方案', '使用 RKNN-Toolkit2 导出固定 Hybrid 模型；将三组回放长测与 202 张标注图的独立精度实验分开统计。'],
+      ['验证', `Hybrid 模型 ${hybrid.modelMib.toFixed(2)} MiB，比 FP16 缩小 ${rk.modelReductionPercent.toFixed(2)}%。FP16 / INT8 的同帧精度已有记录，Hybrid 精度在对比表中明确标为未测试。`]
+    ],
+    source: rk.sources.deployment,
+    sourceLabel: '量化配置、性能与独立精度结果'
+  },
+  {
+    title: 'MCU 周期复位：补齐用户态握手与心跳',
+    date: '2026-10-16',
+    steps: [
+      ['问题', '原板连续 16 个完整启动段的末条指标，均停在启动后约 606–607 秒，影响持续运行。'],
+      ['分析', '温度和内存没有对应异常，系统未绑定厂商 MCU 驱动；同板参考协议与 I²C6、0x62 的身份测读匹配。'],
+      ['方案', '在用户态补上 MCU 启用、开机握手及每 20 秒心跳，由 systemd 托管。协议异常退出并记录，避免将通信失败当作正常运行。'],
+      ['验证', '历史实机观察 1800.5 秒、60 次检查通过，boot ID 不变。该结果支持初始化或心跳缺失的判断，不等同于新安装器及主动重启验收。']
+    ],
+    source: rk.sources.fixesValidation,
+    sourceLabel: 'MCU 历史验证记录',
+    analysisSource: rk.sources.fixesIssues
+  },
+  {
+    title: 'PCA9555：设备树存在，端口供电仍需验证',
+    date: '2026-10-17',
+    steps: [
+      ['问题', 'USB Hub 已枚举，但部分 USB-A 插口没有真实外设的插入事件。'],
+      ['分析', '运行内核未启用 CONFIG_GPIO_PCA953X，PCA9555 节点未绑定驱动；输出锁存与方向寄存器均为 0xff，预存高电平仍未被输出。'],
+      ['方案', '用户态以 0x83 掩码保护其他位，先设置输出锁存、再设置方向并回读；检测到内核驱动接管时跳过访问。'],
+      ['验证', '两个 USB-A 口分别通过鼠标枚举与移动验证；重复执行前后寄存器一致。记录的是用户态供电修复，不将其称为已完成的内核驱动移植。']
+    ],
+    source: rk.sources.fixesValidation,
+    sourceLabel: 'USB 历史验证记录',
+    analysisSource: rk.sources.fixesIssues
+  }
+];
+%>
+<section class="rk-section rk-journal" id="rk-journal" aria-labelledby="rk-journal-title">
+  <header class="rk-section-heading">
+    <<%= heading %> class="rk-section-title" id="rk-journal-title">工程问题与调试记录</<%= heading %>>
+    <p class="rk-prose">把实现取舍、板级问题和对应的验证结果放在一起，保留可追溯的文档来源。</p>
+  </header>
+  <div class="rk-journal-list">
+    <% journal.forEach((entry, index) => { %>
+    <article class="rk-journal-entry" aria-labelledby="rk-journal-entry-<%= index %>">
+      <header class="rk-journal-entry-heading">
+        <<%= entryHeading %> id="rk-journal-entry-<%= index %>"><%= entry.title %></<%= entryHeading %>>
+        <% if (entry.date) { %><time datetime="<%= entry.date %>"><%= entry.date %> · 历史实机记录</time><% } %>
+      </header>
+      <dl class="rk-journal-steps">
+        <% entry.steps.forEach(([label, text]) => { %><div><dt><%= label %></dt><dd><%= text %></dd></div><% }); %>
+      </dl>
+      <p class="rk-journal-source"><a href="<%= entry.source %>"><%= entry.sourceLabel %> ↗</a><% if (entry.analysisSource) { %><a href="<%= entry.analysisSource %>">问题分析与实现 ↗</a><% } %></p>
+    </article>
+    <% }); %>
+  </div>
+</section>
