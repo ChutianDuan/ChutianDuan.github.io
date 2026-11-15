@@ -146,6 +146,7 @@
 
     rail.addEventListener('scroll', scheduleScrollEnd, { passive: true });
     rail.addEventListener('scrollend', finishScroll);
+    rail.addEventListener('wheel', () => { scrollTarget = null; }, { passive: true });
     rail.addEventListener('dragstart', event => event.preventDefault());
     rail.addEventListener('click', event => {
       if (event.detail > 0 && performance.now() < suppressClickUntil) {
