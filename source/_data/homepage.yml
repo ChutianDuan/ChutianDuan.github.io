@@ -1,0 +1,48 @@
+title: 视觉部署与 C++ 系统实践
+description: 无名的工程笔记，记录 RK3588 视觉模型部署、C++ 网络服务和 AI 应用的实现、调试与性能验证。
+projects:
+  - id: rk3588
+    name: RK3588 VisionTrack
+    slogan:
+      - 让视觉模型，
+      - 在边缘端运行。
+    intro: 从摄像头采集到目标跟踪，记录边缘视觉系统的实现与验证。
+    tags: [RK3588, C++, RKNN]
+    href: /projects/#yolo-tracking-service
+    source: https://github.com/ChutianDuan/Yolo
+  - id: rag
+    name: RAG Gateway Stack
+    slogan:
+      - 让每一次回答，
+      - 都有据可循。
+    intro: 汇聚文件与网页，结合检索重排、流式问答和引用记录，让回答可以回查。
+    tags: [Drogon, FastAPI, LanceDB]
+    href: /projects/#rag-agent-platform
+    source: https://github.com/ChutianDuan/Repo
+  - id: chat
+    name: Libevent Chat Server
+    slogan:
+      - 从一个连接，
+      - 到并发通信。
+    intro: 用多线程 Reactor 处理连接、房间消息与私信，通过背压控制发送积压。
+    tags: [C++, libevent, Reactor]
+    href: /projects/#libevent-chat-server
+    source: https://github.com/ChutianDuan/chat_server
+  - id: fighting
+    name: Fighting Netcode
+    slogan:
+      - 即刻响应，
+      - 让状态重新对齐。
+    intro: 先响应本地输入，再用服务器状态回滚重放，观察网络延迟下的同步过程。
+    tags: [C++20, UDP, Rollback]
+    href: /projects/#fighting-authoritative-server
+    source: https://github.com/ChutianDuan/Fighting
+  - id: screw
+    name: ScrewMetrology
+    slogan:
+      - 从图像边缘，
+      - 到尺寸结果。
+    intro: 从离线图像定位螺钉轮廓，通过亚像素边缘测量输出尺寸与公差结果。
+    tags: [C++17, OpenCV, Subpixel]
+    href: /projects/#screw-metrology
+    source: https://github.com/ChutianDuan/ScrewMetrology

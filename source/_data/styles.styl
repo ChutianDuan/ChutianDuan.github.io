@@ -226,6 +226,51 @@ header.header {
   width: 100%;
 }
 
+/* The homepage owns its viewport; article and project layouts keep their footer. */
+.home-page .main {
+  min-height: 100svh;
+}
+
+.home-page .footer,
+.home-page .back-to-top {
+  display: none;
+}
+
+.home-page .site-title {
+  align-items: center;
+  display: inline-flex;
+  font-size: 1.75rem;
+  gap: 10px;
+}
+
+.home-page .site-title::after {
+  background: var(--blue);
+  content: '';
+  height: 12px;
+  width: 12px;
+}
+
+.home-page header.header {
+  max-width: 1256px;
+  padding-left: 28px;
+  padding-right: 28px;
+}
+
+@media (min-width: 768px) {
+  .home-page .site-nav {
+    flex: 0 1 auto;
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 767px) {
+  .home-page header.header { padding-left: 0; padding-right: 0; }
+  .home-page .site-nav-toggle { order: 3; }
+  .home-page .site-meta { order: 1; text-align: left; }
+  .home-page .site-nav-right { order: 2; }
+  .home-page .site-title { font-size: 1.5rem; }
+}
+
 .home-page .post-block,
 .home-page .post-body {
   margin: 0;

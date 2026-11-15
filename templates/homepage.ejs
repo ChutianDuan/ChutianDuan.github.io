@@ -1,0 +1,60 @@
+<% const count = homepage.projects.length; const number = index => String(index + 1).padStart(2, '0'); const metric = value => Number.isFinite(value) ? value.toFixed(2) : '未测试'; %>
+<link rel="stylesheet" href="/assets/portfolio/portfolio.css">
+<section class="home-showcase" id="top" aria-label="工程项目展台">
+  <h1 class="showcase-page-title">工程项目展台</h1>
+  <div class="showcase-stage">
+    <% homepage.projects.forEach((project, index) => { %>
+    <section class="showcase-panel<%= index === 0 ? ' is-active' : '' %>" id="showcase-panel-<%= project.id %>" data-project="<%= project.id %>" role="tabpanel" aria-labelledby="showcase-tab-<%= project.id %>" tabindex="0"<% if (index !== 0) { %> hidden<% } %>>
+      <div class="showcase-copy">
+        <p class="showcase-project-label"><span class="showcase-index"><%= number(index) %> / <%= String(count).padStart(2, '0') %></span><span class="showcase-name"><%= project.name %></span></p>
+        <h2 class="showcase-slogan"><% project.slogan.forEach(line => { %><span><%= line %></span><% }); %></h2>
+        <p class="showcase-intro"><%= project.intro %></p>
+        <ul class="showcase-tags" aria-label="技术栈"><% project.tags.forEach(tag => { %><li><%= tag %></li><% }); %></ul>
+        <% if (project.id === 'rk3588') { %>
+        <dl class="showcase-metrics" aria-label="RK3588 Hybrid 回放实测">
+          <div><dt>JPEG 回放实测</dt><dd><%= metric(hybrid.fps) %><% if (Number.isFinite(hybrid.fps)) { %> <small>FPS</small><% } %></dd></div>
+          <div><dt>混合精度模型</dt><dd><%= metric(hybrid.modelMib) %><% if (Number.isFinite(hybrid.modelMib)) { %> <small>MiB</small><% } %></dd></div>
+        </dl>
+        <p class="showcase-test-note"><%= rk.replay.date %> · <%= hybrid.label %> · <%= rk.replay.inputSize %> · 单路交通 JPEG 回放 <%= Math.round(rk.replay.durationSeconds / 60) %> 分钟，检测速率受约 <%= Math.round(rk.replay.inputFps) %> FPS 输入限制。<a href="<%= rk.sources.deployment %>">测试条件与实测记录 ↗</a></p>
+        <% } %>
+        <div class="showcase-actions">
+          <a class="portfolio-button primary showcase-primary" href="<%= project.href %>">查看项目<svg aria-hidden="true" viewBox="0 0 20 20"><path d="M5 15 15 5M5 5h10v10"></path></svg></a>
+          <a class="portfolio-button showcase-source" href="<%= project.source %>" target="_blank" rel="noopener noreferrer">源码<svg aria-hidden="true" viewBox="0 0 20 20"><path d="M5 15 15 5M5 5h10v10"></path></svg></a>
+        </div>
+      </div>
+      <figure class="showcase-visual">
+        <picture class="showcase-cover">
+          <source type="image/webp" srcset="/assets/portfolio/covers/<%= project.id %>-480.webp 480w, /assets/portfolio/covers/<%= project.id %>-960.webp 960w" sizes="(max-width: 1020px) calc(100vw - 40px), 620px">
+          <img class="showcase-cover-image" src="/assets/portfolio/covers/<%= project.id %>-960.webp" width="1440" height="900" loading="<%= index === 0 ? 'eager' : 'lazy' %>" decoding="async"<% if (index === 0) { %> fetchpriority="high"<% } %> alt="<%= project.name %> 项目视觉示意">
+        </picture>
+        <figcaption class="showcase-caption">视觉示意</figcaption>
+      </figure>
+    </section>
+    <% }); %>
+  </div>
+
+  <section class="showcase-switcher" aria-labelledby="showcase-switcher-title">
+    <header class="showcase-switcher-heading">
+      <div><h2 id="showcase-switcher-title">项目切换</h2><p>拖动或点击卡片切换</p></div>
+      <div class="showcase-controls" hidden>
+        <button class="showcase-prev" type="button" aria-label="上一个项目"><svg aria-hidden="true" viewBox="0 0 20 20"><path d="M16 10H4m4-4-4 4 4 4"></path></svg></button>
+        <span class="showcase-status" role="status" aria-live="polite">01 / <%= String(count).padStart(2, '0') %></span>
+        <button class="showcase-next" type="button" aria-label="下一个项目"><svg aria-hidden="true" viewBox="0 0 20 20"><path d="M4 10h12m-4-4 4 4-4 4"></path></svg></button>
+      </div>
+    </header>
+    <div class="showcase-rail" role="tablist" aria-label="切换工程项目" hidden>
+      <% homepage.projects.forEach((project, index) => { %>
+      <button class="showcase-tab<%= index === 0 ? ' is-active' : '' %>" id="showcase-tab-<%= project.id %>" data-project="<%= project.id %>" type="button" role="tab" aria-controls="showcase-panel-<%= project.id %>" aria-selected="<%= index === 0 %>" tabindex="<%= index === 0 ? '0' : '-1' %>">
+        <span class="showcase-tab-index"><%= number(index) %></span>
+        <img class="showcase-tab-thumbnail" src="/assets/portfolio/covers/<%= project.id %>-480.webp" width="96" height="60" alt="" loading="lazy" decoding="async">
+        <span class="showcase-tab-title"><%= project.name %></span>
+        <span class="showcase-tab-state" aria-hidden="true">当前</span>
+      </button>
+      <% }); %>
+    </div>
+    <noscript>
+      <ul class="showcase-project-links" aria-label="全部工程项目"><% homepage.projects.forEach(project => { %><li><a href="<%= project.href %>"><%= project.name %> ↗</a></li><% }); %></ul>
+    </noscript>
+  </section>
+</section>
+<script src="/assets/portfolio/homepage.js" defer></script>
