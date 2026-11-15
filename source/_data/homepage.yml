@@ -11,6 +11,7 @@ projects:
     href: /projects/#yolo-tracking-service
     source: https://github.com/ChutianDuan/Yolo
   - id: rag
+    cover: rag-v2
     name: RAG Gateway Stack
     slogan:
       - 让每一次回答，

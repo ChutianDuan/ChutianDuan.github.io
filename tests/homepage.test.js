@@ -39,8 +39,9 @@ test('five projects keep their exact slogans, anchors, sources and tab-panel rel
     assert.ok(html.includes(`href="${project.source}"`), project.source);
     assert.ok(html.includes(`aria-controls="showcase-panel-${project.id}"`));
     assert.ok(html.includes(`aria-labelledby="showcase-tab-${project.id}"`));
-    assert.ok(html.includes(`/assets/portfolio/covers/${project.id}-480.webp 480w`));
-    assert.ok(html.includes(`/assets/portfolio/covers/${project.id}-960.webp 960w`));
+    const cover = project.cover || project.id;
+    assert.ok(html.includes(`/assets/portfolio/covers/${cover}-480.webp 480w`));
+    assert.ok(html.includes(`/assets/portfolio/covers/${cover}-960.webp 960w`));
   }
   const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map(match => match[1]);
   assert.equal(ids.length, new Set(ids).size);

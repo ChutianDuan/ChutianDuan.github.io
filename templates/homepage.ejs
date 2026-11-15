@@ -24,10 +24,9 @@
       </div>
       <figure class="showcase-visual">
         <picture class="showcase-cover">
-          <source type="image/webp" srcset="/assets/portfolio/covers/<%= project.id %>-480.webp 480w, /assets/portfolio/covers/<%= project.id %>-960.webp 960w" sizes="(max-width: 1020px) calc(100vw - 40px), 620px">
-          <img class="showcase-cover-image" src="/assets/portfolio/covers/<%= project.id %>-960.webp" width="1440" height="900" loading="<%= index === 0 ? 'eager' : 'lazy' %>" decoding="async"<% if (index === 0) { %> fetchpriority="high"<% } %> alt="<%= project.name %> 项目视觉示意">
+          <source type="image/webp" srcset="/assets/portfolio/covers/<%= project.cover || project.id %>-480.webp 480w, /assets/portfolio/covers/<%= project.cover || project.id %>-960.webp 960w" sizes="(max-width: 1020px) calc(100vw - 40px), 620px">
+          <img class="showcase-cover-image" src="/assets/portfolio/covers/<%= project.cover || project.id %>-960.webp" width="1440" height="900" loading="<%= index === 0 ? 'eager' : 'lazy' %>" decoding="async"<% if (index === 0) { %> fetchpriority="high"<% } %> alt="<%= project.name %> 项目封面">
         </picture>
-        <figcaption class="showcase-caption">视觉示意</figcaption>
       </figure>
     </section>
     <% }); %>
@@ -46,7 +45,7 @@
       <% homepage.projects.forEach((project, index) => { %>
       <button class="showcase-tab<%= index === 0 ? ' is-active' : '' %>" id="showcase-tab-<%= project.id %>" data-project="<%= project.id %>" type="button" role="tab" aria-controls="showcase-panel-<%= project.id %>" aria-selected="<%= index === 0 %>" tabindex="<%= index === 0 ? '0' : '-1' %>">
         <span class="showcase-tab-index"><%= number(index) %></span>
-        <img class="showcase-tab-thumbnail" src="/assets/portfolio/covers/<%= project.id %>-480.webp" width="96" height="60" alt="" loading="lazy" decoding="async">
+        <img class="showcase-tab-thumbnail" src="/assets/portfolio/covers/<%= project.cover || project.id %>-480.webp" width="96" height="60" alt="" loading="lazy" decoding="async">
         <span class="showcase-tab-title"><%= project.name %></span>
         <span class="showcase-tab-state" aria-hidden="true">当前</span>
       </button>

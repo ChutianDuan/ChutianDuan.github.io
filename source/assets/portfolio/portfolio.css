@@ -160,16 +160,6 @@
 .home-showcase .showcase-panel .showcase-visual { margin: 0; min-width: 0; position: relative; }
 .showcase-cover { aspect-ratio: 8 / 5; display: block; }
 .home-showcase .showcase-cover-image { border: 0; display: block; height: 100%; margin: 0; object-fit: contain; padding: 0; width: 100%; }
-.home-showcase .showcase-caption {
-  bottom: 10px;
-  color: #4f5968;
-  font-size: 0.71rem;
-  line-height: 1.5;
-  padding: 2px 6px;
-  position: absolute;
-  right: 10px;
-  background: rgba(255, 255, 255, 0.92);
-}
 .showcase-switcher { border-top: 1px solid var(--portfolio-line); min-width: 0; padding-top: 14px; }
 .showcase-switcher-heading { align-items: center; display: flex; gap: 12px; justify-content: space-between; margin-bottom: 12px; }
 .showcase-switcher-heading > div:first-child { align-items: baseline; display: flex; flex-wrap: wrap; gap: 14px; }
@@ -264,7 +254,6 @@
   .showcase-intro { font-size: 0.9rem; grid-area: intro; line-height: 1.55; max-width: 44em; }
   .home-showcase .showcase-visual { grid-area: visual; }
   .showcase-cover { aspect-ratio: auto; height: clamp(155px, 24svh, 240px); }
-  .showcase-caption { bottom: 4px; right: 4px; }
   .home-showcase .showcase-tags { gap: 6px; grid-area: tags; margin: 0; }
   .showcase-tags li { font-size: 0.7rem; padding: 2px 9px; }
   .showcase-actions { gap: 14px; grid-area: actions; margin: 0; }
